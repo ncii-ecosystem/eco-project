@@ -1,4 +1,3 @@
-# It Was Never Just One App
 
 A guided investigation into the technological ecosystem behind AI-generated non-consensual intimate images (NCII).
 
