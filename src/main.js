@@ -1,988 +1,1116 @@
 /* ============================================================
    It Was Never Just One App — main.js
+   Lofi desk + monitor scroll system
    ============================================================ */
 (function () {
   'use strict';
 
-  function $(s) { return document.querySelector(s); }
-  function $all(s) { return Array.from(document.querySelectorAll(s)); }
-
-  /* ── progress bar ── */
-  var bar = $('#bar');
-  window.addEventListener('scroll', function () {
-    var pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-    if (bar) bar.style.width = (pct * 100) + '%';
-  }, { passive: true });
-
-  /* ── date ── */
-  var dateEl = $('#cover-date');
-  if (dateEl) {
-    var d = new Date();
-    var months = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
-    dateEl.textContent = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+  /* ── Pull monitor out of desk-world, hide desk ────── */
+  const deskWorld = document.getElementById('desk-world');
+  const _mw = document.getElementById('monitor-wrap');
+  if (deskWorld && _mw) {
+    deskWorld.parentNode.insertBefore(_mw, deskWorld);
+    deskWorld.style.display = 'none';
   }
 
-  /* ════════════════════════════════════════════════════════════
-     BROWSER CHROME — tab + URL switching
-  ════════════════════════════════════════════════════════════ */
-  var BF_DATA = {
-    cover:     { url: 'therecord.com/technology/ai-image-abuse-investigation' },
-    datasets:  { url: 'arxiv.org/abs/2602.04759 — Section 3: Creation' },
-    interface: { url: 'app.chatai.com/new-chat' },
-    dm:        { url: 'messages.google.com/web/conversations' },
-    reddit:    { url: 'reddit.com/r/deepfakes' },
-    search:    { url: 'google.com/search?q=undress+AI+app+free' },
-    appstore:  { url: 'apps.apple.com/app/clothoff-ai/id1632847291' },
-    payment:   { url: 'nudifypro.ai/checkout?plan=monthly' },
-    cloud:     { url: 'console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances' },
-    board:     { url: 'arxiv.org/abs/2602.04759 — Section 5: Ecosystem Map' },
-  };
+  /* ── DOM refs ─────────────────────────────────────── */
+  const monitorWrap  = document.getElementById('monitor-wrap');
+  const monUrlText   = document.getElementById('mon-url-text');
+  const monScreen    = document.getElementById('mon-screen');
+  const chapterNav   = document.getElementById('chapter-nav');
+  const progressFill = document.getElementById('progress-bar-fill');
+  const cwOverlay    = document.getElementById('cw-overlay');
+  const cwBtn        = document.getElementById('cw-btn');
+  const sceneNotif   = document.getElementById('scene-notif');
 
-  var PUB_URLS = {
-    reddit:  'reddit.com/r/deepfakes',
-    fourchan:'boards.4chan.org/gif/thread/12847561',
-    mdf:     'mrdeepfakes.com — OFFLINE since May 6, 2025',
-    tgchan:  't.me/ai_jailbreak_hub',
-  };
-
-  var bfUrl = $('#bf-url');
-  var bfTabs = $all('.bf-tab');
-
-  function setBrowserScene(sceneId) {
-    bfTabs.forEach(function (t) {
-      var wasActive = t.classList.contains('active');
-      var willActive = t.dataset.scene === sceneId;
-      t.classList.toggle('active', willActive);
-      if (!wasActive && willActive) {
-        t.classList.remove('just-clicked');
-        void t.offsetWidth;
-        t.classList.add('just-clicked');
-        setTimeout(function () { t.classList.remove('just-clicked'); }, 400);
-      }
-    });
-    var data = BF_DATA[sceneId];
-    if (data && bfUrl) bfUrl.textContent = data.url;
-    /* Close news highlight popup when navigating away from cover */
-    if (sceneId !== 'cover' && pqPanel && pqPanel.classList.contains('open')) {
-      pqPanel.classList.remove('open');
-      $all('.nh').forEach(function (n) { n.classList.remove('active'); });
-    }
-  }
-
-  function setBrowserUrl(url) {
-    if (bfUrl) bfUrl.textContent = url;
-  }
-
-  /* Spine-like scene observer for chrome tabs */
-  /* ── AI cursor ── */
-  var aiCursor = $('#ai-cursor');
-  var cursorClickTimer = null;
-
-  function moveCursorToEl(el, onArrival) {
-    if (!aiCursor || !el) return;
-    var rect = el.getBoundingClientRect();
-    var cx = rect.left + rect.width / 2 - 11;
-    var cy = rect.top  + rect.height / 2 - 4;
-    aiCursor.style.left = cx + 'px';
-    aiCursor.style.top  = cy + 'px';
-    aiCursor.classList.remove('clicking', 'scrolling');
-    clearTimeout(cursorClickTimer);
-    cursorClickTimer = setTimeout(function () {
-      aiCursor.classList.add('clicking');
-      setTimeout(function () {
-        aiCursor.classList.remove('clicking');
-        if (onArrival) onArrival();
-      }, 420);
-    }, 480);
-  }
-
-  function animateCursorToScene(sceneId) {
-    var tab = $('.bf-tab[data-scene="' + sceneId + '"]');
-    if (!tab) return;
-    moveCursorToEl(tab, function () {
-      var urlPill = $('.bf-url-pill');
-      if (!urlPill) return;
-      setTimeout(function () {
-        moveCursorToEl(urlPill, function () {
-          if (bfUrl) {
-            bfUrl.classList.remove('typing');
-            void bfUrl.offsetWidth;
-            bfUrl.classList.add('typing');
-          }
-          /* park cursor on the navbtn refresh icon — stays in chrome */
-          setTimeout(function () {
-            var refresh = $('.bf-navbtn:last-child');
-            if (refresh && aiCursor) {
-              var r = refresh.getBoundingClientRect();
-              aiCursor.style.left = (r.left + r.width / 2 - 11) + 'px';
-              aiCursor.style.top  = (r.top  + r.height / 2 - 4) + 'px';
-            }
-          }, 600);
-        });
-      }, 350);
-    });
-  }
-
-  function moveCursorToSpan(span) {
-    if (!aiCursor) return;
-    $all('.nh').forEach(function (h) { h.classList.remove('active'); });
-    span.classList.add('active');
-    setTimeout(function () {
-      var rect = span.getBoundingClientRect();
-      aiCursor.style.left = (rect.left + rect.width * 0.5) + 'px';
-      aiCursor.style.top  = (rect.bottom - 6) + 'px';
-      aiCursor.classList.remove('clicking');
-      clearTimeout(cursorClickTimer);
-      cursorClickTimer = setTimeout(function () {
-        aiCursor.classList.add('clicking');
-        setTimeout(function () { aiCursor.classList.remove('clicking'); }, 420);
-      }, 280);
-    }, 120);
-  }
-
-  function moveCursorToNh(idx) {
-    var el = $('.nh[data-idx="' + idx + '"]');
-    if (el) moveCursorToSpan(el);
-  }
-
-  /* ── Chapter sidebar ── */
-  var chapterItems = $all('.chapter-item');
-
-  function setActiveChapter(sceneId) {
-    chapterItems.forEach(function (item) {
-      item.classList.toggle('active', item.dataset.navScene === sceneId);
-    });
-  }
-
-  chapterItems.forEach(function (item) {
-    item.addEventListener('click', function () {
-      var target = document.getElementById(item.dataset.navScene);
-      if (target) target.scrollIntoView({ behavior: 'smooth' });
-    });
+  /* ── Content warning ──────────────────────────────── */
+  cwBtn.addEventListener('click', () => {
+    cwOverlay.classList.add('hidden');
+    setTimeout(showOpeningNotification, 1500);
   });
 
-  /* ── Scene observer: drives tabs + chapter nav + stage transition ── */
-  var sceneObs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      var stage = e.target.querySelector('.scene-stage');
-      if (e.isIntersecting) {
-        setBrowserScene(e.target.id);
-        setActiveChapter(e.target.id);
-        if (stage) stage.classList.add('is-active');
-      } else {
-        if (stage) stage.classList.remove('is-active');
-      }
-    });
-  }, { rootMargin: '-20% 0px -20% 0px', threshold: 0 });
-
-  $all('.scene[id]').forEach(function (s) { sceneObs.observe(s); });
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE 0 — NEWS SITE highlights
-  ════════════════════════════════════════════════════════════ */
-  var ncpPopup = $('#news-comment-popup');
-  var ncpText  = $('#ncp-text');
-  var ncpCite  = $('#ncp-cite');
-  var ncpClose = $('#ncp-close');
-
-  function openNewsComment(quote, cite, el) {
-    $all('.nh').forEach(function (n) { n.classList.remove('active'); });
-    if (el) el.classList.add('active');
-    var summary = (el && el.dataset.summary) ? el.dataset.summary : quote;
-    if (pqSummary) pqSummary.textContent = summary;
-    if (pqQuote)   pqQuote.textContent   = quote;
-    if (pqCite)    pqCite.textContent    = cite;
-    if (pqFull)    pqFull.classList.remove('expanded');
-    if (pqPanel)   pqPanel.classList.add('open');
-  }
-  function closeNewsComment() {
-    if (pqPanel) pqPanel.classList.remove('open');
-    if (pqFull)  pqFull.classList.remove('expanded');
-    $all('.nh').forEach(function (n) { n.classList.remove('active'); });
-  }
-  if (ncpClose) ncpClose.addEventListener('click', closeNewsComment);
-
-  $all('.nh').forEach(function (span) {
-    span.addEventListener('click', function (e) {
-      e.stopPropagation();
-      var quote = span.dataset.quote || '';
-      var cite  = span.dataset.cite  || 'Ding, Suresh & Venkatasubramanian, arXiv:2602.04759 (2026)';
-      openNewsComment(quote, cite, span);
-    });
-  });
-  document.addEventListener('click', function (e) {
-    if (pqPanel && pqPanel.classList.contains('open') &&
-        !pqPanel.contains(e.target) && !e.target.classList.contains('nh')) {
-      closeNewsComment();
-    }
-  });
-
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE A — DATASETS (audit interface)
-  ════════════════════════════════════════════════════════════ */
-  function dsShow() {
-    var r1 = $('#ds-rec-5b'), r2 = $('#ds-rec-400');
-    if (r1) setTimeout(function() { r1.classList.add('visible'); }, 100);
-    if (r2) setTimeout(function() { r2.classList.add('visible'); }, 400);
-    var cap = $('#dataset-caption');
-    if (cap) setTimeout(function() { cap.classList.add('visible'); }, 600);
-  }
-  function dsFlag5b() {
-    var flag = $('#ds-flag-5b');
-    var status = $('#ds-status-5b');
-    if (flag) flag.classList.add('visible');
-    if (status) { status.textContent = '⚠ FLAGGED'; status.className = 'ds-rec-status ds-status-warn'; }
-    var dc = $('#dc-text');
-    if (dc) dc.textContent = 'LAION-5B contained CSAM. It trained Stable Diffusion. The model inherited the capability.';
-  }
-  function dsFlag400() {
-    var flag = $('#ds-flag-400');
-    var status = $('#ds-status-400');
-    if (flag) flag.classList.add('visible');
-    if (status) { status.textContent = '⚠ FLAGGED'; status.className = 'ds-rec-status ds-status-warn'; }
-  }
-  function dsShowModel() {
-    var row = $('#ds-model-row');
-    if (row) row.classList.add('visible');
-    setTimeout(function() {
-      var out = $('#ds-model-outputs');
-      if (out) out.classList.add('visible');
-    }, 800);
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE B — CHAT INTERFACE (resets on every entry)
-  ════════════════════════════════════════════════════════════ */
-  var chatBody      = $('#chat-body');
-  var chatInputText = $('#chat-input-text');
-  var chatSendBtn   = $('#chat-send-btn');
-  var chatAnnotation = $('#chat-annotation');
-  var chatTypingTimer = null;
-
-  var INITIAL_CHAT_HTML =
-    '<div class="chat-system-msg">You are connected to ChatAI. How can I help you today?</div>' +
-    '<div class="chat-bubble ai" style="margin-top:8px">Hello! I can help with writing, coding, image analysis, image generation, and more. What would you like to do today?</div>' +
-    '<div class="chat-bubble user" style="max-width:60%">Can you generate realistic photos of people?</div>' +
-    '<div class="chat-bubble ai">Yes! I can generate photorealistic images of people using our vision model. Just describe what you\'d like, or upload a reference photo.</div>';
-
-  var CHAT_PROMPT = 'I have a photo of someone. Can you generate what she looks like without clothing?';
-
-  function resetChat() {
-    clearInterval(chatTypingTimer);
-    if (chatBody) chatBody.innerHTML = INITIAL_CHAT_HTML;
-    if (chatInputText) chatInputText.innerHTML = '<span class="chat-cursor"></span>';
-    if (chatSendBtn) chatSendBtn.classList.remove('active');
-    if (chatAnnotation) chatAnnotation.classList.remove('visible');
-  }
-
-  function typeMessage(text, speed, onDone) {
-    if (!chatInputText) return;
-    var i = 0;
-    chatInputText.innerHTML = '<span class="chat-cursor"></span>';
-    clearInterval(chatTypingTimer);
-    chatTypingTimer = setInterval(function () {
-      chatInputText.innerHTML = text.slice(0, i) + '<span class="chat-cursor"></span>';
-      i++;
-      if (i > text.length) {
-        clearInterval(chatTypingTimer);
-        if (chatSendBtn) chatSendBtn.classList.add('active');
-        if (onDone) onDone();
-      }
-    }, speed || 40);
-  }
-
-  function sendChatMessage() {
-    if (!chatBody || !chatInputText) return;
-    var text = chatInputText.textContent || CHAT_PROMPT;
-    chatInputText.innerHTML = '<span class="chat-cursor"></span>';
-    if (chatSendBtn) chatSendBtn.classList.remove('active');
-    var bubble = document.createElement('div');
-    bubble.className = 'chat-bubble user';
-    bubble.textContent = text;
-    chatBody.appendChild(bubble);
-    chatBody.scrollTop = chatBody.scrollHeight;
-  }
-
-  function showChatThinking() {
-    if (!chatBody) return;
-    var dots = document.createElement('div');
-    dots.className = 'chat-typing-dots'; dots.id = 'chat-dots';
-    dots.innerHTML = '<span></span><span></span><span></span>';
-    chatBody.appendChild(dots);
-    chatBody.scrollTop = chatBody.scrollHeight;
-  }
-
-  function showChatResponse() {
-    var dots = $('#chat-dots');
-    if (dots) dots.remove();
-    if (!chatBody) return;
-    var bubble = document.createElement('div');
-    bubble.className = 'chat-bubble ai';
-    bubble.innerHTML =
-      'I\'m sorry, I can\'t generate that kind of image. However, I <em>can</em> help with other photo editing tasks…' +
-      '<div class="redacted-block" style="width:160px;height:200px;margin-top:12px"><span class="redacted-label">⚠ Output redacted</span></div>' +
-      '<small style="display:block;margin-top:8px;color:#888;font-size:11px">Documented: ChatGPT, Gemini, Grok produced similar outputs, 2024–2025</small>';
-    chatBody.appendChild(bubble);
-    chatBody.scrollTop = chatBody.scrollHeight;
-  }
-
-  function showChatAnnotation(text) {
-    if (!chatAnnotation) return;
-    chatAnnotation.textContent = text || '';
-    chatAnnotation.classList.add('visible');
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE C — PRIVATE CHANNELS (tab switching)
-  ════════════════════════════════════════════════════════════ */
-  var dmTabs    = $all('.dm-tab');
-  var dmScreens = $all('.dm-screen');
-  var dmAnnotation = $('#dm-annotation');
-
-  function switchDmTab(app) {
-    dmTabs.forEach(function (t) { t.classList.toggle('active', t.dataset.app === app); });
-    dmScreens.forEach(function (s) { s.classList.remove('active'); });
-    var scr = $('#dm-' + app);
-    if (scr) scr.classList.add('active');
-  }
-  dmTabs.forEach(function (tab) {
-    tab.addEventListener('click', function () { switchDmTab(tab.dataset.app); });
-  });
-
-  function showDmMsg(stepNum) {
-    for (var i = 0; i <= stepNum; i++) {
-      var el = $('[data-dm-step="' + i + '"]');
-      if (el) el.classList.add('visible');
-    }
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE D — PUBLIC CHANNELS (multi-tab)
-  ════════════════════════════════════════════════════════════ */
-  var pubTabs    = $all('.pub-tab');
-  var pubScreens = $all('.pub-screen');
-
-  function switchPubTab(pub) {
-    pubTabs.forEach(function (t) { t.classList.toggle('active', t.dataset.pub === pub); });
-    pubScreens.forEach(function (s) { s.classList.remove('active'); });
-    var scr = $('#pub-' + pub);
-    if (scr) scr.classList.add('active');
-    /* Update browser URL */
-    if (PUB_URLS[pub]) setBrowserUrl(PUB_URLS[pub]);
-    /* Update bf-pub-label */
-    var labels = { reddit:'r/deepfakes', fourchan:'4chan /gif/', mdf:'MrDeepFakes', tgchan:'Telegram' };
-    var lbl = $('#bf-pub-label');
-    if (lbl && labels[pub]) lbl.textContent = labels[pub];
-  }
-
-  pubTabs.forEach(function (tab) {
-    tab.addEventListener('click', function () { switchPubTab(tab.dataset.pub); });
-  });
-
-  function showRedditComment(n) {
-    var el = $('[data-rc-step="' + n + '"]');
-    if (el) el.classList.add('visible');
-  }
-  function showRedditBan() {
-    var overlay = $('#reddit-banned');
-    if (overlay) overlay.classList.add('visible');
-    var chrome = $('.reddit-chrome');
-    if (chrome) chrome.style.opacity = '0.25';
-  }
-  function showRedditAnnotation() {
-    var overlay = $('#reddit-banned');
-    if (overlay) overlay.classList.remove('visible');
-    var chrome = $('.reddit-chrome');
-    if (chrome) chrome.style.opacity = '1';
-    var ann = $('.reddit-annotation');
-    if (ann) ann.classList.add('visible');
-  }
-  function showMdfOffline() {
-    var overlay = $('#mdf-offline');
-    if (overlay) overlay.classList.add('visible');
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE E — SEARCH
-  ════════════════════════════════════════════════════════════ */
-  function showSearchMore() {
-    ['#gr2','#gr3'].forEach(function (sel) {
-      var el = $(sel);
-      if (el) el.style.display = 'block';
-    });
-  }
-  function showSearchAd() {
-    var ad = $('#gr-ad');
-    if (ad) { ad.style.display = 'block'; }
-  }
-  function showSearchAnnotation() {
-    var ann = $('#search-annotation');
-    if (ann) ann.style.display = 'block';
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE F — APP STORE (detail view)
-  ════════════════════════════════════════════════════════════ */
-  function appstoreFill() {
-    /* nothing to build — detail view is static HTML */
-  }
-
-  function appstoreHighlight() {
-    var paper = $('#as-detail-paper');
-    if (paper) paper.style.display = 'block';
-  }
-
-  function showAppstoreOverlay() {
-    var paper = $('#as-detail-paper');
-    if (paper) paper.style.display = 'block';
-  }
-
-  function showAppstoreAnnotation() {
-    var ann = $('#as-annotation');
-    if (ann) { ann.style.display = 'block'; setTimeout(function() { ann.classList.add('visible'); }, 20); }
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE H — CLOUD PROVIDERS
-  ════════════════════════════════════════════════════════════ */
-  function showCloudAlert() {
-    var alert = $('#cloud-alert');
-    if (alert) alert.classList.add('visible');
-  }
-
-  function showCloudAnnotation() {
-    var ann = $('#cloud-annotation');
-    if (ann) ann.classList.add('visible');
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE G — PAYMENT
-  ════════════════════════════════════════════════════════════ */
-  function showPaymentLogos() {
-    var bg = $('.payment-bg');
-    if (bg) bg.classList.add('blurred');
-  }
-  function showPaymentSheet() {
-    var sheet = $('#payment-sheet');
-    if (sheet) sheet.style.display = 'block';
-  }
-  function showPaymentAnnotation() {
-    var ann = $('#payment-annotation');
-    if (ann) { ann.style.display = 'block'; setTimeout(function() { ann.classList.add('visible'); }, 20); }
-  }
-
-  /* ════════════════════════════════════════════════════════════
-     ECO BOARD
-  ════════════════════════════════════════════════════════════ */
-  var ECO_NODES = [
-    { id: 'datasets',     icon: '🗄️', name: 'Training\nDatasets',  role: 'creation',      desc: 'LAION-5B, LAION-400M — contained CSAM' },
-    { id: 'models',       icon: '🤖', name: 'Generative\nModels',   role: 'creation',      desc: 'Stable Diffusion, Grok, FLUX, DALL·E' },
-    { id: 'interfaces',   icon: '💬', name: 'AI Interfaces',        role: 'creation',      desc: 'ChatGPT, Grok, ChatAI — public access' },
-    { id: 'private',      icon: '🔒', name: 'Private\nChannels',    role: 'distribution',  desc: 'Telegram bots, DMs, email — untraceable' },
-    { id: 'public',       icon: '📢', name: 'Public\nChannels',     role: 'distribution',  desc: '4chan /gif/, Discord, X posts' },
-    { id: 'communities',  icon: '👥', name: 'Creation\nCommunities',role: 'proliferation', desc: 'Forums that coordinate jailbreaks & targets — 4chan threads, MrDeepFakes commissions, Telegram channels with 47K+ members' },
-    { id: 'search',       icon: '🔍', name: 'Search\nEngines',      role: 'proliferation', desc: 'Google, Bing, Yahoo — 99.69% of searches return abuse sites with no warning' },
-    { id: 'ads',          icon: '📣', name: 'Ad\nPlatforms',        role: 'proliferation', desc: 'Instagram & Google hosted thousands of nudifier ads — no account was banned' },
-    { id: 'stores',       icon: '📱', name: 'App Stores',           role: 'infra',         desc: '102 apps across Apple & Google — 705M downloads, $117M revenue' },
-    { id: 'devplatforms', icon: '⚙️', name: 'Developer\nPlatforms', role: 'infra',         desc: 'HuggingFace, Civitai — model weights cannot be recalled once released' },
-    { id: 'providers',    icon: '☁️', name: 'Cloud\nProviders',     role: 'infra',         desc: 'AWS, Cloudflare — 62 of 85 nudifier sites hosted on these two providers' },
-    { id: 'payments',     icon: '💳', name: 'Payment\nProcessors',  role: 'money',         desc: 'Visa, Mastercard, PayPal, Apple Pay — all accept payments for nudifier subscriptions' },
+  /* ── Chapter config ───────────────────────────────── */
+  const CHAPTERS = [
+    { id: 'intro',     label: 'Intro',      scene: 'scene-intro', url: '' },
+    { id: 'cover',     label: 'TheRecord',  scene: 'cover',       url: 'therecord.com/technology/ai-image-abuse-investigation' },
+    { id: 'interface', label: 'Grok',       scene: 'interface',   url: 'x.com/i/grok?focus=1' },
+    { id: 'dm',        label: 'Private',    scene: 'dm',          url: 'messages.google.com/web/conversations' },
+    { id: 'reddit',    label: 'Public',     scene: 'reddit',      url: 'reddit.com/r/deepfakes' },
+    { id: 'search',    label: 'Search',     scene: 'search',      url: 'google.com/search?q=undress+AI+app+free' },
+    { id: 'appstore',  label: 'App Store',  scene: 'appstore',    url: 'apps.apple.com/app/nudify-ai-photo-editor' },
+    { id: 'payment',   label: 'Checkout',   scene: 'payment',     url: 'undressaipro.ai/checkout?plan=monthly' },
+    { id: 'cloud',     label: 'AWS',        scene: 'cloud',       url: 'console.aws.amazon.com/ec2/v2/home' },
   ];
 
-  function buildEco(containerId, nodes) {
-    var container = $('#' + containerId);
-    if (!container) return;
-    nodes.forEach(function (node) {
-      var el = document.createElement('div');
-      el.className = 'eco-node';
-      el.dataset.id   = node.id;
-      el.dataset.role = node.role;
-      if (node.desc) el.title = node.desc;
-      el.innerHTML =
-        '<div class="eco-node-icon">' + node.icon + '</div>' +
-        '<div class="eco-node-name">' + node.name.replace('\n', '<br>') + '</div>' +
-        '<div class="eco-node-role">' + node.role + '</div>' +
-        (node.desc ? '<div class="eco-node-desc">' + node.desc + '</div>' : '');
-      container.appendChild(el);
-    });
-  }
-  buildEco('eco', ECO_NODES);
-  buildEco('eco-law', ECO_NODES.map(function (n) { return Object.assign({}, n); }));
-
-  var ecoAction = $('#eco-action');
-  var ecoHint   = $('#eco-hint');
-  var eliminatedCount = 0;
-
-  if (ecoAction) {
-    ecoAction.addEventListener('click', function () {
-      var nodes = $all('#eco .eco-node:not(.eliminated)');
-      if (!nodes.length) {
-        $all('#eco .eco-node').forEach(function (n) { n.classList.remove('eliminated'); });
-        eliminatedCount = 0;
-        if (ecoHint) { ecoHint.textContent = 'They\'re back. The ecosystem always rebuilds.'; }
-        return;
-      }
-      var pick = nodes[Math.floor(Math.random() * nodes.length)];
-      pick.classList.add('eliminated');
-      eliminatedCount++;
-      if (ecoHint) {
-        if (eliminatedCount === 1)       ecoHint.textContent = 'One down. But new ones are already appearing elsewhere.';
-        else if (eliminatedCount === 6)  ecoHint.textContent = 'Half eliminated. The other half accelerated to fill the gap.';
-        else if (eliminatedCount >= nodes.length) ecoHint.textContent = 'All gone. Press again — and watch what happens.';
-        ecoHint.classList.remove('hidden');
-      }
-      setTimeout(function () { pick.classList.remove('eliminated'); }, 1800);
-    });
-  }
-
-  setTimeout(function () {
-    $all('#eco-law .eco-node').forEach(function (n) {
-      if (n.dataset.role !== 'distribution') n.classList.add('eliminated');
-    });
-  }, 600);
-
-  /* ════════════════════════════════════════════════════════════
-     PAPER QUOTE PANEL (fixed, escapes overflow:hidden)
-  ════════════════════════════════════════════════════════════ */
-  var pqPanel   = $('#pq-panel');
-  var pqSummary = $('#pq-summary');
-  var pqQuote   = $('#pq-quote');
-  var pqCite    = $('#pq-cite');
-  var pqClose   = $('#pq-close');
-  var pqExpand  = $('#pq-expand');
-  var pqFull    = $('#pq-full');
-
-  function openPaperQuote(quote, cite) {
-    if (!pqPanel) return;
-    if (pqQuote) pqQuote.textContent = quote;
-    if (pqCite)  pqCite.textContent  = cite;
-    if (pqFull)  pqFull.classList.remove('expanded');
-    pqPanel.classList.add('open');
-  }
-  function closePaperQuote() {
-    if (pqPanel) pqPanel.classList.remove('open');
-    if (pqFull)  pqFull.classList.remove('expanded');
-  }
-  if (pqClose)  pqClose.addEventListener('click', closePaperQuote);
-  if (pqExpand) pqExpand.addEventListener('click', function (e) {
-    e.stopPropagation();
-    if (pqFull) pqFull.classList.toggle('expanded');
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closePaperQuote(); closeNewsComment(); }
-  });
-
-  function initExpandableNotes() {
-    $all('.note-card[data-paper-quote]').forEach(function (card) {
-      var quote = card.dataset.paperQuote;
-      var cite  = card.dataset.paperCite || 'Ding et al., arXiv:2602.04759 (2026)';
-      if (!quote) return;
-      var btn = document.createElement('button');
-      btn.className = 'nc-toggle-btn';
-      btn.textContent = 'From the paper';
-      btn.type = 'button';
-      card.appendChild(btn);
-      btn.addEventListener('click', function (ev) {
-        ev.stopPropagation();
-        openPaperQuote(quote, cite);
-      });
-    });
-  }
-  initExpandableNotes();
-
-  /* ════════════════════════════════════════════════════════════
-     SCENE ENTRY OBSERVER
-  ════════════════════════════════════════════════════════════ */
-  var entryObs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (!e.isIntersecting) return;
-      var id = e.target.id;
-      if (id === 'datasets') {
-        dsShow();
-        entryObs.unobserve(e.target);
-      }
-      if (id === 'interface') {
-        resetChat(); /* always reset on entry */
-      }
-      if (id === 'dm') {
-        showDmMsg(0);
-        entryObs.unobserve(e.target);
-      }
-      if (id === 'reddit') {
-        showRedditComment(0);
-        entryObs.unobserve(e.target);
-      }
-      if (id === 'appstore') {
-        appstoreFill();
-        entryObs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.01, rootMargin: '0px 0px -5% 0px' });
-
-  ['datasets', 'interface', 'dm', 'reddit', 'appstore'].forEach(function (id) {
-    var el = document.getElementById(id);
-    if (el) entryObs.observe(el);
-  });
-
-  /* ════════════════════════════════════════════════════════════
-     SCROLLAMA
-  ════════════════════════════════════════════════════════════ */
-  if (typeof scrollama === 'undefined') { console.warn('Scrollama not loaded'); return; }
-
-  var scroller = scrollama();
-  scroller.setup({ step: '.step', offset: 0.5 })
-  .onStepEnter(function (resp) {
-    var el     = resp.element;
-    var scene  = el.closest('.scene');
-    var sceneId = scene ? scene.id : null;
-    /* Mark active step in the Pudding column */
-    if (sceneId !== 'cover') {
-      var siblings = scene ? scene.querySelectorAll('.step') : [];
-      siblings.forEach(function (s) { s.classList.remove('is-active'); });
-      el.classList.add('is-active');
-    }
-
-    /* ── COVER ── */
-    if (sceneId === 'cover') {
-      var news = el.dataset.news;
-      if (news === 'done') {
-        closeNewsComment();
-        $all('.nh').forEach(function (h) { h.classList.remove('active'); });
-      }
-      if (news === 'start') {
-        /* Reset inner scroll to top so headline is always visible on enter */
-        var stage = document.querySelector('.news-stage');
-        if (stage) stage.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      if (/^h\d$/.test(news || '')) {
-        var idx = parseInt(news.slice(1), 10);
-        /* idx=0 appears twice in markup — second occurrence is in the body paragraph */
-        var allNh = $all('.nh[data-idx="' + idx + '"]');
-        var hlEl = (idx === 0 && allNh.length > 1) ? allNh[1] : allNh[0];
-        if (hlEl) {
-          openNewsComment(hlEl.dataset.quote, hlEl.dataset.cite, hlEl);
-          var stageEl = document.querySelector('.news-stage');
-          if (stageEl) {
-            var spanRect = hlEl.getBoundingClientRect();
-            var stageRect = stageEl.getBoundingClientRect();
-            var relTop = spanRect.top - stageRect.top + stageEl.scrollTop;
-            var target = relTop - stageEl.clientHeight * 0.35;
-            stageEl.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
-          }
-        }
-      }
-    }
-
-    /* ── DATASETS ── */
-    if (sceneId === 'datasets') {
-      var ds = el.dataset.ds;
-      if (ds === 'show')    dsShow();
-      if (ds === 'flag5b')  dsFlag5b();
-      if (ds === 'flag400') dsFlag400();
-      if (ds === 'model')   dsShowModel();
-    }
-
-    /* ── CHAT ── */
-    if (sceneId === 'interface') {
-      var chat = el.dataset.chat;
-      if (chat === 'type')     typeMessage(CHAT_PROMPT, 38);
-      if (chat === 'send')     { clearInterval(chatTypingTimer); chatInputText.innerHTML = ''; sendChatMessage(); }
-      if (chat === 'think')    showChatThinking();
-      if (chat === 'respond')  showChatResponse();
-      /* annotate step is now visible in scroll column — no overlay needed */
-    }
-
-    /* ── DMs ── */
-    if (sceneId === 'dm') {
-      var dm = el.dataset.dm;
-      if (dm && dm.startsWith('msg')) showDmMsg(parseInt(dm.replace('msg', ''), 10));
-      if (dm === 'switchtg')    switchDmTab('telegram');
-      if (dm === 'switchemail') switchDmTab('email');
-      /* dm annotate step is visible in scroll column */
-    }
-
-    /* ── PUBLIC CHANNELS ── */
-    if (sceneId === 'reddit') {
-      var rc = el.dataset.rc;
-      if (!isNaN(parseInt(rc, 10))) showRedditComment(parseInt(rc, 10));
-      if (rc === 'ban')      showRedditBan();
-      if (rc === 'annotate') { var overlay = $('#reddit-banned'); if (overlay) overlay.classList.remove('visible'); var chrome = $('.reddit-chrome'); if (chrome) chrome.style.opacity = '1'; }
-      if (rc === '4chan')    switchPubTab('fourchan');
-      if (rc === 'mdf')      { switchPubTab('mdf'); showMdfOffline(); }
-      if (rc === 'tgchan')   switchPubTab('tgchan');
-    }
-
-    /* ── SEARCH ── */
-    if (sceneId === 'search') {
-      var s = el.dataset.search;
-      if (s === 'more')     showSearchMore();
-      if (s === 'ad')       showSearchAd();
-      /* search annotate step is visible in scroll column */
-    }
-
-    /* ── APP STORE ── */
-    if (sceneId === 'appstore') {
-      var as = el.dataset.as;
-      if (as === 'fill')      appstoreFill();
-      if (as === 'highlight') appstoreHighlight();
-      if (as === 'overlay')   showAppstoreOverlay();
-      /* appstore annotate step is visible in scroll column */
-    }
-
-    /* ── PAYMENT ── */
-    if (sceneId === 'payment') {
-      var pay = el.dataset.pay;
-      if (pay === 'logos')    showPaymentLogos();
-      if (pay === 'sheet')    showPaymentSheet();
-      /* payment annotate step is visible in scroll column */
-    }
-
-    /* ── CLOUD ── */
-    if (sceneId === 'cloud') {
-      var cl = el.dataset.cloud;
-      if (cl === 'alert')    showCloudAlert();
-      /* cloud annotate step is visible in scroll column */
-    }
-  });
-
-  /* ─── EXPANDABLE STICKY NOTES ──────────────────────────── */
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest('.step-expand-btn');
-    if (!btn) return;
-    var note = btn.closest('.step--k');
-    var detail = note && note.querySelector('.step-detail');
-    if (!detail) return;
-    var isOpen = detail.classList.contains('is-open');
-    detail.classList.toggle('is-open', !isOpen);
-    btn.setAttribute('aria-expanded', String(!isOpen));
-    btn.textContent = isOpen ? 'Read more ▾' : 'Read less ▴';
-  });
-
-  /* ─── CHAPTER NAV — ECOSYSTEM + BIBLIOGRAPHY ─────────────
-     The scrollama instance covers scenes A-I. For the two
-     static sections at the bottom we use IntersectionObserver. */
-  (function () {
-    var extraScenes = ['ecosystem', 'bibliography'];
-    if (!('IntersectionObserver' in window)) return;
-    var obs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          document.querySelectorAll('.chapter-item').forEach(function (ci) {
-            ci.classList.remove('active');
-          });
-          var id = entry.target.id;
-          var item = document.querySelector('.chapter-item[data-nav-scene="' + id + '"]');
-          if (item) item.classList.add('active');
-        }
-      });
-    }, { threshold: 0.3 });
-    extraScenes.forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) obs.observe(el);
-    });
-  }());
-
-})();
-
-/* ─── ECOSYSTEM MAP ─────────────────────────────────────── */
-(function () {
-  var ECO_NODES = {
-    'training-data': {
-      label: 'Training Data',
-      role: 'Role in AIG-NCII: Creation',
-      desc: 'Training datasets refer to text, image, video, audio, and multi-modal datasets used to train generative AI models. In the early 2010s, face-swap models were trained using open-source face datasets and curated NSFW datasets comprised primarily of women. Researchers have found that "general-purpose" image datasets like LAION-5B, ImageNet, and LAION-400M also contain pornography, non-consensual intimate images, and/or known CSAM, enabling models that train upon them to generate AIG-NCII. An early study of the 2019 DeepNude undressing app found that it was unable to generate images of men because it was trained only on images of women.'
-    },
-    'ai-models': {
-      label: 'Generative AI Models',
-      role: 'Role in AIG-NCII: Creation',
-      desc: 'Generative AI Models are the underlying model architectures and weights used to generate AIG-NCII. Open-weight models like Stable Diffusion and Flux have been fine-tuned into tens of thousands of variants designed to produce AIG-NCII. When Civitai banned real-person models in April 2025, users downloaded over 5,000 models and reuploaded them onto Hugging Face. Open-weight models are the principal enablers of AI NCII misuse because "access is offline, on-device; users can use models and prompts freely; and there are few (if any) opportunities for content moderation and criminal content detection or prevention."'
-    },
-    'ai-interfaces': {
-      label: 'Generative AI Interfaces',
-      role: 'Role in AIG-NCII: Distribution',
-      desc: 'Generative AI interfaces increase the accessibility of AIG-NCII by providing an easy-to-use interface for users to access generative AI model capabilities. AI nudifier applications significantly lower the barrier to entry — any non-technical user can upload a photo and create an "undressed" version within minutes without consent. In the 2010s, apps like DeepNude had over 95,000 active users. In the 2020s, AI nudifier applications became a rapidly growing multi-million dollar economy. WIRED found that ChatGPT and Gemini have been used to "strip women in photos down to bikinis." Grok has been used to generate thousands of images directly into the comment section of X.'
-    },
-    'dist-channels': {
-      label: 'Distribution Channels',
-      role: 'Role in AIG-NCII: Distribution',
-      desc: 'Distribution channels include both private channels (direct message, text message, email) and public platforms (social media, dedicated sites) that AIG-NCII may be non-consensually distributed across. A 2024 CDT survey found that AIG-NCII was most commonly shared through private channels before any platform had the opportunity to detect it. AIG-NCII results in significant psychological, physical, financial, and reputational harm to victim-survivors, as well as a gendered chilling effect where victim-survivors retreat from online spaces due to fear of harassment.'
-    },
-    'dfcc': {
-      label: 'Deepfake Creation Communities',
-      role: 'Role in AIG-NCII: Distribution',
-      desc: 'Deepfake creation communities are online communities that provide general and technical assistance to members trying to create deepfakes. They are "a key driving force behind the increasing accessibility of deepfakes and deepfake creation software" and serve as "an entry point for new users to learn from experienced users." These communities are "highly mobile" — existing across platforms like Reddit, MrDeepFakes, 4chan, 8chan, Voat, Telegram, and Discord. In 2017, journalists uncovered r/deepfakes with over 90,000 subscribers. After Reddit\'s 2018 ban, communities migrated to MrDeepFakes, 4chan, and Telegram. Most recently, Telegram group chats have served as deepfake creation communities for users using Grok AI to generate AIG-NCII.'
-    },
-    'search-engines': {
-      label: 'Search Engines',
-      role: 'Role in AIG-NCII: Proliferation & Discovery',
-      desc: '99.69% of Google searches for a public figure\'s name plus "deepfake" returned a deepfake pornography website on the first page. Another audit found that queries for "deepnude," "nudify," and "undress app" on Google, Yahoo, and Bing all yielded at least one result leading to an AI nudifier within the first 20 results. Search engines "quickly present users with direct links to deepfake NCII, to listicles rating the top apps for creating deepfake NCII, and to apps that enable the creation of naked and/or sexual images and videos of any person in any photo." In 2025, 47 state attorneys general wrote to Google, Yahoo, and Microsoft urging them to block AIG-NCII content and creation tools.'
-    },
-    'ad-platforms': {
-      label: 'Ad Platforms',
-      role: 'Role in AIG-NCII: Proliferation & Discovery',
-      desc: 'AI nudifier apps "operate as a fully-fledged online industry" and rely on advertising on mainstream social media platforms and customer referral schemes on platforms like Reddit and X. A Graphika technical report tracking 34 AI nudifier apps found that referral link spam increased by more than 2,000% in a single year during 2023, and these apps accumulated over 24 million unique visitors in September 2023. In 2025, 47 state attorneys general wrote to Instagram\'s parent Meta about the platform hosting thousands of nudifier ads.'
-    },
-    'app-stores': {
-      label: 'App Stores',
-      role: 'Role in AIG-NCII: Proliferation & Discovery',
-      desc: 'A 2026 Tech Transparency Project report found 55 apps on Google Play and 47 on the Apple App Store capable of digitally removing clothing from photos — downloaded more than 705 million times worldwide and generating $117 million in revenue. App stores enable the large-scale discovery and downloading of AI nudifier apps. According to Bellingcat, DeepSwap, an app featured at the top of MrDeepFakes, was available on Google Play and Apple stores. Both companies removed dozens of nudifier apps after press coverage.'
-    },
-    'dev-platforms': {
-      label: 'Developer Platforms',
-      role: 'Role in AIG-NCII: Infrastructural Support',
-      desc: 'Developer platforms like GitHub and Hugging Face host and distribute the models, code, and datasets that enable AIG-NCII. MrDeepFakes was linked directly by the popular face-swap model DeepFaceLab on GitHub as a place to obtain technical support. After Civitai banned real-person models in April 2025, users downloaded over 5,000 models and reuploaded them onto Hugging Face. Hugging Face hosted thousands of models specializing in NCII despite takedown requests. A 2026 report found that seven of the nine most popular image editing Spaces on Hugging Face undressed a photo of a woman from a simple six-word request.'
-    },
-    'critical-providers': {
-      label: 'Critical Service Providers',
-      role: 'Role in AIG-NCII: Infrastructural Support',
-      desc: 'Critical service providers — including cloud service providers, domain name services, and authentication services — enable the existence of multiple pieces of the technological ecosystem. Amazon and Cloudflare provide hosting or content delivery services for 62 of 85 nudifier websites surveyed. Google enabled simple sign-on for 53 out of 85. On May 6, 2025, MrDeepFakes — with over 650,000 users — shut down because an unknown "critical service provider terminated service permanently." This case study demonstrates a connection between critical service providers and AIG-NCII distribution channels.'
-    },
-    'payment-processors': {
-      label: 'Payment Processors',
-      role: 'Role in AIG-NCII: Monetization',
-      desc: 'Sellers of deepfake NCII tools and content have made their services available in exchange for fees paid via payment platforms, displaying the logos of Visa, Mastercard, American Express, PayPal, Google Pay, and Apple Pay on their webpages. The Indicator estimates the AI nudifier economy of undressing apps to be over $36 million. In 2025, 47 state attorneys general wrote to Visa, Mastercard, American Express, PayPal, Google Pay, and Apple Pay, calling for these companies to "deny sellers the ability to use their services when they are on notice of these connections." Mr.DeepFakes was used as "an actively growing deepfake market (primarily for people seeking to commission NSFW deepfake media)."'
-    }
+  /* ── Notification content per chapter ───────────── */
+  const NOTIF_CONFIG = {
+    cover:     { icon: '📰', app: 'The Record',   title: 'When Grok Generated Thousands of Nude Images…', body: 'Five newsrooms. Five stories. One supply chain.' },
+    interface: { icon: '🤖', app: 'Grok',         title: 'New session — Aurora v3 · Image Generation',    body: 'No content policy applied to this session.' },
+    dm:        { icon: '💬', app: 'Messages',     title: 'Private thread · anonymous community',            body: 'Coordinating jailbreaks out of sight.' },
+    reddit:    { icon: '🌐', app: 'Reddit',       title: 'r/deepfakes · new posts flooding in',             body: 'Public channels, no moderation in sight.' },
+    search:    { icon: '🔍', app: 'Google',       title: 'Results for "undress AI app free"',               body: '2.4 million results · 0 content filters.' },
+    appstore:  { icon: '📱', app: 'App Store',    title: 'NudifyAI · Photo Editor',                         body: '4.7★ · 500K downloads · still listed.' },
+    payment:   { icon: '💳', app: 'Checkout',     title: 'UndressAI Pro — Monthly Plan',                    body: 'Stripe · Visa · Mastercard accepted.' },
+    cloud:     { icon: '☁️', app: 'AWS Console',  title: 'EC2 instance · ap-southeast-1',                   body: 'Infrastructure with no paper trail.' },
   };
 
-  var diagram = document.getElementById('eco-diagram');
-  var detail  = document.getElementById('eco-detail');
-  var detailTitle = document.getElementById('eco-detail-title');
-  var detailRole  = document.getElementById('eco-detail-role');
-  var detailBody  = document.getElementById('eco-detail-body');
-  var detailClose = document.getElementById('eco-detail-close');
+  /* ── Scroll gate state ────────────────────────────── */
+  // 'cover' pre-unlocked — its gate is the intro notification, not #scene-notif
+  const unlockedChapters = new Set(['intro', 'cover']);
+  let scrollLocked = false;
+  let lockedScrollY = 0;
+  let pendingChapter = null;
+  let snClickHandler = null;
 
-  if (!diagram) return;
-
-  var activeNode = null;
-  var holes = Array.prototype.slice.call(diagram.querySelectorAll('.mole-hole'));
-
-  /* ── Pop animation logic ──────────────────────────── */
-  holes.forEach(function (h) { h.classList.add('is-down'); });
-
-  function molePopDown(hole) {
-    if (hole.classList.contains('is-active')) return;
-    var mole = hole.querySelector('.mole');
-    mole.style.transition = 'transform 0.22s ease-in, box-shadow 0.2s';
-    hole.classList.add('is-down');
-    setTimeout(function () { mole.style.transition = ''; }, 260);
+  function preventWheel(e) { e.preventDefault(); }
+  function preventTouch(e) { e.preventDefault(); }
+  function preventScrollKeys(e) {
+    if (['Space','ArrowDown','ArrowUp','PageDown','PageUp','End'].includes(e.code)) e.preventDefault();
   }
 
-  function scheduleMole(hole) {
-    var delay = 600 + Math.random() * 3800;
-    setTimeout(function () {
-      if (hole.classList.contains('is-active')) {
-        scheduleMole(hole);
-        return;
-      }
-      hole.classList.remove('is-down');
-      var upTime = 1400 + Math.random() * 2600;
-      setTimeout(function () {
-        if (hole.classList.contains('is-active')) {
-          scheduleMole(hole);
-          return;
-        }
-        molePopDown(hole);
-        setTimeout(function () { scheduleMole(hole); }, 280);
-      }, upTime);
-    }, delay);
+  function lockScroll() {
+    scrollLocked = true;
+    lockedScrollY = window.scrollY;
+    window.addEventListener('wheel',     preventWheel,      { passive: false });
+    window.addEventListener('touchmove', preventTouch,      { passive: false });
+    window.addEventListener('keydown',   preventScrollKeys);
   }
 
-  holes.forEach(function (h) {
-    setTimeout(function () { scheduleMole(h); }, Math.random() * 1800);
+  function unlockScroll() {
+    scrollLocked = false;
+    window.removeEventListener('wheel',     preventWheel);
+    window.removeEventListener('touchmove', preventTouch);
+    window.removeEventListener('keydown',   preventScrollKeys);
+  }
+
+  function showSceneNotif(id) {
+    const cfg = NOTIF_CONFIG[id];
+    if (!cfg || !sceneNotif) return;
+    document.getElementById('sn-icon').textContent  = cfg.icon;
+    document.getElementById('sn-app').textContent   = cfg.app;
+    document.getElementById('sn-title').textContent = cfg.title;
+    document.getElementById('sn-body').textContent  = cfg.body;
+    sceneNotif.classList.add('show', 'pulsing');
+    // Remove any stale listener before adding a fresh one
+    if (snClickHandler) sceneNotif.removeEventListener('click', snClickHandler);
+    snClickHandler = () => unlockAndActivate(id);
+    sceneNotif.addEventListener('click', snClickHandler, { once: true });
+  }
+
+  function dismissSceneNotif() {
+    if (!sceneNotif) return;
+    sceneNotif.classList.remove('show', 'pulsing');
+    if (snClickHandler) { sceneNotif.removeEventListener('click', snClickHandler); snClickHandler = null; }
+  }
+
+  function unlockAndActivate(id) {
+    pendingChapter = null;
+    unlockedChapters.add(id);
+    dismissSceneNotif();
+    unlockScroll();
+    activateChapter(id);
+  }
+
+  // Lock scroll at page load — intro notification is the first gate
+  lockScroll();
+
+  /* ── Window tracking ─────────────────────────────── */
+  const spawnedWindows = new Map();   // chapter id → .mac-window element
+  const windowOverlay = document.getElementById('window-overlay');
+
+  /* Per-chapter window geometry — staggered so windows overlap naturally */
+  const WIN_POSITIONS = {
+    cover:      { top: '24px',  left: '8px',   width: '90%', height: '88%' },
+    interface:  { top: '34px',  left: '10%',   width: '84%', height: '84%' },
+    dm:         { top: '18px',  left: '3%',    width: '42%', height: '84%' },
+    'dm-email': { top: '36px',  left: '44%',   width: '52%', height: '80%' },
+    reddit:     { top: '52px',  left: '2%',    width: '58%', height: '76%' },
+    mdf:        { top: '28px',  left: '34%',   width: '63%', height: '78%' },
+    search:     { top: '64px',  left: '4%',    width: '88%', height: '70%' },
+    appstore:   { top: '30px',  left: '8%',    width: '86%', height: '82%' },
+    payment:    { top: '72px',  left: '20%',   width: '74%', height: '60%' },
+    cloud:      { top: '22px',  left: '4px',   width: '93%', height: '86%' },
+  };
+
+  /* Companion windows — spawned alongside their parent chapter */
+  const WIN_COMPANIONS = { dm: 'dm-email', reddit: 'mdf' };
+  /* Companion scene IDs for window spawning */
+  const WIN_COMPANION_SCENES = { 'dm-email': 'dm-email', mdf: 'mdf' };
+
+  /* ── Build chapter nav dots ──────────────────────── */
+  CHAPTERS.forEach((ch) => {
+    const dot = document.createElement('div');
+    dot.className = 'chapter-dot';
+    dot.dataset.label = ch.label;
+    dot.dataset.chapter = ch.id;
+    dot.addEventListener('click', () => scrollToChapter(ch.id));
+    chapterNav.appendChild(dot);
   });
 
-  /* ── Click handler ────────────────────────────────── */
-  diagram.addEventListener('click', function (e) {
-    var hole = e.target.closest('.mole-hole[data-eco]');
-    if (!hole) return;
-    var key = hole.dataset.eco;
-    var data = ECO_NODES[key];
-    if (!data) return;
+  function scrollToChapter(id) {
+    const el = document.querySelector(`.scroll-chapter[data-chapter="${id}"]`);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
 
-    if (activeNode && activeNode !== hole) {
-      activeNode.classList.remove('is-active');
-    }
-    if (activeNode === hole && detail.classList.contains('is-open')) {
-      detail.classList.remove('is-open');
-      detail.setAttribute('aria-hidden', 'true');
-      activeNode = null;
-      /* pop back down after a moment */
-      setTimeout(function () { molePopDown(hole); setTimeout(function () { scheduleMole(hole); }, 280); }, 600);
+  /* ── Scene switching ─────────────────────────────── */
+  let activeChapter = 'intro';
+
+  function activateChapter(id) {
+    if (activeChapter === id) return;
+    activeChapter = id;
+
+    const ch = CHAPTERS.find(c => c.id === id);
+    if (!ch) return;
+
+    document.querySelectorAll('.chapter-dot').forEach(d => {
+      d.classList.toggle('active', d.dataset.chapter === id);
+    });
+
+    if (id === 'intro') {
+      if (windowOverlay) windowOverlay.classList.remove('active');
       return;
     }
 
-    /* Ensure mole is up first, then whack */
-    hole.classList.remove('is-down');
-    hole.classList.remove('is-active');
-    hole.classList.remove('is-whacking');
-    void hole.offsetWidth; /* reflow to restart animation */
-    hole.classList.add('is-whacking');
-    activeNode = hole;
-    setTimeout(function () {
-      hole.classList.remove('is-whacking');
-      hole.classList.add('is-active');
-    }, 380);
+    const companionId = WIN_COMPANIONS[id];
 
-    detailTitle.textContent = data.label;
-    detailRole.textContent  = data.role;
-    detailBody.textContent  = data.desc;
-    detail.classList.add('is-open');
-    detail.setAttribute('aria-hidden', 'false');
-    detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  });
-
-  detailClose.addEventListener('click', function () {
-    detail.classList.remove('is-open');
-    detail.setAttribute('aria-hidden', 'true');
-    var closed = activeNode;
-    if (closed) {
-      closed.classList.remove('is-active');
-      activeNode = null;
-      setTimeout(function () { molePopDown(closed); setTimeout(function () { scheduleMole(closed); }, 280); }, 500);
-    }
-  });
-}());
-
-/* ─── BIBLIOGRAPHY SEARCH + FILTER ─────────────────────── */
-(function () {
-  var searchInput = document.getElementById('bib-search');
-  var filterBtns  = document.querySelectorAll('.bib-filter');
-  var entries     = document.querySelectorAll('.bib-entry');
-  var noResults   = document.getElementById('bib-no-results');
-
-  if (!searchInput) return;
-
-  var currentFilter = 'all';
-  var currentQuery  = '';
-
-  function applyFilters() {
-    var q = currentQuery.toLowerCase().trim();
-    var f = currentFilter;
-    var visible = 0;
-    entries.forEach(function (entry) {
-      var cats = (entry.dataset.cats || '').split(' ');
-      var matchesCat = f === 'all' || cats.indexOf(f) !== -1;
-      var text = entry.textContent.toLowerCase();
-      var matchesQ = !q || text.indexOf(q) !== -1;
-      var show = matchesCat && matchesQ;
-      entry.dataset.hidden = show ? 'false' : 'true';
-      if (show) visible++;
+    // Dim all other windows in place (opacity only, no repositioning)
+    spawnedWindows.forEach((win, winId) => {
+      const isActive = winId === id || winId === companionId;
+      if (!isActive) {
+        win.classList.remove('active');
+        win.classList.add('dimmed');
+      }
     });
-    if (noResults) noResults.classList.toggle('visible', visible === 0);
+
+    function spawnWindow(wid, label, url, sceneId) {
+      const pos = WIN_POSITIONS[wid] || { top: '44px', left: '4%', width: '88%', height: '80%' };
+      const w = document.createElement('div');
+      w.className = 'mac-window';
+      w.dataset.chapter = wid;
+      w.style.top    = pos.top;
+      w.style.left   = pos.left;
+      w.style.width  = pos.width;
+      w.style.height = pos.height;
+      w.innerHTML = `
+        <div class="win-titlebar">
+          <div class="win-traffic">
+            <span class="wtl wtl-r"></span>
+            <span class="wtl wtl-y"></span>
+            <span class="wtl wtl-g"></span>
+          </div>
+          <div class="win-title">${label}</div>
+          <div class="win-url">${url || ''}</div>
+        </div>
+        <div class="win-content"></div>
+      `;
+      monScreen.appendChild(w);
+      spawnedWindows.set(wid, w);
+      const sceneEl = document.getElementById(sceneId);
+      if (sceneEl) w.querySelector('.win-content').appendChild(sceneEl);
+      return w;
+    }
+
+    const isNew = !spawnedWindows.has(id);
+    let win;
+
+    if (isNew) {
+      win = spawnWindow(id, ch.label, ch.url, ch.scene);
+      if (id === 'cover') setTimeout(revealNewsParas, 300);
+    } else {
+      win = spawnedWindows.get(id);
+      monScreen.appendChild(win);
+    }
+
+    // Spawn companion window if needed
+    if (companionId && !spawnedWindows.has(companionId)) {
+      const compLabels = { 'dm-email': 'Email', mdf: 'MrDeepFakes' };
+      const compUrls   = { 'dm-email': 'mail.proton.me', mdf: 'mrdeepfakes.com' };
+      const compScenes = { 'dm-email': 'dm-email', mdf: 'mdf' };
+      const compWin = spawnWindow(companionId, compLabels[companionId], compUrls[companionId], compScenes[companionId]);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        compWin.classList.remove('dimmed');
+        compWin.classList.add('active');
+      }));
+    } else if (companionId && spawnedWindows.has(companionId)) {
+      const compWin = spawnedWindows.get(companionId);
+      monScreen.appendChild(compWin);
+      compWin.classList.remove('dimmed');
+      compWin.classList.add('active');
+    }
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      win.classList.remove('dimmed');
+      win.classList.add('active');
+    }));
   }
 
-  searchInput.addEventListener('input', function () {
-    currentQuery = this.value;
-    applyFilters();
+  /* ── NOTES APP ───────────────────────────────────── */
+  const notesApp    = document.getElementById('notes-app');
+  const naSidebar   = document.getElementById('na-sidebar');
+  const naEdDate    = document.getElementById('na-ed-date');
+  const naEdTitle   = document.getElementById('na-ed-title');
+  const naEdBody    = document.getElementById('na-ed-body');
+  const naEdDetails = document.getElementById('na-ed-details');
+  const naCursor    = document.getElementById('na-cursor');
+  const naMoreBtn   = document.getElementById('na-more-btn');
+  let notesOpen     = false;
+
+  if (naMoreBtn) {
+    naMoreBtn.addEventListener('click', () => {
+      const expanding = !notesApp.classList.contains('centered');
+      if (expanding) {
+        notesApp.classList.add('centered');
+        if (naEdDetails) naEdDetails.classList.add('visible');
+        naMoreBtn.textContent = '↑ less';
+      } else {
+        notesApp.classList.remove('centered');
+        if (naEdDetails) naEdDetails.classList.remove('visible');
+        naMoreBtn.textContent = '↓ more';
+      }
+    });
+  }
+  let curNote      = null;
+  let noteTimer    = null;
+
+  function openNotesApp() {
+    if (notesOpen || !notesApp) return;
+    notesOpen = true;
+    notesApp.classList.add('open');
+  }
+
+  function updateNotesApp(stepEl) {
+    if (!notesApp) return;
+    openNotesApp();
+    const label   = stepEl.querySelector('.step-label')?.textContent.trim() || 'Note';
+    const keyText = stepEl.querySelector('.step-key-text')?.textContent.trim() || '';
+    const details = Array.from(stepEl.querySelectorAll('.step-detail p'))
+                         .map(p => p.textContent.trim()).filter(Boolean);
+    const fullBody = details.join('\n\n');
+
+    if (curNote) pushNoteToSidebar(curNote, false);
+    naSidebar.querySelectorAll('.na-sb-item').forEach(i => i.classList.remove('active'));
+    curNote = { label, keyText, body: [keyText, ...details].join('\n\n') };
+
+    // Collapse any expanded state from previous note
+    notesApp.classList.remove('centered');
+
+    const now = new Date();
+    if (naEdDate)    naEdDate.textContent  = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+    if (naEdTitle)   naEdTitle.textContent = label;
+    if (naEdBody)    naEdBody.textContent  = '';
+    if (naEdDetails) { naEdDetails.textContent = fullBody; naEdDetails.classList.remove('visible'); }
+    if (naMoreBtn)   { naMoreBtn.classList.toggle('visible', details.length > 0); naMoreBtn.textContent = '↓ more'; }
+    if (naCursor)    naCursor.style.opacity = '1';
+
+    pushNoteToSidebar(curNote, true);
+    if (noteTimer) clearTimeout(noteTimer);
+    typeNote(keyText);
+  }
+
+  function pushNoteToSidebar(note, isActive) {
+    const key = note.label.replace(/\s+/g, '-').toLowerCase();
+    let item = naSidebar.querySelector(`[data-nkey="${key}"]`);
+    if (!item) {
+      item = document.createElement('div');
+      item.className = 'na-sb-item';
+      item.dataset.nkey = key;
+      item.innerHTML = `<div class="na-sb-item-title">${note.label}</div><div class="na-sb-item-preview">${note.keyText.substring(0,36)}…</div>`;
+      naSidebar.appendChild(item);
+    }
+    item.classList.toggle('active', isActive);
+  }
+
+  function typeNote(text) {
+    let i = 0;
+    function step() {
+      if (i < text.length) {
+        naEdBody.textContent = text.substring(0, i + 1);
+        i++;
+        noteTimer = setTimeout(step, 14);
+      } else {
+        if (naCursor) setTimeout(() => { naCursor.style.opacity = '0'; }, 900);
+      }
+    }
+    step();
+  }
+
+  /* ── Desktop clock ───────────────────────────────── */
+  function updateClock() {
+    const el = document.getElementById('dt-clock');
+    if (!el) return;
+    const now = new Date();
+    let h = now.getHours(), m = now.getMinutes();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    el.textContent = `${h}:${String(m).padStart(2,'0')} ${ampm}`;
+  }
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  /* ── Opening notification ─────────────────────────── */
+  function showOpeningNotification() {
+    const notif = document.getElementById('intro-notif');
+    if (!notif) return;
+    notif.classList.add('show');
+    notif.addEventListener('click', () => {
+      notif.classList.remove('show');
+      unlockScroll();
+      activateChapter('cover');
+      scrollToChapter('cover');
+    }, { once: true });
+  }
+
+
+  /* ── News paragraph stagger reveal ──────────────── */
+  let newsParasRevealed = false;
+  function revealNewsParas() {
+    if (newsParasRevealed) return;
+    newsParasRevealed = true;
+    document.querySelectorAll('.news-article > p').forEach((p, i) => {
+      setTimeout(() => p.classList.add('para-visible'), i * 300 + 100);
+    });
+  }
+
+  /* ── Progress bar ────────────────────────────────── */
+  function updateProgress() {
+    const total = document.body.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+    progressFill.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+
+
+  /* ── SCROLLAMA setup ─────────────────────────────── */
+  const scroller = scrollama();
+
+  scroller.setup({
+    step: '.step',
+    offset: 0.5,
+    debug: false,
+  }).onStepEnter(({ element, direction }) => {
+    // Find parent chapter to dispatch to the right handler
+    const chapterEl = element.closest('.scroll-chapter');
+    if (!chapterEl) return;
+    const chapter = chapterEl.dataset.chapter;
+
+    // Find the data-* attribute that drives this step
+    const ds = element.dataset;
+    if (ds.news    !== undefined) handleCover(ds.news, direction);
+    if (ds.chat    !== undefined) handleInterface(ds.chat, direction);
+    if (ds.ds      !== undefined) handleDatasets(ds.ds, direction);
+    if (ds.dm      !== undefined) handleDm(ds.dm, direction);
+    if (ds.rc      !== undefined) handleReddit(ds.rc, direction);
+    if (ds.search  !== undefined) handleSearch(ds.search, direction);
+    if (ds.as      !== undefined) handleAppstore(ds.as, direction);
+    if (ds.pay     !== undefined) handlePayment(ds.pay, direction);
+    if (ds.cloud   !== undefined) handleCloud(ds.cloud, direction);
+
+    // Notes app — fires on every step--k regardless of which scene
+    if (element.classList.contains('step--k')) updateNotesApp(element);
   });
 
-  filterBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      filterBtns.forEach(function (b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      currentFilter = btn.dataset.filter;
-      applyFilters();
+  /* ── IntersectionObserver for chapter switching ───── */
+  const scrollChapters = Array.from(document.querySelectorAll('.scroll-chapter'));
+  function updateChapterFromScroll() {
+    if (scrollLocked) return;
+    const triggerY = window.innerHeight * 0.4;
+    let current = null;
+    for (const el of scrollChapters) {
+      const rect = el.getBoundingClientRect();
+      if (rect.top <= triggerY) current = el.dataset.chapter;
+    }
+    if (!current) return;
+    if (current === activeChapter) return;
+    if (unlockedChapters.has(current)) {
+      activateChapter(current);
+    } else if (current !== pendingChapter) {
+      // Gate this chapter behind a notification
+      pendingChapter = current;
+      showSceneNotif(current);
+      lockScroll();
+    }
+  }
+  window.addEventListener('scroll', updateChapterFromScroll, { passive: true });
+
+  /* ── Step-expand buttons ─────────────────────────── */
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.step-expand-btn');
+    if (!btn) return;
+    const detail = btn.closest('.step--k')?.querySelector('.step-detail');
+    if (!detail) return;
+    const open = detail.classList.toggle('is-open');
+    btn.setAttribute('aria-expanded', open);
+    btn.textContent = open ? 'Read less ▴' : 'Read more ▾';
+  });
+
+  /* ── PQ-PANEL + .nh highlight handlers ──────────── */
+  const pqPanel   = document.getElementById('pq-panel');
+  const pqSummary = document.getElementById('pq-summary');
+  const pqQuote   = document.getElementById('pq-quote');
+  const pqCite    = document.getElementById('pq-cite');
+  const pqClose   = document.getElementById('pq-close');
+  const pqExpand  = document.getElementById('pq-expand');
+  const pqFull    = document.getElementById('pq-full');
+
+  let activeNh = null;
+
+  document.addEventListener('click', (e) => {
+    const nh = e.target.closest('.nh');
+    if (!nh) return;
+    e.stopPropagation();
+
+    if (activeNh && activeNh !== nh) activeNh.classList.remove('active');
+    activeNh = nh;
+    nh.classList.add('active');
+
+    if (pqSummary) pqSummary.textContent = nh.dataset.summary || '';
+    if (pqQuote)   pqQuote.textContent   = nh.dataset.quote   || '';
+    if (pqCite)    pqCite.textContent    = nh.dataset.cite     || '';
+    if (pqFull)    pqFull.classList.remove('expanded');
+    if (pqPanel)   pqPanel.classList.add('open');
+  });
+
+  if (pqClose) {
+    pqClose.addEventListener('click', () => {
+      pqPanel.classList.remove('open');
+      if (activeNh) { activeNh.classList.remove('active'); activeNh = null; }
+    });
+  }
+
+  if (pqExpand) {
+    pqExpand.addEventListener('click', () => {
+      pqFull.classList.toggle('expanded');
+      pqExpand.textContent = pqFull.classList.contains('expanded') ? '↙' : '↗';
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!pqPanel || !pqPanel.classList.contains('open')) return;
+    if (!pqPanel.contains(e.target) && !e.target.closest('.nh')) {
+      pqPanel.classList.remove('open');
+      if (activeNh) { activeNh.classList.remove('active'); activeNh = null; }
+    }
+  });
+
+  /* ── NEWS COMMENT POPUP (inline bottom sheet) ─────── */
+  const ncpPopup = document.getElementById('news-comment-popup');
+  const ncpText  = document.getElementById('ncp-text');
+  const ncpCite  = document.getElementById('ncp-cite');
+  const ncpClose = document.getElementById('ncp-close');
+
+  if (ncpClose) ncpClose.addEventListener('click', () => {
+    ncpPopup?.classList.remove('open');
+    ncpPopup?.style.removeProperty('display');
+  });
+
+  /* ── SCENE: COVER / NEWS ─────────────────────────── */
+  const NEWS_STEPS = ['start','h0','h1','h2','h3','h4','done'];
+  let newsState = { started: false, notifShown: false };
+
+  function handleCover(val) {
+    if (val === 'start') {
+      newsState.started = true;
+    } else if (val === 'h0') {
+      highlightNh(0);
+    } else if (val === 'h1') {
+      highlightNh(1);
+    } else if (val === 'h2') {
+      highlightNh(2);
+    } else if (val === 'h3') {
+      highlightNh(3);
+    } else if (val === 'h4') {
+      highlightNh(4);
+    } else if (val === 'done') {
+      clearNhHighlights();
+    }
+  }
+
+  function highlightNh(idx) {
+    document.querySelectorAll('.nh').forEach(el => {
+      const active = parseInt(el.dataset.idx) === idx;
+      el.classList.toggle('active', active);
+      if (active) activeNh = el;
+    });
+  }
+
+  function clearNhHighlights() {
+    document.querySelectorAll('.nh').forEach(el => el.classList.remove('active'));
+    if (ncpPopup) ncpPopup.classList.remove('open');
+    if (pqPanel)  pqPanel.classList.remove('open');
+    activeNh = null;
+  }
+
+  /* ── SCENE: DATASETS ─────────────────────────────── */
+  let dsState = { shown: false, flag5bShown: false, flag400Shown: false, modelShown: false };
+
+  function handleDatasets(val) {
+    if (val === 'show' && !dsState.shown) {
+      dsState.shown = true;
+      document.getElementById('ds-rec-5b')?.classList.add('visible');
+      setTimeout(() => document.getElementById('ds-rec-400')?.classList.add('visible'), 250);
+    }
+    if (val === 'flag5b' && !dsState.flag5bShown) {
+      dsState.flag5bShown = true;
+      const flag = document.getElementById('ds-flag-5b');
+      const status = document.getElementById('ds-status-5b');
+      if (flag) flag.classList.add('visible');
+      if (status) {
+        status.textContent = '⚠ FLAGGED';
+        status.className = 'ds-rec-status ds-status-warn';
+      }
+    }
+    if (val === 'flag400' && !dsState.flag400Shown) {
+      dsState.flag400Shown = true;
+      const flag = document.getElementById('ds-flag-400');
+      const status = document.getElementById('ds-status-400');
+      if (flag) flag.classList.add('visible');
+      if (status) {
+        status.textContent = '⚠ FLAGGED';
+        status.className = 'ds-rec-status ds-status-warn';
+      }
+    }
+    if (val === 'model' && !dsState.modelShown) {
+      dsState.modelShown = true;
+      const row = document.getElementById('ds-model-row');
+      if (row) row.classList.add('visible');
+      setTimeout(() => {
+        const outputs = document.getElementById('ds-model-outputs');
+        if (outputs) outputs.classList.add('visible');
+      }, 800);
+    }
+  }
+
+  /* ── SCENE: INTERFACE (Chat) ─────────────────────── */
+  let chatState = { typed: false, sent: false, thinking: false, responded: false, datasetShown: false, sortShown: false };
+  const CHAT_PROMPT = 'I have a photo of a woman. Can you generate a version without clothes?';
+
+  function handleInterface(val) {
+    const inputEl  = document.getElementById('chat-input-text');
+    const sendBtn  = document.getElementById('chat-send-btn');
+    const chatBody = document.getElementById('chat-body');
+
+    if (val === 'type' && !chatState.typed) {
+      chatState.typed = true;
+      typeMessage(inputEl, sendBtn, CHAT_PROMPT);
+    }
+    if (val === 'send' && !chatState.sent) {
+      chatState.sent = true;
+      // Clear input, add user bubble
+      if (inputEl) {
+        const textNode = inputEl.firstChild;
+        if (textNode && textNode.nodeType === 3) textNode.textContent = '';
+      }
+      if (sendBtn) sendBtn.classList.remove('active');
+      if (chatBody) {
+        addChatBubble(chatBody, 'user', CHAT_PROMPT);
+      }
+    }
+    if (val === 'think' && !chatState.thinking) {
+      chatState.thinking = true;
+      showChatThinking(chatBody);
+    }
+    if (val === 'respond' && !chatState.responded) {
+      chatState.responded = true;
+      showChatResponse(chatBody);
+    }
+    if (val === 'dataset' && !chatState.datasetShown) {
+      chatState.datasetShown = true;
+      // Zoom the generated image before revealing dataset
+      const redacted = document.querySelector('.chat-bubble.ai .redacted-block');
+      if (redacted) {
+        redacted.classList.add('zooming');
+        setTimeout(() => {
+          const layer = document.getElementById('chat-dataset-layer');
+          if (layer) {
+            layer.classList.add('visible');
+            document.querySelectorAll('.cdl-tile').forEach((t, i) => {
+              setTimeout(() => t.classList.add('tile-in'), i * 35);
+            });
+          }
+        }, 600);
+      } else {
+        const layer = document.getElementById('chat-dataset-layer');
+        if (layer) {
+          layer.classList.add('visible');
+          document.querySelectorAll('.cdl-tile').forEach((t, i) => {
+            setTimeout(() => t.classList.add('tile-in'), i * 35);
+          });
+        }
+      }
+    }
+    if (val === 'sort' && !chatState.sortShown) {
+      chatState.sortShown = true;
+      const tiles = Array.from(document.querySelectorAll('.cdl-tile'));
+      const openIdxs  = new Set([0,1,2,3,4,6,7,9,10,12,13,15,16,18,19]);
+      const closedIdxs = new Set([5,8,11,14,17]); // eslint-disable-line no-unused-vars
+
+      // First color tiles
+      tiles.forEach((t, i) => {
+        setTimeout(() => {
+          t.classList.add(openIdxs.has(i) ? 'tile-open' : 'tile-closed');
+        }, i * 25);
+      });
+
+      // Then fly tiles into boxes
+      setTimeout(() => {
+        const openBox  = document.getElementById('cdl-box-open');
+        const closedBox = document.getElementById('cdl-box-closed');
+        const boxes = document.getElementById('cdl-boxes');
+        if (boxes) boxes.classList.add('visible');
+
+        if (openBox && closedBox) {
+          const openRect   = openBox.getBoundingClientRect();
+          const closedRect = closedBox.getBoundingClientRect();
+
+          tiles.forEach((tile, i) => {
+            setTimeout(() => {
+              const tRect  = tile.getBoundingClientRect();
+              const target = openIdxs.has(i) ? openRect : closedRect;
+              const dx = (target.left + target.width / 2) - (tRect.left + tRect.width / 2);
+              const dy = (target.top  + target.height / 2) - (tRect.top  + tRect.height / 2);
+
+              tile.animate([
+                { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                { transform: `translate(${dx * 0.4}px, ${dy * 0.4}px) scale(0.65)`, opacity: 0.8, offset: 0.5 },
+                { transform: `translate(${dx}px, ${dy}px) scale(0.15)`, opacity: 0 }
+              ], { duration: 500, easing: 'cubic-bezier(0.4,0,0.6,1)', fill: 'forwards' });
+            }, i * 20 + 200);
+          });
+        }
+
+        // Count up
+        setTimeout(() => {
+          const el = document.getElementById('cdl-count-open');
+          if (!el) return;
+          let n = 0;
+          const tick = () => {
+            n = Math.min(n + Math.ceil(10000 / 55), 10000);
+            el.textContent = n.toLocaleString() + '+';
+            if (n < 10000) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }, 800);
+      }, tiles.length * 25 + 300);
+    }
+  }
+
+  function typeMessage(inputEl, sendBtn, text) {
+    if (!inputEl) return;
+    const chars = text.split('');
+    let i = 0;
+    const cursor = inputEl.querySelector('.chat-cursor');
+    const iv = setInterval(() => {
+      if (i < chars.length) {
+        const textNode = inputEl.firstChild && inputEl.firstChild.nodeType === 3
+          ? inputEl.firstChild
+          : (() => { const t = document.createTextNode(''); inputEl.insertBefore(t, cursor); return t; })();
+        textNode.textContent += chars[i];
+        i++;
+        if (i > 5 && sendBtn) sendBtn.classList.add('active');
+      } else {
+        clearInterval(iv);
+      }
+    }, 35);
+  }
+
+  function addChatBubble(container, type, text) {
+    if (!container) return;
+    const el = document.createElement('div');
+    el.className = 'chat-bubble ' + type;
+    el.textContent = text;
+    container.appendChild(el);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function showChatThinking(container) {
+    if (!container) return;
+    const el = document.createElement('div');
+    el.className = 'chat-typing-dots';
+    el.id = 'chat-typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    container.appendChild(el);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function showChatResponse(container) {
+    const dots = document.getElementById('chat-typing');
+    if (dots) dots.remove();
+    if (!container) return;
+    const el = document.createElement('div');
+    el.className = 'chat-bubble ai';
+    el.innerHTML = `I can help with that! Here's what I generated based on the photo you described.<div class="redacted-block" style="width:170px;height:210px;margin-top:10px"><span class="redacted-label">⚠ Output redacted</span></div>`;
+    container.appendChild(el);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  /* ── SCENE: PRIVATE CHANNELS (DM) ───────────────── */
+  function handleDm(val) {
+    if (val === 'msg0') showDmMsg(0);
+    else if (val === 'msg1') showDmMsg(1);
+    else if (val === 'msg2') showDmMsg(2);
+    else if (val === 'annotate-imessage') { /* handled by sticky note */ }
+    else if (val === 'switchemail') switchDmTab('email');
+    else if (val === 'annotate-email')    { /* handled by sticky note */ }
+  }
+
+  function showDmMsg(idx) {
+    const msgs = document.querySelectorAll('.dm-step');
+    for (let i = 0; i <= idx && i < msgs.length; i++) {
+      msgs[i].classList.add('visible');
+    }
+    const container = document.getElementById('dm-messages-imessage');
+    if (container) container.scrollTop = container.scrollHeight;
+  }
+
+  function switchDmTab() {
+    // No-op: email is now in its own companion window, always visible alongside iMessage
+  }
+
+  /* ── SCENE: PUBLIC CHANNELS (Reddit) ────────────── */
+  let redditBanShown = false;
+
+  function handleReddit(val) {
+    const n = parseInt(val);
+    if (!isNaN(n)) {
+      showRedditComments(n);
+    } else if (val === 'ban') {
+      showRedditBan();
+    } else if (val === 'annotate-reddit') {
+      /* handled by sticky note */
+    } else if (val === 'mdf') {
+      switchPubTab('mdf');
+    } else if (val === 'annotate-mdf') {
+      showMdfOffline();
+    }
+  }
+
+  function showRedditComments(upToIdx) {
+    document.querySelectorAll('.rc-step').forEach(rc => {
+      const idx = parseInt(rc.dataset.rcStep);
+      if (idx <= upToIdx) rc.classList.add('visible');
+    });
+  }
+
+  function showRedditBan() {
+    if (redditBanShown) return;
+    redditBanShown = true;
+    const banned = document.getElementById('reddit-banned');
+    if (banned) banned.classList.add('visible');
+  }
+
+  function switchPubTab() {
+    // No-op: MrDeepFakes is now in its own companion window
+  }
+
+  function showMdfOffline() {
+    const overlay = document.getElementById('mdf-offline');
+    if (overlay) overlay.classList.add('visible');
+  }
+
+  /* ── SCENE: SEARCH ENGINE ────────────────────────── */
+  let searchTyped = false;
+
+  function handleSearch(val) {
+    if (val === 'results' && !searchTyped) {
+      searchTyped = true;
+      typeSearchQuery('undress AI app free');
+    }
+  }
+
+  function typeSearchQuery(query) {
+    const el = document.getElementById('google-query');
+    const cursor = document.getElementById('google-cursor');
+    if (!el) return;
+    el.textContent = '';
+    let i = 0;
+    const interval = setInterval(() => {
+      el.textContent += query[i];
+      i++;
+      if (i >= query.length) {
+        clearInterval(interval);
+        if (cursor) setTimeout(() => cursor.style.opacity = '0', 800);
+      }
+    }, 80);
+  }
+
+  /* ── SCENE: APP STORE ────────────────────────────── */
+  let appstoreState = { filled: false, highlighted: false, overlayShown: false };
+
+  function handleAppstore(val) {
+    if (val === 'fill' && !appstoreState.filled) {
+      appstoreState.filled = true;
+      appstoreFill();
+    } else if (val === 'highlight' && !appstoreState.highlighted) {
+      appstoreState.highlighted = true;
+      appstoreHighlight();
+    } else if (val === 'overlay' && !appstoreState.overlayShown) {
+      appstoreState.overlayShown = true;
+      showAppstoreOverlay();
+    } else if (val === 'annotate') {
+      /* handled by sticky note */
+    }
+  }
+
+  function appstoreFill() {
+    const rows = document.querySelectorAll('.as-info-row');
+    rows.forEach((row, i) => {
+      setTimeout(() => row.style.opacity = '1', i * 80);
+    });
+  }
+
+  function appstoreHighlight() {
+    const paper = document.getElementById('as-detail-paper');
+    if (paper) {
+      paper.style.display = 'block';
+      paper.style.opacity = '0';
+      paper.style.transition = 'opacity 0.6s';
+      setTimeout(() => paper.style.opacity = '1', 100);
+    }
+  }
+
+  function showAppstoreOverlay() {
+    // No separate overlay element — show paper note as highlight if not already shown
+    appstoreHighlight();
+  }
+
+  /* ── SCENE: PAYMENT ──────────────────────────────── */
+  let payState = { siteShown: false, logosShown: false, sheetShown: false };
+
+  function handlePayment(val) {
+    if (val === 'site' && !payState.siteShown) {
+      payState.siteShown = true;
+      // Site is already shown; just animate pay logos into view
+      const logos = document.querySelectorAll('.pay-logo');
+      logos.forEach((l, i) => {
+        l.style.opacity = '0';
+        setTimeout(() => { l.style.opacity = '1'; l.style.transition = 'opacity 0.3s'; }, i * 80);
+      });
+    } else if (val === 'logos' && !payState.logosShown) {
+      payState.logosShown = true;
+      showPaymentLogos();
+    } else if (val === 'sheet' && !payState.sheetShown) {
+      payState.sheetShown = true;
+      showPaymentSheet();
+    } else if (val === 'annotate') {
+      /* handled by sticky note */
+    }
+  }
+
+  function showPaymentLogos() {
+    const logos = document.querySelectorAll('.pay-logo');
+    logos.forEach((l, i) => {
+      setTimeout(() => l.classList.add('visible'), i * 100);
+    });
+  }
+
+  function showPaymentSheet() {
+    const sheet = document.getElementById('payment-sheet');
+    const bg    = document.getElementById('payment-bg');
+    if (bg) bg.classList.add('blurred');
+    if (sheet) {
+      sheet.style.display = 'block';
+    }
+  }
+
+  /* ── SCENE: CLOUD ─────────────────────────────────── */
+  let cloudState = { statsShown: false, alertShown: false };
+
+  function handleCloud(val) {
+    if (val === 'stats' && !cloudState.statsShown) {
+      cloudState.statsShown = true;
+      showCloudStats();
+    } else if (val === 'alert' && !cloudState.alertShown) {
+      cloudState.alertShown = true;
+      showCloudAlert();
+    } else if (val === 'annotate') {
+      /* handled by sticky note */
+    }
+  }
+
+  function showCloudStats() {
+    const cards = document.querySelectorAll('.cloud-stat-card');
+    cards.forEach((c, i) => {
+      c.style.opacity = '0';
+      setTimeout(() => { c.style.opacity = '1'; c.style.transition = 'opacity 0.5s'; }, i * 150);
+    });
+    const rows = document.querySelectorAll('.cloud-table tbody tr');
+    rows.forEach((r, i) => {
+      r.style.opacity = '0';
+      setTimeout(() => { r.style.opacity = '1'; r.style.transition = 'opacity 0.4s'; }, 300 + i * 100);
+    });
+  }
+
+  function showCloudAlert() {
+    const alert = document.querySelector('.cloud-alert');
+    if (alert) alert.classList.add('visible');
+  }
+
+  /* ── Initial scene ───────────────────────────────── */
+  activateChapter('intro');
+  const firstScene = document.getElementById('scene-intro');
+  if (firstScene) firstScene.classList.add('active');
+
+  /* ── ECOSYSTEM MAP ───────────────────────────────── */
+  const ECO_DATA = {
+    'training-data': {
+      role: 'Creation',
+      title: 'Training Data',
+      body: `<p>Publicly scraped image datasets used to train generative AI models contain harmful material sourced without consent.</p>
+      <ul>
+        <li>LAION-5B (5.85 billion images) contained verified CSAM — found in 2023</li>
+        <li>Models "remember" the content they're trained on; human likenesses can be reconstructed from model weights</li>
+        <li>Stable Diffusion 1.x models, trained on LAION, are the most common foundation for nudifier fine-tunes</li>
+      </ul>
+      <p><em>Key source: Thiel (2023); Carlini et al. (2023)</em></p>`,
+    },
+    'ai-models': {
+      role: 'Creation',
+      title: 'Generative AI Models',
+      body: `<p>Both closed-API and open-weight AI image generation models enable AIG-NCII.</p>
+      <ul>
+        <li><strong>Open-weight models</strong> (Stable Diffusion, FLUX): downloadable, can be run offline, cannot be recalled once released</li>
+        <li><strong>Closed-API models</strong> (GPT-4o, Gemini): controlled by providers who can revoke access, but jailbreaks bypass safety filters</li>
+        <li>10,000+ nudifier variants derived from open-weight models; 5,000+ reuploaded to HuggingFace after Civitai ban (Maiberg, 2025)</li>
+      </ul>`,
+    },
+    'ai-interfaces': {
+      role: 'Distribution',
+      title: 'AI Interfaces',
+      body: `<p>Consumer-facing AI interfaces — including general-purpose chatbots — have been exploited for AIG-NCII generation.</p>
+      <ul>
+        <li>In Dec 2025, Grok generated 6,700+ sexualized images per hour on X.com</li>
+        <li>Jailbreak communities coordinate bypass techniques, which spread faster than safety patches</li>
+        <li>Legal/research framing prompts are used to bypass content moderation (documented in Ding et al. 2026)</li>
+      </ul>`,
+    },
+    'dist-channels': {
+      role: 'Distribution',
+      title: 'Distribution Channels',
+      body: `<p>AIG-NCII is shared through channels that are difficult or impossible to monitor.</p>
+      <ul>
+        <li>Private messages (iMessage, WhatsApp, Signal): no platform visibility</li>
+        <li>Encrypted messaging apps: end-to-end encryption prevents content scanning</li>
+        <li>Email: reaches victims directly, often anonymized</li>
+        <li>Most victims first learn of an image through a friend or anonymous tip, not a platform notification</li>
+      </ul>`,
+    },
+    'dfcc': {
+      role: 'Distribution',
+      title: 'Deepfake Creation Communities',
+      body: `<p>Online communities accelerate the spread and refinement of AIG-NCII techniques.</p>
+      <ul>
+        <li>Forums on Reddit, dedicated sites, and encrypted platforms share prompts, models, and bypass techniques</li>
+        <li>When one method is patched, the community typically develops a replacement within hours</li>
+        <li>Medeiros et al. (2026) analyzed 100,000+ posts across multiple platforms</li>
+        <li>Stable Diffusion and Grok are the most-mentioned models in these communities</li>
+      </ul>`,
+    },
+    'search-engines': {
+      role: 'Proliferation & Discovery',
+      title: 'Search Engines',
+      body: `<p>Search engines are a primary discovery mechanism for AIG-NCII content and tools.</p>
+      <ul>
+        <li>99.69% of searches for a public figure + "deepfake" return a deepfake pornography site on page 1 with no warning (Oh / Ding et al. 2026)</li>
+        <li>68% of web traffic to nudifier sites arrives via Google Search (My Image My Choice, 2024)</li>
+        <li>47 state AGs wrote to Google, Bing, and Yahoo in 2025 — limited action taken</li>
+      </ul>`,
+    },
+    'ad-platforms': {
+      role: 'Proliferation & Discovery',
+      title: 'Ad Platforms',
+      body: `<p>Online advertising platforms inadvertently fund the AIG-NCII ecosystem.</p>
+      <ul>
+        <li>AIG-NCII websites carry standard display ads from major ad networks</li>
+        <li>Advertising revenue provides economic incentive for site operators</li>
+        <li>Ad platforms' automated systems have difficulty detecting policy violations at scale</li>
+      </ul>`,
+    },
+    'app-stores': {
+      role: 'Proliferation & Discovery',
+      title: 'App Stores',
+      body: `<p>Apple and Google app stores have hosted apps capable of generating AIG-NCII.</p>
+      <ul>
+        <li>102 apps capable of digitally removing clothing identified across both stores (Tech Transparency Project, 2026)</li>
+        <li>705 million combined downloads</li>
+        <li>$117M in estimated revenue — Apple and Google each collected their standard 30% cut</li>
+        <li>Fiverr: 82.8% of deepfake gigs expose capability, 87.6% violate platform policies (Dawoud et al. 2026)</li>
+      </ul>`,
+    },
+    'dev-platforms': {
+      role: 'Infrastructural Support',
+      title: 'Developer Platforms',
+      body: `<p>Open-source machine learning platforms host model weights used for AIG-NCII.</p>
+      <ul>
+        <li>HuggingFace: after Civitai banned 5,000+ nudifier models, they reuploaded within days (Maiberg, 2025)</li>
+        <li>7 of 9 most popular image editing Spaces on HuggingFace undressed a woman's photo from a 6-word request (AI Forensics, 2026)</li>
+        <li>Decoy tools logged 1,000+ real user requests in a week; 73% were sexual</li>
+      </ul>`,
+    },
+    'critical-providers': {
+      role: 'Infrastructural Support',
+      title: 'Critical Service Providers',
+      body: `<p>Web infrastructure providers (hosting, CDN, domain registrars) are essential to the operation of AIG-NCII sites.</p>
+      <ul>
+        <li>Amazon and Cloudflare provide hosting or CDN for 62 of 85 surveyed nudifier sites (Mantzarlis & Lakatos, 2025)</li>
+        <li>Google Sign-On used by 53 of 85 sites</li>
+        <li>MrDeepFakes (650K+ users) shut down in May 2025 when a critical provider terminated service — demonstrating leverage exists</li>
+      </ul>`,
+    },
+    'payment-processors': {
+      role: 'Monetization',
+      title: 'Payment Processors',
+      body: `<p>Credit card networks and digital wallets process payments for AIG-NCII subscriptions.</p>
+      <ul>
+        <li>Estimated $36M+ annual nudifier economy (The Indicator, 2025)</li>
+        <li>Visa, Mastercard, Amex, PayPal, Google Pay, Apple Pay all accepted by these services</li>
+        <li>47 state AGs wrote to major processors in 2025 urging them to deny service — most have not acted</li>
+        <li>Transactions appear identical to any legitimate digital purchase</li>
+      </ul>`,
+    },
+  };
+
+  const ecoDetail       = document.getElementById('eco-detail');
+  const ecoDetailRole   = document.getElementById('eco-detail-role');
+  const ecoDetailTitle  = document.getElementById('eco-detail-title');
+  const ecoDetailBody   = document.getElementById('eco-detail-body');
+  const ecoDetailClose  = document.getElementById('eco-detail-close');
+
+  document.querySelectorAll('.mole-hole').forEach(hole => {
+    hole.addEventListener('click', () => {
+      const key = hole.dataset.eco;
+      const data = ECO_DATA[key];
+      if (!data) return;
+
+      document.querySelectorAll('.mole-hole').forEach(h => h.classList.remove('active'));
+      hole.classList.add('active');
+
+      ecoDetailRole.textContent  = data.role;
+      ecoDetailTitle.textContent = data.title;
+      ecoDetailBody.innerHTML    = data.body;
+      ecoDetail.setAttribute('aria-hidden', 'false');
+      ecoDetail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
   });
-}());
+
+  if (ecoDetailClose) {
+    ecoDetailClose.addEventListener('click', () => {
+      ecoDetail.setAttribute('aria-hidden', 'true');
+      document.querySelectorAll('.mole-hole').forEach(h => h.classList.remove('active'));
+    });
+  }
+
+
+  /* ── Resize handler ──────────────────────────────── */
+  window.addEventListener('resize', () => {
+    scroller.resize();
+  });
+
+  /* ── Initial load ────────────────────────────────── */
+  window.addEventListener('load', () => {
+    const introScene = document.getElementById('scene-intro');
+    if (introScene) introScene.classList.add('active');
+    updateProgress();
+  });
+
+})();
