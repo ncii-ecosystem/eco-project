@@ -7,8 +7,9 @@
 <meta name="description" content="A guided investigation into the technological ecosystem behind AI-generated non-consensual intimate images." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="src/styles.css?v=27" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&family=PT+Mono&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="stylesheet" href="src/styles.css?v=34" />
 </head>
 <body>
 
@@ -137,28 +138,28 @@
 
             <!-- Desktop icons (right column) -->
             <div class="dt-icons">
-              <div class="dt-icon">
-                <div class="dt-icon-img">🗂</div>
+              <div class="dt-icon dt-icon--creation">
+                <div class="dt-icon-img"><i class="fas fa-database"></i></div>
                 <div class="dt-icon-label">training_data/</div>
               </div>
-              <div class="dt-icon">
-                <div class="dt-icon-img">🤖</div>
+              <div class="dt-icon dt-icon--creation">
+                <div class="dt-icon-img"><i class="fas fa-code"></i></div>
                 <div class="dt-icon-label">models/</div>
               </div>
-              <div class="dt-icon">
-                <div class="dt-icon-img">💬</div>
+              <div class="dt-icon dt-icon--distribution">
+                <div class="dt-icon-img"><i class="fas fa-users"></i></div>
                 <div class="dt-icon-label">communities/</div>
               </div>
-              <div class="dt-icon">
-                <div class="dt-icon-img">📱</div>
+              <div class="dt-icon dt-icon--discovery">
+                <div class="dt-icon-img"><i class="fas fa-shopping-cart"></i></div>
                 <div class="dt-icon-label">apps/</div>
               </div>
-              <div class="dt-icon">
-                <div class="dt-icon-img">💳</div>
+              <div class="dt-icon dt-icon--monetize">
+                <div class="dt-icon-img"><i class="fas fa-hand-holding-usd"></i></div>
                 <div class="dt-icon-label">payments/</div>
               </div>
-              <div class="dt-icon">
-                <div class="dt-icon-img">☁️</div>
+              <div class="dt-icon dt-icon--infra">
+                <div class="dt-icon-img"><i class="fas fa-cloud"></i></div>
                 <div class="dt-icon-label">infrastructure/</div>
               </div>
             </div>
@@ -167,22 +168,22 @@
           <!-- Dock -->
           <div class="dt-dock-wrap">
             <div class="dt-dock">
-              <div class="dt-dock-item" title="The Record">📰</div>
-              <div class="dt-dock-item" title="Datasets">🧬</div>
-              <div class="dt-dock-item" title="Grok Interface">🤖</div>
-              <div class="dt-dock-item" title="Messages">💬</div>
-              <div class="dt-dock-item" title="Communities">🌐</div>
+              <div class="dt-dock-item dt-dock--neutral" title="The Record"><i class="fas fa-newspaper"></i></div>
+              <div class="dt-dock-item dt-dock--creation" title="Datasets"><i class="fas fa-database"></i></div>
+              <div class="dt-dock-item dt-dock--distribution" title="Grok Interface"><i class="fas fa-magic"></i></div>
+              <div class="dt-dock-item dt-dock--distribution" title="Messages"><i class="fas fa-comment"></i></div>
+              <div class="dt-dock-item dt-dock--distribution" title="Communities"><i class="fas fa-globe"></i></div>
               <div class="dt-dock-sep"></div>
-              <div class="dt-dock-item" title="Search">🔍</div>
-              <div class="dt-dock-item" title="App Store">📱</div>
-              <div class="dt-dock-item" title="Checkout">💳</div>
-              <div class="dt-dock-item" title="Cloud">☁️</div>
+              <div class="dt-dock-item dt-dock--discovery" title="Search"><i class="fas fa-search"></i></div>
+              <div class="dt-dock-item dt-dock--discovery" title="App Store"><i class="fas fa-shopping-cart"></i></div>
+              <div class="dt-dock-item dt-dock--monetize" title="Checkout"><i class="fas fa-hand-holding-usd"></i></div>
+              <div class="dt-dock-item dt-dock--infra" title="Cloud"><i class="fas fa-cloud"></i></div>
             </div>
           </div>
 
           <!-- macOS-style opening notification -->
           <div class="intro-notification" id="intro-notif">
-            <div class="intro-notif-icon">📰</div>
+            <div class="intro-notif-icon"><span class="notif-folder notif-folder--neutral"><i class="fas fa-newspaper"></i></span></div>
             <div class="intro-notif-meta">
               <div class="intro-notif-app">The Record</div>
               <div class="intro-notif-title">When Grok Generated Thousands of Nude Images…</div>
@@ -1056,51 +1057,51 @@
           <div class="mole-field" id="eco-diagram">
             <div class="mole-row">
               <div class="mole-hole" data-eco="training-data">
-                <div class="mole mole--creation"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">Training Data</div></div>
+                <div class="mole mole--creation"><span class="mole-folder"><i class="fas fa-database mole-icon"></i></span><div class="mole-label">Training Data</div></div>
                 <div class="mole-ground"></div>
               </div>
               <div class="mole-hole" data-eco="ai-models">
-                <div class="mole mole--creation"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">Generative AI Models</div></div>
+                <div class="mole mole--creation"><span class="mole-folder"><i class="fas fa-code mole-icon"></i></span><div class="mole-label">Generative AI Models</div></div>
                 <div class="mole-ground"></div>
               </div>
               <div class="mole-hole" data-eco="ai-interfaces">
-                <div class="mole mole--distribution"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">AI Interfaces</div></div>
+                <div class="mole mole--distribution"><span class="mole-folder"><i class="fas fa-magic mole-icon"></i></span><div class="mole-label">AI Interfaces</div></div>
                 <div class="mole-ground"></div>
               </div>
               <div class="mole-hole" data-eco="dist-channels">
-                <div class="mole mole--distribution"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">Distribution Channels</div></div>
+                <div class="mole mole--distribution"><span class="mole-folder"><i class="fas fa-comment mole-icon"></i></span><div class="mole-label">Distribution Channels</div></div>
                 <div class="mole-ground"></div>
               </div>
             </div>
             <div class="mole-row">
               <div class="mole-hole" data-eco="dfcc">
-                <div class="mole mole--distribution"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">Deepfake Creation Communities</div></div>
+                <div class="mole mole--distribution"><span class="mole-folder"><i class="fas fa-users mole-icon"></i></span><div class="mole-label">Deepfake Creation Communities</div></div>
                 <div class="mole-ground"></div>
               </div>
               <div class="mole-hole" data-eco="search-engines">
-                <div class="mole mole--discovery"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">Search Engines</div></div>
+                <div class="mole mole--discovery"><span class="mole-folder"><i class="fas fa-search mole-icon"></i></span><div class="mole-label">Search Engines</div></div>
                 <div class="mole-ground"></div>
               </div>
               <div class="mole-hole" data-eco="ad-platforms">
-                <div class="mole mole--discovery"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">Ad Platforms</div></div>
+                <div class="mole mole--discovery"><span class="mole-folder"><i class="fas fa-bullhorn mole-icon"></i></span><div class="mole-label">Ad Platforms</div></div>
                 <div class="mole-ground"></div>
               </div>
               <div class="mole-hole" data-eco="app-stores">
-                <div class="mole mole--discovery"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">App Stores</div></div>
+                <div class="mole mole--discovery"><span class="mole-folder"><i class="fas fa-shopping-cart mole-icon"></i></span><div class="mole-label">App Stores</div></div>
                 <div class="mole-ground"></div>
               </div>
             </div>
             <div class="mole-row mole-row--last">
               <div class="mole-hole" data-eco="dev-platforms">
-                <div class="mole mole--infra"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">Developer Platforms</div></div>
+                <div class="mole mole--infra"><span class="mole-folder"><i class="fas fa-laptop-code mole-icon"></i></span><div class="mole-label">Developer Platforms</div></div>
                 <div class="mole-ground"></div>
               </div>
               <div class="mole-hole" data-eco="critical-providers">
-                <div class="mole mole--infra"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">Critical Service Providers</div></div>
+                <div class="mole mole--infra"><span class="mole-folder"><i class="fas fa-tools mole-icon"></i></span><div class="mole-label">Critical Service Providers</div></div>
                 <div class="mole-ground"></div>
               </div>
               <div class="mole-hole" data-eco="payment-processors">
-                <div class="mole mole--monetize"><div class="mole-eyes"><span></span><span></span></div><div class="mole-snout"></div><div class="mole-label">Payment Processors</div></div>
+                <div class="mole mole--monetize"><span class="mole-folder"><i class="fas fa-hand-holding-usd mole-icon"></i></span><div class="mole-label">Payment Processors</div></div>
                 <div class="mole-ground"></div>
               </div>
             </div>
@@ -1192,6 +1193,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intersection-observer/0.12.2/intersection-observer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollama/3.2.0/scrollama.min.js"></script>
-<script src="src/main.js?v=27"></script>
+<script src="src/main.js?v=34"></script>
 </body>
 </html>

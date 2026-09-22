@@ -44,14 +44,14 @@
 
   /* ── Notification content per chapter ───────────── */
   const NOTIF_CONFIG = {
-    cover:     { icon: '📰', app: 'The Record',   title: 'When Grok Generated Thousands of Nude Images…', body: 'Five newsrooms. Five stories. One supply chain.' },
-    interface: { icon: '🤖', app: 'Grok',         title: 'New session — Aurora v3 · Image Generation',    body: 'No content policy applied to this session.' },
-    dm:        { icon: '💬', app: 'Messages',     title: 'Private thread · anonymous community',            body: 'Coordinating jailbreaks out of sight.' },
-    reddit:    { icon: '🌐', app: 'Reddit',       title: 'r/deepfakes · new posts flooding in',             body: 'Public channels, no moderation in sight.' },
-    search:    { icon: '🔍', app: 'Google',       title: 'Results for "undress AI app free"',               body: '2.4 million results · 0 content filters.' },
-    appstore:  { icon: '📱', app: 'App Store',    title: 'NudifyAI · Photo Editor',                         body: '4.7★ · 500K downloads · still listed.' },
-    payment:   { icon: '💳', app: 'Checkout',     title: 'UndressAI Pro — Monthly Plan',                    body: 'Stripe · Visa · Mastercard accepted.' },
-    cloud:     { icon: '☁️', app: 'AWS Console',  title: 'EC2 instance · ap-southeast-1',                   body: 'Infrastructure with no paper trail.' },
+    cover:     { icon: '<span class="notif-folder notif-folder--neutral"><i class="fas fa-newspaper"></i></span>',          app: 'The Record',  title: 'When Grok Generated Thousands of Nude Images…', body: 'Five newsrooms. Five stories. One supply chain.' },
+    interface: { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-magic"></i></span>',         app: 'Grok',        title: 'New session — Aurora v3 · Image Generation',    body: 'No content policy applied to this session.' },
+    dm:        { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-comment"></i></span>',       app: 'Messages',    title: 'Private thread · anonymous community',           body: 'Coordinating jailbreaks out of sight.' },
+    reddit:    { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-globe"></i></span>',         app: 'Reddit',      title: 'r/deepfakes · new posts flooding in',            body: 'Public channels, no moderation in sight.' },
+    search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Google',      title: 'Results for "undress AI app free"',              body: '2.4 million results · 0 content filters.' },
+    appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'App Store',   title: 'NudifyAI · Photo Editor',                        body: '4.7★ · 500K downloads · still listed.' },
+    payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout',    title: 'UndressAI Pro — Monthly Plan',                   body: 'Stripe · Visa · Mastercard accepted.' },
+    cloud:     { icon: '<span class="notif-folder notif-folder--infra"><i class="fas fa-cloud"></i></span>',                app: 'AWS Console', title: 'EC2 instance · ap-southeast-1',                  body: 'Infrastructure with no paper trail.' },
   };
 
   /* ── Scroll gate state ────────────────────────────── */
@@ -86,7 +86,7 @@
   function showSceneNotif(id) {
     const cfg = NOTIF_CONFIG[id];
     if (!cfg || !sceneNotif) return;
-    document.getElementById('sn-icon').textContent  = cfg.icon;
+    document.getElementById('sn-icon').innerHTML    = cfg.icon;
     document.getElementById('sn-app').textContent   = cfg.app;
     document.getElementById('sn-title').textContent = cfg.title;
     document.getElementById('sn-body').textContent  = cfg.body;
@@ -315,6 +315,17 @@
       item.className = 'na-sb-item';
       item.dataset.nkey = key;
       item.innerHTML = `<div class="na-sb-item-title">${note.label}</div><div class="na-sb-item-preview">${note.keyText.substring(0,36)}…</div>`;
+      item.addEventListener('click', () => {
+        const stepLabel = Array.from(document.querySelectorAll('.step-label'))
+          .find(el => el.textContent.trim() === note.label);
+        if (!stepLabel) return;
+        const chapter = stepLabel.closest('.scroll-chapter');
+        if (!chapter) return;
+        if (scrollLocked) unlockScroll();
+        naSidebar.querySelectorAll('.na-sb-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        chapter.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
       naSidebar.appendChild(item);
     }
     item.classList.toggle('active', isActive);
@@ -357,6 +368,9 @@
       unlockScroll();
       activateChapter('cover');
       scrollToChapter('cover');
+      // Open Notes immediately with the first step--k pre-populated
+      const firstStepK = document.querySelector('.step.step--k');
+      if (firstStepK) updateNotesApp(firstStepK);
     }, { once: true });
   }
 
