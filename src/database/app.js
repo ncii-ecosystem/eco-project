@@ -1,0 +1,425 @@
+(function () {
+  'use strict';
+
+  var data = window.DATABASE;
+  var utils = window.DatabaseUtils;
+  var render = window.DatabaseRender;
+  if (!data || !utils || !render) return;
+
+  var records = [];
+  var selectedTech = new Set();
+  var selectedTypes = new Set();
+  var searchQuery = '';
+  var sortKey = 'date';
+  var sortDir = 'desc';
+
+  var els = {
+    search: document.getElementById('db-search'),
+    tech: document.getElementById('db-tech-filters'),
+    types: document.getElementById('db-type-filters'),
+    results: document.getElementById('db-results'),
+    submit: document.getElementById('db-submit'),
+    exportBtn: document.getElementById('db-export')
+  };
+
+  function countByTech(label) {
+    return records.filter(function (r) {
+      return (r.technologies || []).indexOf(label) !== -1;
+    }).length;
+  }
+
+  function countByType(label) {
+    return records.filter(function (r) {
+      return r.medium === label;
+    }).length;
+  }
+
+  function recordSearchBlob(r) {
+    var parts = [r.title, r.source, r.venue, r.summary, r.medium];
+    if (r.authors) parts = parts.concat(r.authors);
+    if (r.technologies) parts = parts.concat(r.technologies);
+    return utils.norm(parts.filter(Boolean).join(' '));
+  }
+
+  function matchesFilters(r) {
+    if (selectedTypes.size > 0 && !selectedTypes.has(r.medium)) {
+      return false;
+    }
+    if (selectedTech.size > 0) {
+      var techs = r.technologies || [];
+      var hit = false;
+      selectedTech.forEach(function (t) {
+        if (techs.indexOf(t) !== -1) hit = true;
+      });
+      if (!hit) return false;
+    }
+    if (searchQuery) {
+      if (recordSearchBlob(r).indexOf(searchQuery) === -1) return false;
+    }
+    return true;
+  }
+
+  function filteredRecords() {
+    var list = records.filter(matchesFilters);
+    var dir = sortDir === 'asc' ? 1 : -1;
+    list.sort(function (a, b) {
+      var cmp = 0;
+      if (sortKey === 'title') {
+        cmp = String(a.title || '').localeCompare(String(b.title || ''), undefined, {
+          sensitivity: 'base'
+        });
+      } else {
+        var at = utils.recordTimestamp(a);
+        var bt = utils.recordTimestamp(b);
+        cmp = at === bt ? 0 : at < bt ? -1 : 1;
+        if (cmp === 0) {
+          cmp = String(a.title || '').localeCompare(String(b.title || ''), undefined, {
+            sensitivity: 'base'
+          });
+        }
+      }
+      return cmp * dir;
+    });
+    return list;
+  }
+
+  function updateFilterCounts(count) {
+    var n = typeof count === 'number' ? count : 0;
+    var entryLabel = n === 1 ? 'entry' : 'entries';
+    if (els.search) {
+      els.search.placeholder = 'Search ' + n + ' ' + entryLabel;
+    }
+    if (els.exportBtn) {
+      els.exportBtn.textContent = 'Export ' + n + ' ' + entryLabel;
+      els.exportBtn.disabled = n === 0;
+      els.exportBtn.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
+    }
+  }
+
+  function renderResults() {
+    var list = filteredRecords();
+    updateFilterCounts(list.length);
+    if (!els.results) return;
+    if (!list.length) {
+      els.results.innerHTML =
+        '<p class="db-empty">No records match the current search and filters.</p>';
+      return;
+    }
+    els.results.innerHTML = list.map(render.renderResult).join('');
+    render.bindMediaFallbacks(els.results);
+  }
+
+  function toggleSet(set, value, btn) {
+    if (set.has(value)) {
+      set.delete(value);
+      btn.classList.remove('is-active');
+      btn.setAttribute('aria-pressed', 'false');
+    } else {
+      set.add(value);
+      btn.classList.add('is-active');
+      btn.setAttribute('aria-pressed', 'true');
+    }
+    renderResults();
+  }
+
+  function clearTypeSelection() {
+    selectedTypes.clear();
+    if (!els.types) return;
+    els.types.querySelectorAll('[data-type]').forEach(function (btn) {
+      btn.classList.remove('is-active');
+      btn.setAttribute('aria-pressed', 'false');
+    });
+  }
+
+  function buildTypeFilters() {
+    if (!els.types) return;
+    var typeLabels = {'News Article': 'News'};
+    var html =
+      '<button type="button" class="db-filter-btn is-active" data-type-all="1" aria-pressed="true">All (' +
+      records.length +
+      ')</button>';
+
+    data.CONTENT_TYPES.forEach(function (label) {
+      var n = countByType(label);
+      var display = typeLabels[label] || label;
+      html +=
+        '<button type="button" class="db-filter-btn" data-type="' +
+        utils.escapeHtml(label) +
+        '" aria-pressed="false">' +
+        utils.escapeHtml(display) +
+        ' (' +
+        n +
+        ')</button>';
+    });
+    els.types.innerHTML = html;
+
+    var allBtn = els.types.querySelector('[data-type-all]');
+    if (allBtn) {
+      allBtn.addEventListener('click', function () {
+        clearTypeSelection();
+        allBtn.classList.add('is-active');
+        allBtn.setAttribute('aria-pressed', 'true');
+        renderResults();
+      });
+    }
+
+    els.types.querySelectorAll('[data-type]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (allBtn) {
+          allBtn.classList.remove('is-active');
+          allBtn.setAttribute('aria-pressed', 'false');
+        }
+        toggleSet(selectedTypes, btn.getAttribute('data-type'), btn);
+        if (selectedTypes.size === 0 && allBtn) {
+          allBtn.classList.add('is-active');
+          allBtn.setAttribute('aria-pressed', 'true');
+        }
+      });
+    });
+  }
+
+  function buildTechFilters() {
+    if (!els.tech) return;
+    var html = '';
+    data.TECHNOLOGY_GROUPS.forEach(function (group) {
+      var role = (data.ROLE_CLASS && data.ROLE_CLASS[group.label]) || '';
+      html +=
+        '<div class="db-filter-group" role="group" aria-label="' +
+        utils.escapeHtml(group.label) +
+        '">' +
+        '<h3 class="db-filter-label">' +
+        utils.escapeHtml(group.label) +
+        '</h3>' +
+        '<div class="db-filter-group-chips">';
+      group.items.forEach(function (label) {
+        var n = countByTech(label);
+        html +=
+          '<button type="button" class="db-filter-btn ' +
+          role +
+          '" data-tech="' +
+          utils.escapeHtml(label) +
+          '" aria-pressed="false">' +
+          render.techIconHtml(label) +
+          utils.escapeHtml(label) +
+          ' (' +
+          n +
+          ')</button>';
+      });
+      html += '</div></div>';
+    });
+    els.tech.innerHTML = html;
+
+    els.tech.querySelectorAll('[data-tech]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        toggleSet(selectedTech, btn.getAttribute('data-tech'), btn);
+      });
+    });
+  }
+
+  if (els.search) {
+    els.search.addEventListener('input', function () {
+      searchQuery = utils.norm(els.search.value.trim());
+      renderResults();
+    });
+  }
+
+  (function bindSortControls() {
+    var root = document.getElementById('db-sort');
+    if (!root) return;
+    var keyBtn = document.getElementById('db-sort-key');
+    var dirBtn = document.getElementById('db-sort-dir');
+
+    function syncKeyButton(animate) {
+      if (!keyBtn) return;
+      var byDate = sortKey === 'date';
+      var label = byDate ? 'date' : 'a–z';
+      var labelEl = keyBtn.querySelector('.db-sort-btn-label');
+      keyBtn.setAttribute('data-sort', sortKey);
+      keyBtn.setAttribute(
+        'aria-label',
+        byDate
+          ? 'Sort by date. Click to switch to a–z.'
+          : 'Sort a–z. Click to switch to date.'
+      );
+      function applyLabel() {
+        if (labelEl) labelEl.textContent = label;
+        else keyBtn.textContent = label;
+      }
+      if (animate) utils.runFlip(keyBtn, applyLabel);
+      else applyLabel();
+    }
+
+    function syncDirButton(animate) {
+      if (!dirBtn) return;
+      var descending = sortDir === 'desc';
+      var glyph = descending ? '↓' : '↑';
+      var glyphEl = dirBtn.querySelector('.db-sort-arrow-glyph');
+      dirBtn.classList.toggle('is-desc', descending);
+      dirBtn.classList.toggle('is-asc', !descending);
+      dirBtn.title = descending ? 'Descending' : 'Ascending';
+      dirBtn.setAttribute(
+        'aria-label',
+        descending
+          ? 'Sort descending. Click to reverse.'
+          : 'Sort ascending. Click to reverse.'
+      );
+      function applyGlyph() {
+        if (glyphEl) glyphEl.textContent = glyph;
+        else dirBtn.textContent = glyph;
+      }
+      if (animate) utils.runFlip(dirBtn, applyGlyph);
+      else applyGlyph();
+    }
+
+    if (keyBtn) {
+      keyBtn.addEventListener('click', function () {
+        sortKey = sortKey === 'date' ? 'title' : 'date';
+        syncKeyButton(true);
+        renderResults();
+      });
+      syncKeyButton(false);
+    }
+
+    if (dirBtn) {
+      dirBtn.addEventListener('click', function () {
+        sortDir = sortDir === 'desc' ? 'asc' : 'desc';
+        syncDirButton(true);
+        renderResults();
+      });
+      syncDirButton(false);
+    }
+  })();
+
+  if (els.exportBtn) {
+    els.exportBtn.addEventListener('click', function () {
+      var list = filteredRecords();
+      if (!list.length) {
+        window.alert('No sources match the current filters.');
+        return;
+      }
+      var stamp = new Date().toISOString().slice(0, 10);
+      utils.downloadCsv(
+        'ncii-ecosystem-' + stamp + '.csv',
+        utils.recordsToCsv(list)
+      );
+    });
+  }
+
+  function showStatus(message) {
+    if (els.results) {
+      els.results.innerHTML =
+        '<p class="db-empty">' + utils.escapeHtml(message) + '</p>';
+    }
+  }
+
+  function mountData(nextRecords) {
+    records = Array.isArray(nextRecords) ? nextRecords : [];
+    selectedTech.clear();
+    selectedTypes.clear();
+    buildTypeFilters();
+    buildTechFilters();
+    renderResults();
+  }
+
+  function loadFromSanity() {
+    showStatus('Loading…');
+    if (!window.SanityClient || !window.SanityClient.fetchPublishedCaseStudies) {
+      showStatus('Sanity client missing.');
+      mountData([]);
+      return;
+    }
+    window.SanityClient.fetchPublishedCaseStudies()
+      .then(function (result) {
+        var next = (result.records || []).filter(function (r) {
+          return r.provenance !== 'Annotated Bibliography';
+        });
+        mountData(next);
+      })
+      .catch(function (err) {
+        console.error(err);
+        showStatus(
+          'Could not load records from Sanity. Check projectId in src/sanity/config.js.'
+        );
+        mountData([]);
+      });
+  }
+
+  loadFromSanity();
+  window.addEventListener('db:reload', loadFromSanity);
+
+  (function initThemeToggle() {
+    var KEY = 'db-theme';
+    var btn = document.getElementById('db-theme-toggle');
+    if (!btn) return;
+    var iconEl = btn.querySelector('.db-theme-toggle-icon');
+
+    function apply(theme, animate) {
+      var light = theme === 'light';
+      document.body.classList.toggle('db-theme-dark', !light);
+      btn.setAttribute(
+        'aria-label',
+        light ? 'Switch to dark mode' : 'Switch to light mode'
+      );
+      btn.title = light ? 'Dark mode' : 'Light mode';
+      function applyIcon() {
+        if (!iconEl) return;
+        iconEl.classList.toggle('fa-moon', light);
+        iconEl.classList.toggle('fa-sun', !light);
+      }
+      if (animate) utils.runFlip(btn, applyIcon);
+      else applyIcon();
+      try {
+        localStorage.setItem(KEY, light ? 'light' : 'dark');
+      } catch (e) {}
+    }
+
+    var saved = null;
+    try {
+      saved = localStorage.getItem(KEY);
+    } catch (e) {}
+    apply(saved === 'dark' ? 'dark' : 'light', false);
+
+    btn.addEventListener('click', function () {
+      apply(
+        document.body.classList.contains('db-theme-dark') ? 'light' : 'dark',
+        true
+      );
+    });
+  })();
+
+  (function initSidebarToggle() {
+    var KEY = 'db-sidebar-collapsed';
+    var btn = document.getElementById('db-sidebar-toggle');
+    var side = document.getElementById('side');
+    if (!btn || !side) return;
+
+    function apply(collapsed) {
+      document.body.classList.toggle('db-sidebar-collapsed', collapsed);
+      btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      btn.title = collapsed ? 'Show filters' : 'Put filters away';
+      btn.setAttribute(
+        'aria-label',
+        collapsed ? 'Show filters' : 'Put filters away'
+      );
+      try {
+        localStorage.setItem(KEY, collapsed ? '1' : '0');
+      } catch (e) {}
+    }
+
+    var saved = null;
+    try {
+      saved = localStorage.getItem(KEY);
+    } catch (e) {}
+    apply(saved === '1');
+
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () {
+        document.body.classList.add('db-sidebar-ready');
+      });
+    });
+
+    btn.addEventListener('click', function () {
+      apply(!document.body.classList.contains('db-sidebar-collapsed'));
+    });
+  })();
+})();

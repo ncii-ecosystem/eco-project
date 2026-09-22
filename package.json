@@ -1,0 +1,9 @@
+{
+  "name": "ncii-ecosystem",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "npm run dev --prefix studio",
+    "site": "node server.mjs"
+  }
+}

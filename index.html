@@ -8,9 +8,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="src/styles.css" />
+<link rel="stylesheet" href="src/home/styles.css" />
+<link rel="stylesheet" href="src/shared/site-nav.css" />
 </head>
 <body>
+
+<header class="site-topnav">
+  <nav aria-label="Site">
+    <ul class="site-topnav-links">
+      <li><a href="index.html" aria-current="page">Home</a></li>
+      <li><a href="database.html">Database</a></li>
+      <li><a href="primers.html">Primers</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </nav>
+</header>
 
 <!-- ═══════════════════════════════════════════════
      BROWSER CHROME FRAME (fixed overlay)
@@ -1817,8 +1829,7 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intersection-observer/0.12.2/intersection-observer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollama/3.2.0/scrollama.min.js"></script>
-<script src="src/main.js"></script>
+<script src="src/home/main.js"></script>
 </body>
 </html>

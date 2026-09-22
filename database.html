@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ncii-ecosystem</title>
+<meta name="description" content="A public and living document compiling academic, civil society, advocacy, and journalistic work related to the creation pipeline behind AIG-NCII." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=PT+Mono&display=swap" rel="stylesheet" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+<link rel="stylesheet" href="src/database/styles.css" />
+<link rel="stylesheet" href="src/shared/site-nav.css" />
+</head>
+<body class="db-page db-split">
+
+<header class="site-topnav">
+  <nav aria-label="Site">
+    <ul class="site-topnav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="database.html" aria-current="page">Database</a></li>
+      <li><a href="primers.html">Primers</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="db-layout">
+  <aside class="db-sidebar" id="side" aria-label="Database controls">
+    <div class="db-sidebar-wrapper">
+      <p class="db-intro">
+        A
+        <span class="db-intro-mark db-intro-mark--public" title="Open to the public">
+          public <span class="db-intro-mark-icon" aria-hidden="true">(<i class="db-intro-glyph fas fa-globe"></i>)</span>
+        </span>
+        and
+        <span class="db-intro-mark db-intro-mark--living" title="Updated over time">
+          living <span class="db-intro-mark-icon" aria-hidden="true">(<i class="db-intro-glyph fas fa-sync-alt"></i>)</span>
+        </span>
+        document compiling academic, civil society, advocacy, and journalistic work related to the creation pipeline behind AIG-NCII, the broader technological ecosystem, established best practices, and the role of AI companies in facilitating harm.
+      </p>
+
+      <div class="db-sidebar-main">
+        <div class="db-search-row">
+          <div class="db-search" id="search">
+            <input
+              class="db-search-input"
+              type="text"
+              id="db-search"
+              placeholder="Search 0 entries"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+
+          <div class="db-sort" id="db-sort" role="group" aria-label="Sort results">
+            <button
+              type="button"
+              class="db-sort-btn"
+              id="db-sort-key"
+              data-sort="date"
+              aria-label="Sort by date. Click to switch to a–z."
+            >
+              <span class="db-sort-btn-sizer" aria-hidden="true">date</span>
+              <span class="db-sort-btn-sizer" aria-hidden="true">a–z</span>
+              <span class="db-sort-btn-label">date</span>
+            </button>
+            <button
+              type="button"
+              class="db-sort-arrow is-desc"
+              id="db-sort-dir"
+              title="Descending"
+              aria-label="Sort descending. Click to reverse."
+            >
+              <span class="db-sort-arrow-glyph">↓</span>
+            </button>
+          </div>
+        </div>
+
+        <nav class="db-filters" id="filter" aria-label="Filters">
+          <div class="db-filter-section">
+            <div class="db-filter-block db-filter-block--types" id="db-type-filters"></div>
+          </div>
+          <div class="db-filter-section">
+            <div class="db-filter-block db-filter-block--tech" id="db-tech-filters"></div>
+          </div>
+        </nav>
+      </div>
+
+      <div class="db-actions" id="actions">
+        <div class="db-action-row">
+          <button type="button" class="db-submit" id="db-submit">Submit entry</button>
+          <button type="button" class="db-submit" id="db-export">Export 0 entries</button>
+          <button
+            type="button"
+            class="db-theme-toggle"
+            id="db-theme-toggle"
+            aria-label="Switch to dark mode"
+            title="Theme"
+          >
+            <i class="db-theme-toggle-icon fas fa-fw fa-moon" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="db-meta-line">Acknowledgements: put people here</p>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="db-sidebar-toggle"
+      id="db-sidebar-toggle"
+      aria-expanded="true"
+      aria-controls="side"
+      title="Put filters away"
+      aria-label="Put filters away"
+    >
+      <i class="db-sidebar-toggle-glyph fas fa-chevron-left" aria-hidden="true"></i>
+    </button>
+  </aside>
+
+  <div class="db-index" id="index">
+    <div class="db-list" id="db-results" aria-live="polite"></div>
+  </div>
+</main>
+
+<dialog class="db-dialog" id="db-submit-dialog" aria-labelledby="db-submit-dialog-title">
+  <form class="db-dialog-panel" id="db-submit-form" method="dialog">
+    <header class="db-dialog-header">
+      <h2 class="db-dialog-title" id="db-submit-dialog-title">Submit entry</h2>
+      <button type="button" class="db-dialog-close" id="db-submit-close" aria-label="Close">×</button>
+    </header>
+
+    <div class="db-dialog-body">
+      <div class="db-submit-grid">
+        <div class="db-field db-field--title">
+          <span class="db-field-label">Title <span class="db-req" aria-hidden="true">*</span></span>
+          <input type="hidden" id="db-sub-title" name="title" value="" />
+          <div class="db-sub-title-wrap">
+            <div
+              class="db-sub-title-paint"
+              id="db-sub-title-paint"
+              contenteditable="true"
+              role="textbox"
+              aria-multiline="true"
+              aria-label="Title (required)"
+              aria-required="true"
+            ></div>
+            <div
+              class="db-sub-tag-picker"
+              id="db-sub-tag-picker"
+              hidden
+              role="group"
+              aria-label="Apply technology to selection"
+            ></div>
+          </div>
+        </div>
+
+        <div class="db-field">
+          <span class="db-field-label">Technologies</span>
+          <p class="db-field-hint">
+            Select tags, then highlight a phrase in the title to apply one.
+          </p>
+          <div class="db-sub-techs" id="db-sub-techs"></div>
+        </div>
+
+        <div class="db-field">
+          <span class="db-field-label">Authors <span class="db-req" aria-hidden="true">*</span></span>
+          <div class="db-sub-authors" id="db-sub-authors"></div>
+          <button type="button" class="db-sub-add" id="db-sub-add-author">+ author</button>
+        </div>
+
+        <div class="db-submit-row">
+          <label class="db-field">
+            <span class="db-field-label">Type <span class="db-req" aria-hidden="true">*</span></span>
+            <select class="db-field-input" id="db-sub-medium" name="medium" required></select>
+          </label>
+          <label class="db-field">
+            <span class="db-field-label">Date <span class="db-req" aria-hidden="true">*</span></span>
+            <input
+              class="db-field-input"
+              type="text"
+              id="db-sub-date"
+              name="date"
+              placeholder="YYYY or YYYY-MM-DD"
+              autocomplete="off"
+              required
+              aria-required="true"
+            />
+          </label>
+        </div>
+
+        <div class="db-submit-row">
+          <label class="db-field">
+            <span class="db-field-label">Source / outlet</span>
+            <input class="db-field-input" type="text" id="db-sub-source" name="source" autocomplete="off" />
+          </label>
+          <label class="db-field">
+            <span class="db-field-label">Venue</span>
+            <input class="db-field-input" type="text" id="db-sub-venue" name="venue" autocomplete="off" />
+          </label>
+        </div>
+
+        <label class="db-field">
+          <span class="db-field-label">URL <span class="db-req" aria-hidden="true">*</span></span>
+          <input
+            class="db-field-input"
+            type="url"
+            id="db-sub-url"
+            name="sourceUrl"
+            placeholder="https://"
+            autocomplete="off"
+            required
+            aria-required="true"
+          />
+        </label>
+
+        <label class="db-field">
+          <span class="db-field-label">Contact <span class="db-req" aria-hidden="true">*</span></span>
+          <input
+            class="db-field-input"
+            type="email"
+            id="db-sub-contact"
+            name="contact"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+            aria-required="true"
+          />
+          <p class="db-field-hint">Email for follow-up on this submission (not shown publicly).</p>
+        </label>
+      </div>
+    </div>
+
+    <footer class="db-dialog-footer">
+      <div class="db-dialog-footer-actions">
+        <button type="button" class="db-submit" id="db-submit-cancel">Cancel</button>
+        <button type="submit" class="db-submit db-submit--solid" id="db-submit-save">Submit for review</button>
+      </div>
+      <p class="db-dialog-status" id="db-submit-status" role="status" hidden></p>
+    </footer>
+  </form>
+</dialog>
+
+<script src="src/sanity/config.js"></script>
+<script src="src/sanity/client.js"></script>
+<script src="src/sanity/write.js"></script>
+<script src="src/database/constants.js"></script>
+<script src="src/database/data.js"></script>
+<script src="src/database/utils.js"></script>
+<script src="src/database/render.js"></script>
+<script src="src/database/submit.js"></script>
+<script src="src/database/app.js"></script>
+</body>
+</html>

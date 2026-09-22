@@ -1,0 +1,56 @@
+:root {
+  --site-nav-h: 2rem;
+}
+
+.site-topnav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 600;
+  height: var(--site-nav-h);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--db-space-3, 0.75rem);
+  box-sizing: border-box;
+  background: var(--db-bg, #ffffff);
+  color: var(--db-ink, #6751d4);
+  border-bottom: 1px solid var(--db-ink, #6751d4);
+  font-family: var(--db-font-mono, "PT Mono", ui-monospace, Menlo, Consolas, monospace);
+  font-size: 0.75rem;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.site-topnav nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.site-topnav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-topnav a {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.72;
+}
+
+.site-topnav a:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.site-topnav a[aria-current="page"] {
+  opacity: 1;
+  font-weight: 700;
+}

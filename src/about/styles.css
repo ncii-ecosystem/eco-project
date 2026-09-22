@@ -1,0 +1,346 @@
+.about-layout {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 var(--db-space-6);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: var(--db-space-5);
+  width: 100%;
+  padding: var(--db-space-3);
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--db-ink);
+}
+
+.about-columns {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  border-bottom: 1px solid var(--db-ink);
+}
+
+.about-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--db-space-4);
+  padding: var(--db-space-4) var(--db-space-3);
+  box-sizing: border-box;
+}
+
+.about-rail {
+  flex: 0 0 20rem;
+  width: 20rem;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--db-space-4);
+  padding: var(--db-space-4) var(--db-space-3);
+  box-sizing: border-box;
+  border: 0;
+  border-left: 1px solid var(--db-ink);
+  text-align: left;
+}
+
+.about-paper-title-block {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--db-space-2);
+}
+
+.about-authors {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  align-self: stretch;
+  gap: var(--db-space-2);
+  text-align: right;
+  max-width: 18rem;
+}
+
+.about-paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--db-space-2);
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-sm);
+  font-weight: normal;
+  line-height: var(--db-lh);
+}
+
+.about-paper-links a {
+  text-decoration: none;
+}
+
+.about-paper-links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  font-weight: 700;
+}
+
+.about-paper-title {
+  margin: 0;
+  max-width: 58rem;
+  font-weight: normal;
+}
+
+.about-abstract,
+.about-closing,
+.about-roles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--db-space-4);
+}
+
+.about-abstract p,
+.about-closing p {
+  margin: 0;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: var(--db-lh-loose);
+  color: var(--db-ink);
+}
+
+.about-role-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--db-space-4);
+  width: 100%;
+}
+
+.about-role-list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--db-space-2);
+  font-size: var(--db-text-lg);
+  line-height: var(--db-lh);
+}
+
+.about-role-num {
+  flex: 0 0 auto;
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-lg);
+  line-height: var(--db-lh);
+  color: var(--db-ink);
+}
+
+.about-role-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--db-space-2) var(--db-space-3);
+}
+
+.about-role-content .db-hl {
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-lg);
+  line-height: var(--db-lh);
+}
+
+.about-role-content .db-hl .db-filter-icon i {
+  font-size: 0.85em;
+}
+
+.about-role-detail {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+  color: var(--db-ink);
+  opacity: 0.8;
+}
+
+.about-rail .db-filter-label {
+  width: 100%;
+  margin: 0;
+}
+
+.about-team-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--db-space-4);
+  width: 100%;
+}
+
+.about-team-person {
+  display: flex;
+  align-items: center;
+  gap: var(--db-space-3);
+  width: 100%;
+  min-width: 0;
+}
+
+.about-team-photo {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  flex: 0 0 4.5rem;
+  overflow: hidden;
+  background: var(--db-ink);
+  color: var(--db-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-team-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.about-team-photo img[src=""] {
+  display: none;
+}
+
+.about-team-initials {
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-sm);
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.about-team-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.about-team-name {
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+  color: var(--db-ink);
+}
+
+.about-team-role {
+  font-family: var(--font-sans);
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+  color: var(--db-ink);
+  opacity: 0.72;
+}
+
+.about-org {
+  display: flex;
+  align-items: center;
+  gap: var(--db-space-3);
+  width: 100%;
+  min-width: 0;
+  margin: auto 0 var(--db-space-3);
+}
+
+.about-org-photo {
+  height: 4.5rem;
+  aspect-ratio: 128 / 175;
+  flex: 0 0 auto;
+}
+
+.about-org-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.about-org-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-xs);
+  line-height: 1.3;
+  color: var(--db-ink);
+  text-decoration: none;
+}
+
+.about-org-name:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  font-weight: 700;
+}
+
+.about-credits {
+  margin: 0;
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-xs);
+  line-height: var(--db-lh);
+  color: var(--db-ink);
+  opacity: 0.72;
+}
+
+.about-credits a {
+  text-decoration: none;
+}
+
+.about-credits a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  font-weight: 700;
+  opacity: 1;
+}
+
+@media (max-width: 720px) {
+  .about-columns {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .about-rail {
+    flex-basis: auto;
+    width: 100%;
+    border-left: 0;
+    border-top: 1px solid var(--db-ink);
+  }
+
+  .about-header {
+    flex-direction: column;
+    gap: var(--db-space-3);
+  }
+
+  .about-authors {
+    align-items: flex-start;
+    text-align: left;
+    max-width: none;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .about-authors .db-result-side-authors br {
+    display: none;
+  }
+
+  .about-paper-title {
+    max-width: none;
+  }
+}
