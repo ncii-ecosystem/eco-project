@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link id="site-favicon" rel="icon" type="image/png" href="assets/logo-light.png?v=3" />
 <title>ncii-ecosystem</title>
 <meta name="description" content="A public and living document compiling academic, civil society, advocacy, and journalistic work related to the creation pipeline behind AIG-NCII." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -15,20 +16,60 @@
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 />
+<link rel="stylesheet" href="src/shared/tokens.css" />
 <link rel="stylesheet" href="src/database/styles.css" />
 <link rel="stylesheet" href="src/shared/site-nav.css" />
+<script src="src/shared/nav.js" defer></script>
+<script src="src/shared/theme-boot.js"></script>
+<script>
+(function () {
+  try {
+    var mobile = window.matchMedia('(max-width: 720px)').matches;
+    if (mobile) {
+      if (localStorage.getItem('db-sidebar-collapsed-mobile') === '0') {
+        document.documentElement.classList.add('db-sidebar-expanded');
+      }
+    } else if (localStorage.getItem('db-sidebar-collapsed') === '1') {
+      document.documentElement.classList.add('db-sidebar-collapsed');
+    }
+  } catch (e) {}
+})();
+</script>
 </head>
 <body class="db-page db-split">
+<script>
+(function () {
+  var root = document.documentElement;
+  if (root.classList.contains('db-sidebar-collapsed')) {
+    document.body.classList.add('db-sidebar-collapsed');
+  }
+  if (root.classList.contains('db-sidebar-expanded')) {
+    document.body.classList.add('db-sidebar-expanded');
+  }
+})();
+</script>
 
 <header class="site-topnav">
-  <nav aria-label="Site">
-    <ul class="site-topnav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="database.html" aria-current="page">Database</a></li>
-      <li><a href="primers.html">Primers</a></li>
-      <li><a href="about.html">About</a></li>
-    </ul>
-  </nav>
+  <a class="site-logo" href="index.html" aria-label="ncii-ecosystem">
+    <img class="site-logo-img site-logo-img--light" src="assets/logo-light.png?v=3" alt="" width="28" height="28" />
+    <img class="site-logo-img site-logo-img--dark" src="assets/logo-dark.png" alt="" width="28" height="28" />
+  </a>
+  <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
+    <span class="site-burger" aria-hidden="true"></span>
+  </button>
+  <div class="site-nav-panel" id="site-nav-menu">
+    <nav aria-label="Site">
+      <ul class="site-topnav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="database.html" aria-current="page">Database</a></li>
+        <li><a href="primers.html">Primers</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+    <button type="button" class="site-theme-toggle" id="site-theme-toggle" aria-label="Switch to dark mode" title="Theme">
+      <i class="site-theme-toggle-icon fas fa-fw fa-moon" aria-hidden="true"></i>
+    </button>
+  </div>
 </header>
 
 <main class="db-layout">
@@ -81,10 +122,24 @@
               <span class="db-sort-arrow-glyph">↓</span>
             </button>
           </div>
+
+          <button
+            type="button"
+            class="db-sidebar-toggle"
+            id="db-sidebar-toggle"
+            aria-expanded="true"
+            aria-controls="db-filters-panel"
+            title="Put filters away"
+            aria-label="Put filters away"
+          >
+            <i class="db-sidebar-toggle-glyph db-sidebar-toggle-glyph--desktop fas fa-chevron-left" aria-hidden="true"></i>
+            <i class="db-sidebar-toggle-glyph db-sidebar-toggle-glyph--plus fas fa-plus" aria-hidden="true"></i>
+            <i class="db-sidebar-toggle-glyph db-sidebar-toggle-glyph--minus fas fa-minus" aria-hidden="true"></i>
+          </button>
         </div>
 
         <nav class="db-filters" id="filter" aria-label="Filters">
-          <div class="db-filter-section">
+          <div class="db-filter-section" id="db-filters-panel">
             <div class="db-filter-block db-filter-block--types" id="db-type-filters"></div>
           </div>
           <div class="db-filter-section">
@@ -97,34 +152,94 @@
         <div class="db-action-row">
           <button type="button" class="db-submit" id="db-submit">Submit entry</button>
           <button type="button" class="db-submit" id="db-export">Export 0 entries</button>
-          <button
-            type="button"
-            class="db-theme-toggle"
-            id="db-theme-toggle"
-            aria-label="Switch to dark mode"
-            title="Theme"
-          >
-            <i class="db-theme-toggle-icon fas fa-fw fa-moon" aria-hidden="true"></i>
-          </button>
         </div>
-        <p class="db-meta-line">Acknowledgements: put people here</p>
       </div>
     </div>
-    <button
-      type="button"
-      class="db-sidebar-toggle"
-      id="db-sidebar-toggle"
-      aria-expanded="true"
-      aria-controls="side"
-      title="Put filters away"
-      aria-label="Put filters away"
-    >
-      <i class="db-sidebar-toggle-glyph fas fa-chevron-left" aria-hidden="true"></i>
-    </button>
   </aside>
 
   <div class="db-index" id="index">
-    <div class="db-list" id="db-results" aria-live="polite"></div>
+    <div class="db-list" id="db-results" aria-live="polite" aria-busy="true">
+      <div class="db-result db-result--skeleton" aria-hidden="true">
+        <div class="db-result-link">
+          <div class="db-result-top">
+            <span class="db-skel db-skel--chip"></span>
+            <span class="db-skel db-skel--chip db-skel--short"></span>
+          </div>
+          <div class="db-skel db-skel--title"></div>
+          <div class="db-skel db-skel--meta"></div>
+        </div>
+        <div class="db-result-media db-skel-media"></div>
+      </div>
+      <div class="db-result db-result--skeleton" aria-hidden="true">
+        <div class="db-result-link">
+          <div class="db-result-top">
+            <span class="db-skel db-skel--chip"></span>
+            <span class="db-skel db-skel--chip db-skel--short"></span>
+          </div>
+          <div class="db-skel db-skel--title"></div>
+          <div class="db-skel db-skel--meta"></div>
+        </div>
+        <div class="db-result-media db-skel-media"></div>
+      </div>
+      <div class="db-result db-result--skeleton" aria-hidden="true">
+        <div class="db-result-link">
+          <div class="db-result-top">
+            <span class="db-skel db-skel--chip"></span>
+            <span class="db-skel db-skel--chip db-skel--short"></span>
+          </div>
+          <div class="db-skel db-skel--title"></div>
+          <div class="db-skel db-skel--meta"></div>
+        </div>
+        <div class="db-result-media db-skel-media"></div>
+      </div>
+      <div class="db-result db-result--skeleton" aria-hidden="true">
+        <div class="db-result-link">
+          <div class="db-result-top">
+            <span class="db-skel db-skel--chip"></span>
+            <span class="db-skel db-skel--chip db-skel--short"></span>
+          </div>
+          <div class="db-skel db-skel--title"></div>
+          <div class="db-skel db-skel--meta"></div>
+        </div>
+        <div class="db-result-media db-skel-media"></div>
+      </div>
+      <div class="db-result db-result--skeleton" aria-hidden="true">
+        <div class="db-result-link">
+          <div class="db-result-top">
+            <span class="db-skel db-skel--chip"></span>
+            <span class="db-skel db-skel--chip db-skel--short"></span>
+          </div>
+          <div class="db-skel db-skel--title"></div>
+          <div class="db-skel db-skel--meta"></div>
+        </div>
+        <div class="db-result-media db-skel-media"></div>
+      </div>
+      <div class="db-result db-result--skeleton" aria-hidden="true">
+        <div class="db-result-link">
+          <div class="db-result-top">
+            <span class="db-skel db-skel--chip"></span>
+            <span class="db-skel db-skel--chip db-skel--short"></span>
+          </div>
+          <div class="db-skel db-skel--title"></div>
+          <div class="db-skel db-skel--meta"></div>
+        </div>
+        <div class="db-result-media db-skel-media"></div>
+      </div>
+      <div class="db-result db-result--skeleton" aria-hidden="true">
+        <div class="db-result-link">
+          <div class="db-result-top">
+            <span class="db-skel db-skel--chip"></span>
+            <span class="db-skel db-skel--chip db-skel--short"></span>
+          </div>
+          <div class="db-skel db-skel--title"></div>
+          <div class="db-skel db-skel--meta"></div>
+        </div>
+        <div class="db-result-media db-skel-media"></div>
+      </div>
+    </div>
+    <footer class="db-index-footer">
+      <p class="db-meta-line">Acknowledgements: put people here</p>
+    </footer>
   </div>
 </main>
 
@@ -139,8 +254,18 @@
       <div class="db-submit-grid">
         <div class="db-field db-field--title">
           <span class="db-field-label">Title <span class="db-req" aria-hidden="true">*</span></span>
-          <input type="hidden" id="db-sub-title" name="title" value="" />
-          <div class="db-sub-title-wrap">
+          <input
+            class="db-field-input db-sub-title-input"
+            type="text"
+            id="db-sub-title"
+            name="title"
+            value=""
+            maxlength="500"
+            autocomplete="off"
+            aria-required="true"
+            aria-label="Title (required)"
+          />
+          <div class="db-sub-title-wrap" id="db-sub-title-wrap">
             <div
               class="db-sub-title-paint"
               id="db-sub-title-paint"
@@ -162,8 +287,11 @@
 
         <div class="db-field">
           <span class="db-field-label">Technologies</span>
-          <p class="db-field-hint">
+          <p class="db-field-hint db-sub-tech-hint db-sub-tech-hint--paint">
             Select tags, then highlight a phrase in the title to apply one.
+          </p>
+          <p class="db-field-hint db-sub-tech-hint db-sub-tech-hint--simple">
+            Select related technology tags.
           </p>
           <div class="db-sub-techs" id="db-sub-techs"></div>
         </div>
@@ -255,5 +383,6 @@
 <script src="src/database/render.js"></script>
 <script src="src/database/submit.js"></script>
 <script src="src/database/app.js"></script>
+<script src="src/shared/theme.js"></script>
 </body>
 </html>

@@ -100,6 +100,7 @@
     var list = filteredRecords();
     updateFilterCounts(list.length);
     if (!els.results) return;
+    els.results.removeAttribute('aria-busy');
     if (!list.length) {
       els.results.innerHTML =
         '<p class="db-empty">No records match the current search and filters.</p>';
@@ -307,9 +308,28 @@
 
   function showStatus(message) {
     if (els.results) {
+      els.results.removeAttribute('aria-busy');
       els.results.innerHTML =
         '<p class="db-empty">' + utils.escapeHtml(message) + '</p>';
     }
+  }
+
+  function showSkeletons() {
+    if (!els.results) return;
+    els.results.setAttribute('aria-busy', 'true');
+    var row =
+      '<div class="db-result db-result--skeleton" aria-hidden="true">' +
+      '<div class="db-result-link">' +
+      '<div class="db-result-top">' +
+      '<span class="db-skel db-skel--chip"></span>' +
+      '<span class="db-skel db-skel--chip db-skel--short"></span>' +
+      '</div>' +
+      '<div class="db-skel db-skel--title"></div>' +
+      '<div class="db-skel db-skel--meta"></div>' +
+      '</div>' +
+      '<div class="db-result-media db-skel-media"></div>' +
+      '</div>';
+    els.results.innerHTML = new Array(7).fill(row).join('');
   }
 
   function mountData(nextRecords) {
@@ -322,7 +342,7 @@
   }
 
   function loadFromSanity() {
-    showStatus('Loading…');
+    showSkeletons();
     if (!window.SanityClient || !window.SanityClient.fetchPublishedCaseStudies) {
       showStatus('Sanity client missing.');
       mountData([]);
@@ -347,79 +367,102 @@
   loadFromSanity();
   window.addEventListener('db:reload', loadFromSanity);
 
-  (function initThemeToggle() {
-    var KEY = 'db-theme';
-    var btn = document.getElementById('db-theme-toggle');
-    if (!btn) return;
-    var iconEl = btn.querySelector('.db-theme-toggle-icon');
-
-    function apply(theme, animate) {
-      var light = theme === 'light';
-      document.body.classList.toggle('db-theme-dark', !light);
-      btn.setAttribute(
-        'aria-label',
-        light ? 'Switch to dark mode' : 'Switch to light mode'
-      );
-      btn.title = light ? 'Dark mode' : 'Light mode';
-      function applyIcon() {
-        if (!iconEl) return;
-        iconEl.classList.toggle('fa-moon', light);
-        iconEl.classList.toggle('fa-sun', !light);
-      }
-      if (animate) utils.runFlip(btn, applyIcon);
-      else applyIcon();
-      try {
-        localStorage.setItem(KEY, light ? 'light' : 'dark');
-      } catch (e) {}
-    }
-
-    var saved = null;
-    try {
-      saved = localStorage.getItem(KEY);
-    } catch (e) {}
-    apply(saved === 'dark' ? 'dark' : 'light', false);
-
-    btn.addEventListener('click', function () {
-      apply(
-        document.body.classList.contains('db-theme-dark') ? 'light' : 'dark',
-        true
-      );
-    });
-  })();
-
   (function initSidebarToggle() {
     var KEY = 'db-sidebar-collapsed';
+    var KEY_MOBILE = 'db-sidebar-collapsed-mobile';
+    var MQ = '(max-width: 720px)';
     var btn = document.getElementById('db-sidebar-toggle');
     var side = document.getElementById('side');
     if (!btn || !side) return;
 
-    function apply(collapsed) {
-      document.body.classList.toggle('db-sidebar-collapsed', collapsed);
-      btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-      btn.title = collapsed ? 'Show filters' : 'Put filters away';
-      btn.setAttribute(
-        'aria-label',
-        collapsed ? 'Show filters' : 'Put filters away'
-      );
-      try {
-        localStorage.setItem(KEY, collapsed ? '1' : '0');
-      } catch (e) {}
+    function isMobile() {
+      return window.matchMedia(MQ).matches;
     }
 
-    var saved = null;
-    try {
-      saved = localStorage.getItem(KEY);
-    } catch (e) {}
-    apply(saved === '1');
+    function storageKey() {
+      return isMobile() ? KEY_MOBILE : KEY;
+    }
+
+    function syncMobileChromeHeight() {
+      if (!isMobile()) {
+        document.body.style.removeProperty('--db-mobile-chrome-h');
+        return;
+      }
+      document.body.style.setProperty(
+        '--db-mobile-chrome-h',
+        side.offsetHeight + 'px'
+      );
+    }
+
+    function setCollapsed(collapsed) {
+      var mobile = isMobile();
+      var expanded = mobile && !collapsed;
+      document.documentElement.classList.toggle('db-sidebar-collapsed', !mobile && collapsed);
+      document.documentElement.classList.toggle('db-sidebar-expanded', expanded);
+      document.body.classList.toggle('db-sidebar-collapsed', !mobile && collapsed);
+      document.body.classList.toggle('db-sidebar-expanded', expanded);
+
+      btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      var showLabel = 'Show filters';
+      var hideLabel = mobile ? 'Hide filters' : 'Put filters away';
+      btn.title = collapsed ? showLabel : hideLabel;
+      btn.setAttribute('aria-label', collapsed ? showLabel : hideLabel);
+      try {
+        localStorage.setItem(storageKey(), collapsed ? '1' : '0');
+      } catch (e) {}
+      window.requestAnimationFrame(syncMobileChromeHeight);
+    }
+
+    function isCollapsed() {
+      if (isMobile()) {
+        return !document.body.classList.contains('db-sidebar-expanded');
+      }
+      return document.body.classList.contains('db-sidebar-collapsed');
+    }
+
+    function readSaved() {
+      try {
+        return localStorage.getItem(storageKey());
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function syncFromStorage() {
+      var saved = readSaved();
+      if (isMobile()) {
+        setCollapsed(saved !== '0');
+        return;
+      }
+      setCollapsed(saved === '1');
+    }
+
+    syncFromStorage();
 
     window.requestAnimationFrame(function () {
       window.requestAnimationFrame(function () {
         document.body.classList.add('db-sidebar-ready');
+        syncMobileChromeHeight();
       });
     });
 
     btn.addEventListener('click', function () {
-      apply(!document.body.classList.contains('db-sidebar-collapsed'));
+      setCollapsed(!isCollapsed());
     });
+
+    var mq = window.matchMedia(MQ);
+    function onViewportChange() {
+      syncFromStorage();
+      syncMobileChromeHeight();
+    }
+    if (mq.addEventListener) mq.addEventListener('change', onViewportChange);
+    else if (mq.addListener) mq.addListener(onViewportChange);
+
+    window.addEventListener('resize', syncMobileChromeHeight);
+
+    if (typeof ResizeObserver !== 'undefined') {
+      var ro = new ResizeObserver(syncMobileChromeHeight);
+      ro.observe(side);
+    }
   })();
 })();

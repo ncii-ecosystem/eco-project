@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link id="site-favicon" rel="icon" type="image/png" href="assets/logo-light.png?v=3" />
 <title>About — ncii-ecosystem</title>
 <meta name="description" content="About the AIG-NCII evidence index and the ecosystem paper that maps technologies facilitating AI-generated non-consensual intimate images." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -15,21 +16,36 @@
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 />
+<link rel="stylesheet" href="src/shared/tokens.css" />
 <link rel="stylesheet" href="src/database/styles.css" />
 <link rel="stylesheet" href="src/about/styles.css" />
 <link rel="stylesheet" href="src/shared/site-nav.css" />
+<script src="src/shared/nav.js" defer></script>
+<script src="src/shared/theme-boot.js"></script>
 </head>
 <body class="db-page about-page">
 
 <header class="site-topnav">
-  <nav aria-label="Site">
-    <ul class="site-topnav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="database.html">Database</a></li>
-      <li><a href="primers.html">Primers</a></li>
-      <li><a href="about.html" aria-current="page">About</a></li>
-    </ul>
-  </nav>
+  <a class="site-logo" href="index.html" aria-label="ncii-ecosystem">
+    <img class="site-logo-img site-logo-img--light" src="assets/logo-light.png?v=3" alt="" width="28" height="28" />
+    <img class="site-logo-img site-logo-img--dark" src="assets/logo-dark.png" alt="" width="28" height="28" />
+  </a>
+  <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
+    <span class="site-burger" aria-hidden="true"></span>
+  </button>
+  <div class="site-nav-panel" id="site-nav-menu">
+    <nav aria-label="Site">
+      <ul class="site-topnav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="database.html">Database</a></li>
+        <li><a href="primers.html">Primers</a></li>
+        <li><a href="about.html" aria-current="page">About</a></li>
+      </ul>
+    </nav>
+    <button type="button" class="site-theme-toggle" id="site-theme-toggle" aria-label="Switch to dark mode" title="Theme">
+      <i class="site-theme-toggle-icon fas fa-fw fa-moon" aria-hidden="true"></i>
+    </button>
+  </div>
 </header>
 
 <main class="about-layout">
@@ -46,8 +62,7 @@
     <aside class="about-authors" aria-label="Authors">
       <div class="db-result-side-time">2026</div>
       <div class="db-result-side-authors">
-        Michelle L. Ding, Harini Suresh,<br />
-        Suresh Venkatasubramanian
+        Michelle L. Ding, Harini Suresh, Suresh Venkatasubramanian
       </div>
     </aside>
   </header>
@@ -176,5 +191,6 @@
   </div>
 </main>
 
+<script src="src/shared/theme.js"></script>
 </body>
 </html>

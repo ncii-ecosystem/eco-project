@@ -21,6 +21,10 @@ window.DatabaseSubmit = (function () {
     return window.DatabaseRender;
   }
 
+  function isSimpleTitleMode() {
+    return window.matchMedia('(max-width: 720px)').matches;
+  }
+
   function setStatus(message, isError) {
     var el = document.getElementById('db-submit-status');
     if (!el) return;
@@ -160,7 +164,9 @@ window.DatabaseSubmit = (function () {
           state.techs.add(label);
         }
         renderTechChips();
-        renderHighlightedTitle();
+        if (!isSimpleTitleMode()) {
+          renderHighlightedTitle();
+        }
       });
     });
   }
@@ -257,6 +263,7 @@ window.DatabaseSubmit = (function () {
   }
 
   function syncTitleFromPaint() {
+    if (isSimpleTitleMode()) return;
     var title = document.getElementById('db-sub-title');
     var paint = document.getElementById('db-sub-title-paint');
     var plain = paintPlainString(paint).trim().slice(0, MAX_TITLE);
@@ -309,6 +316,7 @@ window.DatabaseSubmit = (function () {
   }
 
   function normalizeTitleAfterEdit() {
+    if (isSimpleTitleMode()) return;
     var paint = document.getElementById('db-sub-title-paint');
     var titleEl = document.getElementById('db-sub-title');
     if (!paint) return;
@@ -500,6 +508,7 @@ window.DatabaseSubmit = (function () {
   }
 
   function showTagPicker(selection) {
+    if (isSimpleTitleMode()) return;
     var picker = document.getElementById('db-sub-tag-picker');
     if (!picker || !render() || !utils()) return;
 
@@ -540,6 +549,7 @@ window.DatabaseSubmit = (function () {
   }
 
   function applyHighlight(technology, selection) {
+    if (isSimpleTitleMode()) return;
     if (!technology || !selection || !selection.phrase) return;
     if (!state.techs.has(technology)) {
       hideTagPicker();
@@ -624,6 +634,7 @@ window.DatabaseSubmit = (function () {
   }
 
   function renderHighlightedTitle() {
+    if (isSimpleTitleMode()) return;
     var paint = document.getElementById('db-sub-title-paint');
     var titleEl = document.getElementById('db-sub-title');
     if (!paint || !render()) return;
@@ -653,11 +664,13 @@ window.DatabaseSubmit = (function () {
   }
 
   function onPaintInput() {
+    if (isSimpleTitleMode()) return;
     hideTagPicker();
     normalizeTitleAfterEdit();
   }
 
   function onPaintBlur() {
+    if (isSimpleTitleMode()) return;
     window.setTimeout(function () {
       var picker = document.getElementById('db-sub-tag-picker');
       if (picker && !picker.hidden) return;
@@ -666,6 +679,9 @@ window.DatabaseSubmit = (function () {
   }
 
   function onPaintPaste(e) {
+    if (isSimpleTitleMode()) {
+      return;
+    }
     e.preventDefault();
     var text = '';
     try {
@@ -687,6 +703,7 @@ window.DatabaseSubmit = (function () {
   }
 
   function onPaintBeforeInput(e) {
+    if (isSimpleTitleMode()) return;
     var sel = window.getSelection();
     if (!sel || !sel.rangeCount) return;
     var node = sel.getRangeAt(0).startContainer;
@@ -696,6 +713,7 @@ window.DatabaseSubmit = (function () {
   }
 
   function onPaintSelectionEnd() {
+    if (isSimpleTitleMode()) return;
     if (state.techs.size === 0) {
       hideTagPicker();
       return;
@@ -706,6 +724,16 @@ window.DatabaseSubmit = (function () {
       return;
     }
     showTagPicker(selection);
+  }
+
+  function onTitleInputSimple() {
+    if (!isSimpleTitleMode()) return;
+    var title = document.getElementById('db-sub-title');
+    if (title) {
+      title.value = String(title.value || '').slice(0, MAX_TITLE);
+    }
+    state.highlights = [];
+    hideTagPicker();
   }
 
   function formatAuthorsForDisplay(authors) {
@@ -725,6 +753,9 @@ window.DatabaseSubmit = (function () {
   }
 
   function buildDraftRecord() {
+    if (!isSimpleTitleMode()) {
+      syncTitleFromPaint();
+    }
     var title = titleValue().trim();
     var medium = (document.getElementById('db-sub-medium') || {}).value || '';
     var dateRaw = ((document.getElementById('db-sub-date') || {}).value || '').trim();
@@ -742,7 +773,9 @@ window.DatabaseSubmit = (function () {
       .slice(0, MAX_AUTHORS);
 
     var techs = Array.from(state.techs);
-    var highlights = dedupeHighlights(title, state.highlights);
+    var highlights = isSimpleTitleMode()
+      ? []
+      : dedupeHighlights(title, state.highlights);
     highlights.forEach(function (h) {
       if (h.technology && techs.indexOf(h.technology) === -1) {
         techs.push(h.technology);
@@ -810,7 +843,11 @@ window.DatabaseSubmit = (function () {
     if (event) event.preventDefault();
     if (state.publishing) return;
 
-    syncTitleFromPaint();
+    if (!isSimpleTitleMode()) {
+      syncTitleFromPaint();
+    } else {
+      state.highlights = [];
+    }
     var draft = buildDraftRecord();
     if (!draft.title) {
       setStatus('Title is required.', true);
@@ -909,8 +946,13 @@ window.DatabaseSubmit = (function () {
     resetFormState();
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
-    var paint = document.getElementById('db-sub-title-paint');
-    if (paint) paint.focus();
+    if (isSimpleTitleMode()) {
+      var title = document.getElementById('db-sub-title');
+      if (title) title.focus();
+    } else {
+      var paint = document.getElementById('db-sub-title-paint');
+      if (paint) paint.focus();
+    }
   }
 
   function closeSubmit() {
@@ -935,6 +977,10 @@ window.DatabaseSubmit = (function () {
     }
     if (form) {
       form.addEventListener('submit', submitEntry);
+    }
+    var titleInput = document.getElementById('db-sub-title');
+    if (titleInput) {
+      titleInput.addEventListener('input', onTitleInputSimple);
     }
     if (paint) {
       paint.addEventListener('beforeinput', onPaintBeforeInput);

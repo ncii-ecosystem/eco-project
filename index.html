@@ -3,25 +3,37 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link id="site-favicon" rel="icon" type="image/png" href="assets/logo-light.png?v=3" />
 <title>It Was Never Just One App</title>
 <meta name="description" content="A guided investigation into the technological ecosystem behind AI-generated non-consensual intimate images." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="src/shared/tokens.css" />
 <link rel="stylesheet" href="src/home/styles.css" />
 <link rel="stylesheet" href="src/shared/site-nav.css" />
+<script src="src/shared/nav.js" defer></script>
 </head>
 <body>
 
 <header class="site-topnav">
-  <nav aria-label="Site">
-    <ul class="site-topnav-links">
-      <li><a href="index.html" aria-current="page">Home</a></li>
-      <li><a href="database.html">Database</a></li>
-      <li><a href="primers.html">Primers</a></li>
-      <li><a href="about.html">About</a></li>
-    </ul>
-  </nav>
+  <a class="site-logo" href="index.html" aria-label="ncii-ecosystem">
+    <img class="site-logo-img site-logo-img--light" src="assets/logo-light.png?v=3" alt="" width="28" height="28" />
+    <img class="site-logo-img site-logo-img--dark" src="assets/logo-dark.png" alt="" width="28" height="28" />
+  </a>
+  <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
+    <span class="site-burger" aria-hidden="true"></span>
+  </button>
+  <div class="site-nav-panel" id="site-nav-menu">
+    <nav aria-label="Site">
+      <ul class="site-topnav-links">
+        <li><a href="index.html" aria-current="page">Home</a></li>
+        <li><a href="database.html">Database</a></li>
+        <li><a href="primers.html">Primers</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </div>
 </header>
 
 <!-- ═══════════════════════════════════════════════

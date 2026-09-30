@@ -122,24 +122,13 @@ window.DatabaseRender = (function () {
     return bits.join(' — ');
   }
 
-  function sideMetaHtml(r) {
-    var escapeHtml = u().escapeHtml;
-    var authors =
-      r.authors && r.authors.length ? r.authors.join(', ') : '';
-    var time = u().formatDisplayDate(r);
-    if (!authors && !time) return '';
-    return (
-      '<div class="db-result-side">' +
-      (time
-        ? '<div class="db-result-side-time">' + escapeHtml(time) + '</div>'
-        : '<div class="db-result-side-time" aria-hidden="true"></div>') +
-      (authors
-        ? '<div class="db-result-side-authors">' +
-          escapeHtml(authors) +
-          '</div>'
-        : '') +
-      '</div>'
-    );
+  function authorsMatchOrg(authors, org, r) {
+    if (!authors) return false;
+    var a = u().norm(authors);
+    if (!a) return false;
+    if (org && a === u().norm(org)) return true;
+    if (r.source && a === u().norm(r.source)) return true;
+    return false;
   }
 
   function mediaHtml(r) {
@@ -180,21 +169,40 @@ window.DatabaseRender = (function () {
   function renderResult(r) {
     var escapeHtml = u().escapeHtml;
     var hasLink = !!r.sourceUrl;
+    var authors =
+      r.authors && r.authors.length ? r.authors.join(', ') : '';
+    var time = u().formatDisplayDate(r);
+    var org = metaLine(r);
+    var hideAuthors = authorsMatchOrg(authors, org, r);
+    var showAuthors = authors && !hideAuthors;
+
     var inner =
-      '<div class="db-result-title-block">' +
-      '<div class="db-result-type-row">' +
+      '<div class="db-result-top">' +
+      '<div class="db-result-top-left">' +
       '<span class="db-result-type">' +
       escapeHtml(r.medium || '') +
       '</span>' +
       techTagsHtml(r) +
       '</div>' +
+      (time
+        ? '<div class="db-result-side-time">' + escapeHtml(time) + '</div>'
+        : '<div class="db-result-side-time" aria-hidden="true"></div>') +
+      '</div>' +
       '<h2 class="db-result-title">' +
       renderTitleHtml(r) +
       '</h2>' +
-      '</div>' +
-      '<div class="db-result-desc"><p>' +
-      escapeHtml(metaLine(r)) +
-      '</p></div>';
+      '<div class="db-result-bottom' +
+      (hideAuthors ? ' db-result-bottom--org-only' : '') +
+      '">' +
+      (org
+        ? '<div class="db-result-org">' + escapeHtml(org) + '</div>'
+        : '<div class="db-result-org" aria-hidden="true"></div>') +
+      (showAuthors
+        ? '<div class="db-result-side-authors">' +
+          escapeHtml(authors) +
+          '</div>'
+        : '<div class="db-result-side-authors" aria-hidden="true"></div>') +
+      '</div>';
 
     var linkBlock = hasLink
       ? '<a href="' +
@@ -209,7 +217,6 @@ window.DatabaseRender = (function () {
       escapeHtml(r.id) +
       '">' +
       linkBlock +
-      sideMetaHtml(r) +
       mediaHtml(r) +
       '</div>'
     );
