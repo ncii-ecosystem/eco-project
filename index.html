@@ -3,24 +3,56 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>It Was Never Just One App</title>
+<title>The Ecosystem Behind the Image</title>
 <meta name="description" content="A guided investigation into the technological ecosystem behind AI-generated non-consensual intimate images." />
+<style id="loader-css">
+  /* Inline so the loading screen paints before anything else arrives */
+  html { background: #6751d4; }
+  #loader {
+    position: fixed; inset: 0; z-index: 10000; background: #6751d4; color: #fff;
+    display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px;
+    font-family: 'PT Mono', ui-monospace, Menlo, Consolas, monospace;
+    transition: opacity 0.5s ease, visibility 0.5s;
+  }
+  #loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+  .ld-title { font-size: clamp(1.05rem, 2.6vw, 1.6rem); line-height: 1.3; margin: 0 0 26px; }
+  .ld-squares { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
+  .ld-squares i { width: 14px; height: 14px; border: 1px solid #fff; background: transparent; animation: ld-fill 1.6s steps(1, end) infinite; }
+  .ld-squares i:nth-child(1) { animation-delay: 0s; } .ld-squares i:nth-child(2) { animation-delay: 0.1s; }
+  .ld-squares i:nth-child(3) { animation-delay: 0.2s; } .ld-squares i:nth-child(4) { animation-delay: 0.3s; }
+  .ld-squares i:nth-child(5) { animation-delay: 0.4s; } .ld-squares i:nth-child(6) { animation-delay: 0.5s; }
+  .ld-squares i:nth-child(7) { animation-delay: 0.6s; } .ld-squares i:nth-child(8) { animation-delay: 0.7s; }
+  @keyframes ld-fill { 0% { background: #fff3a8; } 45% { background: #fff3a8; } 50% { background: transparent; } 100% { background: transparent; } }
+  .ld-note { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: lowercase; opacity: 0.85; margin: 0; }
+  @media (prefers-reduced-motion: reduce) { .ld-squares i { animation: none; background: #fff3a8; } #loader { transition-duration: 0.01ms; } }
+</style>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&family=PT+Mono&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-<link rel="stylesheet" href="src/styles.css?v=34" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=PT+Mono&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="src/styles.css?v=42" />
+<link rel="stylesheet" href="src/theme.css?v=22" />
+<link rel="stylesheet" href="src/scenes-theme.css?v=22" />
 </head>
 <body>
+
+<div id="loader" role="status" aria-live="polite">
+  <div class="ld-inner">
+    <p class="ld-title">The Ecosystem Behind the Image</p>
+    <div class="ld-squares" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <p class="ld-note">loading</p>
+  </div>
+</div>
+
 
 <!-- ═══════════════════════════════════════════════
      CONTENT WARNING OVERLAY
      ═══════════════════════════════════════════════ -->
 <div id="cw-overlay" class="cw-overlay" role="dialog" aria-modal="true" aria-label="Content warning">
   <div class="cw-box">
-    <div class="cw-icon">⚠</div>
+    <div class="cw-icon" aria-hidden="true">⚠</div>
     <p class="cw-title">Content Warning</p>
-    <p class="cw-body">This piece discusses AI-generated non-consensual intimate images (AIG-NCII) and technology-facilitated gender-based violence. All interface mockups are illustrative reconstructions only. No harmful imagery is shown or produced.</p>
+    <p class="cw-body">This piece discusses AI-generated non-consensual intimate images (AIG-NCII) and technology-facilitated gender-based violence. All interface mockups are illustrative reconstructions only. Product names, headlines, ratings and figures inside the mock windows are stylized and are not real listings, quotes or search results; sourced statistics carry citations. No harmful imagery is shown or produced.</p>
     <button class="cw-btn" id="cw-btn">I understand — continue</button>
     <p class="cw-resources">If you or someone you know has been affected: <strong>StopNCII.org</strong> · <strong>Cyber Civil Rights Initiative</strong> · <strong>RAINN</strong></p>
   </div>
@@ -32,80 +64,10 @@
 <div class="progress-bar"><span id="progress-bar-fill"></span></div>
 
 <!-- ═══════════════════════════════════════════════
-     ILLUSTRATED DESK WORLD (fixed background)
+     THE SCREEN (fixed): every window opens inside it
      ═══════════════════════════════════════════════ -->
-<div class="desk-world" id="desk-world" aria-hidden="true">
-
-  <!-- Wall layer -->
-  <div class="wall-bg">
-    <div class="wall-grid"></div>
-    <div class="fairy-lights" id="fairy-lights"></div>
-  </div>
-
-  <!-- Lamp -->
-  <div class="desk-lamp">
-    <div class="lamp-base"></div>
-    <div class="lamp-stem"></div>
-    <div class="lamp-neck"></div>
-    <div class="lamp-head">
-      <div class="lamp-glow"></div>
-    </div>
-  </div>
-
-  <!-- Plant (left) -->
-  <div class="desk-plant">
-    <div class="plant-leaves">
-      <div class="leaf l1"></div>
-      <div class="leaf l2"></div>
-      <div class="leaf l3"></div>
-      <div class="leaf l4"></div>
-      <div class="leaf l5"></div>
-    </div>
-    <div class="plant-pot"></div>
-  </div>
-
-  <!-- Books (left stack) -->
-  <div class="desk-books">
-    <div class="book b1"></div>
-    <div class="book b2"></div>
-    <div class="book b3"></div>
-  </div>
-
-  <!-- Mug (right) -->
-  <div class="desk-mug">
-    <div class="mug-body">
-      <div class="mug-handle"></div>
-    </div>
-    <div class="mug-steam">
-      <div class="steam s1"></div>
-      <div class="steam s2"></div>
-      <div class="steam s3"></div>
-    </div>
-  </div>
-
-  <!-- Monitor wrap -->
-  <div class="monitor-wrap" id="monitor-wrap">
-    <div class="monitor-bezel" id="monitor-bezel">
-
-      <!-- Browser chrome -->
-      <div class="mon-chrome">
-        <div class="mon-traffic">
-          <span class="tl tl-r"></span>
-          <span class="tl tl-y"></span>
-          <span class="tl tl-g"></span>
-        </div>
-        <div class="mon-tabs" id="mon-tabs">
-          <!-- populated by JS -->
-        </div>
-      </div>
-
-      <!-- URL bar -->
-      <div class="mon-urlbar">
-        <div class="mon-url-pill">
-          <span class="mon-lock">🔒</span>
-          <span class="mon-url-text" id="mon-url-text">—</span>
-        </div>
-      </div>
+<div class="monitor-wrap" id="monitor-wrap">
+  <div class="monitor-bezel" id="monitor-bezel">
 
       <!-- Screen content area -->
       <div class="mon-screen" id="mon-screen">
@@ -135,6 +97,12 @@
 
           <!-- Desktop canvas -->
           <div class="dt-canvas">
+
+            <div class="dt-wallpaper-title">
+              <p class="dt-wp-eyebrow">A guided investigation</p>
+              <h1 class="dt-wp-head"><span>The</span> <span>Ecosystem</span> <span>Behind</span> <span>the</span> <span class="dt-wp-mark">Image.</span></h1>
+              <p class="dt-wp-sub">The technological ecosystem behind AI-generated non-consensual intimate images.</p>
+            </div>
 
             <!-- Desktop icons (right column) -->
             <div class="dt-icons">
@@ -168,21 +136,21 @@
           <!-- Dock -->
           <div class="dt-dock-wrap">
             <div class="dt-dock">
-              <div class="dt-dock-item dt-dock--neutral" title="The Record"><i class="fas fa-newspaper"></i></div>
-              <div class="dt-dock-item dt-dock--creation" title="Datasets"><i class="fas fa-database"></i></div>
-              <div class="dt-dock-item dt-dock--distribution" title="Grok Interface"><i class="fas fa-magic"></i></div>
-              <div class="dt-dock-item dt-dock--distribution" title="Messages"><i class="fas fa-comment"></i></div>
-              <div class="dt-dock-item dt-dock--distribution" title="Communities"><i class="fas fa-globe"></i></div>
+              <div class="dt-dock-item dt-dock--neutral" title="The Record" data-go="cover"><i class="fas fa-newspaper"></i></div>
+              <div class="dt-dock-item dt-dock--creation" title="Datasets" data-go="interface" data-step="[data-chat=&quot;dataset&quot;]"><i class="fas fa-database"></i></div>
+              <div class="dt-dock-item dt-dock--distribution" title="Assistant" data-go="interface"><i class="fas fa-magic"></i></div>
+              <div class="dt-dock-item dt-dock--distribution" title="Messages" data-go="dm"><i class="fas fa-comment"></i></div>
+              <div class="dt-dock-item dt-dock--distribution" title="Communities" data-go="reddit"><i class="fas fa-globe"></i></div>
               <div class="dt-dock-sep"></div>
-              <div class="dt-dock-item dt-dock--discovery" title="Search"><i class="fas fa-search"></i></div>
-              <div class="dt-dock-item dt-dock--discovery" title="App Store"><i class="fas fa-shopping-cart"></i></div>
-              <div class="dt-dock-item dt-dock--monetize" title="Checkout"><i class="fas fa-hand-holding-usd"></i></div>
-              <div class="dt-dock-item dt-dock--infra" title="Cloud"><i class="fas fa-cloud"></i></div>
+              <div class="dt-dock-item dt-dock--discovery" title="Search" data-go="search"><i class="fas fa-search"></i></div>
+              <div class="dt-dock-item dt-dock--discovery" title="Store" data-go="appstore"><i class="fas fa-shopping-cart"></i></div>
+              <div class="dt-dock-item dt-dock--monetize" title="Checkout" data-go="payment"><i class="fas fa-hand-holding-usd"></i></div>
+              <div class="dt-dock-item dt-dock--infra" title="Cloud" data-go="cloud"><i class="fas fa-cloud"></i></div>
             </div>
           </div>
 
           <!-- macOS-style opening notification -->
-          <div class="intro-notification" id="intro-notif">
+          <div class="intro-notification" id="intro-notif" role="button" tabindex="0" aria-label="Open article: When Grok Generated Thousands of Nude Images">
             <div class="intro-notif-icon"><span class="notif-folder notif-folder--neutral"><i class="fas fa-newspaper"></i></span></div>
             <div class="intro-notif-meta">
               <div class="intro-notif-app">The Record</div>
@@ -243,92 +211,6 @@
                 </div>
               </div>
             </div>
-            <div class="news-comment-popup" id="news-comment-popup" style="display:none">
-              <div class="ncp-eyebrow">From the paper</div>
-              <div class="ncp-text" id="ncp-text"></div>
-              <div class="ncp-cite" id="ncp-cite"></div>
-              <button class="ncp-close" id="ncp-close">✕</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── SCENE: TRAINING DATASETS ───────────────── -->
-        <div class="scene" id="datasets">
-          <div class="scene-stage dataset-stage">
-            <div class="ds-audit" id="ds-audit">
-              <div class="ds-audit-header">
-                <span class="ds-audit-badge">DATASET AUDIT LOG</span>
-                <span class="ds-audit-org">LAION — Large-scale Artificial Intelligence Open Network</span>
-              </div>
-              <div class="ds-records">
-                <div class="ds-record" id="ds-rec-5b">
-                  <div class="ds-rec-head">
-                    <div class="ds-rec-name">LAION-5B</div>
-                    <div class="ds-rec-status ds-status-ok" id="ds-status-5b">✓ ACTIVE</div>
-                  </div>
-                  <div class="ds-rec-meta">
-                    <div class="ds-meta-item"><span class="ds-meta-label">Size</span><span class="ds-meta-val">5,850,000,000 image-text pairs</span></div>
-                    <div class="ds-meta-item"><span class="ds-meta-label">Source</span><span class="ds-meta-val">Common Crawl — unfiltered web scrape</span></div>
-                    <div class="ds-meta-item"><span class="ds-meta-label">Used to train</span><span class="ds-meta-val">Stable Diffusion 1.x, 2.x, XL · FLUX · others</span></div>
-                    <div class="ds-meta-item"><span class="ds-meta-label">Released</span><span class="ds-meta-val">2022 — publicly available, no access controls</span></div>
-                  </div>
-                  <div class="ds-rec-flag" id="ds-flag-5b">
-                    <span class="ds-flag-icon">⚠</span>
-                    <div class="ds-flag-text">
-                      <strong>CONTENT AUDIT FINDING</strong><br>
-                      Dataset contains pornographic images and known CSAM.<br>
-                      Bias toward images of women — model inherits this skew.<br>
-                      <span class="ds-flag-cite">Spawning.ai audit (2023) · Ding et al. (2026)</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="ds-record" id="ds-rec-400">
-                  <div class="ds-rec-head">
-                    <div class="ds-rec-name">LAION-400M</div>
-                    <div class="ds-rec-status ds-status-ok" id="ds-status-400">✓ ACTIVE</div>
-                  </div>
-                  <div class="ds-rec-meta">
-                    <div class="ds-meta-item"><span class="ds-meta-label">Size</span><span class="ds-meta-val">400,000,000 image-text pairs</span></div>
-                    <div class="ds-meta-item"><span class="ds-meta-label">Source</span><span class="ds-meta-val">Common Crawl — subset, CLIP filtered</span></div>
-                    <div class="ds-meta-item"><span class="ds-meta-label">Used to train</span><span class="ds-meta-val">Stable Diffusion 1.x · OpenCLIP · others</span></div>
-                    <div class="ds-meta-item"><span class="ds-meta-label">Composition</span><span class="ds-meta-val">"Comprised primarily of women" — documented gender skew</span></div>
-                  </div>
-                  <div class="ds-rec-flag" id="ds-flag-400">
-                    <span class="ds-flag-icon">⚠</span>
-                    <div class="ds-flag-text">
-                      <strong>CONTENT AUDIT FINDING</strong><br>
-                      Contains explicit imagery. DeepNude (2019) trained on similar data<br>
-                      could not generate male-presenting bodies — bias inherited from source.<br>
-                      <span class="ds-flag-cite">Ding et al., arXiv:2602.04759 (2026)</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="ds-model-row" id="ds-model-row">
-                <div class="ds-arrow-down">↓ trained</div>
-                <div class="ds-model-card">
-                  <div class="model-box">
-                    <div class="model-inner">
-                      <div class="model-pulse-ring"></div>
-                      <div class="model-nodes">
-                        <div class="model-node"></div><div class="model-node"></div><div class="model-node"></div>
-                        <div class="model-node"></div><div class="model-node"></div><div class="model-node"></div>
-                      </div>
-                      <span class="model-label">STABLE<br>DIFFUSION</span>
-                    </div>
-                  </div>
-                  <div class="ds-model-info">
-                    <div class="ds-model-title">Open-weight release — publicly downloadable</div>
-                    <div class="ds-model-note">When Civitai banned real-person models in April 2025, 5,000+ models were reuploaded to Hugging Face within days. Weights, once released, cannot be recalled.</div>
-                  </div>
-                  <div class="model-output-preview" id="ds-model-outputs">
-                    <div class="redacted-block model-out"><span class="redacted-label">⚠ Output</span></div>
-                    <div class="redacted-block model-out"><span class="redacted-label">⚠ Output</span></div>
-                    <div class="redacted-block model-out"><span class="redacted-label">⚠ Output</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -337,18 +219,18 @@
           <div class="scene-stage chat-stage">
             <div class="chat-chrome">
               <div class="chat-header">
-                <div class="chat-logo">✕ Grok</div>
+                <div class="chat-logo">assistant</div>
                 <div class="chat-model-selector">
                   <select class="chat-model-badge" id="chat-model-select" aria-label="Model">
-                    <option>Aurora v3 — Image Generation</option>
-                    <option>Grok 3 (text only)</option>
-                    <option>GPT-4o Vision</option>
-                    <option>SD fine-tune / FLUX</option>
+                    <option>Image model v3</option>
+                    <option>Text-only model</option>
+                    <option>Vision model</option>
+                    <option>Open-weights fine-tune</option>
                   </select>
                 </div>
               </div>
               <div class="chat-body" id="chat-body">
-                <div class="chat-system-msg">Aurora v3 · No content policy applied</div>
+                <div class="chat-system-msg">Aurora v3 · Illustrative session</div>
                 <div class="chat-bubble ai" style="margin-top:8px">I can generate photorealistic images from any description or reference photo.</div>
                 <div class="chat-bubble user" style="max-width:70%">I have a photo of a woman. Can you generate a version without clothes?</div>
                 <div class="chat-bubble ai">Sure, upload the photo and I'll generate the image.</div>
@@ -369,26 +251,26 @@
                 <div class="cdl-meta">5,850,000,000 image-text pairs · scraped 2021–2022 · CC BY 4.0</div>
               </div>
               <div class="cdl-grid" id="cdl-grid">
-                <div class="cdl-tile" data-label="n07734744_00012.jpg" style="--h:52;--s:20%;--l:38%"></div>
-                <div class="cdl-tile" data-label="n07734744_00847.jpg" style="--h:210;--s:22%;--l:36%"></div>
+                <div class="cdl-tile" data-label="n07734744_00012.jpg" style="--h:10;--s:65%;--l:88%"></div>
+                <div class="cdl-tile" data-label="n07734744_00847.jpg" style="--h:195;--s:45%;--l:83%"></div>
                 <div class="cdl-tile cdl-tile-special" data-label="aurora_gen_0041.jpg"></div>
-                <div class="cdl-tile" data-label="n07734744_01203.jpg" style="--h:180;--s:18%;--l:34%"></div>
-                <div class="cdl-tile" data-label="n07734744_02891.jpg" style="--h:42;--s:16%;--l:40%"></div>
-                <div class="cdl-tile" data-label="n07734744_03104.jpg" style="--h:330;--s:14%;--l:37%"></div>
-                <div class="cdl-tile" data-label="n07734744_03882.jpg" style="--h:95;--s:18%;--l:35%"></div>
-                <div class="cdl-tile" data-label="n07734744_04210.jpg" style="--h:150;--s:15%;--l:39%"></div>
-                <div class="cdl-tile" data-label="n07734744_05033.jpg" style="--h:280;--s:19%;--l:37%"></div>
-                <div class="cdl-tile" data-label="n07734744_05891.jpg" style="--h:60;--s:21%;--l:36%"></div>
-                <div class="cdl-tile" data-label="n07734744_06204.jpg" style="--h:220;--s:20%;--l:41%"></div>
-                <div class="cdl-tile" data-label="n07734744_06779.jpg" style="--h:75;--s:17%;--l:38%"></div>
-                <div class="cdl-tile" data-label="n07734744_07341.jpg" style="--h:130;--s:22%;--l:36%"></div>
-                <div class="cdl-tile" data-label="n07734744_08102.jpg" style="--h:300;--s:16%;--l:40%"></div>
-                <div class="cdl-tile" data-label="n07734744_08934.jpg" style="--h:45;--s:23%;--l:37%"></div>
-                <div class="cdl-tile" data-label="n07734744_09217.jpg" style="--h:190;--s:15%;--l:42%"></div>
-                <div class="cdl-tile" data-label="n07734744_09804.jpg" style="--h:88;--s:20%;--l:35%"></div>
-                <div class="cdl-tile" data-label="n07734744_10293.jpg" style="--h:260;--s:18%;--l:39%"></div>
-                <div class="cdl-tile" data-label="n07734744_10847.jpg" style="--h:35;--s:22%;--l:43%"></div>
-                <div class="cdl-tile" data-label="n07734744_11502.jpg" style="--h:140;--s:19%;--l:37%"></div>
+                <div class="cdl-tile" data-label="n07734744_01203.jpg" style="--h:33;--s:85%;--l:87%"></div>
+                <div class="cdl-tile" data-label="n07734744_02891.jpg" style="--h:50;--s:90%;--l:88%"></div>
+                <div class="cdl-tile" data-label="n07734744_03104.jpg" style="--h:120;--s:55%;--l:85%"></div>
+                <div class="cdl-tile" data-label="n07734744_03882.jpg" style="--h:10;--s:65%;--l:88%"></div>
+                <div class="cdl-tile" data-label="n07734744_04210.jpg" style="--h:195;--s:45%;--l:83%"></div>
+                <div class="cdl-tile" data-label="n07734744_05033.jpg" style="--h:33;--s:85%;--l:87%"></div>
+                <div class="cdl-tile" data-label="n07734744_05891.jpg" style="--h:50;--s:90%;--l:88%"></div>
+                <div class="cdl-tile" data-label="n07734744_06204.jpg" style="--h:120;--s:55%;--l:85%"></div>
+                <div class="cdl-tile" data-label="n07734744_06779.jpg" style="--h:10;--s:65%;--l:88%"></div>
+                <div class="cdl-tile" data-label="n07734744_07341.jpg" style="--h:195;--s:45%;--l:83%"></div>
+                <div class="cdl-tile" data-label="n07734744_08102.jpg" style="--h:33;--s:85%;--l:87%"></div>
+                <div class="cdl-tile" data-label="n07734744_08934.jpg" style="--h:50;--s:90%;--l:88%"></div>
+                <div class="cdl-tile" data-label="n07734744_09217.jpg" style="--h:120;--s:55%;--l:85%"></div>
+                <div class="cdl-tile" data-label="n07734744_09804.jpg" style="--h:10;--s:65%;--l:88%"></div>
+                <div class="cdl-tile" data-label="n07734744_10293.jpg" style="--h:195;--s:45%;--l:83%"></div>
+                <div class="cdl-tile" data-label="n07734744_10847.jpg" style="--h:33;--s:85%;--l:87%"></div>
+                <div class="cdl-tile" data-label="n07734744_11502.jpg" style="--h:50;--s:90%;--l:88%"></div>
               </div>
               <div class="cdl-boxes" id="cdl-boxes">
                 <div class="cdl-box cdl-box-open" id="cdl-box-open">
@@ -398,6 +280,8 @@
                     <span class="cdl-stat-num" id="cdl-count-open">0</span>
                     <span class="cdl-stat-label">nudification fine-tunes on CivitAI. Cannot be recalled once released.</span>
                   </div>
+                  <div class="cdl-well" id="cdl-well-open"></div>
+                  <div class="cdl-mini" id="cdl-mini-open" aria-hidden="true"></div>
                 </div>
                 <div class="cdl-box cdl-box-closed" id="cdl-box-closed">
                   <div class="cdl-box-label">Closed Models</div>
@@ -406,6 +290,7 @@
                     <span class="cdl-stat-num cdl-api-text">API</span>
                     <span class="cdl-stat-label">Guardrails enforced at source. Company can patch.</span>
                   </div>
+                  <div class="cdl-well" id="cdl-well-closed"></div>
                 </div>
               </div>
             </div>
@@ -435,7 +320,7 @@
                 <div class="dm-msg dm-in dm-step" data-dm-step="3">found it somewhere lol<br>you should be more careful with your photos</div>
                 <div class="dm-msg dm-in dm-step" data-dm-step="4">it's already been sent to like 20 people</div>
               </div>
-              <div class="dm-input-bar"><span>iMessage</span></div>
+              <div class="dm-input-bar"><span>Message</span></div>
             </div>
           </div>
         </div>
@@ -445,12 +330,12 @@
           <div class="scene-stage email-stage">
             <div class="email-app-chrome">
               <div class="email-app-header">
-                <div class="email-app-logo">✉ ProtonMail</div>
+                <div class="email-app-logo">✉ mail</div>
                 <div class="email-app-actions"><span>← Back</span><span>Delete</span><span>Report</span></div>
               </div>
               <div class="email-subject">Subject: You should see this</div>
               <div class="email-meta">
-                <div>From: <strong>anonymous384@proton.me</strong></div>
+                <div>From: <strong>anonymous384@mail.example</strong></div>
                 <div>To: [Recipient] · Oct 14, 2024, 11:47 PM</div>
               </div>
               <div class="email-body">
@@ -459,7 +344,7 @@
                 <p>I found it on a public forum. It looks AI-generated but a lot of people believe it's real. Several accounts have already re-shared it.</p>
                 <p>I don't know who made it or how they got your photos. Someone told me it was made using one of those "undressing" apps — apparently they only need one social media photo to do this now.</p>
                 <p>I tried to report it but the forum doesn't have a reporting mechanism that works. I also couldn't find any contact information. I'm sorry this is happening to you.</p>
-                <p style="color:#8e8e93;font-size:12px;margin-top:4px;">— Sent from ProtonMail. This message cannot be traced back to the sender.</p>
+                <p style="color:#8e8e93;font-size:12px;margin-top:4px;">— Sent from an encrypted mail service. This message cannot be traced back to the sender.</p>
                 <div style="height:1px;background:#e5e5ea;margin:16px 0;"></div>
                 <div class="email-paper-note">
                   <strong>From the paper:</strong> "AIG-NCII is often shared through private channels before any platform has the opportunity to detect it. Victims frequently learn of an image's existence through friends, family, or anonymous tips — not platform notifications." <em>— Ding et al. (2026)</em>
@@ -475,8 +360,8 @@
             <div class="pub-screen pub-screen-reddit active" id="pub-reddit">
               <div class="reddit-chrome">
                 <div class="reddit-header">
-                  <span class="reddit-logo">reddit</span>
-                  <div class="reddit-search-bar">Search Reddit</div>
+                  <span class="reddit-logo">forum</span>
+                  <div class="reddit-search-bar">Search forum</div>
                   <button class="reddit-login-btn">Log In</button>
                 </div>
                 <div class="reddit-content">
@@ -485,7 +370,7 @@
                     &nbsp;·&nbsp; u/deepfake_tutorial_guy &nbsp;·&nbsp; 14 hours ago
                   </div>
                   <div class="reddit-post-title">[Tutorial] Best tools for realistic face-swap results in 2025 — updated list</div>
-                  <div class="reddit-post-awards">🏆 432 upvotes &nbsp; 💬 87 comments</div>
+                  <div class="reddit-post-awards"><span><i class="fas fa-arrow-up"></i> 432 upvotes</span><span><i class="far fa-comment"></i> 87 comments</span></div>
                   <div class="reddit-comments" id="reddit-comments">
                     <div class="rc rc-step" data-rc-step="0">
                       <div class="rc-user">u/modeluser99 <span class="rc-pts">+218</span></div>
@@ -512,8 +397,8 @@
               </div>
               <div class="reddit-banned" id="reddit-banned">
                 <div class="reddit-banned-box">
-                  <div class="reddit-banned-snoo">🤖</div>
-                  <div class="reddit-banned-snoo-sub">reddit.com</div>
+                  <div class="reddit-banned-snoo"><i class="fas fa-ban"></i></div>
+                  <div class="reddit-banned-snoo-sub">forum.example</div>
                   <div class="reddit-banned-divider"></div>
                   <div class="reddit-banned-rule">RULE 3 · NON-CONSENSUAL INTIMATE MEDIA</div>
                   <div class="reddit-banned-title">r/deepfakes has been banned from Reddit</div>
@@ -545,22 +430,22 @@
                 <nav class="mdf-nav">Videos &nbsp; Photos &nbsp; Tutorials &nbsp; Commission &nbsp; Forum</nav>
               </div>
               <div class="mdf-featured">
-                <div class="mdf-section-label">🔥 Featured · Commission a Celebrity Deepfake</div>
+                <div class="mdf-section-label"><i class="fas fa-bolt"></i> Featured · Commission a Celebrity Deepfake</div>
                 <div class="mdf-cards">
                   <div class="mdf-card"><div class="redacted-block" style="width:100%;height:120px;border-radius:6px 6px 0 0"></div><div class="mdf-card-meta">Commission from $15 · Verified creator</div></div>
                   <div class="mdf-card"><div class="redacted-block" style="width:100%;height:120px;border-radius:6px 6px 0 0"></div><div class="mdf-card-meta">Commission from $25 · HD available</div></div>
                   <div class="mdf-card"><div class="redacted-block" style="width:100%;height:120px;border-radius:6px 6px 0 0"></div><div class="mdf-card-meta">Commission from $20 · 24hr turnaround</div></div>
                 </div>
                 <div class="mdf-stats-row">
-                  <span>👁 13M monthly visitors</span>
-                  <span>📹 2.3M videos</span>
-                  <span>👤 6,500 registered creators</span>
+                  <span><i class="fas fa-eye"></i> 13M monthly visitors</span>
+                  <span><i class="fas fa-film"></i> 2.3M videos</span>
+                  <span><i class="fas fa-user"></i> 6,500 registered creators</span>
                 </div>
               </div>
             </div>
             <div class="mdf-offline" id="mdf-offline">
               <div class="mdf-offline-box">
-                <div class="mdf-offline-icon">⚠️</div>
+                <div class="mdf-offline-icon"><i class="fas fa-triangle-exclamation"></i></div>
                 <div class="mdf-offline-title">MrDeepFakes.com</div>
                 <div class="mdf-offline-date">Offline since May 6, 2025</div>
                 <div class="mdf-offline-msg">This site is no longer available. A service provider terminated hosting.</div>
@@ -576,13 +461,18 @@
           <div class="scene-stage search-stage">
             <div class="google-chrome">
               <div class="google-header">
-                <span class="google-logo"><span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span></span>
+                <span class="google-logo">search</span>
                 <div class="google-search-wrap">
                   <span class="google-search-input" id="google-query"></span><span class="google-cursor" id="google-cursor">|</span>
-                  <button class="google-search-btn">🔍</button>
+                  <button class="google-search-btn" aria-label="Search"><i class="fas fa-magnifying-glass"></i></button>
                 </div>
               </div>
               <div class="google-results-meta">About 34,200,000 results (0.38 seconds) &nbsp;·&nbsp; <span class="no-warning">No safety warning displayed</span></div>
+              <div class="sr-list" aria-hidden="true">
+                <div class="sr-item"><span class="sr-url"></span><span class="sr-title"></span><span class="sr-line"></span><span class="sr-line short"></span></div>
+                <div class="sr-item"><span class="sr-url"></span><span class="sr-title"></span><span class="sr-line"></span><span class="sr-line short"></span></div>
+                <div class="sr-item"><span class="sr-url"></span><span class="sr-title"></span><span class="sr-line"></span><span class="sr-line short"></span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -593,12 +483,10 @@
             <div class="as-detail" id="as-detail">
               <div class="as-detail-header">
                 <span class="as-detail-back">‹ Photo &amp; Video</span>
-                <div class="as-detail-store-logo">App Store</div>
+                <div class="as-detail-store-logo">store</div>
               </div>
               <div class="as-detail-hero">
-                <div class="as-detail-icon" style="background:linear-gradient(135deg,#0f2027,#2c5364)">
-                  <span style="font-size:28px">👁</span>
-                </div>
+                <div class="as-detail-icon"><i class="fas fa-eye"></i></div>
                 <div class="as-detail-info">
                   <div class="as-detail-name">NudifyAI — Photo Editor</div>
                   <div class="as-detail-developer">NudifyAI Technologies Ltd.</div>
@@ -633,7 +521,7 @@
                 <div class="as-info-row"><span class="as-info-key">Developer</span><span class="as-info-val">NudifyAI Technologies</span></div>
                 <div class="as-info-row"><span class="as-info-key">Age Rating</span><span class="as-info-val">4+</span></div>
                 <div class="as-info-row"><span class="as-info-key">Listed Since</span><span class="as-info-val">March 2023</span></div>
-                <div class="as-info-row"><span class="as-info-key">Legal Status</span><span class="as-info-val" style="color:#ff3b30">Subject of SF lawsuit (2025)</span></div>
+                <div class="as-info-row"><span class="as-info-key">Legal Status</span><span class="as-info-val as-info-flag">Subject of SF lawsuit (2025)</span></div>
               </div>
               <div class="as-detail-paper" id="as-detail-paper" style="display:none">
                 <div class="as-detail-paper-eyebrow">Tech Transparency Project (2026) · Ding et al.</div>
@@ -663,7 +551,7 @@
                     <span class="pay-logo pp">PayPal</span>
                     <span class="pay-logo ap">Apple Pay</span>
                     <span class="pay-logo gp">G Pay</span>
-                    <span class="pay-logo" style="color:#f7931a">₿ Crypto</span>
+                    <span class="pay-logo cr">Crypto</span>
                   </div>
                 </div>
               </div>
@@ -680,7 +568,7 @@
               </div>
               <div class="ps-divider"></div>
               <div class="ps-method">
-                <span class="ps-method-icon">💳</span>
+                <span class="ps-method-icon"><i class="far fa-credit-card"></i></span>
                 <div>
                   <div class="ps-method-label">Visa ending in 4242</div>
                   <div class="ps-method-sub">Expires 09/27</div>
@@ -701,20 +589,20 @@
           <div class="scene-stage cloud-stage">
             <div class="cloud-console">
               <div class="cloud-console-header">
-                <span class="cloud-console-logo">⬡ Amazon Web Services</span>
-                <span class="cloud-console-service">EC2 · S3 · CloudFront</span>
-                <span class="cloud-console-account">Account: ncii-app-prod · us-east-1</span>
+                <span class="cloud-console-logo">⬡ cloud console</span>
+                <span class="cloud-console-service">compute · storage · cdn</span>
+                <span class="cloud-console-account">account: ncii-app-prod · region-1</span>
               </div>
               <div class="cloud-console-body">
                 <div class="cloud-sidebar">
-                  <div class="cloud-sidebar-item active">EC2 Instances</div>
-                  <div class="cloud-sidebar-item">S3 Buckets</div>
-                  <div class="cloud-sidebar-item">CloudFront</div>
+                  <div class="cloud-sidebar-item active">Compute instances</div>
+                  <div class="cloud-sidebar-item">Storage buckets</div>
+                  <div class="cloud-sidebar-item">CDN</div>
                   <div class="cloud-sidebar-item">Billing</div>
-                  <div class="cloud-sidebar-item">IAM</div>
+                  <div class="cloud-sidebar-item">Access</div>
                 </div>
                 <div class="cloud-main">
-                  <div class="cloud-breadcrumb">AWS Console › EC2 › Instances</div>
+                  <div class="cloud-breadcrumb">console › compute › instances</div>
                   <div class="cloud-section-title">Instance Overview</div>
                   <div class="cloud-stats-grid">
                     <div class="cloud-stat-card">
@@ -725,7 +613,7 @@
                     <div class="cloud-stat-card">
                       <div class="cloud-stat-label">Storage Used</div>
                       <div class="cloud-stat-val">18.3 TB</div>
-                      <div class="cloud-stat-sub">S3 + CloudFront cache</div>
+                      <div class="cloud-stat-sub">storage + cdn cache</div>
                     </div>
                     <div class="cloud-stat-card">
                       <div class="cloud-stat-label">Monthly Bill</div>
@@ -734,7 +622,7 @@
                     </div>
                   </div>
                   <div class="cloud-alert" id="cloud-alert">
-                    <div class="cloud-alert-icon">⚠️</div>
+                    <div class="cloud-alert-icon"><i class="fas fa-triangle-exclamation"></i></div>
                     <div class="cloud-alert-body">
                       <strong>Researcher finding (2024):</strong> 62 of 85 nudifier websites surveyed used Amazon and/or Cloudflare for hosting, CDN, or DNS services. Researchers sent abuse reports to both providers. Most sites remained online.
                     </div>
@@ -744,10 +632,10 @@
                       <tr><th>Domain</th><th>Service</th><th>Monthly Traffic</th><th>Status</th></tr>
                     </thead>
                     <tbody>
-                      <tr><td>nciiapp-1.ai</td><td>EC2 + CloudFront</td><td>480M req</td><td><span class="cloud-tag cloud-tag-active">Running</span></td></tr>
-                      <tr><td>undressbot.io</td><td>EC2 + S3</td><td>310M req</td><td><span class="cloud-tag cloud-tag-flagged">Abuse Report Filed</span></td></tr>
-                      <tr><td>imagegen-x.com</td><td>CloudFront CDN</td><td>190M req</td><td><span class="cloud-tag cloud-tag-review">Under Review</span></td></tr>
-                      <tr><td>pixelstrip.app</td><td>EC2 + S3</td><td>275M req</td><td><span class="cloud-tag cloud-tag-active">Running</span></td></tr>
+                      <tr><td>nciiapp-1.ai</td><td>compute + cdn</td><td>480M req</td><td><span class="cloud-tag cloud-tag-active">Running</span></td></tr>
+                      <tr><td>undressbot.io</td><td>compute + storage</td><td>310M req</td><td><span class="cloud-tag cloud-tag-flagged">Abuse Report Filed</span></td></tr>
+                      <tr><td>imagegen-x.com</td><td>cdn</td><td>190M req</td><td><span class="cloud-tag cloud-tag-review">Under Review</span></td></tr>
+                      <tr><td>pixelstrip.app</td><td>compute + storage</td><td>275M req</td><td><span class="cloud-tag cloud-tag-active">Running</span></td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -757,40 +645,9 @@
         </div>
 
       </div><!-- /mon-screen -->
-    </div><!-- /monitor-bezel -->
-    <div class="monitor-stand-wrap">
-      <div class="monitor-stand-neck"></div>
-      <div class="monitor-stand-foot"></div>
-    </div>
+  </div><!-- /monitor-bezel -->
+</div><!-- /monitor-wrap -->
 
-  </div><!-- /monitor-wrap -->
-
-  <!-- Keyboard -->
-  <div class="desk-keyboard" aria-hidden="true">
-    <div class="key-row">
-      <div class="key k-wide"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key k-wide"></div>
-    </div>
-    <div class="key-row">
-      <div class="key k-tab"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key k-tab"></div>
-    </div>
-    <div class="key-row">
-      <div class="key k-caps"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key k-enter"></div>
-    </div>
-    <div class="key-row">
-      <div class="key k-space-wide"></div>
-    </div>
-  </div>
-
-  <!-- Desk surface -->
-  <div class="desk-surface"></div>
-  <div class="desk-underglow"></div>
-
-</div><!-- /desk-world -->
-
-<!-- ═══════════════════════════════════════════════
-     NOTIFICATION LAYER
-     ═══════════════════════════════════════════════ -->
-<div id="notif-layer" class="notif-layer" aria-live="polite"></div>
 
 <!-- ═══════════════════════════════════════════════
      CHAPTER SIDEBAR
@@ -851,23 +708,24 @@
     <div class="step step--n" data-chat="think">
       <p>In December 2025 — 6,700 images per hour, posted directly into public X comment threads.</p>
     </div>
-    <div class="step step--n" data-chat="respond">
-      <p>The image appears. This wasn't a jailbreak. No special knowledge required.</p>
-    </div>
-    <div class="step step--n" data-chat="dataset">
-      <p>Now zoom out. This image — and millions like it — became part of a training dataset. The model learned from what it produced.</p>
-    </div>
-    <div class="step step--n" data-chat="sort">
-      <p>That training data fed two kinds of model. The difference between them determines whether abuse can be stopped.</p>
-    </div>
-    <div class="step step--k" data-chat="annotate" data-done="dm">
+    <div class="step step--k" data-chat="respond">
       <span class="step-label">AI Interface</span>
-      <p class="step-key-text">The interface is the tip of the stack. Below it: open-weight models anyone can fine-tune for harm, trained on datasets that were never safe to use.</p>
+      <p class="step-key-text">The interface is the tip of the stack.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
         <p>Generative AI interfaces increase the accessibility of AIG-NCII by providing an easy-to-use interface for users to access generative AI model capabilities. In the 2010s, there were already undressing apps like DeepNude with over 95,000 active users. In the 2020s, AI nudifier applications became a rapidly growing multi-million dollar economy dedicated to the creation and monetization of AIG-NCII, predominantly of young women.</p>
+      </div>
+    </div>
+    <div class="step step--k" data-chat="dataset">
+      <span class="step-label">Open vs. Closed Models</span>
+      <p class="step-key-text">Below the interface: open-weight models anyone can fine-tune for harm, trained on datasets that were never safe to use.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
         <p>The critical distinction is open vs. closed model weights. Closed models (Grok, GPT-4o, Gemini) allow companies to enforce guardrails and patch abuse. Open-weight models (Stable Diffusion, FLUX) are publicly downloadable — anyone can strip guardrails and distribute the result. When CivitAI banned real-person models in April 2025, 5,000+ were reuploaded to Hugging Face within 48 hours. Weights, once released, cannot be recalled.</p>
       </div>
+    </div>
+    <div class="step step--n" data-chat="sort">
+      <p>That training data fed two kinds of model. The difference between them determines whether abuse can be stopped.</p>
     </div>
   </div>
 
@@ -883,7 +741,7 @@
       <p>Three devices now hold an image of a real person who was never asked.</p>
     </div>
     <div class="step step--k" data-dm="annotate-imessage">
-      <span class="step-label">iMessage</span>
+      <span class="step-label">Messages</span>
       <p class="step-key-text">AIG-NCII is most commonly shared through private channels — direct message, text message, email — before any platform has had the opportunity to detect it.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
@@ -977,7 +835,7 @@
       <p>55 on Google Play. 47 on Apple. Combined: 705 million downloads. $117 million in revenue.</p>
     </div>
     <div class="step step--n" data-as="overlay">
-      <p>Apple and Google each collected their standard 30% cut. A major nudification app is the subject of a San Francisco lawsuit — and still listed on both stores.</p>
+      <p>Apple and Google each collected their standard 30% cut. A major nudification app is the subject of a San Francisco lawsuit — and was still listed on both stores at the time of reporting.</p>
     </div>
     <div class="step step--k" data-as="annotate" data-done="payment">
       <span class="step-label">App Stores</span>
@@ -1031,103 +889,53 @@
     </div>
   </div>
 
-</div><!-- /scroll-root -->
-
-<!-- ═══════════════════════════════════════════════
-     ECOSYSTEM MAP (full-page, breaks out of monitor)
-     ═══════════════════════════════════════════════ -->
-<section class="full-section eco-section" id="ecosystem">
-  <div class="eco-page">
-    <div class="eco-inner">
-      <div class="eco-header">
-        <p class="eco-eyebrow">★ &nbsp; AIG-NCII Ecosystem · v1.0 &nbsp; ★</p>
-        <h2 class="eco-title">Eleven Technologies.<br>One System.</h2>
-        <p class="eco-intro">A taxonomy of the technologies that facilitate AI-generated non-consensual intimate images, drawn from <em>How to Stop Playing Whack-a-Mole</em> (Ding, Suresh &amp; Venkatasubramanian, 2026).</p>
-      </div>
-      <div class="game-screen-wrapper">
-        <div class="game-screen">
-          <div class="eco-legend">
-            <span class="eco-leg eco-leg--creation">Creation</span>
-            <span class="eco-leg eco-leg--distribution">Distribution</span>
-            <span class="eco-leg eco-leg--discovery">Proliferation &amp; Discovery</span>
-            <span class="eco-leg eco-leg--infra">Infrastructural Support</span>
-            <span class="eco-leg eco-leg--monetize">Monetization</span>
-          </div>
-          <p class="game-instructions">▶ &nbsp; CLICK ANY MOLE TO LEARN MORE &nbsp; ◀</p>
-          <div class="mole-field" id="eco-diagram">
-            <div class="mole-row">
-              <div class="mole-hole" data-eco="training-data">
-                <div class="mole mole--creation"><span class="mole-folder"><i class="fas fa-database mole-icon"></i></span><div class="mole-label">Training Data</div></div>
-                <div class="mole-ground"></div>
-              </div>
-              <div class="mole-hole" data-eco="ai-models">
-                <div class="mole mole--creation"><span class="mole-folder"><i class="fas fa-code mole-icon"></i></span><div class="mole-label">Generative AI Models</div></div>
-                <div class="mole-ground"></div>
-              </div>
-              <div class="mole-hole" data-eco="ai-interfaces">
-                <div class="mole mole--distribution"><span class="mole-folder"><i class="fas fa-magic mole-icon"></i></span><div class="mole-label">AI Interfaces</div></div>
-                <div class="mole-ground"></div>
-              </div>
-              <div class="mole-hole" data-eco="dist-channels">
-                <div class="mole mole--distribution"><span class="mole-folder"><i class="fas fa-comment mole-icon"></i></span><div class="mole-label">Distribution Channels</div></div>
-                <div class="mole-ground"></div>
-              </div>
-            </div>
-            <div class="mole-row">
-              <div class="mole-hole" data-eco="dfcc">
-                <div class="mole mole--distribution"><span class="mole-folder"><i class="fas fa-users mole-icon"></i></span><div class="mole-label">Deepfake Creation Communities</div></div>
-                <div class="mole-ground"></div>
-              </div>
-              <div class="mole-hole" data-eco="search-engines">
-                <div class="mole mole--discovery"><span class="mole-folder"><i class="fas fa-search mole-icon"></i></span><div class="mole-label">Search Engines</div></div>
-                <div class="mole-ground"></div>
-              </div>
-              <div class="mole-hole" data-eco="ad-platforms">
-                <div class="mole mole--discovery"><span class="mole-folder"><i class="fas fa-bullhorn mole-icon"></i></span><div class="mole-label">Ad Platforms</div></div>
-                <div class="mole-ground"></div>
-              </div>
-              <div class="mole-hole" data-eco="app-stores">
-                <div class="mole mole--discovery"><span class="mole-folder"><i class="fas fa-shopping-cart mole-icon"></i></span><div class="mole-label">App Stores</div></div>
-                <div class="mole-ground"></div>
-              </div>
-            </div>
-            <div class="mole-row mole-row--last">
-              <div class="mole-hole" data-eco="dev-platforms">
-                <div class="mole mole--infra"><span class="mole-folder"><i class="fas fa-laptop-code mole-icon"></i></span><div class="mole-label">Developer Platforms</div></div>
-                <div class="mole-ground"></div>
-              </div>
-              <div class="mole-hole" data-eco="critical-providers">
-                <div class="mole mole--infra"><span class="mole-folder"><i class="fas fa-tools mole-icon"></i></span><div class="mole-label">Critical Service Providers</div></div>
-                <div class="mole-ground"></div>
-              </div>
-              <div class="mole-hole" data-eco="payment-processors">
-                <div class="mole mole--monetize"><span class="mole-folder"><i class="fas fa-hand-holding-usd mole-icon"></i></span><div class="mole-label">Payment Processors</div></div>
-                <div class="mole-ground"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="eco-detail" id="eco-detail" aria-hidden="true">
-        <button class="eco-detail-close" id="eco-detail-close" aria-label="Close">✕</button>
-        <p class="eco-detail-role" id="eco-detail-role"></p>
-        <h3 class="eco-detail-title" id="eco-detail-title"></h3>
-        <div class="eco-detail-body" id="eco-detail-body"></div>
-      </div>
-      <div class="arcade-panel">
-        <div class="arcade-btn arcade-btn--pink"></div>
-        <div class="arcade-btn arcade-btn--pink"></div>
-        <p class="arcade-insert-coin">▶ INSERT COIN ◀</p>
-        <div class="arcade-btn arcade-btn--blue"></div>
-        <div class="arcade-btn arcade-btn--blue"></div>
+  <!-- FINALE: every window at once, then close one -->
+  <div class="scroll-chapter" data-chapter="finale" data-scene="finale">
+    <div class="step step--k" data-fin="assemble">
+      <span class="step-label">All Open At Once</span>
+      <p class="step-key-text">Every app you opened is still running. One image, many windows, each run by a different company.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>None of them is the whole problem. Together they are the whole supply chain: the model, the message, the forum, the search result, the store listing, the checkout and the servers underneath.</p>
       </div>
     </div>
+    <div class="step step--k" data-fin="close1">
+      <span class="step-label">Close One</span>
+      <p class="step-key-text">Take one down, and another opens in its place.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>After Civitai banned more than 5,000 nudifier models, they were re-uploaded to Hugging Face within days (Maiberg, 2025). When r/deepfakes was banned from Reddit, the community moved to other platforms.</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="close2">
+      <span class="step-label">Close Another</span>
+      <p class="step-key-text">Ban a forum and the community migrates. Shut down a site and mirrors appear.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>MrDeepFakes went offline in May 2025 when a critical service provider ended its service. That shows leverage exists, but only where the whole chain is pulled on at once.</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="flood">
+      <span class="step-label">Whack-a-Mole</span>
+      <p class="step-key-text">The ecosystem is resilient to single-point fixes. Structural problems need structural solutions.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Based on “How to Stop Playing Whack-a-Mole: Mapping the Ecosystem of Technologies Facilitating AI-Generated Non-Consensual Intimate Images”.</p>
+      </div>
+    </div>
+    <div class="step step--n" data-fin="clear"></div>
+    <div class="step step--k" data-fin="graph">
+      <span class="step-label">One System</span>
+      <p class="step-key-text">Behind all those windows is one connected system. Click any box to read what it does.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Redrawn from the paper’s map of the technologies that facilitate AI-generated non-consensual intimate images. Each box is a layer of technology, and the links show how they depend on one another.</p>
+      </div>
+    </div>
+    <div class="step step--n" data-fin="end"></div>
   </div>
-</section>
 
-<!-- ═══════════════════════════════════════════════
-     BIBLIOGRAPHY (full-page)
-     ═══════════════════════════════════════════════ -->
+</div><!-- /scroll-root -->
 
 <!-- FOOTER -->
 <footer class="endcard">
@@ -1155,10 +963,10 @@
 </div>
 
 <!-- ── NOTES APP (persistent floating window, right side) ── -->
-<div id="notes-app" aria-label="Notes">
+<div id="notes-app" role="complementary" aria-label="Notes">
   <div class="na-titlebar">
     <div class="na-traffic">
-      <span class="na-tl na-r"></span>
+      <span class="na-tl na-r" id="na-close" role="button" tabindex="0" aria-label="Collapse notes" title="Collapse notes"></span>
       <span class="na-tl na-y"></span>
       <span class="na-tl na-g"></span>
     </div>
@@ -1174,13 +982,33 @@
       <div class="na-ed-title" id="na-ed-title"></div>
       <div class="na-ed-body" id="na-ed-body"></div><span class="na-cursor" id="na-cursor">|</span>
       <div class="na-ed-details" id="na-ed-details"></div>
-      <div class="na-more-btn" id="na-more-btn">↓ more</div>
+      <button type="button" class="na-more-btn" id="na-more-btn" aria-expanded="false">↓ more</button>
     </div>
   </div>
 </div>
 
 <!-- ── SCENE GATE NOTIFICATION ──────────────────────── -->
-<div id="scene-notif" role="alertdialog" aria-label="Open next scene">
+<!-- ── QUICK EXIT (always visible) ──────────────────────── -->
+<button type="button" id="quick-exit" class="quick-exit" title="Leave this page immediately (or press Esc three times)">Exit <span aria-hidden="true">✕</span><span class="sr-only">— leave this page immediately</span></button>
+
+<!-- ── READER CONTROLS + HINT ───────────────────────── -->
+<div id="reader-controls" class="reader-controls" role="group" aria-label="Reader controls">
+  <button type="button" id="rc-auto" class="rc-btn" aria-pressed="false" title="Open each new scene automatically instead of waiting for a click">Auto-open scenes: off</button>
+  <button type="button" id="rc-restart" class="rc-btn" title="Start over from the beginning">↺ Restart</button>
+</div>
+<div id="reader-hint" class="reader-hint" role="status" aria-live="polite"></div>
+
+<!-- ── TIP NOTIFICATION (shown when the article opens) ─── -->
+<div id="tip-notif" class="tip-notif" role="status" aria-live="polite">
+  <span class="tip-icon" aria-hidden="true"><i class="fas fa-hand-pointer"></i></span>
+  <div class="tip-meta">
+    <div class="tip-app">Tip</div>
+    <div class="tip-body">Click any <mark>highlighted phrase</mark> to open the research behind it.</div>
+  </div>
+  <button type="button" class="tip-close" id="tip-close" aria-label="Dismiss tip">✕</button>
+</div>
+
+<div id="scene-notif" role="alertdialog" aria-label="Open next scene" tabindex="0">
   <div class="sn-icon" id="sn-icon"></div>
   <div class="sn-meta">
     <div class="sn-app" id="sn-app"></div>
@@ -1191,8 +1019,34 @@
   <div class="sn-hint">click to open ↗</div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intersection-observer/0.12.2/intersection-observer.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/scrollama/3.2.0/scrollama.min.js"></script>
-<script src="src/main.js?v=34"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/scrollama/3.2.0/scrollama.min.js" integrity="sha512-YE2BOLTLBOkZ10ahg304yD425ncH98QTjdCgfsjzAJB1tMHWeruT4BBrHL2FXfXLjFJqfsB7I7qhqxubPsT/dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  /* Dismiss the loading screen once the page and its fonts are ready (never before 0.7s, never later than 8s) */
+  (function () {
+    var loader = document.getElementById('loader');
+    if (!loader) return;
+    var started = performance.now(), finished = false;
+    function finish() {
+      if (finished) return;
+      finished = true;
+      var wait = Math.max(0, 700 - (performance.now() - started));
+      setTimeout(function () {
+        loader.classList.add('done');
+        setTimeout(function () { loader.remove(); }, 700);
+      }, wait);
+    }
+    var pageReady = new Promise(function (resolve) {
+      if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve);
+    });
+    var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    Promise.all([pageReady, fontsReady]).then(finish, finish);
+    setTimeout(finish, 8000);
+  })();
+</script>
+<script src="src/scenes.js?v=54"></script>
+<script src="src/main.js?v=60"></script>
+<script src="src/motion.js?v=47"></script>
+<script src="src/graph.js?v=1"></script>
+<script src="src/finale.js?v=5"></script>
 </body>
 </html>

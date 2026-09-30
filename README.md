@@ -1,19 +1,19 @@
+# Haya's section: how to run
 
-A guided investigation into the technological ecosystem behind AI-generated non-consensual intimate images (NCII).
+The scrolling story (the home page) is a static site: there is nothing to install.
 
-## How to View
+## Option 1: open the file
 
 ```bash
 open index.html
 ```
 
-## Project Structure
+## Option 2: serve it locally (recommended)
 
+```bash
+python3 -m http.server 8741
 ```
-eco-project/
-├── index.html       # Main page
-├── src/
-│   ├── main.js      # Interactive logic
-│   └── styles.css   # Styles
-└── README.md
-```
+
+Open [http://localhost:8741](http://localhost:8741)
+
+The page loads its fonts, icons and scrollama from the internet, so it needs a network connection.
