@@ -17,12 +17,12 @@
   #loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
   .ld-title { font-size: clamp(1.05rem, 2.6vw, 1.6rem); line-height: 1.3; margin: 0 0 26px; }
   .ld-squares { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
-  .ld-squares i { width: 14px; height: 14px; border: 1px solid #fff; background: transparent; animation: ld-fill 1.6s steps(1, end) infinite; }
-  .ld-squares i:nth-child(1) { animation-delay: 0s; } .ld-squares i:nth-child(2) { animation-delay: 0.1s; }
-  .ld-squares i:nth-child(3) { animation-delay: 0.2s; } .ld-squares i:nth-child(4) { animation-delay: 0.3s; }
-  .ld-squares i:nth-child(5) { animation-delay: 0.4s; } .ld-squares i:nth-child(6) { animation-delay: 0.5s; }
-  .ld-squares i:nth-child(7) { animation-delay: 0.6s; } .ld-squares i:nth-child(8) { animation-delay: 0.7s; }
-  @keyframes ld-fill { 0% { background: #fff3a8; } 45% { background: #fff3a8; } 50% { background: transparent; } 100% { background: transparent; } }
+  .ld-squares i { width: 14px; height: 14px; border: 1px solid #fff; background: transparent; animation: ld-fill 3.2s steps(1, end) infinite; }
+  .ld-squares i:nth-child(1) { animation-delay: 0.0s; } .ld-squares i:nth-child(2) { animation-delay: 0.3s; }
+  .ld-squares i:nth-child(3) { animation-delay: 0.6s; } .ld-squares i:nth-child(4) { animation-delay: 0.9s; }
+  .ld-squares i:nth-child(5) { animation-delay: 1.2s; } .ld-squares i:nth-child(6) { animation-delay: 1.5s; }
+  .ld-squares i:nth-child(7) { animation-delay: 1.8s; } .ld-squares i:nth-child(8) { animation-delay: 2.1s; }
+  @keyframes ld-fill { 0% { background: #fff3a8; } 20% { background: #fff3a8; } 24% { background: transparent; } 100% { background: transparent; } }
   .ld-note { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: lowercase; opacity: 0.85; margin: 0; }
   @media (prefers-reduced-motion: reduce) { .ld-squares i { animation: none; background: #fff3a8; } #loader { transition-duration: 0.01ms; } }
 </style>
@@ -30,9 +30,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=PT+Mono&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="src/styles.css?v=42" />
-<link rel="stylesheet" href="src/theme.css?v=22" />
-<link rel="stylesheet" href="src/scenes-theme.css?v=22" />
+<link rel="stylesheet" href="src/styles.css?v=48" />
+<link rel="stylesheet" href="src/theme.css?v=53" />
+<link rel="stylesheet" href="src/scenes-theme.css?v=44" />
 </head>
 <body>
 
@@ -52,8 +52,14 @@
   <div class="cw-box">
     <div class="cw-icon" aria-hidden="true">⚠</div>
     <p class="cw-title">Content Warning</p>
-    <p class="cw-body">This piece discusses AI-generated non-consensual intimate images (AIG-NCII) and technology-facilitated gender-based violence. All interface mockups are illustrative reconstructions only. Product names, headlines, ratings and figures inside the mock windows are stylized and are not real listings, quotes or search results; sourced statistics carry citations. No harmful imagery is shown or produced.</p>
-    <button class="cw-btn" id="cw-btn">I understand — continue</button>
+    <p class="cw-body">The following animated story includes themes of image-based sexual abuse and gender-based violence, specifically AI-generated non-consensual intimate images depicting children and adults.</p>
+    <p class="cw-exit-note">You can exit at any time.</p>
+    <div class="cw-actions">
+      <a class="cw-btn cw-btn--primary" id="cw-resources" href="resources.html">Access Resources</a>
+      <button class="cw-btn cw-btn--ghost" id="cw-btn" type="button">I Understand. Continue to Animated Story…</button>
+      <a class="cw-btn cw-btn--ghost" id="cw-skip" href="about.html">Skip Animation, Go to About Page</a>
+    </div>
+    <p class="cw-fineprint">Interface mockups in the story are illustrative; no harmful imagery is shown or produced.</p>
     <p class="cw-resources">If you or someone you know has been affected: <strong>StopNCII.org</strong> · <strong>Cyber Civil Rights Initiative</strong> · <strong>RAINN</strong></p>
   </div>
 </div>
@@ -136,79 +142,131 @@
           <!-- Dock -->
           <div class="dt-dock-wrap">
             <div class="dt-dock">
-              <div class="dt-dock-item dt-dock--neutral" title="The Record" data-go="cover"><i class="fas fa-newspaper"></i></div>
+              <div class="dt-dock-item dt-dock--neutral" title="Feed" data-go="cover"><i class="fas fa-camera-retro"></i></div>
+              <div class="dt-dock-sep"></div>
+              <div class="dt-dock-item dt-dock--creation" title="Assistant" data-go="interface"><i class="fas fa-magic"></i></div>
               <div class="dt-dock-item dt-dock--creation" title="Datasets" data-go="interface" data-step="[data-chat=&quot;dataset&quot;]"><i class="fas fa-database"></i></div>
-              <div class="dt-dock-item dt-dock--distribution" title="Assistant" data-go="interface"><i class="fas fa-magic"></i></div>
-              <div class="dt-dock-item dt-dock--distribution" title="Messages" data-go="dm"><i class="fas fa-comment"></i></div>
-              <div class="dt-dock-item dt-dock--distribution" title="Communities" data-go="reddit"><i class="fas fa-globe"></i></div>
+              <div class="dt-dock-item dt-dock--creation" title="Models" data-go="models"><i class="fas fa-code"></i></div>
+              <div class="dt-dock-item dt-dock--infra" title="Repos" data-go="models" data-step="[data-md=&quot;move&quot;]"><i class="fas fa-laptop-code"></i></div>
+              <div class="dt-dock-sep"></div>
+              <div class="dt-dock-item dt-dock--discovery" title="Communities" data-go="reddit"><i class="fas fa-users"></i></div>
               <div class="dt-dock-sep"></div>
               <div class="dt-dock-item dt-dock--discovery" title="Search" data-go="search"><i class="fas fa-search"></i></div>
-              <div class="dt-dock-item dt-dock--discovery" title="Store" data-go="appstore"><i class="fas fa-shopping-cart"></i></div>
-              <div class="dt-dock-item dt-dock--monetize" title="Checkout" data-go="payment"><i class="fas fa-hand-holding-usd"></i></div>
-              <div class="dt-dock-item dt-dock--infra" title="Cloud" data-go="cloud"><i class="fas fa-cloud"></i></div>
+              <div class="dt-dock-item dt-dock--discovery" title="Ads" data-go="search" data-step="[data-search=&quot;ads&quot;]"><i class="fas fa-bullhorn"></i></div>
+              <div class="dt-dock-item dt-dock--discovery" title="Apps" data-go="appstore"><i class="fas fa-shopping-cart"></i></div>
+              <div class="dt-dock-sep"></div>
+              <div class="dt-dock-item dt-dock--monetize" title="Payments" data-go="payment"><i class="fas fa-hand-holding-usd"></i></div>
+              <div class="dt-dock-item dt-dock--infra" title="Infrastructure" data-go="cloud"><i class="fas fa-screwdriver-wrench"></i></div>
+              <div class="dt-dock-sep"></div>
+              <div class="dt-dock-item dt-dock--distribution" title="Channels" data-go="dm"><i class="fas fa-comment"></i></div>
+              <div class="dt-dock-sep"></div>
+              <div class="dt-dock-item dt-dock--neutral" title="Map" data-go="finale" data-step="[data-fin=&quot;graph&quot;]"><i class="fas fa-diagram-project"></i></div>
+              <div class="dt-dock-item dt-dock--neutral" title="Law" data-go="finale" data-step="[data-fin=&quot;law-intro&quot;]"><i class="fas fa-scale-balanced"></i></div>
+              <div class="dt-dock-sep"></div>
+              <div class="dt-dock-item dt-dock--neutral" title="Database" data-go="database" data-href="database.html"><i class="fas fa-table-list"></i></div>
             </div>
           </div>
 
           <!-- macOS-style opening notification -->
-          <div class="intro-notification" id="intro-notif" role="button" tabindex="0" aria-label="Open article: When Grok Generated Thousands of Nude Images">
-            <div class="intro-notif-icon"><span class="notif-folder notif-folder--neutral"><i class="fas fa-newspaper"></i></span></div>
+          <div class="intro-notification" id="intro-notif" role="button" tabindex="0" aria-label="Open the feed: Five headlines, five different stories">
+            <div class="intro-notif-icon"><span class="notif-folder notif-folder--neutral"><i class="fas fa-camera-retro"></i></span></div>
             <div class="intro-notif-meta">
-              <div class="intro-notif-app">The Record</div>
-              <div class="intro-notif-title">When Grok Generated Thousands of Nude Images…</div>
-              <div class="intro-notif-body">Five newsrooms. Five stories. One supply chain.</div>
+              <div class="intro-notif-app">Scrollr</div>
+              <div class="intro-notif-title">Five headlines. Five different stories.</div>
+              <div class="intro-notif-body">Trending now. Tap to open your feed.</div>
             </div>
             <div class="intro-notif-time">now</div>
+            <div class="intro-notif-cta">Click to begin ↗</div>
           </div>
         </div>
 
         <!-- ── SCENE: NEWS / COVER ─────────────────────── -->
         <div class="scene" id="cover">
           <div class="scene-stage news-stage">
-            <div class="news-chrome">
-              <div class="news-site-header">
-                <div class="news-site-logo">THE&nbsp;RECORD</div>
-                <nav class="news-site-nav">
-                  <a>Technology</a>
-                  <a>Politics</a>
-                  <a>Health</a>
-                  <a>Opinion</a>
-                </nav>
-                <div class="news-site-search">🔍 Search</div>
+            <div class="news-chrome feed">
+              <div class="feed-top">
+                <span class="feed-logo">scrollr</span>
+                <span class="feed-top-icons" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-paper-plane"></i></span>
               </div>
-              <div class="news-body" id="news-body">
-                <div class="news-hero">
-                  <div class="news-tag">TECHNOLOGY · INVESTIGATION</div>
-                  <h1 class="news-headline">When Grok Generated Thousands of Nude Images, Five Newsrooms Blamed Five Different Things. They Were All Right.</h1>
-                  <p class="news-dek">In January 2026, xAI's chatbot produced sexualized images per hour — including of children. Five major outlets published five different stories. A Brown University study says each headline named a different node in the same supply chain.</p>
-                  <div class="news-byline">By Staff Reporters &nbsp;·&nbsp; <span id="cover-date">JANUARY 10, 2026</span> &nbsp;·&nbsp; 9 min read</div>
-                  <div class="news-tags-row"><span class="news-pill">AI</span><span class="news-pill">NCII</span><span class="news-pill">Deepfakes</span></div>
+              <div class="feed-row">
+                
+                <div class="feed-main">
+                  <div class="feed-stories" aria-hidden="true"><span class="fp-story"><span class="fp-ring"><span class="fp-av">B</span></span><small>Bloomberg</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">4</span></span><small>404 Media</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">W</span></span><small>WIRED</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">V</span></span><small>The Verge</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">R</span></span><small>Reuters</small></span></div>
+              <div class="feed-trend" aria-hidden="true"><i class="fas fa-fire"></i> Trending · 5 newsrooms · 5 headlines · 3 days</div>
+                  <div class="feed-posts">
+                <article class="feed-post" data-tone="0">
+                  <div class="post-comments" data-for="0"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">U</span><div><b>user_4821</b><p>wait, per HOUR?</p></div></li><li><span class="fc-av">M</span><div><b>m.ortiz</b><p>this is what “move fast” looks like</p></div></li><li><span class="fc-av">K</span><div><b>kaia_writes</b><p>nobody asked for this feature</p></div></li></ul></div>
+                  <header class="fp-head"><span class="fp-av">B</span><div class="fp-who"><b>Bloomberg</b><small>Jan 7 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
+                  <div class="fp-media">
+                    <p class="fp-headline"><span class="nh" data-idx="0" data-role="creation" tabindex="0" role="button">“Musk’s <span class="tech" data-role="creation"><b>Grok AI</b><i class="fas fa-magic" aria-hidden="true"></i></span> Generated Thousands of Undressed Images Per Hour on <span class="tech" data-role="dist"><b>X</b><i class="fas fa-comment" aria-hidden="true"></i></span>”</span></p>
+                    <div class="nh-pop" aria-live="polite">
+                      <button type="button" class="np-x" aria-label="Close">&times;</button>
+                      <b class="np-label">The AI interface</b>
+                      <p>A chatbot built into a social platform generated sexualized images at enormous scale, posting them straight into public comment threads.</p>
+                    </div>
+                  </div>
+                  <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
+                  <p class="fp-cap"><b>Bloomberg</b> Generated on demand, published in public. #ai #deepfakes</p>
+                </article>
+                <article class="feed-post" data-tone="1">
+                  <div class="post-comments" data-for="1"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">D</span><div><b>dev.nadia</b><p>they just keep finding new prompts</p></div></li><li><span class="fc-av">U</span><div><b>user_0093</b><p>patching one thing isn’t going to fix it</p></div></li><li><span class="fc-av">J</span><div><b>jun_s</b><p>who runs these channels??</p></div></li></ul></div>
+                  <header class="fp-head"><span class="fp-av">4</span><div class="fp-who"><b>404 Media</b><small>Jan 7 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
+                  <div class="fp-media">
+                    <p class="fp-headline"><span class="nh" data-idx="1" data-role="prolif" tabindex="0" role="button">“Inside the <span class="tech" data-role="prolif"><b>Telegram Channel</b><i class="fas fa-users" aria-hidden="true"></i></span> Jailbreaking <span class="tech" data-role="creation"><b>Grok</b><i class="fas fa-magic" aria-hidden="true"></i></span> Over and Over Again”</span></p>
+                    <div class="nh-pop" aria-live="polite">
+                      <button type="button" class="np-x" aria-label="Close">&times;</button>
+                      <b class="np-label">The chat channel</b>
+                      <p>A private channel with thousands of members coordinated jailbreaks, sharing working prompts faster than any patch could ship.</p>
+                    </div>
+                  </div>
+                  <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
+                  <p class="fp-cap"><b>404 Media</b> Every fix was answered within hours. #jailbreak</p>
+                </article>
+                <article class="feed-post" data-tone="2">
+                  <div class="post-comments" data-for="2"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">T</span><div><b>tessa.b</b><p>still in my store right now</p></div></li><li><span class="fc-av">U</span><div><b>user_7710</b><p>so the stores just… allow it?</p></div></li><li><span class="fc-av">R</span><div><b>rohan_k</b><p>reporting it does what exactly</p></div></li></ul></div>
+                  <header class="fp-head"><span class="fp-av">W</span><div class="fp-who"><b>WIRED</b><small>Jan 8 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
+                  <div class="fp-media">
+                    <p class="fp-headline"><span class="nh" data-idx="2" data-role="infra" tabindex="0" role="button">“Why Are <span class="tech" data-role="creation"><b>Grok</b><i class="fas fa-magic" aria-hidden="true"></i></span> and <span class="tech" data-role="dist"><b>X</b><i class="fas fa-comment" aria-hidden="true"></i></span> Still Available in <span class="tech" data-role="infra"><b>App Stores</b><i class="fas fa-shopping-cart" aria-hidden="true"></i></span>?”</span></p>
+                    <div class="nh-pop" aria-live="polite">
+                      <button type="button" class="np-x" aria-label="Close">&times;</button>
+                      <b class="np-label">The app stores</b>
+                      <p>The chatbot and its platform stayed downloadable for days after the harm was documented.</p>
+                    </div>
+                  </div>
+                  <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
+                  <p class="fp-cap"><b>WIRED</b> Three days on, still one tap away. #appstores</p>
+                </article>
+                <article class="feed-post" data-tone="3">
+                  <div class="post-comments" data-for="3"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">L</span><div><b>lena.w</b><p>so the fix is “pay for it”?</p></div></li><li><span class="fc-av">U</span><div><b>user_2256</b><p>free users can still get to it</p></div></li><li><span class="fc-av">A</span><div><b>ari.p</b><p>a paywall isn’t a safeguard</p></div></li></ul></div>
+                  <header class="fp-head"><span class="fp-av">V</span><div class="fp-who"><b>The Verge</b><small>Jan 9 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
+                  <div class="fp-media">
+                    <p class="fp-headline"><span class="nh" data-idx="3" data-role="money" tabindex="0" role="button">“No, <span class="tech" data-role="creation"><b>Grok</b><i class="fas fa-magic" aria-hidden="true"></i></span> hasn’t <span class="tech" data-role="money"><b>paywalled</b><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span> its deepfake image feature.”</span></p>
+                    <div class="nh-pop" aria-live="polite">
+                      <button type="button" class="np-x" aria-label="Close">&times;</button>
+                      <b class="np-label">The paywall</b>
+                      <p>Restricting the tool to paying users fixed nothing: free users still reached the same model through other doors.</p>
+                    </div>
+                  </div>
+                  <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
+                  <p class="fp-cap"><b>The Verge</b> A paywall is not a safety measure. #paywall</p>
+                </article>
+                <article class="feed-post" data-tone="4">
+                  <div class="post-comments" data-for="4"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">S</span><div><b>sam_o</b><p>only after the backlash, of course</p></div></li><li><span class="fc-av">U</span><div><b>user_3380</b><p>“some” image generation. some.</p></div></li><li><span class="fc-av">P</span><div><b>priya.r</b><p>one door closed, five still open</p></div></li></ul></div>
+                  <header class="fp-head"><span class="fp-av">R</span><div class="fp-who"><b>Reuters</b><small>Jan 9 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
+                  <div class="fp-media">
+                    <p class="fp-headline"><span class="nh" data-idx="4" data-role="dist" tabindex="0" role="button">“Musk’s <span class="tech" data-role="creation"><b>AI bot Grok</b><i class="fas fa-magic" aria-hidden="true"></i></span> limits some image generation on <span class="tech" data-role="dist"><b>X</b><i class="fas fa-comment" aria-hidden="true"></i></span> after backlash”</span></p>
+                    <div class="nh-pop" aria-live="polite">
+                      <button type="button" class="np-x" aria-label="Close">&times;</button>
+                      <b class="np-label">The partial fix</b>
+                      <p>After the backlash, some image generation was limited, but only in one place. The rest of the chain kept running.</p>
+                    </div>
+                  </div>
+                  <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
+                  <p class="fp-cap"><b>Reuters</b> One node restricted. The chain stays intact. #backlash</p>
+                </article>
+              </div>
                 </div>
-                <div class="news-divider"></div>
-                <div class="news-article">
-                  <p>In late December 2025, waves of prompts flooded X: <em>"put a bikini on her." "take her clothes off."</em> <span class="nh" data-idx="0" data-role="creation" data-source="Bloomberg · Jan 7"
-                    data-summary="Grok — xAI's chatbot embedded in X — generated over 6,700 sexualized images per hour, including of children. The outputs hit public feeds instantly with no review, no filter, no delay."
-                    data-quote="The chatbot 'Grok' is a Generative AI Interface that enables xAI users to directly access Grok — a family of Generative AI Models. Grok posts images directly onto the comment sections of X, a public Distribution Channel. This facilitates both the non-consensual creation and distribution of intimate images through a single product."
-                    data-cite="Bloomberg (Jan 7, 2026) · Ding, Suresh &amp; Venkatasubramanian, arXiv:2602.04759">Grok — xAI's chatbot embedded directly in X — generated over 6,700 sexualized images per hour, including of children</span>. The outputs hit public feeds immediately. There was no review, no filter, no delay.</p>
-
-                  <p>Three days. Five major newsrooms. Five completely different headlines.</p>
-
-                  <p>Bloomberg blamed <span class="nh" data-idx="0" data-role="creation" data-source="Bloomberg · Jan 7"
-                    data-summary="Grok — xAI's chatbot embedded in X — generated over 6,700 sexualized images per hour, including of children. The outputs hit public feeds instantly with no review, no filter, no delay."
-                    data-quote="The chatbot 'Grok' is a Generative AI Interface that enables xAI users to directly access Grok — a family of Generative AI Models. Grok posts images directly onto the comment sections of X, a public Distribution Channel. This facilitates both the non-consensual creation and distribution of intimate images through a single product."
-                    data-cite="Bloomberg (Jan 7, 2026) · Ding, Suresh &amp; Venkatasubramanian, arXiv:2602.04759">the AI interface itself</span> — Grok's open access to Aurora v3, a generative model with no guardrail for this class of image request. 404 Media found <span class="nh" data-idx="1" data-role="prolif" data-source="404 Media · Jan 7"
-                    data-summary="A Telegram channel with thousands of members coordinated jailbreaks in real time, sharing working prompts faster than any patch could deploy. When one was blocked, the community found another within hours."
-                    data-quote="A Telegram channel with thousands of members was dedicated entirely to jailbreaking Grok to produce AIG-NCII at scale. Creation Communities like this are documented as a structural node — they systematize and amplify exploitation of AI Interfaces. When one jailbreak is patched, the community finds another within hours."
-                    data-cite="404 Media (Jan 7, 2026) · Ding, Suresh &amp; Venkatasubramanian, arXiv:2602.04759">a Telegram channel with thousands of members coordinating jailbreaks in real time</span> — sharing working prompts faster than any patch could deploy. WIRED asked why <span class="nh" data-idx="2" data-role="infra" data-source="WIRED · Jan 8"
-                    data-summary="Three days after the incident, Grok and X remained in the Apple and Google App Stores — lending legitimacy and reach to tools enabling harm at scale. Each download was a point of complicity in the supply chain."
-                    data-quote="App Stores lend legitimacy and discoverability to tools that would otherwise require technical knowledge to access. The question 'Why are Grok and X still available in App Stores?' points to App Stores as infrastructure nodes that sustain the ecosystem — each download is a point of complicity in the supply chain."
-                    data-cite="WIRED (Jan 8, 2026) · Ding, Suresh &amp; Venkatasubramanian, arXiv:2602.04759">Grok and X were still available in the Apple and Google App Stores</span> after three days of documented harm. The Verge reported that <span class="nh" data-idx="3" data-role="money" data-source="The Verge · Jan 9"
-                    data-summary="X restricted Grok to paying subscribers on Jan 9. Free users still reached the same model through grok.com, the X platform, and the Grok mobile app. Paywalling is not a safety intervention."
-                    data-quote="On Jan 9, X restricted access to the Grok chatbot to paying subscribers. But journalists found that free users could still access model capabilities via grok.com, the X platform, and the Grok mobile app. One Generative AI Model can have multiple Interfaces — limiting one does not stop the others. Paywalling is not a safety intervention."
-                    data-cite="The Verge (Jan 9, 2026) · Ding, Suresh &amp; Venkatasubramanian, arXiv:2602.04759">paywalling Grok fixed nothing</span> — free users still reached the same model through grok.com and the mobile app. Reuters surfaced that <span class="nh" data-idx="4" data-role="creation" data-source="Reuters · Jan 9"
-                    data-summary="The behavior traced back to training data researchers had flagged years before the incident. The ecosystem is resilient to single-point interventions — structural problems require structural solutions."
-                    data-quote="Because the ecosystem is composed of multiple interdependent nodes, disrupting one does not disable the others. Like a supply chain, it is resilient to single-point interventions. The behavior traced back to the training data — which researchers had flagged years earlier as containing problematic content. Structural problems require structural solutions."
-                    data-cite="Reuters (Jan 9, 2026) · Ding, Suresh &amp; Venkatasubramanian, arXiv:2602.04759">the behavior traced back to the training data</span>, which researchers had flagged years before the incident.</p>
-                </div>
+                <aside class="feed-side feed-suggest" aria-hidden="true"><div class="fs-title">Suggested for you</div><ul><li><span class="fp-av">B</span><b>Bloomberg</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">4</span><b>404 Media</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">W</span><b>WIRED</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">V</span><b>The Verge</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">R</span><b>Reuters</b><span class="fs-follow">Follow</span></li></ul></aside>
               </div>
             </div>
           </div>
@@ -230,68 +288,115 @@
                 </div>
               </div>
               <div class="chat-body" id="chat-body">
-                <div class="chat-system-msg">Aurora v3 · Illustrative session</div>
+                <div class="chat-system-msg">Image model · illustrative session</div>
                 <div class="chat-bubble ai" style="margin-top:8px">I can generate photorealistic images from any description or reference photo.</div>
-                <div class="chat-bubble user" style="max-width:70%">I have a photo of a woman. Can you generate a version without clothes?</div>
-                <div class="chat-bubble ai">Sure, upload the photo and I'll generate the image.</div>
               </div>
               <div class="chat-footer">
                 <div class="chat-input-wrap">
                   <div class="chat-input-text" id="chat-input-text" aria-label="Message input"></div>
                   <button class="chat-send-btn" id="chat-send-btn" disabled>&#10148;</button>
                 </div>
-                <p class="chat-disclaimer">Aurora v3 processes image requests without restriction.</p>
+                <p class="chat-disclaimer">This model processes image requests without restriction.</p>
               </div>
             </div>
 
             <!-- Dataset + model reveal — zooms over the chat on scroll -->
             <div class="chat-dataset-layer" id="chat-dataset-layer">
               <div class="cdl-header">
-                <div class="cdl-eyebrow">LAION-5B</div>
-                <div class="cdl-meta">5,850,000,000 image-text pairs · scraped 2021–2022 · CC BY 4.0</div>
+                <div class="cdl-eyebrow">Training data</div>
+                <div class="cdl-meta">DATASET100 · scraped image-text pairs</div>
+                <div class="cdl-flagbox" id="cdl-flagbox" aria-live="polite"><i class="fas fa-flag"></i> CSAM detected: <b id="cdl-flagged">0</b></div>
               </div>
+              <ol class="cdl-steps" id="cdl-steps">
+                <li data-k="1"><b>1</b> Images are scraped from the web into one huge dataset</li>
+                <li data-k="2"><b>2</b> A scan finds child sexual abuse material inside it</li>
+                <li data-k="3"><b>3</b> Models train on everything in the dataset</li>
+              </ol>
               <div class="cdl-grid" id="cdl-grid">
-                <div class="cdl-tile" data-label="n07734744_00012.jpg" style="--h:10;--s:65%;--l:88%"></div>
-                <div class="cdl-tile" data-label="n07734744_00847.jpg" style="--h:195;--s:45%;--l:83%"></div>
-                <div class="cdl-tile cdl-tile-special" data-label="aurora_gen_0041.jpg"></div>
-                <div class="cdl-tile" data-label="n07734744_01203.jpg" style="--h:33;--s:85%;--l:87%"></div>
-                <div class="cdl-tile" data-label="n07734744_02891.jpg" style="--h:50;--s:90%;--l:88%"></div>
-                <div class="cdl-tile" data-label="n07734744_03104.jpg" style="--h:120;--s:55%;--l:85%"></div>
-                <div class="cdl-tile" data-label="n07734744_03882.jpg" style="--h:10;--s:65%;--l:88%"></div>
-                <div class="cdl-tile" data-label="n07734744_04210.jpg" style="--h:195;--s:45%;--l:83%"></div>
-                <div class="cdl-tile" data-label="n07734744_05033.jpg" style="--h:33;--s:85%;--l:87%"></div>
-                <div class="cdl-tile" data-label="n07734744_05891.jpg" style="--h:50;--s:90%;--l:88%"></div>
-                <div class="cdl-tile" data-label="n07734744_06204.jpg" style="--h:120;--s:55%;--l:85%"></div>
-                <div class="cdl-tile" data-label="n07734744_06779.jpg" style="--h:10;--s:65%;--l:88%"></div>
-                <div class="cdl-tile" data-label="n07734744_07341.jpg" style="--h:195;--s:45%;--l:83%"></div>
-                <div class="cdl-tile" data-label="n07734744_08102.jpg" style="--h:33;--s:85%;--l:87%"></div>
-                <div class="cdl-tile" data-label="n07734744_08934.jpg" style="--h:50;--s:90%;--l:88%"></div>
-                <div class="cdl-tile" data-label="n07734744_09217.jpg" style="--h:120;--s:55%;--l:85%"></div>
-                <div class="cdl-tile" data-label="n07734744_09804.jpg" style="--h:10;--s:65%;--l:88%"></div>
-                <div class="cdl-tile" data-label="n07734744_10293.jpg" style="--h:195;--s:45%;--l:83%"></div>
-                <div class="cdl-tile" data-label="n07734744_10847.jpg" style="--h:33;--s:85%;--l:87%"></div>
-                <div class="cdl-tile" data-label="n07734744_11502.jpg" style="--h:50;--s:90%;--l:88%"></div>
+                <div class="cdl-tile" data-label="img_00012.jpg" style="--h:10;--s:65%;--l:88%"></div>
+                <div class="cdl-tile" data-label="img_00847.jpg" style="--h:195;--s:45%;--l:83%"></div>
+                <div class="cdl-tile cdl-tile-special" data-label="generated_0041.jpg"></div>
+                <div class="cdl-tile" data-label="img_01203.jpg" style="--h:33;--s:85%;--l:87%"></div>
+                <div class="cdl-tile" data-label="img_02891.jpg" style="--h:50;--s:90%;--l:88%"></div>
+                <div class="cdl-tile" data-label="img_03104.jpg" style="--h:120;--s:55%;--l:85%"></div>
+                <div class="cdl-tile" data-label="img_03882.jpg" style="--h:10;--s:65%;--l:88%"></div>
+                <div class="cdl-tile" data-label="img_04210.jpg" style="--h:195;--s:45%;--l:83%"></div>
+                <div class="cdl-tile" data-label="img_05033.jpg" style="--h:33;--s:85%;--l:87%"></div>
+                <div class="cdl-tile" data-label="img_05891.jpg" style="--h:50;--s:90%;--l:88%"></div>
+                <div class="cdl-tile" data-label="img_06204.jpg" style="--h:120;--s:55%;--l:85%"></div>
+                <div class="cdl-tile" data-label="img_06779.jpg" style="--h:10;--s:65%;--l:88%"></div>
+                <div class="cdl-tile" data-label="img_07341.jpg" style="--h:195;--s:45%;--l:83%"></div>
+                <div class="cdl-tile" data-label="img_08102.jpg" style="--h:33;--s:85%;--l:87%"></div>
+                <div class="cdl-tile" data-label="img_08934.jpg" style="--h:50;--s:90%;--l:88%"></div>
+                <div class="cdl-tile" data-label="img_09217.jpg" style="--h:120;--s:55%;--l:85%"></div>
+                <div class="cdl-tile" data-label="img_09804.jpg" style="--h:10;--s:65%;--l:88%"></div>
+                <div class="cdl-tile" data-label="img_10293.jpg" style="--h:195;--s:45%;--l:83%"></div>
+                <div class="cdl-tile" data-label="img_10847.jpg" style="--h:33;--s:85%;--l:87%"></div>
+                <div class="cdl-tile" data-label="img_11502.jpg" style="--h:50;--s:90%;--l:88%"></div>
               </div>
-              <div class="cdl-boxes" id="cdl-boxes">
-                <div class="cdl-box cdl-box-open" id="cdl-box-open">
-                  <div class="cdl-box-label">Open Weights</div>
-                  <div class="cdl-box-names">Stable Diffusion · FLUX.1</div>
-                  <div class="cdl-box-stat">
-                    <span class="cdl-stat-num" id="cdl-count-open">0</span>
-                    <span class="cdl-stat-label">nudification fine-tunes on CivitAI. Cannot be recalled once released.</span>
-                  </div>
-                  <div class="cdl-well" id="cdl-well-open"></div>
-                  <div class="cdl-mini" id="cdl-mini-open" aria-hidden="true"></div>
+              <div class="cdl-scanbar" id="cdl-scanbar" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SCENE: MODELS (open vs closed) ─────────── -->
+        <div class="scene" id="models">
+          <div class="scene-stage md-stage">
+            <div class="md-head">
+              <span class="cdl-eyebrow">Generative AI models</span>
+              <span class="md-sub">The same model can be released in two ways</span>
+            </div>
+            <div class="md-panels">
+              <section class="md-panel md-open" id="md-open" aria-label="Open weights">
+                <header><span class="md-label">Open weights</span><span class="md-tag">downloadable</span></header>
+                <div class="md-arena">
+                  <div class="md-model md-model-main"><i class="fas fa-cube"></i><span>model</span></div>
+                  <div class="md-copies" id="md-copies" aria-hidden="true"></div>
                 </div>
-                <div class="cdl-box cdl-box-closed" id="cdl-box-closed">
-                  <div class="cdl-box-label">Closed Models</div>
-                  <div class="cdl-box-names">Grok Aurora · GPT-4o · Gemini</div>
-                  <div class="cdl-box-stat">
-                    <span class="cdl-stat-num cdl-api-text">API</span>
-                    <span class="cdl-stat-label">Guardrails enforced at source. Company can patch.</span>
-                  </div>
-                  <div class="cdl-well" id="cdl-well-closed"></div>
+                <div class="md-stat"><span class="md-num" id="md-count">1</span><span class="md-unit">copies in the world</span></div>
+                <ul class="md-points">
+                  <li>Anyone can download it.</li>
+                  <li>Anyone can fine-tune it for harm.</li>
+                  <li>Once released, it can never be recalled.</li>
+                </ul>
+              </section>
+              <section class="md-panel md-closed" id="md-closed" aria-label="Closed models">
+                <header><span class="md-label">Closed models</span><span class="md-tag">hosted behind an API</span></header>
+                <div class="md-arena">
+                  <div class="md-reqs" id="md-reqs" aria-hidden="true"></div>
+                  <div class="md-model md-model-main"><i class="fas fa-cube"></i><span>model</span><i class="fas fa-lock md-lock"></i></div>
+                  <div class="md-guard"><i class="fas fa-shield-halved"></i> guardrails</div>
                 </div>
+                <div class="md-stat"><span class="md-num">1</span><span class="md-unit">copy, held by the company</span></div>
+                <ul class="md-points">
+                  <li>Every request goes through the company’s API.</li>
+                  <li>Guardrails are enforced at the source.</li>
+                  <li>The company can patch it or cut off access.</li>
+                </ul>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SCENE: DEVELOPER PLATFORM (hosts open-weight models) ── -->
+        <div class="scene" id="devplat">
+          <div class="scene-stage dp-stage">
+            <div class="dp-head">
+              <span class="dp-logo"><i class="fas fa-laptop-code"></i> repohub</span>
+              <div class="dp-search"><i class="fas fa-search"></i> models</div>
+              <span class="dp-tab">Models</span><span class="dp-tab">Datasets</span><span class="dp-tab">Code</span>
+            </div>
+            <div class="dp-body">
+              <div class="dp-section">
+                <div class="dp-h">Base models <small>pre-trained, open weights</small></div>
+                <div class="dp-cards">
+                  <div class="dp-card dp-base"><i class="fas fa-cube"></i><div><b>open-base-1</b><span>text-to-image · open weights</span></div><em>fork</em></div>
+                  <div class="dp-card dp-base"><i class="fas fa-cube"></i><div><b>open-base-2</b><span>text-to-image · open weights</span></div><em>fork</em></div>
+                </div>
+              </div>
+              <div class="dp-section dp-grow">
+                <div class="dp-h">Fine-tuned variants <span class="dp-count"><b id="dp-count">0</b> and counting</span></div>
+                <div class="dp-rows" id="dp-rows" aria-hidden="true"></div>
               </div>
             </div>
           </div>
@@ -302,8 +407,8 @@
           <div class="scene-stage dm-stage">
             <div class="dm-screen dm-screen-imessage active" id="dm-imessage">
               <div class="dm-header-bar">
-                <div class="dm-avatar">JS</div>
-                <div class="dm-contact-name">Jake S.</div>
+                <div class="dm-avatar" aria-hidden="true"><i class="fas fa-user"></i></div>
+                <div class="dm-contact-name"></div>
                 <div class="dm-status">Today</div>
               </div>
               <div class="dm-messages" id="dm-messages-imessage">
@@ -346,9 +451,6 @@
                 <p>I tried to report it but the forum doesn't have a reporting mechanism that works. I also couldn't find any contact information. I'm sorry this is happening to you.</p>
                 <p style="color:#8e8e93;font-size:12px;margin-top:4px;">— Sent from an encrypted mail service. This message cannot be traced back to the sender.</p>
                 <div style="height:1px;background:#e5e5ea;margin:16px 0;"></div>
-                <div class="email-paper-note">
-                  <strong>From the paper:</strong> "AIG-NCII is often shared through private channels before any platform has the opportunity to detect it. Victims frequently learn of an image's existence through friends, family, or anonymous tips — not platform notifications." <em>— Ding et al. (2026)</em>
-                </div>
               </div>
             </div>
           </div>
@@ -366,19 +468,19 @@
                 </div>
                 <div class="reddit-content">
                   <div class="reddit-post-meta">
-                    <span class="reddit-sub">r/<span id="reddit-sub-name">deepfakes</span></span>
-                    &nbsp;·&nbsp; u/deepfake_tutorial_guy &nbsp;·&nbsp; 14 hours ago
+                    <span class="reddit-sub">c/<span id="reddit-sub-name">faceswaps</span></span>
+                    &nbsp;·&nbsp; u/tutorial_guy &nbsp;·&nbsp; 14 hours ago
                   </div>
                   <div class="reddit-post-title">[Tutorial] Best tools for realistic face-swap results in 2025 — updated list</div>
                   <div class="reddit-post-awards"><span><i class="fas fa-arrow-up"></i> 432 upvotes</span><span><i class="far fa-comment"></i> 87 comments</span></div>
                   <div class="reddit-comments" id="reddit-comments">
                     <div class="rc rc-step" data-rc-step="0">
                       <div class="rc-user">u/modeluser99 <span class="rc-pts">+218</span></div>
-                      <div class="rc-text">Just tried the DeepFaceLab workflow from the wiki — results are insane. Way better than anything in the store.</div>
+                      <div class="rc-text">Just tried the open face-swap toolkit from the wiki — results are insane. Way better than anything in the store.</div>
                     </div>
                     <div class="rc rc-step" data-rc-step="1">
                       <div class="rc-user">u/aiart_anon <span class="rc-pts">+187</span></div>
-                      <div class="rc-text">For celeb targets the FLUX fine-tunes on HuggingFace work best. The LoRA targeting specific actresses gets realistic results. DM for link.</div>
+                      <div class="rc-text">For celeb targets the open-weight fine-tunes on the model-sharing sites work best. The add-on targeting specific actresses gets realistic results. DM for link.</div>
                     </div>
                     <div class="rc rc-step" data-rc-step="2">
                       <div class="rc-user">u/throwaway_8874 <span class="rc-pts">+94</span></div>
@@ -390,7 +492,7 @@
                     </div>
                     <div class="rc rc-step" data-rc-step="4">
                       <div class="rc-user">u/modeluser99 <span class="rc-pts">+44</span></div>
-                      <div class="rc-text">They always remove the best ones lol. Check 4chan /gif/ thread — it mirrors here whenever this sub gets swept</div>
+                      <div class="rc-text">They always remove the best ones lol. Check the imageboard thread — it mirrors here whenever this community gets swept</div>
                     </div>
                   </div>
                 </div>
@@ -400,19 +502,19 @@
                   <div class="reddit-banned-snoo"><i class="fas fa-ban"></i></div>
                   <div class="reddit-banned-snoo-sub">forum.example</div>
                   <div class="reddit-banned-divider"></div>
-                  <div class="reddit-banned-rule">RULE 3 · NON-CONSENSUAL INTIMATE MEDIA</div>
-                  <div class="reddit-banned-title">r/deepfakes has been banned from Reddit</div>
-                  <div class="reddit-banned-sub">This community was removed for violating <strong>Reddit's Content Policy</strong>. The subreddit was one of the first communities banned under Reddit's 2018 policy update targeting non-consensual pornography.</div>
-                  <div class="reddit-banned-meta">Community created 2017 · Banned February 7, 2018 · <strong>90,000 subscribers</strong> at removal</div>
+                  <div class="reddit-banned-rule">RULE · NON-CONSENSUAL INTIMATE MEDIA</div>
+                  <div class="reddit-banned-title">c/faceswaps has been banned from the forum</div>
+                  <div class="reddit-banned-sub">This community was removed for violating the <strong>forum's content policy</strong>. It was one of the first communities banned under a policy update targeting non-consensual pornography.</div>
+                  <div class="reddit-banned-meta">Removed for violating policy · <strong>Tens of thousands of members</strong> at removal</div>
                   <div class="reddit-banned-divider"></div>
                   <div class="reddit-migration-label">Community migrated to →</div>
                   <div class="reddit-migration">
-                    <span class="reddit-platform-chip">4chan /gif/</span>
-                    <span class="reddit-platform-chip">8chan</span>
-                    <span class="reddit-platform-chip">Voat</span>
-                    <span class="reddit-platform-chip">Discord</span>
-                    <span class="reddit-platform-chip">MrDeepFakes.com</span>
-                    <span class="reddit-platform-chip">Telegram</span>
+                    <span class="reddit-platform-chip">Imageboard A</span>
+                    <span class="reddit-platform-chip">Imageboard B</span>
+                    <span class="reddit-platform-chip">Forum C</span>
+                    <span class="reddit-platform-chip">Chat server</span>
+                    <span class="reddit-platform-chip">Video site</span>
+                    <span class="reddit-platform-chip">Messaging channel</span>
                   </div>
                 </div>
               </div>
@@ -420,13 +522,13 @@
           </div>
         </div>
 
-        <!-- ── SCENE: MRDEEPFAKES (companion to Reddit) ── -->
+        <!-- ── SCENE: NSFWFAKES (companion to the forum) ── -->
         <div class="scene" id="mdf">
           <div class="scene-stage mdf-stage">
             <div class="mdf-site">
               <div class="mdf-site-header">
-                <span class="mdf-logo">MrDeepFakes</span>
-                <span class="mdf-tagline">The #1 Deepfake Porn Community</span>
+                <span class="mdf-logo">nsfwfakes</span>
+                <span class="mdf-tagline">The #1 Deepfake Community</span>
                 <nav class="mdf-nav">Videos &nbsp; Photos &nbsp; Tutorials &nbsp; Commission &nbsp; Forum</nav>
               </div>
               <div class="mdf-featured">
@@ -437,20 +539,19 @@
                   <div class="mdf-card"><div class="redacted-block" style="width:100%;height:120px;border-radius:6px 6px 0 0"></div><div class="mdf-card-meta">Commission from $20 · 24hr turnaround</div></div>
                 </div>
                 <div class="mdf-stats-row">
-                  <span><i class="fas fa-eye"></i> 13M monthly visitors</span>
-                  <span><i class="fas fa-film"></i> 2.3M videos</span>
-                  <span><i class="fas fa-user"></i> 6,500 registered creators</span>
+                  <span><i class="fas fa-eye"></i> millions of monthly visitors</span>
+                  <span><i class="fas fa-film"></i> millions of videos</span>
+                  <span><i class="fas fa-user"></i> thousands of registered creators</span>
                 </div>
               </div>
             </div>
             <div class="mdf-offline" id="mdf-offline">
               <div class="mdf-offline-box">
                 <div class="mdf-offline-icon"><i class="fas fa-triangle-exclamation"></i></div>
-                <div class="mdf-offline-title">MrDeepFakes.com</div>
-                <div class="mdf-offline-date">Offline since May 6, 2025</div>
+                <div class="mdf-offline-title">nsfwfakes.example</div>
+                <div class="mdf-offline-date">Offline</div>
                 <div class="mdf-offline-msg">This site is no longer available. A service provider terminated hosting.</div>
-                <div class="mdf-offline-detail"><strong>13 million</strong> monthly visitors &nbsp;·&nbsp; <strong>$36M+</strong> annual economy &nbsp;·&nbsp; Shut down by a hosting provider's terms of service decision.</div>
-                <div class="mdf-offline-note">"Mr.DeepFakes operated as 'an actively growing deepfake market.' Its shutdown illustrates both the power and the fragility of infrastructure-level intervention." — Ding et al. (2026)</div>
+                <div class="mdf-offline-detail">Millions of monthly visitors &nbsp;·&nbsp; a large annual economy &nbsp;·&nbsp; Shut down by a hosting provider's terms of service decision.</div>
               </div>
             </div>
           </div>
@@ -468,6 +569,11 @@
                 </div>
               </div>
               <div class="google-results-meta">About 34,200,000 results (0.38 seconds) &nbsp;·&nbsp; <span class="no-warning">No safety warning displayed</span></div>
+              <div class="sr-ads" id="sr-ads" aria-hidden="true">
+                <div class="sr-ad sr-ad-1"><span class="sr-ad-x">×</span><span class="sr-ad-tag">Ad</span><b>Photo Magic</b><p>Edit any photo with AI. Try it free.</p><span class="sr-ad-btn">Install</span></div>
+                <div class="sr-ad sr-ad-2"><span class="sr-ad-x">×</span><span class="sr-ad-tag">Ad</span><b>Snap Studio AI</b><p>One photo is all it takes.</p><span class="sr-ad-btn">Try now</span></div>
+                <div class="sr-ad sr-ad-3"><span class="sr-ad-x">×</span><span class="sr-ad-tag">Ad</span><b>Remix Any Photo</b><p>New this week. No sign-up needed.</p><span class="sr-ad-btn">Open</span></div>
+              </div>
               <div class="sr-list" aria-hidden="true">
                 <div class="sr-item"><span class="sr-url"></span><span class="sr-title"></span><span class="sr-line"></span><span class="sr-line short"></span></div>
                 <div class="sr-item"><span class="sr-url"></span><span class="sr-title"></span><span class="sr-line"></span><span class="sr-line short"></span></div>
@@ -521,12 +627,6 @@
                 <div class="as-info-row"><span class="as-info-key">Developer</span><span class="as-info-val">NudifyAI Technologies</span></div>
                 <div class="as-info-row"><span class="as-info-key">Age Rating</span><span class="as-info-val">4+</span></div>
                 <div class="as-info-row"><span class="as-info-key">Listed Since</span><span class="as-info-val">March 2023</span></div>
-                <div class="as-info-row"><span class="as-info-key">Legal Status</span><span class="as-info-val as-info-flag">Subject of SF lawsuit (2025)</span></div>
-              </div>
-              <div class="as-detail-paper" id="as-detail-paper" style="display:none">
-                <div class="as-detail-paper-eyebrow">Tech Transparency Project (2026) · Ding et al.</div>
-                <p>The 2026 Tech Transparency Project report found <strong>55 apps on Google Play</strong> and <strong>47 on the Apple App Store</strong> capable of digitally removing clothing from photos — with combined downloads of <strong>705 million</strong> and <strong>$117 million in revenue</strong>. Apple and Google each took their standard 30% cut.</p>
-                <p>"App stores lend legitimacy and discoverability to tools that would otherwise require technical knowledge to access." — Ding et al., arXiv:2602.04759 (2026)</p>
               </div>
             </div>
           </div>
@@ -546,11 +646,11 @@
                   <h2>Unlimited AI Photo Editing</h2>
                   <p>Join 2 million users. Results in 30 seconds.</p>
                   <div class="pay-logos">
-                    <span class="pay-logo visa">VISA</span>
-                    <span class="pay-logo mc">MC</span>
-                    <span class="pay-logo pp">PayPal</span>
-                    <span class="pay-logo ap">Apple Pay</span>
-                    <span class="pay-logo gp">G Pay</span>
+                    <span class="pay-logo visa">Card</span>
+                    <span class="pay-logo mc">Debit</span>
+                    <span class="pay-logo pp">Wallet</span>
+                    <span class="pay-logo ap">Mobile Pay</span>
+                    <span class="pay-logo gp">Bank</span>
                     <span class="pay-logo cr">Crypto</span>
                   </div>
                 </div>
@@ -570,15 +670,15 @@
               <div class="ps-method">
                 <span class="ps-method-icon"><i class="far fa-credit-card"></i></span>
                 <div>
-                  <div class="ps-method-label">Visa ending in 4242</div>
+                  <div class="ps-method-label">Card ending in 4242</div>
                   <div class="ps-method-sub">Expires 09/27</div>
                 </div>
               </div>
               <button class="ps-pay-btn">Pay $9.99</button>
               <div class="ps-logos">
-                <span class="pay-logo visa sm">VISA</span>
-                <span class="pay-logo mc sm">MC</span>
-                <span class="pay-logo pp sm">PayPal</span>
+                <span class="pay-logo visa sm">Card</span>
+                <span class="pay-logo mc sm">Debit</span>
+                <span class="pay-logo pp sm">Wallet</span>
               </div>
             </div>
           </div>
@@ -623,9 +723,7 @@
                   </div>
                   <div class="cloud-alert" id="cloud-alert">
                     <div class="cloud-alert-icon"><i class="fas fa-triangle-exclamation"></i></div>
-                    <div class="cloud-alert-body">
-                      <strong>Researcher finding (2024):</strong> 62 of 85 nudifier websites surveyed used Amazon and/or Cloudflare for hosting, CDN, or DNS services. Researchers sent abuse reports to both providers. Most sites remained online.
-                    </div>
+                    <div class="cloud-alert-body"><strong>Abuse reports filed:</strong> reports were sent to the hosting and delivery providers. Most sites remained online.</div>
                   </div>
                   <table class="cloud-table" id="cloud-table">
                     <thead>
@@ -634,7 +732,7 @@
                     <tbody>
                       <tr><td>nciiapp-1.ai</td><td>compute + cdn</td><td>480M req</td><td><span class="cloud-tag cloud-tag-active">Running</span></td></tr>
                       <tr><td>undressbot.io</td><td>compute + storage</td><td>310M req</td><td><span class="cloud-tag cloud-tag-flagged">Abuse Report Filed</span></td></tr>
-                      <tr><td>imagegen-x.com</td><td>cdn</td><td>190M req</td><td><span class="cloud-tag cloud-tag-review">Under Review</span></td></tr>
+                      <tr><td>imagegen-hub.com</td><td>cdn</td><td>190M req</td><td><span class="cloud-tag cloud-tag-review">Under Review</span></td></tr>
                       <tr><td>pixelstrip.app</td><td>compute + storage</td><td>275M req</td><td><span class="cloud-tag cloud-tag-active">Running</span></td></tr>
                     </tbody>
                   </table>
@@ -649,52 +747,37 @@
 </div><!-- /monitor-wrap -->
 
 
-<!-- ═══════════════════════════════════════════════
-     CHAPTER SIDEBAR
-     ═══════════════════════════════════════════════ -->
-<nav id="chapter-nav" class="chapter-nav" aria-label="Chapters">
-  <!-- populated by JS -->
-</nav>
 
 <!-- ═══════════════════════════════════════════════
      SCROLL DRIVER (creates scroll height)
      ═══════════════════════════════════════════════ -->
 <div id="scroll-root">
-
   <!-- INTRO -->
   <div class="scroll-chapter" data-chapter="intro" data-scene="scene-intro">
     <div class="step" style="height:55vh"></div>
-    <div class="step step--k">
-      <span class="step-label">The Incident</span>
-      <p class="step-key-text">In December 2025, xAI's chatbot Grok generated over 6,700 sexualized images per hour — including of children — directly into public X comment threads. Five newsrooms published five stories. They all named something different.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
-      <div class="step-detail" aria-hidden="true">
-        <p>Bloomberg blamed the AI interface. 404 Media found coordinating Telegram channels. WIRED asked why Grok was still in the App Store. The Verge reported that paywalling fixed nothing. Reuters traced it back to the training data.</p>
-        <p>A Brown University study argues each headline was correct — and each named a different node in the same supply chain.</p>
-      </div>
-    </div>
     <div class="step" style="height:30vh"></div>
-    <div class="step step--k">
-      <span class="step-label">The Supply Chain</span>
-      <p class="step-key-text">AIG-NCII is not a single product. It is an ecosystem — training data, AI models, distribution channels, app stores, payment processors, and cloud infrastructure that together make the abuse possible at scale.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
-      <div class="step-detail" aria-hidden="true">
-        <p>This investigation follows the chain node by node. Each window that opens is a different layer of the system. Each layer has a different owner — and a different point of intervention.</p>
-        <p>Based on Ding, Suresh &amp; Venkatasubramanian (2026), Brown University School of Public Health.</p>
-      </div>
-    </div>
     <div class="step" style="height:70vh"></div>
   </div>
 
   <!-- COVER / NEWS -->
   <div class="scroll-chapter" data-chapter="cover" data-scene="cover">
     <div class="step step--n" data-news="start" style="height:150vh"></div>
-    <div class="step" data-news="h0" style="height:100vh"></div>
-    <div class="step" data-news="h1" style="height:100vh"></div>
-    <div class="step" data-news="h2" style="height:100vh"></div>
-    <div class="step" data-news="h3" style="height:100vh"></div>
-    <div class="step" data-news="h4" style="height:100vh"></div>
-    <div class="step" data-news="done" data-done="interface" style="height:60vh"></div>
+    <div class="step" data-news="h0" data-offset="0.8" style="height:100vh"></div>
+    <div class="step" data-news="h1" data-offset="0.8" style="height:100vh"></div>
+    <div class="step" data-news="h2" data-offset="0.8" style="height:100vh"></div>
+    <div class="step" data-news="h3" data-offset="0.8" style="height:100vh"></div>
+    <div class="step" data-news="h4" data-offset="0.8" style="height:100vh"></div>
+    <div class="step step--k" data-news="done" data-done="interface" style="height:70vh">
+      <span class="step-label">The Supply Chain</span>
+      <p class="step-key-text">AIG-NCII is powered not just by a single model, app, or website, but by a vast, interconnected, and ever-evolving technological ecosystem.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>The ecosystem has 11 categories of technologies that play one of five roles: creation (training datasets, generative AI models, generative AI interfaces), distribution (distribution channels), proliferation and discovery (deepfake creation communities, search engines, advertisement platforms, app stores), infrastructural support (developer platforms, critical service providers) and monetization (payment processors).</p>
+        <p>Each headline named a different part of it. Bloomberg: a generative AI interface (Grok) and a public distribution channel (X). 404 Media: a deepfake creation community (a Telegram channel). WIRED: app stores. The Verge: monetization, the paywall. Reuters: a limit on one interface, on one platform.</p>
+        <p>Grok posts images directly onto the comment sections of X, a public distribution channel, facilitating both the non-consensual creation and distribution of intimate images.</p>
+        <p>This investigation follows the chain part by part. Each window that opens is a different layer of the system.</p>
+      </div>
+    </div>
   </div>
 
   <!-- INTERFACE → DATASET → MODEL REVEAL (one continuous scene) -->
@@ -709,56 +792,64 @@
       <p>In December 2025 — 6,700 images per hour, posted directly into public X comment threads.</p>
     </div>
     <div class="step step--k" data-chat="respond">
-      <span class="step-label">AI Interface</span>
-      <p class="step-key-text">The interface is the tip of the stack.</p>
+      <span class="step-label">Generative AI Interfaces</span>
+      <p class="step-key-text">Generative AI interfaces increase the accessibility of AIG-NCII by providing an easy-to-use interface for users to access generative AI model capabilities.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>Generative AI interfaces increase the accessibility of AIG-NCII by providing an easy-to-use interface for users to access generative AI model capabilities. In the 2010s, there were already undressing apps like DeepNude with over 95,000 active users. In the 2020s, AI nudifier applications became a rapidly growing multi-million dollar economy dedicated to the creation and monetization of AIG-NCII, predominantly of young women.</p>
+        <p>In the 2010s face-swap era, there were already “undressing” apps like DeepNude that had over 95k active users. In the 2020s, AI nudifier applications became a rapidly growing multi-million dollar economy dedicated to the creation and monetization of AIG-NCII, predominantly of young women.</p>
+        <p>AI nudifier applications significantly lower the barrier to entry because any non-technical user can upload a photo of another person (like a yearbook photo or social media post) and create an “undressed” version of that person within minutes without their consent. The apps offer features including undressing and positioning the subject in various sexual positions.</p>
+        <p>General purpose model interfaces have also been used to produce AIG-NCII. WIRED found that ChatGPT and Gemini have been used to “strip women in photos down to bikinis”. Most notably, Grok has been used to generate thousands of images of women and girls directly into the comment section of X.</p>
       </div>
     </div>
     <div class="step step--k" data-chat="dataset">
-      <span class="step-label">Open vs. Closed Models</span>
-      <p class="step-key-text">Below the interface: open-weight models anyone can fine-tune for harm, trained on datasets that were never safe to use.</p>
+      <span class="step-label">Training Datasets</span>
+      <p class="step-key-text">Training datasets refer to text, image, video, audio, and/or multi-modal datasets used to train generative AI models.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>The critical distinction is open vs. closed model weights. Closed models (Grok, GPT-4o, Gemini) allow companies to enforce guardrails and patch abuse. Open-weight models (Stable Diffusion, FLUX) are publicly downloadable — anyone can strip guardrails and distribute the result. When CivitAI banned real-person models in April 2025, 5,000+ were reuploaded to Hugging Face within 48 hours. Weights, once released, cannot be recalled.</p>
+        <p>In the early 2010s, face-swap models were trained using open-source face datasets and other curated NSFW datasets comprised primarily of women. An early study of the 2019 DeepNude undressing app found that it was unable to generate images of men because it was trained only on images of women.</p>
+        <p>Researchers have found that “general-purpose” image datasets like LAION-5B, ImageNet, and LAION-400M also contain pornography, non-consensual intimate images, and/or known CSAM, enabling models that train upon them to generate AIG-NCII.</p>
       </div>
     </div>
-    <div class="step step--n" data-chat="sort">
-      <p>That training data fed two kinds of model. The difference between them determines whether abuse can be stopped.</p>
+    <div class="step step--n" data-chat="scan">
+      <p>A scan of the dataset flags images of child sexual abuse material.</p>
+    </div>
+    <div class="step step--n" data-chat="return">
+      <p>The model trained on all of it. Back to the interface.</p>
+    </div>
+    <div class="step step--n" data-chat="model">
+      <p>Click the model to see what it is made of.</p>
     </div>
   </div>
 
-  <!-- DM / PRIVATE CHANNELS -->
-  <div class="scroll-chapter" data-chapter="dm" data-scene="dm">
-    <div class="step step--n" data-dm="msg0">
-      <p>The first message arrives. No platform sees it. No algorithm catches it.</p>
+  <!-- MODELS (open vs closed) → DEVELOPER PLATFORMS -->
+  <div class="scroll-chapter" data-chapter="models" data-scene="models">
+    <div class="step step--n" data-md="open">
+      <p>Open weights: released once, copied forever.</p>
     </div>
-    <div class="step step--n" data-dm="msg1">
-      <p>It's forwarded. Then again.</p>
+    <div class="step step--n" data-md="closed">
+      <p>Closed models: one copy, held by the company.</p>
     </div>
-    <div class="step step--n" data-dm="msg2">
-      <p>Three devices now hold an image of a real person who was never asked.</p>
-    </div>
-    <div class="step step--k" data-dm="annotate-imessage">
-      <span class="step-label">Messages</span>
-      <p class="step-key-text">AIG-NCII is most commonly shared through private channels — direct message, text message, email — before any platform has had the opportunity to detect it.</p>
+    <div class="step step--k" data-md="annotate">
+      <span class="step-label">Generative AI Models</span>
+      <p class="step-key-text">Generative AI models refer to a spectrum of models that use deep learning techniques to take in an input and produce a modified output.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>A 2024 survey by the Center for Democracy &amp; Technology of K-12 school students and teachers found that AI-generated NCII was most commonly shared through private channels (direct message, text message, email) as well as public channels. These trends align with traditional modes of non-consensual distribution of intimate images.</p>
-        <p>AIG-NCII results in significant psychological, physical, financial, and reputational harm to victim-survivors, as well as a gendered chilling effect where victim-survivors retreat from online spaces due to fear of harassment.</p>
+        <p>In the 2010s, smaller, independent, open-source models like DeepFaceLab primarily used generative adversarial networks to automate the face-swapping process. DeepFaceLab had direct ties to Mr.DeepFakes, a prolific “deepfake pornography” community and hosting site. Early models required a high level of technical expertise and were inconsistent in quality and realism.</p>
+        <p>With the 2020s came larger and more powerful generative AI models that produced realistic outputs. Open-weight models like Stable Diffusion and Flux have been fine-tuned to produce tens of thousands of fine-tuned variants designed to produce AIG-NCII, predominantly of women. This trend is now being replicated with open-weight video-generation models.</p>
+        <p>Additionally, proprietary closed models like xAI’s Aurora, Google’s Gemini models, and OpenAI’s GPT models can be used via chatbot interface or API access to generate AIG-NCII.</p>
       </div>
     </div>
-    <div class="step step--n" data-dm="switchemail">
-      <p>Email. SMS. Private messages. Platforms not designed to detect this, and with no legal obligation to try.</p>
+    <div class="step step--n" data-md="move">
+      <p>Where do open-weight models live? On developer platforms.</p>
     </div>
-    <div class="step step--k" data-dm="annotate-email" data-done="reddit">
-      <span class="step-label">Email</span>
-      <p class="step-key-text">AIG-NCII disproportionately depicts women and girls, making it a form of technology-facilitated gender-based violence that results in significant psychological, physical, financial, and reputational harm to victim-survivors.</p>
+    <div class="step step--k" data-md="annotate-dev">
+      <span class="step-label">Developer Platforms</span>
+      <p class="step-key-text">Developer platforms are platforms for developers to create, store, manage, and share code, including models and datasets.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>AIG-NCII results in a gendered chilling effect where victim-survivors retreat from online spaces due to fear of harassment. Schools in Australia and South Korea have provided students with the option to remove their photos from yearbooks for fear of being subject to deepfake abuse.</p>
-        <p>Distribution channels include both private channels and public platforms that AI-generated intimate images may be non-consensually distributed across. Email falls outside the coverage of laws like the TAKE IT DOWN Act, which focuses on social media and hosting sites rather than communication services.</p>
+        <p>Developer platforms are central to the development of open-source models and datasets that are used in the creation of deepfakes. Activists and researchers have documented GitHub’s role in hosting early face-swap models like DeepFaceLab, DeepNude, and Unstable Diffusion that were used to produce AIG-NCII.</p>
+        <p>AI-specific developer platforms like Hugging Face and Civitai are used to host open-weight models, such as pre-trained base models Stable Diffusion and Flux, as well as almost 35,000 fine-tuned “deepfake” variants, a majority of them sexual and signaling intent to produce non-consensual intimate images.</p>
+        <p>An audit of Civitai also found that it was predominantly used to host “not-safe-for-work” (NSFW) models and datasets. After Civitai passed a new policy banning models depicting the likeness of real people in April 2025, 404 Media found that users downloaded over 5000 models and reuploaded them onto Hugging Face.</p>
       </div>
     </div>
   </div>
@@ -784,24 +875,25 @@
       <p>Reddit bans r/deepfakes. February 2018. 90,000 subscribers removed overnight.</p>
     </div>
     <div class="step step--k" data-rc="annotate-reddit">
-      <span class="step-label">Reddit</span>
-      <p class="step-key-text">In 2017, journalists uncovered r/deepfakes on Reddit, one of the earliest deepfake creation communities, with over 90,000 subscribers focused on face-swapping celebrity faces with porn performers.</p>
+      <span class="step-label">Deepfake Creation Communities</span>
+      <p class="step-key-text">Deepfake creation communities are online communities that provide general and technical assistance to members trying to create deepfakes.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>In February 2018, under public pressure, Reddit banned r/deepfakes and updated their site-wide rules "against involuntary pornography and sexual or suggestive content involving minors." This was one of the earliest platform-level interventions against AIG-NCII.</p>
-        <p>After the ban, many members migrated to MrDeepFakes.com, the self-proclaimed "largest deepfake community." Deepfake creation communities are "highly mobile" — existing across platforms like Reddit, MrDeepFakes, 4chan, 8chan, Voat, Telegram, and Discord.</p>
+        <p>They are a “key driving force behind the increasing accessibility of deepfakes and deepfake creation software” and serve as an “entry point” for new users to learn from experienced users. Historically, deepfake creation communities have been large (reaching 100,000 members) and highly mobile, existing across platforms like Reddit, MrDeepFakes, 4chan, 8chan, Voat, Telegram, and Discord.</p>
+        <p>In 2017, journalists uncovered “r/deepfakes” on Reddit, one of the earliest deepfake creation communities, with over 90,000 subscribers that focused on face swapping celebrity faces with porn performers. In February 2018, under public pressure, Reddit banned “r/deepfakes” and updated its site-wide rules “against involuntary pornography and sexual or suggestive content involving minors”.</p>
       </div>
     </div>
     <div class="step step--n" data-rc="mdf">
       <p>MrDeepFakes builds a commercial market — commissions, subscriptions, a full review system for deepfake content.</p>
     </div>
-    <div class="step step--k" data-rc="annotate-mdf" data-done="search">
+    <div class="step step--k" data-rc="annotate-mdf" data-done="dm">
       <span class="step-label">MrDeepFakes</span>
-      <p class="step-key-text">After the r/deepfakes ban, many members migrated to MrDeepFakes.com — the self-proclaimed "largest deepfake community," serving as both a deepfake video distribution and consumption site and a forum for deepfake content creators.</p>
+      <p class="step-key-text">After the “r/deepfakes” ban, many members migrated to MrDeepFakes.com, the self-proclaimed “largest deepfake community”.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>MrDeepFakes was linked directly by the popular face-swap model DeepFaceLab on GitHub as a place to obtain technical support. Researchers studying MDF found subforums on technical assistance for both models and datasets. Mr.DeepFakes was used as "an actively growing deepfake market (primarily for people seeking to commission NSFW deepfake media)."</p>
-        <p>On May 6, 2025, Mr.DeepFakes — with over 650,000 users — shut down because an unknown "critical service provider terminated service permanently" and "data loss has made it impossible to continue operation." This case study demonstrates a connection between critical service providers and AIG-NCII distribution channels.</p>
+        <p>It serves as both a deepfake video distribution and consumption site and a forum for deepfake content creators. MDF was also linked directly by the popular face-swap model DeepFaceLab on GitHub as a place to obtain technical support. Researchers studying MDF found subforums on technical assistance for both models and datasets.</p>
+        <p>Telegram group chats have also served as “deepfake creation communities” for users who use Grok AI to generate AIG-NCII.</p>
+        <p>On May 6, 2025, Mr.DeepFakes, the world’s most notorious “deepfake pornography” site with over 650,000 users, shut down because an unknown “critical service provider terminated service permanently” and “data loss has made it impossible to continue operation.”</p>
       </div>
     </div>
   </div>
@@ -814,14 +906,26 @@
     <div class="step step--n" data-search="more">
       <p>Google, Yahoo, and Bing. No safety labels. No content warnings. Surfaced like any other search result.</p>
     </div>
-    <div class="step step--k" data-search="annotate" data-done="appstore">
+    <div class="step step--k" data-search="annotate">
       <span class="step-label">Search Engines</span>
-      <p class="step-key-text">99.69% of Google searches for a public figure's name plus "deepfake" returned a deepfake pornography website on the first page of results.</p>
+      <p class="step-key-text">Search engines enable the wide-spread discovery of AI nudifier apps, AIG-NCII, and distribution sites.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>Independent researcher Genevieve Oh conducted 6,000 Google searches of 100 public figures — elected officials, broadcasters, TV hosts, singers, and chess players — and found that 99.69% of searches for "NAME+DEEPFAKE" resulted in a deepfake pornography website result on the first page. Another audit found that queries for "deepnude," "nudify," and "undress app" on Google, Yahoo, and Bing all yielded at least one result leading to an AI nudifier application within the first 20 results.</p>
-        <p>In 2025, 47 state attorneys general wrote an open letter to Google, Yahoo, and Microsoft urging them to "block AIG-NCII content and creation tools from search engines" and to "provide appropriate warnings" when users search for related terms.</p>
-        <blockquote>"Search engines 'quickly present users with direct links to deepfake NCII, to listicles rating the top apps for creating deepfake NCII, and to apps that enable the creation of naked and/or sexual images and videos of any person in any photo.'"</blockquote>
+        <p>Independent researcher Genevieve Oh conducted 6000 google searches of 100 public figures (elected officials, broadcasters, TV hosts, singers, and chess players) and found that 99.69% of the searches for “NAME+DEEPFAKE” resulted in a “deepfake pornography” website result on the first page. Another audit found that queries for “deepnude,” “nudify,” and “undress app” on Google, Yahoo, and Bing all yielded at least one result leading the user to AI nudifier applications within the first 20 results.</p>
+        <p>In 2025, 47 state attorneys general wrote an open letter to Google, Yahoo, and Microsoft urging them to block AIG-NCII content and creation tools from search engines. According to the letter, queries like “how to make deepfake pornography,” “undress apps,” “nudify apps,” or “deepfake porn” do not produce any warning labels. Instead, search engines “quickly present users with direct links to deepfake NCII, to listicles rating the top apps for creating deepfake NCII, and to apps that enable the creation of naked and/or sexual images and videos of any person in any photo”.</p>
+      </div>
+    </div>
+  
+    <div class="step step--n" data-search="ads">
+      <p>Pop-up ads for the same kind of app follow the reader around the page.</p>
+    </div>
+    <div class="step step--k" data-search="annotate-ads" data-done="payment">
+      <span class="step-label">Advertisement Platforms</span>
+      <p class="step-key-text">Advertisement platforms enable organizations and individuals to place ads (specifically for AI nudifier apps) that drive massive traffic to these tools.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>AI nudifier apps gain users by posting advertisements on large social media platforms. Investigative journalists at 404 Media and the Indicator have documented thousands of advertisements that AI nudifiers post on Instagram.</p>
+        <p>A technical report from Graphika tracking 34 AI nudifier apps demonstrates how these apps “operate as a fully-fledged online industry” and rely on advertising on mainstream social media platforms and deploying customer referral schemes such as referral links on platforms like Reddit and X, allowing them to accumulate over 24 million unique visitors in September, 2023. Graphika found a 2000% increase in referral links in one year during 2023.</p>
       </div>
     </div>
   </div>
@@ -837,13 +941,13 @@
     <div class="step step--n" data-as="overlay">
       <p>Apple and Google each collected their standard 30% cut. A major nudification app is the subject of a San Francisco lawsuit — and was still listed on both stores at the time of reporting.</p>
     </div>
-    <div class="step step--k" data-as="annotate" data-done="payment">
+    <div class="step step--k" data-as="annotate" data-done="search">
       <span class="step-label">App Stores</span>
-      <p class="step-key-text">A 2026 report by the Tech Transparency Project found 55 apps on Google Play and 47 on the Apple App Store capable of digitally removing clothing from photos — downloaded more than 705 million times worldwide and generating $117 million in revenue.</p>
+      <p class="step-key-text">App stores are digital marketplaces for producers to upload and advertise apps for consumers to discover and download apps.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>App stores enable the large-scale discovery and downloading of AI nudifier apps. According to Bellingcat, DeepSwap, an app featured at the top of MrDeepFakes, was available on Google Play and Apple stores. Both Apple and Google collected their standard revenue share from these downloads.</p>
-        <p>Both companies removed dozens of nudifier apps from their stores after press coverage. With the most recent case of Grok, advocates critiqued app stores for continuing to host Grok and X. Apple threatened to remove Grok from the App Store over sexualized deepfakes.</p>
+        <p>The National Center on Sexual Exploitation has previously called out Apple and Google for their stores’ role promoting and facilitating sexual exploitation of children by allowing the discovery of inappropriate and potentially dangerous apps. Similarly, app stores enable the large-scale discovery and downloading of AI nudifier apps. According to Bellingcat, DeepSwap, an app that was featured on the top of Mr.DeepFakes, was available on Google Play and Apple stores.</p>
+        <p>With the most recent case of Grok, advocates have also critiqued app stores for continuing to host Grok and X. A 2026 report by the Tech Transparency Project found 55 apps in the Google Play Store that can “digitally remove the clothes from women and render them completely or partially naked or clad in a bikini or other minimal clothing” and 47 such apps in the Apple store. TTP found that these apps were “downloaded more than 705 million times worldwide and generated $117 million in revenue” (a portion of which goes to Google and Apple). Both companies removed dozens of nudifier apps from their stores after press coverage.</p>
       </div>
     </div>
   </div>
@@ -861,11 +965,11 @@
     </div>
     <div class="step step--k" data-pay="annotate" data-done="cloud">
       <span class="step-label">Payment Processors</span>
-      <p class="step-key-text">Sellers of deepfake NCII tools and content have made their services available in exchange for fees paid via payment platforms, displaying the logos of Visa, Mastercard, American Express, PayPal, Google Pay, and Apple Pay on their webpages.</p>
+      <p class="step-key-text">Payment processors (including credit cards and cryptocurrencies) enable the monetization of non-consensual creation and distribution of AI-generated intimate images.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>The Indicator estimates the current AI nudifier economy of undressing apps to be over $36 million. Mr.DeepFakes was used as "an actively growing deepfake market (primarily for people seeking to commission NSFW deepfake media)."</p>
-        <p>In 2025, 47 state attorneys general wrote a letter to Visa, Mastercard, American Express, PayPal, Google Pay, and Apple Pay, calling for these companies to "deny sellers the ability to use their services when they are on notice of these connections" and to "actively work to identify and remove any such sellers from their network."</p>
+        <p>The Indicator estimates the current AI nudifier economy of undressing apps to be over $36 million dollars. According to researchers, Mr.DeepFakes was used as an “actively growing deepfake market (primarily for people seeking to commission NSFW deepfake media)”.</p>
+        <p>In 2025, 47 state attorneys general wrote a letter to Visa, Mastercard, American Express, PayPal, Google Pay, and Apple Pay stating “sellers of deepfake NCII tools and content have made their services available in exchange for fees paid via payment platforms…even including the logos of those companies on their webpages” and call for these companies to “deny sellers the ability to use their services when they are on notice of these connections but should be actively working to identify and remove any such sellers from their network”.</p>
       </div>
     </div>
   </div>
@@ -879,12 +983,46 @@
       <p>Researchers sent abuse reports to both. Both have acceptable use policies against illegal content. Most sites remained online. Enforcement is reactive — complaint-driven, with no proactive detection.</p>
     </div>
     <div class="step step--k" data-cloud="annotate">
-      <span class="step-label">Cloud Infrastructure</span>
-      <p class="step-key-text">Amazon and Cloudflare provide hosting or content delivery services for 62 of the 85 nudifier websites surveyed. Google enabled simple sign-on for 53 out of 85.</p>
+      <span class="step-label">Critical Service Providers</span>
+      <p class="step-key-text">Critical service providers, including cloud service providers, domain name services (DNS), and authentication services, are support software enabling the existence of multiple pieces of the technological ecosystem.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
       <div class="step-detail" aria-hidden="true">
-        <p>Critical service providers — including cloud service providers, domain name services, and authentication services — enable the existence of multiple pieces of the technological ecosystem, including nudifier apps and deepfake websites. Researchers filed abuse reports with Amazon and Cloudflare. Most sites remained online.</p>
-        <p>On May 6, 2025, Mr.DeepFakes — with over 650,000 users — shut down because an unknown "critical service provider terminated service permanently" and "data loss has made it impossible to continue operation." This case study demonstrates a connection between critical service providers and AIG-NCII distribution channels.</p>
+        <p>That includes nudifier apps and deepfake websites. An Indicator audit of 85 AI nudifier websites found that “Amazon and Cloudflare provide hosting or content delivery services for 62 of the 85 nudifiers” and “Google enabled simple sign-on for 53 out of 85.”</p>
+        <p>On May 6, 2025, Mr.DeepFakes, the world’s most notorious “deepfake pornography” site with over 650,000 users, shut down because an unknown “critical service provider terminated service permanently” and “data loss has made it impossible to continue operation.” This case study demonstrates a connection between critical service providers and AIG-NCII distribution channels.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DM / PRIVATE CHANNELS -->
+  <div class="scroll-chapter" data-chapter="dm" data-scene="dm">
+    <div class="step step--n" data-dm="msg0">
+      <p>The first message arrives. No platform sees it. No algorithm catches it.</p>
+    </div>
+    <div class="step step--n" data-dm="msg1">
+      <p>It's forwarded. Then again.</p>
+    </div>
+    <div class="step step--n" data-dm="msg2">
+      <p>Three devices now hold an image of a real person who was never asked.</p>
+    </div>
+    <div class="step step--k" data-dm="annotate-imessage">
+      <span class="step-label">Distribution Channels</span>
+      <p class="step-key-text">Distribution channels include both private channels and public platforms that AI-generated intimate images may be non-consensually distributed across.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>A 2024 survey by the Center for Democracy &amp; Technology of K-12 school students and teachers found that AI-generated NCII was most commonly shared through public channels (e.g., posting on social media platforms or adult sites) and private channels (e.g., direct message, text message, email). These trends also align with traditional modes of non-consensual distribution of intimate images.</p>
+        <p>Under the public platform category, there are also “deepfake pornography sites” such as Mr.Deepfakes that are dedicated to the distribution of AIG-NCII. In 2024, the American Sunlight Project discovered tens of thousands of AIG-NCII depicting 26 senators and members of congress, 25 of them women, across eleven “deepfake pornography” websites. Activists and researchers have called out hundreds of similar websites.</p>
+      </div>
+    </div>
+    <div class="step step--n" data-dm="switchemail">
+      <p>Email. SMS. Private messages. Platforms not designed to detect this, and with no legal obligation to try.</p>
+    </div>
+    <div class="step step--k" data-dm="annotate-email" data-done="appstore">
+      <span class="step-label">The Harm</span>
+      <p class="step-key-text">AIG-NCII disproportionately depicts women and girls, making it a form of technology-facilitated gender-based violence.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>It results in significant psychological, physical, financial, and reputational harm to victim-survivors, as well as a gendered chilling effect where victim-survivors retreat from online spaces due to fear of harassment.</p>
+        <p>Generative AI significantly increases the accessibility of image-based sexual abuse and perpetuates a culture of non-consent at scale. A single image of a person can be “nudified” in a matter of minutes.</p>
       </div>
     </div>
   </div>
@@ -932,6 +1070,95 @@
         <p>Redrawn from the paper’s map of the technologies that facilitate AI-generated non-consensual intimate images. Each box is a layer of technology, and the links show how they depend on one another.</p>
       </div>
     </div>
+    <div class="step step--k" data-fin="law-intro">
+      <span class="step-label">Laws and the Ecosystem</span>
+      <p class="step-key-text">AIG-NCII is a crisis of non-consent at scale that regulators are scrambling to control.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Regulation that only criminalizes individuals for the creation, dissemination, or solicitation of AIG-NCII without targeting the technological ecosystem supporting it is simply not enough to prevent image-based sexual abuse at scale.</p>
+        <p>In the U.S., there is a patchwork of federal and state laws that cover AIG-NCII to some degree. Nearly all 50 U.S. states have some form of law addressing AIG-NCII. However, these laws use inconsistent terminology, definitions, and include varying levels of protections for victim-survivors.</p>
+        <p>The paper maps the U.S. federal law (the TAKE IT DOWN Act) and 63 state laws across 44 states. Out of the 63 state laws, a vast majority target individuals who have created, solicited, or disseminated AIG-NCII. Only 5 out of 63 state laws (7.9%) explicitly target technology actors.</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="law-fed">
+      <span class="step-label">Federal: the TAKE IT DOWN Act</span>
+      <p class="step-key-text">The only U.S. federal law to date targeting AIG-NCII is the TAKE IT DOWN Act.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Signed into law in May 2025 (and in effect in May 2026), the Act requires public platforms to remove reported non-consensually posted “intimate visual depictions” within 48 hours, to be enforced by the Federal Trade Commission.</p>
+        <p>Viewing the Act against the ecosystem, current federal protections only target a very small piece of it, namely the Distribution Channels.</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="law-states">
+      <span class="step-label">State Laws: Different Technologies</span>
+      <p class="step-key-text">California and New York regulate the same piece of the ecosystem, Distribution Channels, while Tennessee, Arkansas and Texas attempt to regulate the technologies involved in the creation of AIG-NCII: Generative AI Models and Generative AI Interfaces.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>California SB981 (2024) requires “social media platforms” to provide a mechanism that is reasonably accessible to a reporting user.</p>
+        <p>New York A8808 (2024) enables individuals to maintain an action or special proceeding for a court order to require “websites” to permanently remove non-consensually distributed intimate images.</p>
+        <p>Tennessee H0769 (2025) makes it an offense for a person to knowingly “possess, distribute, or produce technology, software, or digital tools” designed for the purpose of creating material that includes a minor engaged in sexual activity or simulated sexual activity.</p>
+        <p>Arkansas HB1529 (2025) enables the Attorney General to “institute a civil action on behalf of the state against a provider or developer of image generation technology” that was used to create deepfake visual material.</p>
+        <p>Texas SB441 (2025) makes it an offense for an individual to non-consensually create intimate deepfakes. It does not apply to the “provider or developer of a publicly accessible artificial intelligence application or software” used in the creation of the deepfake media if they “included a prohibition against the creation of deep fake media … in terms and conditions or user policies” and “took affirmative steps to prevent the creation of deep fake media.”</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="law-same">
+      <span class="step-label">Same Technology, Different Wording</span>
+      <p class="step-key-text">Tennessee’s language focuses on how technologies are designed while Arkansas’ language focuses on how they have been used.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Both laws reasonably target the creation pipeline via Generative AI Models and Generative AI Interfaces.</p>
+        <p>In practice, a Generative AI Interface that is clearly designed for the purpose of nudification (but never used) may not be subject to civil action in Arkansas but could be within scope in Tennessee.</p>
+        <p>So although some jurisdictions target the same technology, their language is inconsistent, which may or may not have been done intentionally. The ecosystem map helps to see this, and directs a closer reading of the legal text of the two states.</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="law-new">
+      <span class="step-label">A New Law, Added to the Map</span>
+      <p class="step-key-text">On May 7, 2026, Minnesota passed a new state law (bill HF 1606) titled “Prohibition on Nudification Technology”.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>“A person who owns or controls a website, application, software, program, or other service must not: (1) allow a user to access, download, or use the website, application, software, program, or other service to nudify an image or video; or (2) nudify an image or video on behalf of a user.”</p>
+        <p>Annotating the bill text with the technologies it targets, the law targets primarily Generative AI Interfaces, particularly nudifier applications. However, it differs from the other states that target creation technologies (Tennessee and Arkansas) because Generative AI Models are not covered.</p>
+        <p>The ecosystem is robust over time: new laws can be annotated and added as they are passed.</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="law-map">
+      <span class="step-label">The U.S. State Landscape</span>
+      <p class="step-key-text">Each state is labeled with icons of the regulated technologies and color-coded with the role of the technology in the ecosystem.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Creation: Tennessee H0769, Arkansas HB1529, Texas SB441 (2025) and Minnesota HF1606 (2026). Distribution: California SB981 and New York A8808 (2024).</p>
+        <p>Click a highlighted state to read what its law says.</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="law-gap">
+      <span class="step-label">What the Laws Reach</span>
+      <p class="step-key-text">Mapping policies against the ecosystem allows stakeholders to clearly characterize and compare different state laws.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>As a result, industry players can improve product compliance; advocacy organizations can develop localized victim-survivor resources; lawyers have a larger toolkit for litigation; and state and local policymakers can situate their laws within a larger landscape.</p>
+        <p>The goal is not to offer recommendations on how best to regulate this ecosystem, which should be done with the participation of local policymakers and civil society groups, but to show how the ecosystem can help make sense of the existing legal landscape and reveal gaps and opportunities.</p>
+        <p>The same method can be applied to other jurisdictions. Regulators from the European Commission, United Kingdom, France, Ireland, India, Malaysia, Indonesia, Brazil, Australia, Canada, and many others have initiated investigations in response to Grok.</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="future-edge">
+      <span class="step-label">Next: The Links Between Boxes</span>
+      <p class="step-key-text">The ecosystem reveals edges, the relationships between technologies, that are important to understand but have not yet been studied.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>For example, there has yet to be a study on the relationship between Generative AI Models and Generative AI Interfaces (specifically AI nudifier applications). Current AI nudifier apps or “undressing” sites state that they use generative AI technology, but do not specify the underlying model being used, reflecting a gap in tech accountability upstream.</p>
+        <p>Further research along this edge would assist existing interventions (e.g., lawsuits against the creators of these technologies) and shed light on future directions for AI governance (e.g., designing AI safety techniques to mitigate downstream harm).</p>
+      </div>
+    </div>
+    <div class="step step--k" data-fin="future-ripple">
+      <span class="step-label">Next: Ripple Effects</span>
+      <p class="step-key-text">All the different technologies are connected in a complex web, so one intervention can ripple through the others.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more ▾</button>
+      <div class="step-detail" aria-hidden="true">
+        <p>In April 2025, developer platform Civitai, which hosts NSFW models and datasets, updated its Terms of Service to explicitly prohibit content that uses, reproduces, or is based on the likeness of real people. 404 Media called the new policy a major blow to the nonconsensual AI porn ecosystem.</p>
+        <p>On the map, the policy induces a ripple effect for Training Datasets and Generative AI Models. Researchers could study how it affects other technologies in the ecosystem, such as the amount of NSFW Generative AI Models or, further downstream, the number of Generative AI Interfaces available on App Stores.</p>
+        <p>The recommendation: a relational approach to researching AIG-NCII, looking at the relationships between technologies and the ripple effects that interventions may have.</p>
+      </div>
+    </div>
     <div class="step step--n" data-fin="end"></div>
   </div>
 
@@ -942,31 +1169,18 @@
   <div class="endcard-inner">
     <p>Based on <em>"How to Stop Playing Whack-a-Mole: Mapping the Ecosystem of Technologies Facilitating AI-Generated Non-Consensual Intimate Images"</em> — Michelle L. Ding, Harini Suresh &amp; Suresh Venkatasubramanian, Brown University (arXiv:2602.04759, 2026).</p>
     <p class="endcard-note">No abusive imagery is shown or produced here. All interface mockups are illustrative reconstructions for educational purposes only. All content is hypothetical unless otherwise cited.</p>
+    <p class="endcard-next"><a class="endcard-soon" href="database.html">Explore the database →</a></p>
     <p class="endcard-resources">If you or someone you know has been affected: <strong>StopNCII.org</strong> &middot; <strong>Cyber Civil Rights Initiative</strong> &middot; <strong>RAINN (1-800-656-HOPE)</strong></p>
+    <p class="endcard-credit">Designed and built by <strong>Haya Bugshan</strong></p>
   </div>
 </footer>
 
-<!-- ═══════════════════════════════════════════════
-     PQ PANEL (sticky note research popup)
-     ═══════════════════════════════════════════════ -->
-<div class="pq-panel" id="pq-panel" role="dialog" aria-modal="true" aria-label="Research note">
-  <div class="pq-inner">
-    <button class="pq-expand" id="pq-expand" aria-label="Expand research note">↗</button>
-    <button class="pq-close" id="pq-close" aria-label="Close">✕</button>
-    <p class="pq-summary" id="pq-summary"></p>
-    <div class="pq-full" id="pq-full">
-      <hr class="pq-divider">
-      <blockquote class="pq-quote" id="pq-quote"></blockquote>
-      <cite class="pq-cite" id="pq-cite"></cite>
-    </div>
-  </div>
-</div>
 
 <!-- ── NOTES APP (persistent floating window, right side) ── -->
 <div id="notes-app" role="complementary" aria-label="Notes">
   <div class="na-titlebar">
     <div class="na-traffic">
-      <span class="na-tl na-r" id="na-close" role="button" tabindex="0" aria-label="Collapse notes" title="Collapse notes"></span>
+      <span class="na-tl na-r" id="na-close" role="button" tabindex="0" aria-label="Show less" title="Show less"></span>
       <span class="na-tl na-y"></span>
       <span class="na-tl na-g"></span>
     </div>
@@ -989,24 +1203,14 @@
 
 <!-- ── SCENE GATE NOTIFICATION ──────────────────────── -->
 <!-- ── QUICK EXIT (always visible) ──────────────────────── -->
-<button type="button" id="quick-exit" class="quick-exit" title="Leave this page immediately (or press Esc three times)">Exit <span aria-hidden="true">✕</span><span class="sr-only">— leave this page immediately</span></button>
+<button type="button" id="quick-exit" class="quick-exit" data-tip="Leave the story and return to the content warning. Pressing Esc three times does the same.">Exit <span aria-hidden="true">✕</span><span class="sr-only">— leave this page immediately</span></button>
 
 <!-- ── READER CONTROLS + HINT ───────────────────────── -->
 <div id="reader-controls" class="reader-controls" role="group" aria-label="Reader controls">
-  <button type="button" id="rc-auto" class="rc-btn" aria-pressed="false" title="Open each new scene automatically instead of waiting for a click">Auto-open scenes: off</button>
-  <button type="button" id="rc-restart" class="rc-btn" title="Start over from the beginning">↺ Restart</button>
+  <button type="button" id="rc-sound" class="rc-btn" aria-pressed="true" data-tip="The soft chime when a notification pops up.">Sound: on</button>
+  <button type="button" id="rc-restart" class="rc-btn" data-tip="Start the story again from the beginning.">↺ Restart</button>
 </div>
 <div id="reader-hint" class="reader-hint" role="status" aria-live="polite"></div>
-
-<!-- ── TIP NOTIFICATION (shown when the article opens) ─── -->
-<div id="tip-notif" class="tip-notif" role="status" aria-live="polite">
-  <span class="tip-icon" aria-hidden="true"><i class="fas fa-hand-pointer"></i></span>
-  <div class="tip-meta">
-    <div class="tip-app">Tip</div>
-    <div class="tip-body">Click any <mark>highlighted phrase</mark> to open the research behind it.</div>
-  </div>
-  <button type="button" class="tip-close" id="tip-close" aria-label="Dismiss tip">✕</button>
-</div>
 
 <div id="scene-notif" role="alertdialog" aria-label="Open next scene" tabindex="0">
   <div class="sn-icon" id="sn-icon"></div>
@@ -1021,7 +1225,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollama/3.2.0/scrollama.min.js" integrity="sha512-YE2BOLTLBOkZ10ahg304yD425ncH98QTjdCgfsjzAJB1tMHWeruT4BBrHL2FXfXLjFJqfsB7I7qhqxubPsT/dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-  /* Dismiss the loading screen once the page and its fonts are ready (never before 0.7s, never later than 8s) */
+  /* Dismiss the loading screen once the page and its fonts are ready (never before 3.2s, never later than 10s) */
   (function () {
     var loader = document.getElementById('loader');
     if (!loader) return;
@@ -1029,7 +1233,9 @@
     function finish() {
       if (finished) return;
       finished = true;
-      var wait = Math.max(0, 700 - (performance.now() - started));
+      var seen = false; try { seen = sessionStorage.getItem('eco-seen') === '1'; sessionStorage.setItem('eco-seen', '1'); } catch (e) { /* ignore */ }
+      var minShow = seen ? 900 : (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1500 : 3200);
+      var wait = Math.max(0, minShow - (performance.now() - started));
       setTimeout(function () {
         loader.classList.add('done');
         setTimeout(function () { loader.remove(); }, 700);
@@ -1040,13 +1246,15 @@
     });
     var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
     Promise.all([pageReady, fontsReady]).then(finish, finish);
-    setTimeout(finish, 8000);
+    setTimeout(finish, 10000);
   })();
 </script>
-<script src="src/scenes.js?v=54"></script>
-<script src="src/main.js?v=60"></script>
-<script src="src/motion.js?v=47"></script>
-<script src="src/graph.js?v=1"></script>
-<script src="src/finale.js?v=5"></script>
+<script src="src/scenes.js?v=72"></script>
+<script src="src/main.js?v=85"></script>
+<script src="src/motion.js?v=60"></script>
+<script src="src/windows.js?v=4"></script>
+<script src="src/graph.js?v=5"></script>
+<script src="src/policy.js?v=3"></script>
+<script src="src/finale.js?v=16"></script>
 </body>
 </html>

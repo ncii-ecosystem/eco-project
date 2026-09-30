@@ -32,15 +32,15 @@
   /* ── geometry ─────────────────────────────────────────── */
   function area() {
     const reserve = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--notes-reserve')) || 0;
-    const rail = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rail')) || 0;
     const pad = 14;
-    return { x: pad + rail, y: pad, w: mon.clientWidth - pad * 2 - reserve - rail, h: mon.clientHeight - pad * 2 };
+    const dock = 66;                                   // the dock stays on screen, so the grid stops above it
+    return { x: pad, y: pad, w: mon.clientWidth - pad * 2 - reserve, h: mon.clientHeight - pad * 2 - dock };
   }
 
   // the flood also covers the strip behind the Notes window
   function fullArea() {
     const a = area();
-    return { x: 14, y: a.y, w: mon.clientWidth - 28, h: a.h };
+    return { x: 14, y: a.y, w: mon.clientWidth - 28, h: mon.clientHeight - 28 };
   }
 
   function layout(n) {
@@ -139,6 +139,9 @@
     delete cursor.dataset.x; delete cursor.dataset.y;
   }
 
+  // the story uses the same cursor outside the finale (the click on the model picker)
+  Eco.cursor = { to: cursorTo, hide: hideCursor };
+
   /* Move to a window's close square, press it, and close the window */
   function closeWindow(win, then) {
     const btn = win.querySelector('.wtl-r');
@@ -157,18 +160,35 @@
   const clearStep = document.querySelector('.step[data-fin="clear"]');
   let clearTicking = false;
 
+  let clearCache = null, lastHide = -1;
   function resetClear() {
     mon.querySelectorAll('.fin-vanish').forEach(w => w.classList.remove('fin-vanish'));
     const card = mon.querySelector('.fin-final');
     if (card) card.classList.remove('fin-out');
     if (Eco.graph) Eco.graph.setProgress(0);
+    clearCache = null; lastHide = -1;
+  }
+
+  /* the windows to clear, topmost first. Worked out once, then only the ones that change are touched on each scroll frame */
+  function clearList() {
+    const n = mon.children.length;
+    if (!clearCache || clearCache.n !== n) {
+      clearCache = { n, wins: Array.from(mon.querySelectorAll('.mac-window:not(.fin-gone)'))
+        .sort((a, b) => (parseInt(b.style.zIndex, 10) || 0) - (parseInt(a.style.zIndex, 10) || 0)) };   // topmost leave first
+      lastHide = -1;
+    }
+    return clearCache.wins;
   }
 
   function applyClear(p) {
-    const wins = Array.from(mon.querySelectorAll('.mac-window:not(.fin-gone)'))
-      .sort((a, b) => (parseInt(b.style.zIndex, 10) || 0) - (parseInt(a.style.zIndex, 10) || 0));   // topmost leave first
+    const wins = clearList();
     const hide = Math.floor(clamp01(p / 0.6) * wins.length + 0.0001);
-    wins.forEach((w, i) => w.classList.toggle('fin-vanish', i < hide));
+    if (hide !== lastHide) {
+      const from = lastHide < 0 ? 0 : Math.min(hide, lastHide);
+      const to = lastHide < 0 ? wins.length : Math.max(hide, lastHide);
+      for (let i = from; i < to; i++) wins[i].classList.toggle('fin-vanish', i < hide);
+      lastHide = hide;
+    }
     const card = mon.querySelector('.fin-final');
     if (card) card.classList.toggle('fin-out', p > 0.04);
     if (Eco.graph) Eco.graph.setProgress(clamp01((p - 0.4) / 0.6));
@@ -189,29 +209,52 @@
   }, { passive: true });
 
   /* ── stages ───────────────────────────────────────────── */
+  /* Moving many heavy windows by changing their size every frame is what made this choppy. Instead each window
+     jumps to its final box at once and is animated there from where it was with a transform (FLIP), which the
+     browser can do without re-laying-out the windows' contents. */
+  function flipWindows(list, change, ms) {
+    const first = list.map((w) => w.getBoundingClientRect());
+    change();
+    if (reduced.matches) return;
+    list.forEach((w, i) => {
+      const f = first[i], l = w.getBoundingClientRect();
+      if (!l.width || !l.height) return;
+      const dx = f.left - l.left, dy = f.top - l.top, sx = f.width / l.width, sy = f.height / l.height;
+      if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(sx - 1) < 0.01 && Math.abs(sy - 1) < 0.01) return;
+      w.animate([
+        { transformOrigin: '0 0', transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
+        { transformOrigin: '0 0', transform: 'none' },
+      ], { duration: ms, delay: i * 55, easing: 'cubic-bezier(0.2, 0.85, 0.2, 1)', fill: 'backwards' });
+    });
+  }
+
   function assemble() {
     wins = Eco.windows.all();
     cells = layout(wins.length);
-    mon.classList.add('finale-mode');
-    wins.forEach((w, i) => {
-      saved.set(w, { left: w.style.left, top: w.style.top, width: w.style.width, height: w.style.height, zIndex: w.style.zIndex });
-      w.style.setProperty('--i', reduced.matches ? 0 : i);
-      w.style.zIndex = 10 + i;
-      setBox(w, boxOf(cells[i]));
-    });
+    flipWindows(wins, () => {
+      mon.classList.add('finale-mode');
+      wins.forEach((w, i) => {
+        saved.set(w, { left: w.style.left, top: w.style.top, width: w.style.width, height: w.style.height, zIndex: w.style.zIndex });
+        w.style.zIndex = 10 + i;
+        setBox(w, boxOf(cells[i]));
+      });
+    }, 850);
     undoStack.push(() => {
       hideCursor();
       resetClear();
-      wins.forEach((w) => {
-        const s = saved.get(w);
-        if (!s) return;
-        Object.assign(w.style, s);
-        w.style.removeProperty('--i');
-      });
-      saved.clear();
-      mon.classList.remove('finale-mode');
+      flipWindows(wins, () => {
+        wins.forEach((w) => {
+          const s = saved.get(w);
+          if (!s) return;
+          Object.assign(w.style, s);
+        });
+        saved.clear();
+        mon.classList.remove('finale-mode');
+      }, 650);
     });
   }
+
+  const indexOf = (chapter) => Math.max(0, wins.findIndex((w) => w.dataset.chapter === chapter));
 
   function closeAndPop(index, popsWanted) {
     const win = wins[index];
@@ -245,7 +288,7 @@
 
   /* The last close: pop-ups pour in until nothing else is visible */
   function flood() {
-    const target = wins[6] || wins[wins.length - 1];        // the search window
+    const target = wins[indexOf('search')] || wins[wins.length - 1];      // the search window
     const record = { closed: target, pops: [], card: null };
     closeWindow(target, () => {
       const a = fullArea();
@@ -294,19 +337,27 @@
 
   Eco.finale = {
     step(name) {
+      if (Eco.policy && Eco.policy.STEPS.includes(name)) {    // the last part: laws on the map (needs the map first)
+        this.step('graph');
+        driveClear();                                           // the map must be on screen, even after a jump straight here
+        Eco.policy.step(name);
+        return;
+      }
       let idx = ORDER.indexOf(name);
       if (name === 'clear' || name === 'graph') idx = ORDER.length - 1;   // scroll-driven; needs the flood first
       if (idx < 0) return;
       while (done <= idx) {                                 // catch up if steps were skipped
         const stage = ORDER[done];
         if (stage === 'assemble') assemble();
-        else if (stage === 'close1') closeAndPop(4, 2);     // the forum
-        else if (stage === 'close2') closeAndPop(7, 3);     // the store
+        else if (stage === 'close1') closeAndPop(indexOf('reddit'), 2);     // the forum
+        else if (stage === 'close2') closeAndPop(indexOf('appstore'), 3);   // the store
         else if (stage === 'flood') flood();
         done += 1;
       }
+      if (name === 'clear' || name === 'graph') driveClear();   // after a jump straight here, the map must be drawn for the current scroll position
     },
     undo(name) {
+      if (Eco.policy && Eco.policy.STEPS.includes(name)) { Eco.policy.undo(name); return; }
       const idx = ORDER.indexOf(name);
       if (idx < 0) return;
       while (done > idx) {

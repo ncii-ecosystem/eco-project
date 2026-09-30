@@ -37,8 +37,8 @@
 html { font-synthesis: style; }
 #notes-app, .dt-menubar { font-family: var(--font-sans); }
 .dt-menubar { font-family: var(--font-mono); }
-.chat-dataset-layer, .cdl-eyebrow, .cdl-meta, .cdl-box { font-family: var(--font-mono); }
-h1, h2, h3, .dt-wp-head, .news-headline, .news-site-logo { letter-spacing: 0; }
+.chat-dataset-layer, .cdl-eyebrow, .cdl-meta { font-family: var(--font-mono); }
+h1, h2, h3, .dt-wp-head, .feed-logo { letter-spacing: 0; }
 
 /* No glow: flat colour only */
 body *, body *::before, body *::after { text-shadow: none !important; }
@@ -92,7 +92,11 @@ body *, body *::before, body *::after { text-shadow: none !important; }
               filter 0.4s ease, left 0.5s ease, width 0.5s ease, visibility 0.45s;
 }
 .mac-window.active { box-shadow: 10px 10px 0 var(--d); }
-.mac-window.dimmed { filter: saturate(0.5) brightness(0.72); }
+.mac-window.dimmed { filter: none; }
+.mac-window.dimmed::before { content: ''; position: absolute; inset: 0; z-index: 60; pointer-events: none; background: rgba(43, 29, 122, 0.34); }
+.mac-window.raised::before { display: none; }
+/* windows that are not the live one stop their looping animations, so only what is on screen is being drawn */
+.mac-window.dimmed *, .mac-window.buried * { animation-play-state: paused !important; }
 .win-titlebar {
   background: var(--paper); border-bottom: 1px solid var(--p); height: 34px;
 }
@@ -158,7 +162,7 @@ body *, body *::before, body *::after { text-shadow: none !important; }
 .cw-box { background: var(--paper); border: 1px solid var(--p); border-radius: 0; box-shadow: 10px 10px 0 rgba(0,0,0,0.25); }
 .cw-title { color: var(--p); }
 .cw-body { color: #3b2f86; }
-.cw-btn { background: var(--p); border-radius: 0; font-family: var(--font-mono); text-transform: lowercase; }
+.cw-btn { background: var(--p); border-radius: 0; font-family: var(--font-mono); text-transform: none; }
 .cw-btn:hover { opacity: 1; box-shadow: var(--hard-sm); }
 .cw-resources { color: var(--p); }
 
@@ -168,7 +172,6 @@ body *, body *::before, body *::after { text-shadow: none !important; }
 .endcard-resources { color: var(--r-prolif) !important; }
 
 /* Research panel */
-.pq-inner { border-radius: 0; }
 
 /* ── Opening title: the first thing you see ───────────── */
 .dt-wallpaper-title { left: 7%; max-width: min(760px, 62%); }
@@ -194,57 +197,6 @@ body *, body *::before, body *::after { text-shadow: none !important; }
 @media (prefers-reduced-motion: reduce) { .dt-wp-head span, .dt-wp-sub { animation: none; } }
 
 .cw-icon { color: var(--p); }
-
-/* ── Chapter chain: squares joined by a rule that fills in ── */
-.chapter-nav { gap: 14px; padding: 4px 0; }
-.chapter-nav::before {
-  content: ''; position: absolute; left: 50%; top: 8px; bottom: 8px; width: 1px;
-  background: #fff; opacity: 0.55; transform: translateX(-50%);
-}
-.chapter-dot {
-  width: 12px; height: 12px; border-radius: 0; background: #fff; border: 1px solid var(--d);
-  position: relative; z-index: 1;
-}
-.chapter-dot.done { background: var(--r-money); }
-.chapter-dot.active { background: var(--r-prolif); box-shadow: 3px 3px 0 var(--d); border-color: var(--d); transform: scale(1.25); }
-.chapter-dot:hover { background: var(--r-creation); }
-.chapter-dot::after {
-  left: 22px; color: var(--p); background: #fff; border: 1px solid var(--d); padding: 2px 6px;
-  font-size: 0.65rem; text-transform: lowercase;
-}
-
-/* ── Tip notification: slides in when the article opens ── */
-.tip-notif {
-  position: fixed; right: 12px; bottom: 14px; z-index: 64; width: 300px;
-  display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px;
-  background: var(--paper); color: var(--p); border: 1px solid var(--p); box-shadow: var(--hard);
-  transform: translateX(120%); opacity: 0; pointer-events: none;
-  transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.1), opacity 0.3s ease;
-}
-.tip-notif.show { transform: none; opacity: 1; pointer-events: all; }
-.tip-icon {
-  flex: none; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
-  background: var(--r-prolif); border: 1px solid var(--p); font-size: 15px;
-}
-.tip-meta { flex: 1; min-width: 0; }
-.tip-app { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; margin-bottom: 3px; }
-.tip-body { font-size: 13px; line-height: 1.45; color: #241a5c; }
-.tip-body mark { background: var(--r-creation); color: var(--p); padding: 0 3px; border-bottom: 2px solid var(--p); font-weight: 600; }
-.tip-close { flex: none; background: none; border: none; color: var(--p); cursor: pointer; font-size: 13px; padding: 2px 4px; line-height: 1; }
-.tip-close:hover { color: var(--d); }
-.tip-close:focus-visible { outline: 2px solid var(--p); outline-offset: 2px; }
-.in-outro .tip-notif { opacity: 0; visibility: hidden; }
-@media (prefers-reduced-motion: reduce) { .tip-notif { transition-duration: 0.01ms; } }
-
-/* Notes: the first titlebar square collapses an expanded note */
-.na-r { position: relative; }
-#notes-app.centered .na-r { cursor: pointer; }
-#notes-app.centered .na-r:hover, #notes-app.centered .na-r:focus-visible { background: var(--p); outline: none; }
-#notes-app.centered .na-r::after {
-  content: '\00d7'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font: 700 10px/1 var(--font-mono); color: var(--p); opacity: 0.75;
-}
-#notes-app.centered .na-r:hover::after, #notes-app.centered .na-r:focus-visible::after { color: #fff; opacity: 1; }
 
 /* ── Notes: bigger type, so the note is the thing you read ── */
 #notes-app { width: 340px; }
@@ -283,13 +235,14 @@ html.notes-open { --notes-reserve: 360px; }
 
 .finale-mode #window-overlay { background: transparent; }
 .finale-mode .mac-window {
-  opacity: 1 !important; visibility: visible !important; filter: none !important; transform: none !important;
+  opacity: 1 !important; visibility: visible !important; filter: none !important; transform: none;
   pointer-events: none; box-shadow: 5px 5px 0 var(--d);
-  transition: left 0.95s cubic-bezier(0.2, 0.85, 0.2, 1), top 0.95s cubic-bezier(0.2, 0.85, 0.2, 1),
-              width 0.95s cubic-bezier(0.2, 0.85, 0.2, 1), height 0.95s cubic-bezier(0.2, 0.85, 0.2, 1),
-              opacity 0.35s ease, transform 0.35s ease;
-  transition-delay: calc(var(--i, 0) * 70ms);
+  transition: opacity 0.35s ease, transform 0.35s ease;      /* the gather itself is a transform animation (see finale.js) */
 }
+.finale-mode .mac-window:not(.fin-pop) { will-change: transform, opacity; }   /* each app window is its own layer, so leaving one does not repaint the rest */
+.fin-pop { contain: layout paint style; }
+.finale-mode .mac-window.fin-pop.fin-vanish { transform: none !important; }   /* pop-ups just fade: no scaling of dozens of layers */
+.finale-mode .mac-window::before { display: none; }
 .finale-mode .mac-window.fin-closing { opacity: 0 !important; transform: scale(0.86) !important; transition-delay: 0s; }
 .finale-mode .mac-window.fin-gone { visibility: hidden !important; }
 .fin-press { background: var(--p) !important; transform: scale(0.75); }
@@ -321,14 +274,6 @@ html.notes-open { --notes-reserve: 360px; }
 /* In the finale each window shows its whole scene, shrunk like a thumbnail */
 .finale-mode .mac-window:not(.fin-pop) .win-content > .scene { zoom: 0.5; width: 200%; height: 200%; }
 
-/* ── Chapter squares live on their own rail, so windows start to the right of it ── */
-:root { --rail: 44px; }
-.chapter-nav {
-  left: 8px; padding: 14px 8px; gap: 14px;
-  background: var(--paper); border: 1px solid var(--d); box-shadow: var(--hard-sm);
-}
-.chapter-nav::before { top: 20px; bottom: 20px; background: var(--p); opacity: 0.35; }
-
 /* ── Chapter number in every window's title bar ── */
 .win-chip {
   flex: none; margin-left: 8px; padding: 2px 7px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em;
@@ -353,7 +298,7 @@ html { scrollbar-gutter: stable; }
 
 /* ── Dock: interactive, and always on top ─────────────── */
 .dt-dock-wrap {
-  position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 66; padding: 0;
+  position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 8500; padding: 0;   /* above the finale's pop-ups, which climb past 150 */
 }
 .dt-dock-item { cursor: pointer; }
 .dt-dock-item:not(.visited):not(:hover) { opacity: 0.55; }
@@ -364,7 +309,7 @@ html { scrollbar-gutter: stable; }
 .dt-dock-item:focus-visible { outline: 2px solid var(--p); outline-offset: 3px; }
 .dt-dock-item.nope { animation: dock-nope 0.4s ease; }
 @keyframes dock-nope { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-.finale-mode .dt-dock-wrap, .in-outro .dt-dock-wrap { opacity: 0; visibility: hidden; pointer-events: none; }
+.in-outro .dt-dock-wrap { opacity: 0; visibility: hidden; pointer-events: none; }   /* the dock stays through the finale, so the reader can jump back to any app */
 @media (prefers-reduced-motion: reduce) { .dt-dock-item.nope { animation: none; } }
 
 /* ── Finale part 2: the windows leave one by one, and the map appears ── */
@@ -373,6 +318,51 @@ html { scrollbar-gutter: stable; }
 .finale-mode .mac-window.fin-vanish { opacity: 0 !important; transform: scale(0.9) !important; pointer-events: none; transition-delay: 0s; }
 .fin-final.fin-out { opacity: 0 !important; }
 
+/* ── Content warning: three choices, the resources one is the coloured default ── */
+.cw-body { margin-bottom: 14px; }
+.cw-exit-note { color: var(--p); font-family: var(--font-mono); font-size: 0.85rem; margin: 0 0 22px; }
+.cw-actions { display: flex; flex-direction: column; gap: 10px; }
+.cw-actions .cw-btn {
+  display: block; width: 100%; box-sizing: border-box; padding: 13px 18px; text-align: center; text-decoration: none;
+  font-size: 0.85rem; line-height: 1.3; cursor: pointer; border: 1px solid var(--p);
+}
+.cw-btn--primary { background: var(--p); color: #fff; }
+.cw-btn--ghost { background: var(--paper); color: var(--p); }
+.cw-btn--ghost:hover { background: var(--r-prolif); box-shadow: var(--hard-sm); }
+.cw-btn--primary:hover { box-shadow: var(--hard-sm); }
+.cw-actions .cw-btn:focus-visible { outline: 2px solid var(--p); outline-offset: 3px; }
+.cw-fineprint { margin: 18px 0 0; font-size: 0.7rem; color: #3b2f86; opacity: 0.8; line-height: 1.5; }
+.cw-box { max-width: 500px; }
+
+/* ── Notifications you must click are yellow and alive ─ */
+.intro-notification, #scene-notif { background: var(--r-prolif); }
+.intro-notification.show { animation: notif-call 1.8s ease-in-out infinite; }
+@keyframes notif-call {
+  0%, 100% { box-shadow: 6px 6px 0 var(--d), 0 0 0 0 rgba(255, 243, 168, 0); transform: translateX(0) scale(1); }
+  50%      { box-shadow: 8px 8px 0 var(--d), 0 0 0 10px rgba(255, 243, 168, 0.75); transform: translateX(0) scale(1.03); }
+}
+.intro-notification { flex-wrap: wrap; cursor: pointer; }
+.intro-notif-cta, .sn-hint {
+  flex-basis: 100%; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--p);
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--p); text-align: right;
+}
+#scene-notif.show.pulsing { animation: notif-call 1.8s ease-in-out infinite; }
+.intro-notif-time { color: var(--p); opacity: 0.7; }
+@media (prefers-reduced-motion: reduce) { .intro-notification.show, #scene-notif.show.pulsing { animation: none; } }
+
+/* positioned by their own rules; the tip hangs above them */
+.rc-btn { position: relative; }
+#scene-notif { flex-wrap: wrap; }
+[data-tip]::after {
+  content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 10px); z-index: 20; width: max-content; max-width: 260px;
+  padding: 7px 10px; background: var(--paper); color: var(--p); border: 1px solid var(--p); box-shadow: 3px 3px 0 var(--d);
+  font: 400 12px/1.4 var(--font-mono); text-align: left; text-transform: none; white-space: normal;
+  opacity: 0; pointer-events: none; transform: translateY(4px); transition: opacity 0.15s ease, transform 0.15s ease;
+}
+[data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; transform: none; transition-delay: 0.25s; }
+.reader-controls { z-index: 9600; }   /* their tips sit above the exit button */
+
+/* ── The map (graph.js) ─────────────────────────────── */
 .eco-graph {
   position: absolute; z-index: 300; inset: 0; padding: 10px 14px;
   background:
@@ -381,7 +371,7 @@ html { scrollbar-gutter: stable; }
     var(--paper);
   opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.5s ease, visibility 0.5s;
   padding-right: calc(14px + var(--notes-reserve, 0px));
-  padding-left: calc(14px + var(--rail, 44px));
+  padding-bottom: 118px;                                /* the dock and the click hint stay on screen under the map */
 }
 .eco-graph.show { opacity: 1; visibility: visible; }
 .eco-graph.live { pointer-events: auto; }
@@ -421,3 +411,143 @@ html { scrollbar-gutter: stable; }
 .eg-h { font: 600 21px var(--font-sans); fill: #241a5c; }
 .eg-m { font: 400 19px var(--font-mono); fill: #3b2f86; }
 @media (prefers-reduced-motion: reduce) { .eg-node, .eco-graph, .eg-edges { transition-duration: 0.01ms !important; } }
+
+/* ── Notes: movable like a window ─────────────────────── */
+.na-titlebar { cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none; }
+.na-titlebar:focus-visible { outline: 2px solid var(--p); outline-offset: -4px; }
+#notes-app.na-dragging { transition: none !important; box-shadow: 10px 10px 0 var(--d); }
+#notes-app.na-dragging .na-titlebar { cursor: grabbing; }
+html.notes-open.notes-moved { --notes-reserve: 0px; }   /* once it's moved, windows use the whole screen */
+
+/* ── Every story window can be moved and resized (windows.js) ── */
+.mac-window .win-titlebar { cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none; }
+.mac-window.win-dragging { transition: none !important; }
+.mac-window.win-dragging .win-titlebar { cursor: grabbing; }
+body.win-busy, body.win-busy * { user-select: none !important; -webkit-user-select: none !important; }
+.win-rz { position: absolute; z-index: 6; touch-action: none; }
+.win-rz-n  { top: 0; left: 14px; right: 14px; height: 6px; cursor: ns-resize; }
+.win-rz-s  { bottom: 0; left: 14px; right: 14px; height: 7px; cursor: ns-resize; }
+.win-rz-e  { right: 0; top: 14px; bottom: 14px; width: 7px; cursor: ew-resize; }
+.win-rz-w  { left: 0; top: 14px; bottom: 14px; width: 6px; cursor: ew-resize; }
+.win-rz-ne { top: 0; right: 0; width: 16px; height: 16px; cursor: nesw-resize; }
+.win-rz-nw { top: 0; left: 0; width: 16px; height: 16px; cursor: nwse-resize; }
+.win-rz-se { bottom: 0; right: 0; width: 18px; height: 18px; cursor: nwse-resize; }
+.win-rz-sw { bottom: 0; left: 0; width: 16px; height: 16px; cursor: nesw-resize; }
+.finale-mode .win-rz, .fin-pop .win-rz { display: none; }
+/* a small grip in the bottom-right corner shows that the window can be resized */
+.mac-window:not(.fin-pop)::after {
+  content: ''; position: absolute; right: 4px; bottom: 4px; width: 10px; height: 10px; z-index: 7; pointer-events: none;
+  background: linear-gradient(135deg, transparent 50%, var(--p) 50%, var(--p) 58%, transparent 58%, transparent 72%, var(--p) 72%, var(--p) 80%, transparent 80%);
+  opacity: 0.6;
+}
+.finale-mode .mac-window::after { display: none; }
+
+/* story windows stay open: the traffic-light buttons are decoration only */
+.mac-window:not(.fin-pop) .wtl { pointer-events: none; cursor: default; }
+
+/* Notes: the first titlebar square is an x only while a note is expanded, to go back to less text */
+.na-r { position: relative; }
+#notes-app .na-tl { cursor: default; }
+#notes-app:not(.centered) .na-tl { pointer-events: none; }
+#notes-app.centered .na-r { cursor: pointer; }
+#notes-app.centered .na-r:hover, #notes-app.centered .na-r:focus-visible { background: var(--p); outline: none; }
+#notes-app.centered .na-r::after {
+  content: '\00d7'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font: 700 10px/1 var(--font-mono); color: var(--p); opacity: 0.75;
+}
+#notes-app.centered .na-r:hover::after, #notes-app.centered .na-r:focus-visible::after { color: #fff; opacity: 1; }
+
+/* a window the reader clicked to the front: fully lit, until the story moves on */
+.mac-window.raised:not(.buried) { box-shadow: 10px 10px 0 var(--d); }
+
+/* ── The last part: laws on the ecosystem map (policy.js) ─────────────── */
+.eco-graph .eg-svg { transition: opacity 0.5s ease; }
+.eco-graph.pol-away .eg-svg { opacity: 0; }
+.eco-graph.pol-on .eg-h, .eco-graph.pol-on .eg-m { opacity: 0; }       /* the boxes' small print gives way to the law tags */
+.eg-h, .eg-m { transition: opacity 0.4s ease; }
+.eg-node.in.pol-dim { opacity: 0.28; }
+.pol-tags, .pol-q { pointer-events: none; }
+.pol-tag { opacity: 0; transform: scale(0.85); transform-box: fill-box; transform-origin: center;
+  transition: opacity 0.35s ease var(--td, 0ms), transform 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) var(--td, 0ms); }
+.pol-tag.on { opacity: 1; transform: none; }
+.pol-tag-box { fill: #fff; stroke: #2b1d7a; stroke-width: 3; }
+.pol-tag-text { font: 700 22px var(--font-mono); fill: #2b1d7a; }
+.pol-tag.fed .pol-tag-box { fill: #2b1d7a; }
+.pol-tag.fed .pol-tag-text { fill: #fff; }
+.pol-tag.new .pol-tag-box { fill: var(--r-prolif); }
+.pol-tag.gap .pol-tag-box { stroke: #8c2f2a; stroke-dasharray: 9 6; }
+.pol-tag.gap .pol-tag-text { fill: #8c2f2a; }
+.pol-q { opacity: 0; transition: opacity 0.4s ease; }
+.eco-graph[data-pol="8"] .pol-q { opacity: 1; }
+.pol-q-dot { fill: var(--r-prolif); stroke: #2b1d7a; stroke-width: 4; }
+.pol-q-text { font: 900 42px var(--font-mono); fill: #2b1d7a; }
+.eco-graph.pol-edge-focus .eg-edge:not(.pol-edge) { opacity: 0.1; }
+.eg-edge.pol-edge .eg-line { stroke: var(--p); stroke-width: 9; stroke-dasharray: 16 10; animation: pol-dash 0.9s linear infinite; }
+.eg-edge.pol-edge .eg-dot, .eg-edge.pol-edge .eg-head { fill: var(--p); }
+@keyframes pol-dash { to { stroke-dashoffset: -26; } }
+.eg-node.pol-ripple .eg-box { stroke: var(--p); stroke-width: 9; animation: pol-ripple 1.4s ease-out 1; }
+@keyframes pol-ripple { 0% { stroke-width: 2; } 35% { stroke-width: 22; } 100% { stroke-width: 9; } }
+@media (prefers-reduced-motion: reduce) { .eg-edge.pol-edge .eg-line, .eg-node.pol-ripple .eg-box { animation: none; } .pol-tag { transition-duration: 0.01ms; } }
+
+/* cards along the bottom of the screen, one at a time */
+.pol-layer { position: absolute; inset: 0; z-index: 320; pointer-events: none; display: flex; align-items: flex-end; justify-content: center;
+  padding: 0 calc(16px + var(--notes-reserve, 0px)) 118px 16px; }
+.pol-band { position: relative; width: min(860px, 100%); }
+.pol-card { position: absolute; left: 0; right: 0; bottom: 0; background: var(--paper); border: 1px solid var(--p); box-shadow: 6px 6px 0 var(--d); padding: 12px 16px;
+  font: 400 14px/1.45 var(--font-sans); color: #241a5c; opacity: 0; visibility: hidden; transform: translateY(16px);
+  transition: opacity 0.35s ease, transform 0.4s ease, visibility 0.35s; }
+.pol-card.on { opacity: 1; visibility: visible; transform: none; }
+.pol-card h4 { margin: 0 0 4px; font: 700 12px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--p); }
+.pol-card p { margin: 0; }
+.pol-card blockquote { margin: 0 0 6px; padding-left: 10px; border-left: 3px solid var(--p); font-size: 13px; }
+.pol-stat { display: flex; align-items: center; gap: 16px; }
+.pol-stat b { font: 900 44px var(--font-mono); color: var(--p); white-space: nowrap; line-height: 1; }
+.pol-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pol-pair blockquote { margin: 0; }
+.pol-pair span { display: block; font: 700 11px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--p); margin-bottom: 3px; }
+.pol-pair em { font-style: normal; background: var(--r-prolif); padding: 0 4px; }
+
+/* the U.S. state map */
+.pol-map { position: absolute; inset: 0; z-index: 310; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; gap: 8px; align-content: stretch; overflow: hidden;
+  padding: 18px calc(20px + var(--notes-reserve, 0px)) 128px 22px; opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.5s ease, visibility 0.5s; font-family: var(--font-mono); color: #241a5c; }
+.pol-map.on { opacity: 1; visibility: visible; pointer-events: auto; }
+.pol-map h3 { margin: 0; font: 700 clamp(14px, 1.8vw, 22px) var(--font-mono); color: var(--p); }
+.pol-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, max-content); gap: 4px 28px; font-size: clamp(11px, 1.2vw, 15px); }
+.pol-n { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 50%; border: 1px solid #2b1d7a; margin-right: 8px; font-size: 0.85em; }
+.pol-list .r-dist .pol-n { background: var(--r-dist); } .pol-list .r-creation .pol-n { background: var(--r-creation); }
+.pol-us-wrap { position: relative; min-height: 0; min-width: 0; width: 100%; max-width: 1060px; margin: 0 auto; }
+.pol-us { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.pol-tile { fill: #fff; stroke: #2b1d7a; stroke-width: 1.5; }
+.pol-code { font: 700 15px var(--font-mono); fill: rgba(43, 29, 122, 0.45); }
+.pol-state.has .pol-code { fill: #2b1d7a; }
+.pol-state.has.r-creation .pol-tile { fill: var(--r-creation); } .pol-state.has.r-dist .pol-tile { fill: var(--r-dist); }
+.pol-ic { font: 900 16px 'Font Awesome 6 Free'; fill: #2b1d7a; }
+.pol-badge { fill: #fff; stroke: #2b1d7a; stroke-width: 1.5; }
+.pol-badge-n { font: 700 12px var(--font-mono); fill: #2b1d7a; }
+.pol-state.has { cursor: pointer; outline: none; transition: transform 0.15s ease; }
+.pol-state.has:hover .pol-tile, .pol-state.has:focus-visible .pol-tile { stroke: var(--p); stroke-width: 4; }
+.pol-role { font-size: clamp(11px, 1.2vw, 14px); display: flex; align-items: center; justify-content: flex-end; }
+.pol-role .sw { display: inline-block; width: 18px; height: 18px; border: 1px solid #2b1d7a; margin: 0 6px 0 14px; }
+.pol-role .r-creation { background: var(--r-creation); } .pol-role .r-dist { background: var(--r-dist); }
+
+/* the closing note that points to the database (not built yet) */
+.endcard-next { margin-top: 18px; }
+.endcard-soon { display: inline-block; text-decoration: none; cursor: pointer; font: 700 13px var(--font-mono); color: var(--p); background: var(--r-prolif); border: 1px solid var(--p); box-shadow: 4px 4px 0 var(--d); padding: 8px 14px; }
+
+.endcard-inner .endcard-credit { margin-top: 28px; font: 400 13px var(--font-mono); color: #fff; opacity: 0.85; letter-spacing: 0.04em; }
+.endcard-inner .endcard-credit strong { color: var(--r-prolif); font-weight: 700; }
+
+/* a chapter that ends on a note gets room after it, so the reader can read the note before the next app's notification arrives */
+.scroll-chapter:not([data-chapter="cover"]):has(> .step--k:last-child) { padding-bottom: 60vh; }
+
+.endcard-soon:hover, .endcard-soon:focus-visible { background: #fff; outline: none; transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--d); }
+
+/* "click me" hint on the maps */
+.pol-hint { position: absolute; z-index: 330; left: calc((100% - var(--notes-reserve, 0px)) / 2); bottom: 76px; transform: translate(-50%, 10px);
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--r-prolif); color: var(--p); border: 1px solid var(--p); box-shadow: 4px 4px 0 var(--d);
+  font: 700 13px var(--font-mono); letter-spacing: 0.02em; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s; }
+.pol-hint.on { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.pol-hint i { animation: pol-tap 1.3s ease-in-out infinite; }
+@keyframes pol-tap { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(4px, -5px); } }
+@media (prefers-reduced-motion: reduce) { .pol-hint i { animation: none; } }

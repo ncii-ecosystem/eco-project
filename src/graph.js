@@ -26,34 +26,26 @@
     wand: '', comment: '', users: '', tools: '', money: '',
   };
 
-  /* Boxes. Lines: ['h', text] = bold sub-heading, ['m', text] = example line. */
+  /* Boxes. Lines: ['h', text] = bold sub-heading. Only generic categories are drawn here; the real
+     examples and their sources appear in the Notes window when a box is opened. */
   const NODES = [
-    { id: 'app-stores', role: 'discovery', x: 862, y: 38, w: 325, h: 124, icon: 'cart', title: 'App Stores',
-      lines: [['m', '(e.g. Google Play,'], ['m', 'Apple Store)']], wide: false, small: true },
-    { id: 'ad-platforms', role: 'discovery', x: 862, y: 202, w: 325, h: 107, icon: 'bullhorn', title: 'Ad Platforms',
-      lines: [['m', '(e.g. Instagram, TikTok)']], small: true },
-    { id: 'search-engines', role: 'discovery', x: 862, y: 349, w: 736, h: 108, icon: 'search', title: 'Search Engines',
-      lines: [['m', '(e.g. Google, Bing, Yahoo)']], wide: true },
-    { id: 'dev-platforms', role: 'infra', x: 28, y: 349, w: 749, h: 108, icon: 'laptop', title: 'Developer Platforms',
-      lines: [['m', '(e.g. Github, Civitai, Hugging Face)']], wide: true },
+    { id: 'app-stores', role: 'discovery', x: 862, y: 38, w: 325, h: 124, icon: 'cart', title: 'App Stores', lines: [], small: true },
+    { id: 'ad-platforms', role: 'discovery', x: 862, y: 202, w: 325, h: 107, icon: 'bullhorn', title: 'Ad Platforms', lines: [], small: true },
+    { id: 'search-engines', role: 'discovery', x: 862, y: 349, w: 736, h: 108, icon: 'search', title: 'Search Engines', lines: [], wide: true },
+    { id: 'dev-platforms', role: 'infra', x: 28, y: 349, w: 749, h: 108, icon: 'laptop', title: 'Developer Platforms', lines: [], wide: true },
     { id: 'training-data', role: 'creation', x: 28, y: 530, w: 323, h: 505, icon: 'database', title: 'Training Datasets', tall: true,
-      lines: [['h', 'Open Data'], ['m', '(e.g. ImageNet, LAION-5B)'], ['gap'], ['h', 'Closed Data'], ['m', '(e.g., Proprietary datasets)']] },
+      lines: [['h', 'Open Data'], ['gap'], ['h', 'Closed Data']] },
     { id: 'ai-models', role: 'creation', x: 437, y: 530, w: 338, h: 505, icon: 'code', title: 'Generative AI Models', tall: true,
-      lines: [['h', 'Open Source Models'], ['m', '(e.g. DeepFaceLab, DeepNude)'], ['gap'],
-              ['h', 'Open Weight Models &'], ['h', 'Variants'], ['m', '(e.g. Stable Diffusion, Flux)'], ['gap'],
-              ['h', 'Closed Models'], ['m', '(e.g. Aurora, GPT models,'], ['m', 'Gemini models)']] },
+      lines: [['h', 'Open Source Models'], ['gap'], ['h', 'Open Weight Models &'], ['h', 'Variants'], ['gap'], ['h', 'Closed Models']] },
     { id: 'ai-interfaces', role: 'creation', x: 862, y: 530, w: 325, h: 505, icon: 'wand', title: 'Generative AI Interfaces', tall: true,
-      lines: [['h', 'General Purpose Model'], ['h', 'Interfaces'], ['m', '(e.g. Grok, ChatGPT, Gemini)'], ['gap'],
-              ['h', 'AI Nudifier Applications'], ['m', '(e.g. ClothesOff)']] },
+      lines: [['h', 'General Purpose Model'], ['h', 'Interfaces'], ['gap'], ['h', 'AI Nudifier Applications']] },
     { id: 'dist-channels', role: 'distribution', x: 1273, y: 530, w: 325, h: 505, icon: 'comment', title: 'Distribution Channels', tall: true,
-      lines: [['h', 'Private Channels'], ['m', '(e.g., Email, iMessage,'], ['m', 'Telegram)'], ['gap'],
-              ['h', 'Public Platforms'], ['m', '(e.g., Mr. DeepFakes, X)']] },
+      lines: [['h', 'Private Channels'], ['gap'], ['h', 'Public Platforms']] },
     { id: 'dfcc', role: 'discovery', x: 28, y: 1131, w: 1570, h: 144, icon: 'users', title: 'Deepfake Creation Communities', wide: true,
-      lines: [['hm', 'Private Channels', ' (e.g. Telegram, Discord)'], ['hm', 'Public Platforms', ' (e.g. r/deepfakes, Mr.DeepFakes)']] },
+      lines: [['h', 'Private Channels'], ['h', 'Public Platforms']] },
     { id: 'critical-providers', role: 'infra', x: 28, y: 1320, w: 1570, h: 122, icon: 'tools', title: 'Critical Service Providers', wide: true,
       lines: [['m', 'Cloud Service Providers, Domain Name Services, and Authentication Services']] },
-    { id: 'payment-processors', role: 'money', x: 26, y: 1487, w: 1572, h: 116, icon: 'money', title: 'Payment Processors', wide: true,
-      lines: [['m', '(e.g. Visa, Mastercard, cryptocurrencies)']] },
+    { id: 'payment-processors', role: 'money', x: 26, y: 1487, w: 1572, h: 116, icon: 'money', title: 'Payment Processors', wide: true, lines: [] },
   ];
 
   /* Links between boxes; `dir` says where the arrowhead goes */
@@ -76,57 +68,19 @@
     EDGES.push({ a: 'critical-providers', b: 'payment-processors', d: `M${x} 1442 V1487`, dots: [[x, 1442], [x, 1487]] });
   });
 
-  /* What each box says when it is opened (from the paper and the reporting used in the story) */
+  /* What each box says when it is opened: the paper's own wording, the same text as the Notes entries */
   const DETAILS = {
-    'training-data': { role: 'Creation', title: 'Training Datasets', body: `<p>Publicly scraped image datasets used to train generative AI models contain harmful material sourced without consent.</p>
-      <ul><li>LAION-5B (5.85 billion images) contained verified CSAM — found in 2023</li>
-      <li>Models "remember" the content they're trained on; human likenesses can be reconstructed from model weights</li>
-      <li>Stable Diffusion 1.x models, trained on LAION, are the most common foundation for nudifier fine-tunes</li></ul>
-      <p><em>Key source: Thiel (2023); Carlini et al. (2023)</em></p>` },
-    'ai-models': { role: 'Creation', title: 'Generative AI Models', body: `<p>Both closed-API and open-weight AI image generation models enable AIG-NCII.</p>
-      <ul><li>Open-weight models (Stable Diffusion, FLUX): downloadable, can be run offline, cannot be recalled once released</li>
-      <li>Closed-API models (GPT-4o, Gemini): controlled by providers who can revoke access, but jailbreaks bypass safety filters</li>
-      <li>10,000+ nudifier variants derived from open-weight models; 5,000+ reuploaded to HuggingFace after Civitai ban (Maiberg, 2025)</li></ul>` },
-    'ai-interfaces': { role: 'Creation', title: 'Generative AI Interfaces', body: `<p>Consumer-facing AI interfaces — including general-purpose chatbots — have been exploited for AIG-NCII generation.</p>
-      <ul><li>In Dec 2025, Grok generated 6,700+ sexualized images per hour on X.com</li>
-      <li>Jailbreak communities coordinate bypass techniques, which spread faster than safety patches</li>
-      <li>Legal/research framing prompts are used to bypass content moderation (documented in Ding et al. 2026)</li></ul>` },
-    'dist-channels': { role: 'Distribution', title: 'Distribution Channels', body: `<p>AIG-NCII is shared through channels that are difficult or impossible to monitor.</p>
-      <ul><li>Private messages (iMessage, WhatsApp, Signal): no platform visibility</li>
-      <li>Encrypted messaging apps: end-to-end encryption prevents content scanning</li>
-      <li>Email: reaches victims directly, often anonymized</li>
-      <li>Most victims first learn of an image through a friend or anonymous tip, not a platform notification</li></ul>` },
-    'dfcc': { role: 'Proliferation & Discovery', title: 'Deepfake Creation Communities', body: `<p>Online communities accelerate the spread and refinement of AIG-NCII techniques.</p>
-      <ul><li>Forums on Reddit, dedicated sites, and encrypted platforms share prompts, models, and bypass techniques</li>
-      <li>When one method is patched, the community typically develops a replacement within hours</li>
-      <li>Medeiros et al. (2026) analyzed 100,000+ posts across multiple platforms</li>
-      <li>Stable Diffusion and Grok are the most-mentioned models in these communities</li></ul>` },
-    'search-engines': { role: 'Proliferation & Discovery', title: 'Search Engines', body: `<p>Search engines are a primary discovery mechanism for AIG-NCII content and tools.</p>
-      <ul><li>99.69% of searches for a public figure + "deepfake" return a deepfake pornography site on page 1 with no warning (Oh / Ding et al. 2026)</li>
-      <li>68% of web traffic to nudifier sites arrives via Google Search (My Image My Choice, 2024)</li>
-      <li>47 state AGs wrote to Google, Bing, and Yahoo in 2025 — limited action taken</li></ul>` },
-    'ad-platforms': { role: 'Proliferation & Discovery', title: 'Ad Platforms', body: `<p>Online advertising platforms inadvertently fund the AIG-NCII ecosystem.</p>
-      <ul><li>AIG-NCII websites carry standard display ads from major ad networks</li>
-      <li>Advertising revenue provides economic incentive for site operators</li>
-      <li>Ad platforms' automated systems have difficulty detecting policy violations at scale</li></ul>` },
-    'app-stores': { role: 'Proliferation & Discovery', title: 'App Stores', body: `<p>Apple and Google app stores have hosted apps capable of generating AIG-NCII.</p>
-      <ul><li>102 apps capable of digitally removing clothing identified across both stores (Tech Transparency Project, 2026)</li>
-      <li>705 million combined downloads</li>
-      <li>$117M in estimated revenue — Apple and Google each collected their standard 30% cut</li>
-      <li>Fiverr: 82.8% of deepfake gigs expose capability, 87.6% violate platform policies (Dawoud et al. 2026)</li></ul>` },
-    'dev-platforms': { role: 'Infrastructural Support', title: 'Developer Platforms', body: `<p>Open-source machine learning platforms host model weights used for AIG-NCII.</p>
-      <ul><li>HuggingFace: after Civitai banned 5,000+ nudifier models, they reuploaded within days (Maiberg, 2025)</li>
-      <li>7 of 9 most popular image editing Spaces on HuggingFace undressed a woman's photo from a 6-word request (AI Forensics, 2026)</li>
-      <li>Decoy tools logged 1,000+ real user requests in a week; 73% were sexual</li></ul>` },
-    'critical-providers': { role: 'Infrastructural Support', title: 'Critical Service Providers', body: `<p>Web infrastructure providers (hosting, CDN, domain registrars) are essential to the operation of AIG-NCII sites.</p>
-      <ul><li>Amazon and Cloudflare provide hosting or CDN for 62 of 85 surveyed nudifier sites (Mantzarlis & Lakatos, 2025)</li>
-      <li>Google Sign-On used by 53 of 85 sites</li>
-      <li>MrDeepFakes (650K+ users) shut down in May 2025 when a critical provider terminated service — demonstrating leverage exists</li></ul>` },
-    'payment-processors': { role: 'Monetization', title: 'Payment Processors', body: `<p>Credit card networks and digital wallets process payments for AIG-NCII subscriptions.</p>
-      <ul><li>Estimated $36M+ annual nudifier economy (The Indicator, 2025)</li>
-      <li>Visa, Mastercard, Amex, PayPal, Google Pay, Apple Pay all accepted by these services</li>
-      <li>47 state AGs wrote to major processors in 2025 urging them to deny service — most have not acted</li>
-      <li>Transactions appear identical to any legitimate digital purchase</li></ul>` },
+    'training-data': { role: "Creation", title: "Training Datasets", body: "<p>Training datasets refer to text, image, video, audio, and/or multi-modal datasets used to train generative AI models.</p><p>In the early 2010s, face-swap models were trained using open-source face datasets and other curated NSFW datasets comprised primarily of women. An early study of the 2019 DeepNude undressing app found that it was unable to generate images of men because it was trained only on images of women.</p><p>Researchers have found that “general-purpose” image datasets like LAION-5B, ImageNet, and LAION-400M also contain pornography, non-consensual intimate images, and/or known CSAM, enabling models that train upon them to generate AIG-NCII.</p>" },
+    'ai-models': { role: "Creation", title: "Generative AI Models", body: "<p>Generative AI models refer to a spectrum of models that use deep learning techniques to take in an input and produce a modified output.</p><p>In the 2010s, smaller, independent, open-source models like DeepFaceLab primarily used generative adversarial networks to automate the face-swapping process. DeepFaceLab had direct ties to Mr.DeepFakes, a prolific “deepfake pornography” community and hosting site. Early models required a high level of technical expertise and were inconsistent in quality and realism.</p><p>With the 2020s came larger and more powerful generative AI models that produced realistic outputs. Open-weight models like Stable Diffusion and Flux have been fine-tuned to produce tens of thousands of fine-tuned variants designed to produce AIG-NCII, predominantly of women. This trend is now being replicated with open-weight video-generation models.</p><p>Additionally, proprietary closed models like xAI’s Aurora, Google’s Gemini models, and OpenAI’s GPT models can be used via chatbot interface or API access to generate AIG-NCII.</p>" },
+    'ai-interfaces': { role: "Creation", title: "Generative AI Interfaces", body: "<p>Generative AI interfaces increase the accessibility of AIG-NCII by providing an easy-to-use interface for users to access generative AI model capabilities.</p><p>In the 2010s face-swap era, there were already “undressing” apps like DeepNude that had over 95k active users. In the 2020s, AI nudifier applications became a rapidly growing multi-million dollar economy dedicated to the creation and monetization of AIG-NCII, predominantly of young women.</p><p>AI nudifier applications significantly lower the barrier to entry because any non-technical user can upload a photo of another person (like a yearbook photo or social media post) and create an “undressed” version of that person within minutes without their consent. The apps offer features including undressing and positioning the subject in various sexual positions.</p><p>General purpose model interfaces have also been used to produce AIG-NCII. WIRED found that ChatGPT and Gemini have been used to “strip women in photos down to bikinis”. Most notably, Grok has been used to generate thousands of images of women and girls directly into the comment section of X.</p>" },
+    'dist-channels': { role: "Distribution", title: "Distribution Channels", body: "<p>Distribution channels include both private channels and public platforms that AI-generated intimate images may be non-consensually distributed across.</p><p>A 2024 survey by the Center for Democracy &amp; Technology of K-12 school students and teachers found that AI-generated NCII was most commonly shared through public channels (e.g., posting on social media platforms or adult sites) and private channels (e.g., direct message, text message, email). These trends also align with traditional modes of non-consensual distribution of intimate images.</p><p>Under the public platform category, there are also “deepfake pornography sites” such as Mr.Deepfakes that are dedicated to the distribution of AIG-NCII. In 2024, the American Sunlight Project discovered tens of thousands of AIG-NCII depicting 26 senators and members of congress, 25 of them women, across eleven “deepfake pornography” websites. Activists and researchers have called out hundreds of similar websites.</p>" },
+    'dfcc': { role: "Proliferation & Discovery", title: "Deepfake Creation Communities", body: "<p>Deepfake creation communities are online communities that provide general and technical assistance to members trying to create deepfakes.</p><p>They are a “key driving force behind the increasing accessibility of deepfakes and deepfake creation software” and serve as an “entry point” for new users to learn from experienced users. Historically, deepfake creation communities have been large (reaching 100,000 members) and highly mobile, existing across platforms like Reddit, MrDeepFakes, 4chan, 8chan, Voat, Telegram, and Discord.</p><p>In 2017, journalists uncovered “r/deepfakes” on Reddit, one of the earliest deepfake creation communities, with over 90,000 subscribers that focused on face swapping celebrity faces with porn performers. In February 2018, under public pressure, Reddit banned “r/deepfakes” and updated its site-wide rules “against involuntary pornography and sexual or suggestive content involving minors”.</p><p>It serves as both a deepfake video distribution and consumption site and a forum for deepfake content creators. MDF was also linked directly by the popular face-swap model DeepFaceLab on GitHub as a place to obtain technical support. Researchers studying MDF found subforums on technical assistance for both models and datasets.</p><p>Telegram group chats have also served as “deepfake creation communities” for users who use Grok AI to generate AIG-NCII.</p><p>On May 6, 2025, Mr.DeepFakes, the world’s most notorious “deepfake pornography” site with over 650,000 users, shut down because an unknown “critical service provider terminated service permanently” and “data loss has made it impossible to continue operation.”</p>" },
+    'search-engines': { role: "Proliferation & Discovery", title: "Search Engines", body: "<p>Search engines enable the wide-spread discovery of AI nudifier apps, AIG-NCII, and distribution sites.</p><p>Independent researcher Genevieve Oh conducted 6000 google searches of 100 public figures (elected officials, broadcasters, TV hosts, singers, and chess players) and found that 99.69% of the searches for “NAME+DEEPFAKE” resulted in a “deepfake pornography” website result on the first page. Another audit found that queries for “deepnude,” “nudify,” and “undress app” on Google, Yahoo, and Bing all yielded at least one result leading the user to AI nudifier applications within the first 20 results.</p><p>In 2025, 47 state attorneys general wrote an open letter to Google, Yahoo, and Microsoft urging them to block AIG-NCII content and creation tools from search engines. According to the letter, queries like “how to make deepfake pornography,” “undress apps,” “nudify apps,” or “deepfake porn” do not produce any warning labels. Instead, search engines “quickly present users with direct links to deepfake NCII, to listicles rating the top apps for creating deepfake NCII, and to apps that enable the creation of naked and/or sexual images and videos of any person in any photo”.</p>" },
+    'ad-platforms': { role: "Proliferation & Discovery", title: "Advertisement Platforms", body: "<p>Advertisement platforms enable organizations and individuals to place ads (specifically for AI nudifier apps) that drive massive traffic to these tools.</p><p>AI nudifier apps gain users by posting advertisements on large social media platforms. Investigative journalists at 404 Media and the Indicator have documented thousands of advertisements that AI nudifiers post on Instagram.</p><p>A technical report from Graphika tracking 34 AI nudifier apps demonstrates how these apps “operate as a fully-fledged online industry” and rely on advertising on mainstream social media platforms and deploying customer referral schemes such as referral links on platforms like Reddit and X, allowing them to accumulate over 24 million unique visitors in September, 2023. Graphika found a 2000% increase in referral links in one year during 2023.</p>" },
+    'app-stores': { role: "Proliferation & Discovery", title: "App Stores", body: "<p>App stores are digital marketplaces for producers to upload and advertise apps for consumers to discover and download apps.</p><p>The National Center on Sexual Exploitation has previously called out Apple and Google for their stores’ role promoting and facilitating sexual exploitation of children by allowing the discovery of inappropriate and potentially dangerous apps. Similarly, app stores enable the large-scale discovery and downloading of AI nudifier apps. According to Bellingcat, DeepSwap, an app that was featured on the top of Mr.DeepFakes, was available on Google Play and Apple stores.</p><p>With the most recent case of Grok, advocates have also critiqued app stores for continuing to host Grok and X. A 2026 report by the Tech Transparency Project found 55 apps in the Google Play Store that can “digitally remove the clothes from women and render them completely or partially naked or clad in a bikini or other minimal clothing” and 47 such apps in the Apple store. TTP found that these apps were “downloaded more than 705 million times worldwide and generated $117 million in revenue” (a portion of which goes to Google and Apple). Both companies removed dozens of nudifier apps from their stores after press coverage.</p>" },
+    'dev-platforms': { role: "Infrastructural Support", title: "Developer Platforms", body: "<p>Developer platforms are platforms for developers to create, store, manage, and share code, including models and datasets.</p><p>Developer platforms are central to the development of open-source models and datasets that are used in the creation of deepfakes. Activists and researchers have documented GitHub’s role in hosting early face-swap models like DeepFaceLab, DeepNude, and Unstable Diffusion that were used to produce AIG-NCII.</p><p>AI-specific developer platforms like Hugging Face and Civitai are used to host open-weight models, such as pre-trained base models Stable Diffusion and Flux, as well as almost 35,000 fine-tuned “deepfake” variants, a majority of them sexual and signaling intent to produce non-consensual intimate images.</p><p>An audit of Civitai also found that it was predominantly used to host “not-safe-for-work” (NSFW) models and datasets. After Civitai passed a new policy banning models depicting the likeness of real people in April 2025, 404 Media found that users downloaded over 5000 models and reuploaded them onto Hugging Face.</p>" },
+    'critical-providers': { role: "Infrastructural Support", title: "Critical Service Providers", body: "<p>Critical service providers, including cloud service providers, domain name services (DNS), and authentication services, are support software enabling the existence of multiple pieces of the technological ecosystem.</p><p>That includes nudifier apps and deepfake websites. An Indicator audit of 85 AI nudifier websites found that “Amazon and Cloudflare provide hosting or content delivery services for 62 of the 85 nudifiers” and “Google enabled simple sign-on for 53 out of 85.”</p><p>On May 6, 2025, Mr.DeepFakes, the world’s most notorious “deepfake pornography” site with over 650,000 users, shut down because an unknown “critical service provider terminated service permanently” and “data loss has made it impossible to continue operation.” This case study demonstrates a connection between critical service providers and AIG-NCII distribution channels.</p>" },
+    'payment-processors': { role: "Monetization", title: "Payment Processors", body: "<p>Payment processors (including credit cards and cryptocurrencies) enable the monetization of non-consensual creation and distribution of AI-generated intimate images.</p><p>The Indicator estimates the current AI nudifier economy of undressing apps to be over $36 million dollars. According to researchers, Mr.DeepFakes was used as an “actively growing deepfake market (primarily for people seeking to commission NSFW deepfake media)”.</p><p>In 2025, 47 state attorneys general wrote a letter to Visa, Mastercard, American Express, PayPal, Google Pay, and Apple Pay stating “sellers of deepfake NCII tools and content have made their services available in exchange for fees paid via payment platforms…even including the logos of those companies on their webpages” and call for these companies to “deny sellers the ability to use their services when they are on notice of these connections but should be actively working to identify and remove any such sellers from their network”.</p>" },
   };
 
   /* ── build the SVG ─────────────────────────────────────── */
@@ -186,7 +140,7 @@
     const titleSize = n.tall ? 25 : (n.wide ? 30 : 27);
     let y;
     if (n.tall) y = n.y + 165; else if (n.wide) y = n.y + 52; else y = n.y + 46;
-    if (n.small && n.lines.length > 1) y = n.y + 46;
+    if (!n.lines.length && !n.tall) y = n.y + n.h / 2 + 10;   // title-only boxes: centred
     const title = el('text', { x: cx, y, class: 'eg-title', 'text-anchor': 'middle', style: `font-size:${titleSize}px` }, g);
     title.textContent = n.title;
     y += n.tall ? 62 : 34;
@@ -275,4 +229,6 @@
     },
     select,
   };
+  // the policy layer (policy.js) draws on the same map
+  Eco.graph.ext = { root, svg, el, NODES, nodeEls, edgeEls, select, ICON };
 })();
