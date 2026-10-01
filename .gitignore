@@ -1,9 +1,2 @@
-node_modules/
-**/node_modules/
+.claude/
 .env
-**/.env
-.DS_Store
-studio/dist/
-studio/.sanity/
-*.log
-.vercel
