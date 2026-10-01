@@ -4,7 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>The Ecosystem Behind the Image</title>
-<meta name="description" content="A guided investigation into the technological ecosystem behind AI-generated non-consensual intimate images." />
+<meta name="description" content="A guided investigation into the technological ecosystem 
+behind AI-generated non-consensual intimate images." />
 <style id="loader-css">
   /* Inline so the loading screen paints before anything else arrives */
   html { background: #6751d4; }
@@ -44,23 +45,19 @@
   </div>
 </div>
 
-
 <!-- ═══════════════════════════════════════════════
      CONTENT WARNING OVERLAY
      ═══════════════════════════════════════════════ -->
 <div id="cw-overlay" class="cw-overlay" role="dialog" aria-modal="true" aria-label="Content warning">
   <div class="cw-box">
-    <div class="cw-icon" aria-hidden="true">⚠</div>
+    <!-- <div class="cw-icon" aria-hidden="true">⚠</div> -->
     <p class="cw-title">Content Warning</p>
-    <p class="cw-body">The following animated story includes themes of image-based sexual abuse and gender-based violence, specifically AI-generated non-consensual intimate images depicting children and adults.</p>
-    <p class="cw-exit-note">You can exit at any time.</p>
+    <p class="cw-body">The following animated story discusses AI-generated non-consensual intimate images,
+      a form of image-based sexual abuse. You may exit at any time.</p>
     <div class="cw-actions">
-      <a class="cw-btn cw-btn--primary" id="cw-resources" href="resources.html">Access Resources</a>
-      <button class="cw-btn cw-btn--ghost" id="cw-btn" type="button">I Understand. Continue to Animated Story…</button>
-      <a class="cw-btn cw-btn--ghost" id="cw-skip" href="about.html">Skip Animation, Go to About Page</a>
+      <button class="cw-btn cw-btn--ghost" id="cw-btn" type="button">I Understand. Continue to Animated Story</button>
+      <a class="cw-btn cw-btn--primary" id="cw-resources" href="resources.html">Find Survivor Support Resources</a>
     </div>
-    <p class="cw-fineprint">Interface mockups in the story are illustrative; no harmful imagery is shown or produced.</p>
-    <p class="cw-resources">If you or someone you know has been affected: <strong>StopNCII.org</strong> · <strong>Cyber Civil Rights Initiative</strong> · <strong>RAINN</strong></p>
   </div>
 </div>
 
@@ -85,7 +82,7 @@
         <div class="scene" id="scene-intro">
 
           <!-- Menu bar -->
-          <div class="dt-menubar">
+          <!-- <div class="dt-menubar">
             <div class="dt-menubar-left">
               <span class="dt-apple">&#63743;</span>
               <span class="dt-menu-app">Finder</span>
@@ -99,16 +96,16 @@
               <span class="dt-menu-icon">batt</span>
               <span class="dt-clock" id="dt-clock">9:41 AM</span>
             </div>
-          </div>
+          </div> -->
 
           <!-- Desktop canvas -->
           <div class="dt-canvas">
 
-            <div class="dt-wallpaper-title">
+            <!-- <div class="dt-wallpaper-title">
               <p class="dt-wp-eyebrow">A guided investigation</p>
               <h1 class="dt-wp-head"><span>The</span> <span>Ecosystem</span> <span>Behind</span> <span>the</span> <span class="dt-wp-mark">Image.</span></h1>
               <p class="dt-wp-sub">The technological ecosystem behind AI-generated non-consensual intimate images.</p>
-            </div>
+            </div> -->
 
             <!-- Desktop icons (right column) -->
             <div class="dt-icons">
@@ -171,11 +168,11 @@
           <div class="intro-notification" id="intro-notif" role="button" tabindex="0" aria-label="Open the feed: Five headlines, five different stories">
             <div class="intro-notif-icon"><span class="notif-folder notif-folder--neutral"><i class="fas fa-camera-retro"></i></span></div>
             <div class="intro-notif-meta">
-              <div class="intro-notif-app">Scrollr</div>
-              <div class="intro-notif-title">Five headlines. Five different stories.</div>
-              <div class="intro-notif-body">Trending now. Tap to open your feed.</div>
+              <div class="intro-notif-app">NewsFeed</div>
+              <!-- <div class="intro-notif-title">Five headlines. Five different stories.</div>
+              <div class="intro-notif-body">Trending now. Tap to open your feed.</div> -->
             </div>
-            <div class="intro-notif-time">now</div>
+            <!-- <div class="intro-notif-time">now</div> -->
             <div class="intro-notif-cta">Click to begin ↗</div>
           </div>
         </div>
@@ -184,89 +181,119 @@
         <div class="scene" id="cover">
           <div class="scene-stage news-stage">
             <div class="news-chrome feed">
+
               <div class="feed-top">
-                <span class="feed-logo">scrollr</span>
+                <!-- <span class="feed-logo">NewsFeed</span> -->
                 <span class="feed-top-icons" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-paper-plane"></i></span>
               </div>
+              
               <div class="feed-row">
                 
                 <div class="feed-main">
-                  <div class="feed-stories" aria-hidden="true"><span class="fp-story"><span class="fp-ring"><span class="fp-av">B</span></span><small>Bloomberg</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">4</span></span><small>404 Media</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">W</span></span><small>WIRED</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">V</span></span><small>The Verge</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">R</span></span><small>Reuters</small></span></div>
-              <div class="feed-trend" aria-hidden="true"><i class="fas fa-fire"></i> Trending · 5 newsrooms · 5 headlines · 3 days</div>
+                  <!-- <div class="feed-stories" aria-hidden="true"><span class="fp-story"><span class="fp-ring"><span class="fp-av">B</span></span><small>Bloomberg</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">4</span></span><small>404 Media</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">W</span></span><small>WIRED</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">V</span></span><small>The Verge</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">R</span></span><small>Reuters</small></span></div>
+              -->
+                  <!-- <div class="feed-trend" aria-hidden="true"><i class="fas fa-fire"></i> Trending · 5 newsrooms · 5 headlines · 3 days</div> -->
                   <div class="feed-posts">
                 <article class="feed-post" data-tone="0">
-                  <div class="post-comments" data-for="0"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">U</span><div><b>user_4821</b><p>wait, per HOUR?</p></div></li><li><span class="fc-av">M</span><div><b>m.ortiz</b><p>this is what “move fast” looks like</p></div></li><li><span class="fc-av">K</span><div><b>kaia_writes</b><p>nobody asked for this feature</p></div></li></ul></div>
+                  <!-- <div class="post-comments" data-for="0"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">U</span><div><b>user_4821</b><p>wait, per HOUR?</p></div></li><li><span class="fc-av">M</span><div><b>m.ortiz</b><p>this is what “move fast” looks like</p></div></li><li><span class="fc-av">K</span><div><b>kaia_writes</b><p>nobody asked for this feature</p></div></li></ul></div>
+                   -->
                   <header class="fp-head"><span class="fp-av">B</span><div class="fp-who"><b>Bloomberg</b><small>Jan 7 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
                   <div class="fp-media">
-                    <p class="fp-headline"><span class="nh" data-idx="0" data-role="creation" tabindex="0" role="button">“Musk’s <span class="tech" data-role="creation"><b>Grok AI</b><i class="fas fa-magic" aria-hidden="true"></i></span> Generated Thousands of Undressed Images Per Hour on <span class="tech" data-role="dist"><b>X</b><i class="fas fa-comment" aria-hidden="true"></i></span>”</span></p>
+                    <p class="fp-headline"><span class="nh" data-idx="0" data-role="creation" tabindex="0" role="button">“Musk’s 
+                      <span class="tech" data-role="creation"><b>Grok AI</b><i class="fas fa-magic" aria-hidden="true"></i>
+                      </span> Generated Thousands of Undressed Images Per Hour on <span class="tech" data-role="dist">
+                        <b>X</b><i class="fas fa-comment" aria-hidden="true"></i></span>”</span></p>
+<!-- 
                     <div class="nh-pop" aria-live="polite">
                       <button type="button" class="np-x" aria-label="Close">&times;</button>
                       <b class="np-label">The AI interface</b>
                       <p>A chatbot built into a social platform generated sexualized images at enormous scale, posting them straight into public comment threads.</p>
-                    </div>
+                    </div> -->
+
                   </div>
                   <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
-                  <p class="fp-cap"><b>Bloomberg</b> Generated on demand, published in public. #ai #deepfakes</p>
+                  <p class="fp-cap"><b>Bloomberg</b></p>
                 </article>
                 <article class="feed-post" data-tone="1">
-                  <div class="post-comments" data-for="1"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">D</span><div><b>dev.nadia</b><p>they just keep finding new prompts</p></div></li><li><span class="fc-av">U</span><div><b>user_0093</b><p>patching one thing isn’t going to fix it</p></div></li><li><span class="fc-av">J</span><div><b>jun_s</b><p>who runs these channels??</p></div></li></ul></div>
-                  <header class="fp-head"><span class="fp-av">4</span><div class="fp-who"><b>404 Media</b><small>Jan 7 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
+                  <!-- <div class="post-comments" data-for="1"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">D</span><div><b>dev.nadia</b><p>they just keep finding new prompts</p></div></li><li><span class="fc-av">U</span><div><b>user_0093</b><p>patching one thing isn’t going to fix it</p></div></li><li><span class="fc-av">J</span><div><b>jun_s</b><p>who runs these channels??</p></div></li></ul></div>
+                   -->
+                  <header class="fp-head"><span class="fp-av">4</span><div class="fp-who">
+                    <b>404 Media</b><small>Jan 7 · 2026</small></div>
+                    <span class="fp-dots" aria-hidden="true">···</span></header>
                   <div class="fp-media">
                     <p class="fp-headline"><span class="nh" data-idx="1" data-role="prolif" tabindex="0" role="button">“Inside the <span class="tech" data-role="prolif"><b>Telegram Channel</b><i class="fas fa-users" aria-hidden="true"></i></span> Jailbreaking <span class="tech" data-role="creation"><b>Grok</b><i class="fas fa-magic" aria-hidden="true"></i></span> Over and Over Again”</span></p>
-                    <div class="nh-pop" aria-live="polite">
+                    
+                    <!-- <div class="nh-pop" aria-live="polite">
+                      
                       <button type="button" class="np-x" aria-label="Close">&times;</button>
+                      
                       <b class="np-label">The chat channel</b>
                       <p>A private channel with thousands of members coordinated jailbreaks, sharing working prompts faster than any patch could ship.</p>
-                    </div>
+                   
+                    </div> -->
                   </div>
                   <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
-                  <p class="fp-cap"><b>404 Media</b> Every fix was answered within hours. #jailbreak</p>
+                  <p class="fp-cap"><b>404 Media</b></p>
                 </article>
                 <article class="feed-post" data-tone="2">
-                  <div class="post-comments" data-for="2"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">T</span><div><b>tessa.b</b><p>still in my store right now</p></div></li><li><span class="fc-av">U</span><div><b>user_7710</b><p>so the stores just… allow it?</p></div></li><li><span class="fc-av">R</span><div><b>rohan_k</b><p>reporting it does what exactly</p></div></li></ul></div>
+                  <!-- <div class="post-comments" data-for="2"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">T</span><div><b>tessa.b</b><p>still in my store right now</p></div></li><li><span class="fc-av">U</span><div><b>user_7710</b><p>so the stores just… allow it?</p></div></li><li><span class="fc-av">R</span><div><b>rohan_k</b><p>reporting it does what exactly</p></div></li></ul></div>
+                  -->
                   <header class="fp-head"><span class="fp-av">W</span><div class="fp-who"><b>WIRED</b><small>Jan 8 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
                   <div class="fp-media">
                     <p class="fp-headline"><span class="nh" data-idx="2" data-role="infra" tabindex="0" role="button">“Why Are <span class="tech" data-role="creation"><b>Grok</b><i class="fas fa-magic" aria-hidden="true"></i></span> and <span class="tech" data-role="dist"><b>X</b><i class="fas fa-comment" aria-hidden="true"></i></span> Still Available in <span class="tech" data-role="infra"><b>App Stores</b><i class="fas fa-shopping-cart" aria-hidden="true"></i></span>?”</span></p>
-                    <div class="nh-pop" aria-live="polite">
+                   
+                    <!-- <div class="nh-pop" aria-live="polite">
                       <button type="button" class="np-x" aria-label="Close">&times;</button>
+          
                       <b class="np-label">The app stores</b>
                       <p>The chatbot and its platform stayed downloadable for days after the harm was documented.</p>
-                    </div>
+
+                    </div> -->
+
                   </div>
                   <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
-                  <p class="fp-cap"><b>WIRED</b> Three days on, still one tap away. #appstores</p>
+                  <p class="fp-cap"><b>WIRED</b></p>
                 </article>
                 <article class="feed-post" data-tone="3">
-                  <div class="post-comments" data-for="3"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">L</span><div><b>lena.w</b><p>so the fix is “pay for it”?</p></div></li><li><span class="fc-av">U</span><div><b>user_2256</b><p>free users can still get to it</p></div></li><li><span class="fc-av">A</span><div><b>ari.p</b><p>a paywall isn’t a safeguard</p></div></li></ul></div>
+                  <!-- <div class="post-comments" data-for="3"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">L</span><div><b>lena.w</b><p>so the fix is “pay for it”?</p></div></li><li><span class="fc-av">U</span><div><b>user_2256</b><p>free users can still get to it</p></div></li><li><span class="fc-av">A</span><div><b>ari.p</b><p>a paywall isn’t a safeguard</p></div></li></ul></div>
+                  -->
                   <header class="fp-head"><span class="fp-av">V</span><div class="fp-who"><b>The Verge</b><small>Jan 9 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
                   <div class="fp-media">
                     <p class="fp-headline"><span class="nh" data-idx="3" data-role="money" tabindex="0" role="button">“No, <span class="tech" data-role="creation"><b>Grok</b><i class="fas fa-magic" aria-hidden="true"></i></span> hasn’t <span class="tech" data-role="money"><b>paywalled</b><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span> its deepfake image feature.”</span></p>
-                    <div class="nh-pop" aria-live="polite">
+                   
+                    <!-- <div class="nh-pop" aria-live="polite">
                       <button type="button" class="np-x" aria-label="Close">&times;</button>
                       <b class="np-label">The paywall</b>
                       <p>Restricting the tool to paying users fixed nothing: free users still reached the same model through other doors.</p>
-                    </div>
+                    </div> -->
+
                   </div>
                   <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
-                  <p class="fp-cap"><b>The Verge</b> A paywall is not a safety measure. #paywall</p>
+                  <p class="fp-cap"><b>The Verge</b></p>
                 </article>
                 <article class="feed-post" data-tone="4">
-                  <div class="post-comments" data-for="4"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">S</span><div><b>sam_o</b><p>only after the backlash, of course</p></div></li><li><span class="fc-av">U</span><div><b>user_3380</b><p>“some” image generation. some.</p></div></li><li><span class="fc-av">P</span><div><b>priya.r</b><p>one door closed, five still open</p></div></li></ul></div>
+                
+                  <!-- <div class="post-comments" data-for="4"><div class="fs-title"><i class="far fa-comment"></i> Comments</div><ul class="fc-set"><li><span class="fc-av">S</span><div><b>sam_o</b><p>only after the backlash, of course</p></div></li><li><span class="fc-av">U</span><div><b>user_3380</b><p>“some” image generation. some.</p></div></li><li><span class="fc-av">P</span><div><b>priya.r</b><p>one door closed, five still open</p></div></li></ul></div>
+                  -->
                   <header class="fp-head"><span class="fp-av">R</span><div class="fp-who"><b>Reuters</b><small>Jan 9 · 2026</small></div><span class="fp-dots" aria-hidden="true">···</span></header>
                   <div class="fp-media">
                     <p class="fp-headline"><span class="nh" data-idx="4" data-role="dist" tabindex="0" role="button">“Musk’s <span class="tech" data-role="creation"><b>AI bot Grok</b><i class="fas fa-magic" aria-hidden="true"></i></span> limits some image generation on <span class="tech" data-role="dist"><b>X</b><i class="fas fa-comment" aria-hidden="true"></i></span> after backlash”</span></p>
-                    <div class="nh-pop" aria-live="polite">
+                    
+                    <!-- <div class="nh-pop" aria-live="polite">
                       <button type="button" class="np-x" aria-label="Close">&times;</button>
                       <b class="np-label">The partial fix</b>
                       <p>After the backlash, some image generation was limited, but only in one place. The rest of the chain kept running.</p>
-                    </div>
+                    </div> -->
+
                   </div>
                   <div class="fp-actions" aria-hidden="true"><i class="far fa-heart"></i><i class="far fa-comment"></i><i class="far fa-paper-plane"></i><i class="far fa-bookmark"></i></div>
-                  <p class="fp-cap"><b>Reuters</b> One node restricted. The chain stays intact. #backlash</p>
+                  <p class="fp-cap"><b>Reuters</b></p>
                 </article>
               </div>
                 </div>
-                <aside class="feed-side feed-suggest" aria-hidden="true"><div class="fs-title">Suggested for you</div><ul><li><span class="fp-av">B</span><b>Bloomberg</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">4</span><b>404 Media</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">W</span><b>WIRED</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">V</span><b>The Verge</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">R</span><b>Reuters</b><span class="fs-follow">Follow</span></li></ul></aside>
+                <!-- <aside class="feed-side feed-suggest" aria-hidden="true">
+                  <div class="fs-title">Suggested for you</div><ul><li><span class="fp-av">B</span><b>Bloomberg</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">4</span><b>404 Media</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">W</span><b>WIRED</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">V</span><b>The Verge</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">R</span><b>Reuters</b><span class="fs-follow">Follow</span></li></ul></aside>
+               -->
               </div>
             </div>
           </div>
@@ -278,26 +305,33 @@
             <div class="chat-chrome">
               <div class="chat-header">
                 <div class="chat-logo">assistant</div>
-                <div class="chat-model-selector">
+                
+                <!-- <div class="chat-model-selector">
                   <select class="chat-model-badge" id="chat-model-select" aria-label="Model">
                     <option>Image model v3</option>
                     <option>Text-only model</option>
                     <option>Vision model</option>
                     <option>Open-weights fine-tune</option>
                   </select>
-                </div>
+                </div> -->
+
               </div>
               <div class="chat-body" id="chat-body">
-                <div class="chat-system-msg">Image model · illustrative session</div>
+
+                <!-- <div class="chat-system-msg">Image model · illustrative session</div> -->
+
                 <div class="chat-bubble ai" style="margin-top:8px">I can generate photorealistic images from any description or reference photo.</div>
               </div>
               <div class="chat-footer">
                 <div class="chat-input-wrap">
                   <div class="chat-input-text" id="chat-input-text" aria-label="Message input"></div>
                   <button class="chat-send-btn" id="chat-send-btn" disabled>&#10148;</button>
+              
                 </div>
-                <p class="chat-disclaimer">This model processes image requests without restriction.</p>
+                <!-- <p class="chat-disclaimer">This model processes image requests without restriction.</p>
+              -->
               </div>
+
             </div>
 
             <!-- Dataset + model reveal — zooms over the chat on scroll -->
@@ -1171,6 +1205,7 @@
     <p class="endcard-note">No abusive imagery is shown or produced here. All interface mockups are illustrative reconstructions for educational purposes only. All content is hypothetical unless otherwise cited.</p>
     <p class="endcard-next"><a class="endcard-soon" href="database.html">Explore the database →</a></p>
     <p class="endcard-resources">If you or someone you know has been affected: <strong>StopNCII.org</strong> &middot; <strong>Cyber Civil Rights Initiative</strong> &middot; <strong>RAINN (1-800-656-HOPE)</strong></p>
+    
     <p class="endcard-credit">Designed and built by <strong>Haya Bugshan</strong></p>
   </div>
 </footer>
@@ -1184,12 +1219,12 @@
       <span class="na-tl na-y"></span>
       <span class="na-tl na-g"></span>
     </div>
-    <span class="na-title-text">Notes</span>
+    <!-- <span class="na-title-text">Notes</span> -->
     <div class="na-toolbar-icon">✏️</div>
   </div>
   <div class="na-panes">
     <div class="na-sidebar" id="na-sidebar">
-      <div class="na-sb-head">iCloud</div>
+      <!-- <div class="na-sb-head">iCloud</div> -->
     </div>
     <div class="na-editor" id="na-editor">
       <div class="na-ed-date" id="na-ed-date"></div>
