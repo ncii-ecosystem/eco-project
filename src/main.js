@@ -34,14 +34,14 @@
   document.getElementById('cw-resources')?.focus();   // the coloured default choice
   cwBtn.addEventListener('click', () => {
     cwOverlay.classList.add('hidden');
-    setTimeout(showOpeningNotification, 1500);
+    setTimeout(startOpening, 700);
   });
 
   const { CHAPTERS, NOTIF_CONFIG } = Eco;
 
   /* ── Scroll gate state ────────────────────────────── */
   // 'cover' pre-unlocked — its gate is the intro notification, not #scene-notif
-  const unlockedChapters = new Set(['intro', 'cover', 'finale']);
+  const unlockedChapters = new Set(['intro', 'desk1', 'finale']);
   const visitedChapters = new Set();   // apps the reader has opened, for the dock   // the finale has no gate
   let scrollLocked = false;
   let lockedScrollY = 0;
@@ -132,11 +132,19 @@
     cloud:  { stats: 1000, alert: 600 },
     fin:    { assemble: 1500, close1: 2200, close2: 2600, flood: 4000 },
   };
-  function holdMs(el) {
+  function animMs(el) {                                              // how long the step's own animation runs
     const ds = el.dataset;
     let ms = 0;
     Object.keys(HOLD_MS).forEach((key) => { if (ds[key] !== undefined) ms = Math.max(ms, HOLD_MS[key][ds[key]] || 0); });
-    if (el.classList.contains('step--k')) ms = Math.max(ms, 900);   // the note types itself out
+    return ms;
+  }
+  function holdMs(el) {
+    let ms = animMs(el);
+    if (el.classList.contains('step--k')) {                         // the note comes once the animation is done, then a beat to read it
+      const words = (el.querySelector('.step-key-text')?.textContent || '').trim().split(/\s+/).length;
+      const read = Math.min(2000, Math.max(900, 500 + words * 80));
+      ms = Math.max(ms, Math.min(ms, 2400) + read);
+    }
     return ms;
   }
 
@@ -175,6 +183,7 @@
     document.getElementById('sn-app').textContent   = cfg.app;
     document.getElementById('sn-title').textContent = cfg.title;
     document.getElementById('sn-body').textContent  = cfg.body;
+    sceneNotif.setAttribute('aria-label', 'Open ' + cfg.app + ': ' + cfg.title);
     sceneNotif.classList.add('show', 'pulsing');
     Eco.sound.notify();
     // Remove any stale listener before adding a fresh one
@@ -391,6 +400,22 @@
 
     visitedChapters.add(id);
     syncDock();
+    // the empty desktop (the opening and the beat before search): the windows step aside; every pop-up note window goes away
+    const wasDesk = monScreen.classList.contains('desk-mode'), nowDesk = id === 'intro';           // only the opening hides the windows
+    if (wasDesk && !nowDesk) {                                  // the windows that were behind simply come back; only the new one animates
+      spawnedWindows.forEach((w) => { w.classList.add('no-anim'); setTimeout(() => w.classList.remove('no-anim'), 120); });
+    }
+    monScreen.classList.toggle('desk-mode', nowDesk);
+    monScreen.classList.toggle('flood-gone', id !== 'intro');           // the opening's flood of headlines is part of the desktop: it goes when the apps take over
+    if (Eco.auxHide) Eco.auxHide();
+    if (id === 'desk1') {
+      // the empty-desktop beat: every window is still there, all of them dimmed
+      spawnedWindows.forEach((w) => { w.classList.remove('active', 'buried'); w.classList.add('dimmed'); });
+      if (windowOverlay) windowOverlay.classList.remove('active');
+      setTimeout(() => syncNoteToChapter(id), 850);
+      return;
+    }
+
     if (Eco.arrow) Eco.arrow.visible(id === 'models');
 
     if (id !== 'finale') {                                               // coming back from the finale: windows back in place, pop-ups gone, law layer off
@@ -419,8 +444,9 @@
       }
     });
 
-    setTimeout(() => syncNoteToChapter(id), 450);        // once the scroll has settled
+    setTimeout(() => syncNoteToChapter(id), 850);        // once the scroll has settled and the window has opened
 
+    document.documentElement.classList.add('notes-open');   // every window is laid out with room for Notes from the start
     const isNew = !spawnedWindows.has(id);
     let win;
 
@@ -560,12 +586,33 @@
     document.documentElement.classList.add('notes-open');
   }
 
-  function updateNotesApp(stepEl) {
+  /* Making a new note easy to notice: a brief veil over the scene, a soft sound, and a bigger card for the first few */
+  let noteCount = 0, veilTimer = null;
+  const veil = document.getElementById('note-veil');
+  function flashVeil() {
+    if (!veil || prefersReducedMotion()) return;
+    veil.classList.remove('go'); void veil.offsetWidth; veil.classList.add('go');
+  }
+  /* A step with an animation shows its note when the animation is done; the previous note stays until then */
+  let noteDelayTimer = null;
+  function updateNotesApp(stepEl, delayMs) {
+    clearTimeout(noteDelayTimer);
+    if (delayMs > 0 && !prefersReducedMotion()) { noteDelayTimer = setTimeout(() => renderNote(stepEl), delayMs); return; }
+    renderNote(stepEl);
+  }
+  function renderNote(stepEl) {
     if (!notesApp) return;
+    // where the note sits: set while it is closed it just appears there; set while open it glides
+    const pos = stepEl.dataset.pos || '';
+    if (!notesOpen) notesApp.classList.add('na-snap', 'na-jump');   // closed: move to the new place without any animation...
+    notesApp.classList.toggle('pos-center', pos === 'center');
+    notesApp.classList.toggle('pos-top', pos === 'top');
+    if (!notesOpen) { void notesApp.offsetWidth; notesApp.classList.remove('na-jump'); }   // ...then open from there, so it slides in from the side
     openNotesApp();
+    if (notesApp.classList.contains('na-snap')) { void notesApp.offsetWidth; setTimeout(() => notesApp.classList.remove('na-snap'), 60); }
     if (curNote && curNote.stepEl === stepEl) return;          // already showing this note: don't type it out again
     const label   = stepEl.querySelector('.step-label')?.textContent.trim() || 'Note';
-    const keyText = stepEl.querySelector('.step-key-text')?.textContent.trim() || '';
+    const keyText = stepEl.querySelector('.step-key-text')?.innerHTML.trim() || '';
     const details = Array.from(stepEl.querySelectorAll('.step-detail p'))
                          .map(p => p.textContent.trim()).filter(Boolean);
     const fullBody = details.join('\n\n');
@@ -590,6 +637,11 @@
     notesApp.classList.remove('na-flash');
     void notesApp.offsetWidth;
     notesApp.classList.add('na-flash');
+    noteCount += 1;
+    // the dim comes in as the note is typed out (never for the first notes, which come before the first notification)
+    clearTimeout(veilTimer);
+    if (!['n1', 'n2', 'n3', 'n4'].includes(stepEl.dataset.intro) && !stepEl.dataset.nkey) veilTimer = setTimeout(flashVeil, 120);
+    if (Eco.sound && Eco.sound.note) Eco.sound.note();
     if (noteTimer) clearTimeout(noteTimer);
     typeNote(keyText);
   }
@@ -606,8 +658,12 @@
     const ks = chapterEl ? Array.from(chapterEl.querySelectorAll('.step--k')) : [];
     if (!ks.length) return;
     const line = window.innerHeight * 0.5;
-    let pick = ks[0];
-    ks.forEach((k) => { if (k.getBoundingClientRect().top <= line) pick = k; });   // the last note already passed, else the first
+    let pick = null;
+    ks.forEach((k) => { if (k.getBoundingClientRect().top <= line) pick = k; });   // the last note already passed
+    if (!pick) {
+      if (id === 'interface') { if (Eco.hideNote) Eco.hideNote(); return; }       // the chat types its message first; its note comes with the reply
+      pick = ks[0];
+    }
     updateNotesApp(pick);
   }
   function noteBack(element) {
@@ -615,6 +671,7 @@
     const i = allNotes.indexOf(element);
     const prev = i > 0 ? allNotes[i - 1] : null;
     if (prev && prev.closest('.scroll-chapter')?.dataset.chapter !== 'intro') updateNotesApp(prev);
+    else if (element.closest('.scroll-chapter')?.dataset.chapter === 'interface' && Eco.hideNote) Eco.hideNote();   // back above the chat's first note: the opening's notes belong to the desktop
   }
 
   function pushNoteToSidebar(note, isActive) {
@@ -647,25 +704,46 @@
     item.classList.toggle('active', isActive);
   }
 
-  function typeNote(text) {
-    if (prefersReducedMotion()) {
-      naEdBody.textContent = text;
-      if (naCursor) naCursor.style.opacity = '0';
-      return;
-    }
+  /* A note appears word by word. Every word is laid out from the start, so the card keeps its size while it fills in. */
+  function typeNote(html) {
+    naEdBody.innerHTML = html;
+    if (naCursor) naCursor.style.opacity = '0';
+    if (prefersReducedMotion()) return;
+    const words = [];
+    const walker = document.createTreeWalker(naEdBody, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach((node) => {
+      const frag = document.createDocumentFragment();
+      node.nodeValue.split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+        const sp = document.createElement('span');
+        sp.className = 'nw';
+        sp.textContent = part;
+        frag.appendChild(sp);
+        words.push(sp);
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
     let i = 0;
-    function step() {
-      if (i < text.length) {
-        naEdBody.textContent = text.substring(0, i + 1);
-        i++;
-        noteTimer = setTimeout(step, 5);
-      } else {
-          if (naCursor) setTimeout(() => { naCursor.style.opacity = '0'; }, 900);
-      }
-    }
-    step();
+    const per = Math.max(28, Math.min(70, 1500 / Math.max(1, words.length)));
+    (function step() {
+      if (i >= words.length) return;
+      words[i++].classList.add('on');
+      noteTimer = setTimeout(step, per);
+    })();
   }
+  Eco.hideNote = function () {
+    if (!notesApp) return;
+    clearTimeout(noteTimer); clearTimeout(veilTimer); clearTimeout(noteDelayTimer);
+    notesApp.classList.remove('open', 'centered');
+    if (activeChapter === 'intro' || activeChapter === 'desk1') document.documentElement.classList.remove('notes-open');   // between apps the windows keep their room, so they do not resize
+    notesOpen = false;
+    curNote = null;
+  };
 
+  Eco.holdScroll = (ms) => holdFor(ms);
   Eco.showNote = updateNotesApp;   // graph.js opens a box's explanation here
 
   /* ── Desktop clock ───────────────────────────────── */
@@ -684,22 +762,59 @@
   /* ── Opening notification ─────────────────────────── */
   let scrollHintPending = false;
   let hintBaseY = 0;
-  function showOpeningNotification() {
-    const notif = document.getElementById('intro-notif');
-    if (!notif) return;
+  /* The reader starts the story by scrolling: notes appear on the empty desktop one after another. */
+  function startOpening() {
+    // the desktop starts up (wallpaper, icons one by one, the dock), then the first note arrives from the side
+    setTimeout(() => monScreen.classList.remove('booting'), 300);
+    setTimeout(() => {
+      openingDone = true;
+      unlockScroll();
+      storyStarted = true; armIdleHint();
+      const first = document.querySelector('.step[data-intro="n1"]');
+      if (first) requestStep(first);
+      setTimeout(() => { showHint('Scroll to continue ↓'); hintBaseY = window.scrollY; scrollHintPending = true; }, 2200);
+    }, 3000);
+  }
+
+  /* "Story starts here": the headline cards fade out one after another, and the new wallpaper sweeps across */
+  function openFeedFromCards() {
+    Eco.intro.flights = [];
+    if (prefersReducedMotion()) return;
+    document.querySelectorAll('#hl-grid .hl-card').forEach((c, i) => {
+      Eco.intro.flights.push(c.animate(
+        [{ transform: 'none', opacity: 1 }, { transform: 'scale(0.94) translateY(8px)', opacity: 0 }],
+        { duration: 420, delay: i * 70, easing: 'ease-in', fill: 'forwards' }));
+    });
+  }
+
+  /* A gate: a notification that waits for a click. The story is held at its step until then. */
+  let gateKind = null;
+  function openGate(kind, stepEl) {
+    const notif = document.getElementById(kind === 'news' ? 'intro-notif' : 'story-notif');
+    if (!notif || gateKind) return;
+    gateKind = kind;
+    nextStepAt = performance.now() + 1e9;                       // later steps wait in the queue
+    const hold = stepEl.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.5 + 4;
+    if (window.scrollY > hold + 30) window.scrollTo({ top: hold, behavior: 'instant' });
+    lockScroll();
+    hideHint();
     notif.classList.add('show');
     Eco.sound.notify();
     notif.focus({ preventScroll: true });
     onActivate(notif, () => {
       if (!notif.classList.contains('show')) return;
       notif.classList.remove('show');
+      gateKind = null;
+      if (kind === 'news') Eco.intro.newsOpen = true; else Eco.intro.storyOpen = true;
+      if (kind === 'story') openFeedFromCards();
+      Eco.intro.refresh();
+      nextStepAt = 0;
       unlockScroll();
-      showHint('Scroll to continue ↓');
-      // Arm after the scroll to the article settles, so only the reader's own scrolling dismisses it
-      setTimeout(() => { hintBaseY = window.scrollY; scrollHintPending = true; }, 1300);
-      activateChapter('cover');
-      scrollToChapter('cover');
-      storyStarted = true; armIdleHint();
+      markNavigating();
+      const next = document.querySelector(kind === 'news' ? '.step[data-intro="flood"]' : '.step[data-intro="t2"]');
+      const go = () => { if (next) next.scrollIntoView({ behavior: scrollBehavior(), block: 'center' }); drainSteps(); };
+      if (kind === 'story' && !prefersReducedMotion()) setTimeout(go, 1900);    // let the new wallpaper sweep across first
+      else go();
     });
   }
 
@@ -751,10 +866,16 @@
     if (['move', 'annotate-dev'].includes(element.dataset.md)) openCompanion('models');
 
     // Notes app — fires on every step--k regardless of which scene
-    if (element.classList.contains('step--k')) updateNotesApp(element);
+    if (element.classList.contains('step--k') && !Eco.intro.floodRunning) updateNotesApp(element, Math.min(animMs(element), 2400));
+
+    // the two notifications of the opening hold the story until the reader clicks them
+    if (direction === 'down') {
+      if (element.dataset.intro === 'newsfeed' && !Eco.intro.newsOpen) openGate('news', element);
+      else if (element.dataset.intro === 'go' && !Eco.intro.storyOpen) openGate('story', element);
+    }
 
     // pause the scroll for the length of this step's animation (forwards only, and not in the intro)
-    if (direction === 'down' && element.closest('.scroll-chapter')?.dataset.chapter !== 'intro') {
+    if (direction === 'down' && (element.closest('.scroll-chapter')?.dataset.chapter !== 'intro' || element.classList.contains('step--k'))) {
       const ms = holdMs(element);
       holdFor(ms);
       nextStepAt = performance.now() + (prefersReducedMotion() ? 0 : ms);
@@ -763,7 +884,7 @@
 
   function drainSteps() {
     clearTimeout(drainTimer);
-    if (!queued.size) return;
+    if (!queued.size || !openingDone) return;
     const wait = nextStepAt - performance.now();
     if (wait > 16) { drainTimer = setTimeout(drainSteps, wait); return; }
     const sorted = Array.from(queued).sort((a, b) => stepOrder.get(a) - stepOrder.get(b));
@@ -776,7 +897,9 @@
     if (queued.size) drainTimer = setTimeout(drainSteps, supersededByLater ? 0 : Math.max(16, nextStepAt - performance.now()));
   }
 
+  let openingDone = false;                // the desktop opening plays first; no step is taken before it ends
   function requestStep(element) {
+    if (!openingDone) return;
     if (entered.has(element) || queued.has(element)) return;
     queued.add(element);
     drainSteps();
@@ -814,7 +937,10 @@
     debug: false,
   }).onStepEnter(({ element, direction }) => {
     if (direction === 'down') requestStep(element);
-    else if (!entered.has(element)) playStep(element, direction);     // scrolling back up into a step keeps the old behaviour
+    else if (!entered.has(element)) {                                  // scrolling back up into a step keeps the old behaviour...
+      if (element.getBoundingClientRect().top > stepLine(element) + 60) return;   // ...unless it was never really reached (a snap-back, a fling)
+      playStep(element, direction);
+    }
     else Eco.handleStep(element.dataset, direction);
   }).onStepExit(({ element, direction }) => {
     if (direction === 'up') { if (!entered.delete(element)) return; queued.delete(element); }
@@ -833,6 +959,8 @@
       if (rect.top <= triggerY) current = el.dataset.chapter;
     }
     if (!current) return;
+    if (gateKind) return;                                                              // an opening notification is waiting for its click
+    if (!Eco.intro.storyOpen && current !== 'intro') current = 'intro';               // a fast scroll can overshoot: the opening still has to be played first
     if (unlockedChapters.has(current)) {            // anywhere already opened: follow the scroll, up or down
       if (current !== activeChapter) activateChapter(current);
       return;
