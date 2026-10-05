@@ -4,13 +4,13 @@
 <link rel="stylesheet" href="src/shared/router.css" />
 <script src="src/shared/router.js"></script>
 <meta charset="UTF-8" />
-<link rel="stylesheet" href="src/shared/tokens.css" />
-<link rel="stylesheet" href="src/shared/site-nav.css" />
+<link rel="stylesheet" href="src/shared/tokens.css?v=2" />
+<link rel="stylesheet" href="src/shared/site-nav.css?v=2" />
 <script src="src/shared/theme-boot.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link id="site-favicon" rel="icon" type="image/svg+xml" href="assets/logo.svg" />
-<title>Primers — ncii-ecosystem</title>
-<meta name="description" content="Primers related to AIG-NCII and the technological ecosystem." />
+<title>Survivor Support — ncii-ecosystem</title>
+<meta name="description" content="Survivor support related to AIG-NCII." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=PT+Mono&display=swap" rel="stylesheet" />
@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="src/database/styles.css" />
 <script src="src/shared/nav.js" defer></script>
 </head>
-<body class="db-page">
+<body class="db-page ss-page">
 
 <header class="site-topnav">
   <a class="site-logo" href="home.html" aria-label="ncii ecosystem">
@@ -40,7 +40,7 @@
         <li><a href="home.html">Home</a></li>
         <li><a href="index.html">Story</a></li>
         <li><a href="database.html">Database</a></li>
-        <li><a href="survivor-support.html">Survivor Support</a></li>
+        <li><a href="survivor-support.html" aria-current="page">Survivor Support</a></li>
         <li><a href="about.html">About</a></li>
       </ul>
     </nav>
@@ -50,8 +50,27 @@
   </div>
 </header>
 
-<main class="primers-layout">
-  <h1 class="db-filter-label">Primers</h1>
+<main class="primers-layout ss-layout">
+  <h1 class="db-filter-label">Survivor Support</h1>
+  <p class="ss-intro">If you or someone you know has been affected by AI-generated non-consensual intimate images, these organizations can help.</p>
+
+  <div class="ss-resources">
+    <section class="ss-resource" aria-labelledby="ss-stopncii">
+      <h2 id="ss-stopncii">StopNCII.org</h2>
+      <p>A free tool that helps stop intimate images from being shared online without consent.</p>
+      <a href="https://stopncii.org" target="_blank" rel="noopener noreferrer">Visit StopNCII.org <span aria-hidden="true">↗</span><span class="ss-sr-only"> (opens in a new tab)</span></a>
+    </section>
+    <section class="ss-resource" aria-labelledby="ss-ccri">
+      <h2 id="ss-ccri">Cyber Civil Rights Initiative</h2>
+      <p>Support and advocacy for people affected by image-based abuse.</p>
+      <a href="https://cybercivilrights.org" target="_blank" rel="noopener noreferrer">Visit Cyber Civil Rights Initiative <span aria-hidden="true">↗</span><span class="ss-sr-only"> (opens in a new tab)</span></a>
+    </section>
+    <section class="ss-resource" aria-labelledby="ss-rainn">
+      <h2 id="ss-rainn">RAINN</h2>
+      <p>Support for survivors of sexual violence. Hotline: <a href="tel:18006564673">1-800-656-HOPE (4673)</a>.</p>
+      <a href="https://rainn.org" target="_blank" rel="noopener noreferrer">Visit RAINN <span aria-hidden="true">↗</span><span class="ss-sr-only"> (opens in a new tab)</span></a>
+    </section>
+  </div>
 </main>
 
 <script src="src/shared/theme.js"></script>

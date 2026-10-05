@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="src/shared/router.css" />
+<script src="src/shared/router.js"></script>
 <meta charset="UTF-8" />
+<link rel="stylesheet" href="src/shared/tokens.css" />
+<link rel="stylesheet" href="src/shared/site-nav.css" />
+<script src="src/shared/theme-boot.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link id="site-favicon" rel="icon" type="image/png" href="assets/logo-light.png?v=3" />
+<link id="site-favicon" rel="icon" type="image/svg+xml" href="assets/logo.svg" />
 <title>About — ncii-ecosystem</title>
 <meta name="description" content="About the AIG-NCII evidence index and the ecosystem paper that maps technologies facilitating AI-generated non-consensual intimate images." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,19 +21,16 @@
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 />
-<link rel="stylesheet" href="src/shared/tokens.css" />
 <link rel="stylesheet" href="src/database/styles.css" />
 <link rel="stylesheet" href="src/about/styles.css" />
-<link rel="stylesheet" href="src/shared/site-nav.css" />
 <script src="src/shared/nav.js" defer></script>
-<script src="src/shared/theme-boot.js"></script>
 </head>
 <body class="db-page about-page">
 
 <header class="site-topnav">
-  <a class="site-logo" href="index.html" aria-label="ncii-ecosystem">
-    <img class="site-logo-img site-logo-img--light" src="assets/logo-light.png?v=3" alt="" width="28" height="28" />
-    <img class="site-logo-img site-logo-img--dark" src="assets/logo-dark.png" alt="" width="28" height="28" />
+  <a class="site-logo" href="home.html" aria-label="ncii ecosystem">
+    <img class="site-logo-img" src="assets/logo.svg" alt="" width="28" height="28" />
+    <span class="site-logo-name">ncii ecosystem</span>
   </a>
   <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
     <span class="site-burger" aria-hidden="true"></span>
@@ -36,9 +38,10 @@
   <div class="site-nav-panel" id="site-nav-menu">
     <nav aria-label="Site">
       <ul class="site-topnav-links">
-        <li><a href="index.html">Home</a></li>
+        <li><a href="home.html">Home</a></li>
+        <li><a href="index.html">Story</a></li>
         <li><a href="database.html">Database</a></li>
-        <li><a href="primers.html">Primers</a></li>
+        <li><a href="survivor-support.html">Survivor Support</a></li>
         <li><a href="about.html" aria-current="page">About</a></li>
       </ul>
     </nav>
@@ -140,9 +143,18 @@
       </section>
     </article>
 
-    <aside class="about-rail" aria-label="Acknowledgements">
-      <p class="db-filter-label">Acknowledgements</p>
+    <aside class="about-rail" aria-label="Team">
+      <p class="db-filter-label">Team</p>
       <ul class="about-team-list">
+        <li class="about-team-person">
+          <div class="about-team-photo" aria-hidden="true">
+            <span class="about-team-initials">MD</span>
+          </div>
+          <div class="about-team-meta">
+            <span class="about-team-name">Michelle L. Ding</span>
+            <span class="about-team-role">Author</span>
+          </div>
+        </li>
         <li class="about-team-person">
           <div class="about-team-photo" aria-hidden="true">
             <img src="assets/people/haya-bugshan.jpg" alt="" width="72" height="72" onerror="this.remove()" />
@@ -161,6 +173,24 @@
           <div class="about-team-meta">
             <span class="about-team-name">Maja Mishevska</span>
             <span class="about-team-role">Design &amp; development</span>
+          </div>
+        </li>
+        <li class="about-team-person">
+          <div class="about-team-photo" aria-hidden="true">
+            <span class="about-team-initials">HS</span>
+          </div>
+          <div class="about-team-meta">
+            <span class="about-team-name">Harini Suresh</span>
+            <span class="about-team-role">Assistant Professor of Computer Science at Brown</span>
+          </div>
+        </li>
+        <li class="about-team-person">
+          <div class="about-team-photo" aria-hidden="true">
+            <span class="about-team-initials">SV</span>
+          </div>
+          <div class="about-team-meta">
+            <span class="about-team-name">Suresh Venkatasubramanian</span>
+            <span class="about-team-role">Professor of Data Science and Computer Science at Brown</span>
           </div>
         </li>
       </ul>

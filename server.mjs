@@ -36,10 +36,10 @@ const DATASET = String(process.env.SANITY_DATASET || 'production').trim();
 const API_VERSION = String(process.env.SANITY_API_VERSION || '2024-01-01').trim();
 const WRITE_TOKEN = String(process.env.SANITY_WRITE_TOKEN || '').trim();
 
-const MAX_BODY_BYTES = Number(process.env.SUBMIT_MAX_BODY_BYTES || 32 * 1024);
-const RATE_IP_MAX = Number(process.env.SUBMIT_RATE_IP_MAX || 5);
+const MAX_BODY_BYTES = Number(process.env.SUBMIT_MAX_BODY_BYTES || 512 * 1024);
+const RATE_IP_MAX = Number(process.env.SUBMIT_RATE_IP_MAX || 25);
 const RATE_IP_WINDOW_MS = Number(process.env.SUBMIT_RATE_IP_WINDOW_MS || 15 * 60 * 1000);
-const RATE_GLOBAL_MAX = Number(process.env.SUBMIT_RATE_GLOBAL_MAX || 40);
+const RATE_GLOBAL_MAX = Number(process.env.SUBMIT_RATE_GLOBAL_MAX || 200);
 const RATE_GLOBAL_WINDOW_MS = Number(
   process.env.SUBMIT_RATE_GLOBAL_WINDOW_MS || 60 * 60 * 1000
 );
@@ -85,10 +85,11 @@ function pruneHits(hits, windowMs, now) {
   if (i > 0) hits.splice(0, i);
 }
 
-function checkRateLimit(ip) {
+function checkRateLimit(ip, count) {
+  const needed = count || 1;
   const now = Date.now();
   pruneHits(globalBucket.hits, RATE_GLOBAL_WINDOW_MS, now);
-  if (globalBucket.hits.length >= RATE_GLOBAL_MAX) {
+  if (globalBucket.hits.length + needed > RATE_GLOBAL_MAX) {
     return {
       ok: false,
       retryAfterSec: Math.ceil(RATE_GLOBAL_WINDOW_MS / 1000),
@@ -102,7 +103,7 @@ function checkRateLimit(ip) {
     ipBuckets.set(ip, bucket);
   }
   pruneHits(bucket.hits, RATE_IP_WINDOW_MS, now);
-  if (bucket.hits.length >= RATE_IP_MAX) {
+  if (bucket.hits.length + needed > RATE_IP_MAX) {
     const oldest = bucket.hits[0] || now;
     return {
       ok: false,
@@ -122,15 +123,16 @@ function checkRateLimit(ip) {
   return {ok: true};
 }
 
-function recordSubmit(ip) {
+function recordSubmit(ip, count) {
+  const n = count || 1;
   const now = Date.now();
-  globalBucket.hits.push(now);
+  for (let i = 0; i < n; i += 1) globalBucket.hits.push(now);
   let bucket = ipBuckets.get(ip);
   if (!bucket) {
     bucket = {hits: []};
     ipBuckets.set(ip, bucket);
   }
-  bucket.hits.push(now);
+  for (let i = 0; i < n; i += 1) bucket.hits.push(now);
 
   if (ipBuckets.size > 5000) {
     for (const [key, value] of ipBuckets) {
@@ -228,26 +230,47 @@ async function fetchTechnologies() {
   return rows;
 }
 
-function buildCaseStudyDoc(input, techByName) {
+function normalizeSubmitter(raw) {
+  const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  const name = String(source.name || '')
+    .trim()
+    .slice(0, LIMITS.SUBMITTER_NAME);
+  const affiliation = String(source.affiliation || '')
+    .trim()
+    .slice(0, LIMITS.SUBMITTER_AFFILIATION);
+  const contact = String(source.contact || '')
+    .trim()
+    .slice(0, LIMITS.CONTACT);
+  const listPublicly = !!source.listPublicly;
+
+  if (listPublicly && !name) {
+    throw new Error('Name is required for public credit.');
+  }
+
+  if (contact && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
+    throw new Error('Enter a valid email address.');
+  }
+
+  return {
+    anonymous: !listPublicly,
+    name: name,
+    affiliation: affiliation,
+    contact: contact,
+    listPublicly: listPublicly,
+  };
+}
+
+function buildCaseStudyDoc(input, techByName, submitter) {
   const title = String(input.title || '').trim();
   const medium = String(input.medium || '').trim();
   if (!title) throw new Error('Title is required');
   if (!ALLOWED_MEDIUMS.has(medium)) throw new Error('Invalid type');
 
-  const authors = (Array.isArray(input.authors) ? input.authors : [])
-    .map(function (a) {
-      const name = String((a && a.name) || '').trim();
-      if (!name) return null;
-      return {
-        _type: 'author',
-        _key: key(),
-        name: name.slice(0, LIMITS.AUTHOR_NAME),
-        isOrganization: !!(a && a.isOrganization),
-      };
-    })
-    .filter(Boolean)
-    .slice(0, LIMITS.AUTHORS);
-  if (!authors.length) throw new Error('At least one author is required');
+  const authors = typeof input.authors === 'string' ? input.authors.trim() : '';
+  if (!authors) throw new Error('Author(s)/organization is required');
+  if (authors.length > LIMITS.AUTHORS) {
+    throw new Error('You’ve reached the maximum number of characters for this field.');
+  }
 
   const techNames = Array.isArray(input.technologies) ? input.technologies : [];
   const technologies = [];
@@ -328,26 +351,10 @@ function buildCaseStudyDoc(input, techByName) {
     headlineSegments.push(entry);
   }
 
-  const dateRaw = String(input.date || '').trim();
-  if (!dateRaw) throw new Error('Date is required');
-  if (/^\d{4}$/.test(dateRaw)) {
-    const y = Number(dateRaw);
-    if (y < 1900 || y > 2100) throw new Error('Date year out of range');
-  } else if (/^\d{4}-\d{2}-\d{2}$/.test(dateRaw)) {
-    const m = dateRaw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    const year = Number(m[1]);
-    const month = Number(m[2]);
-    const day = Number(m[3]);
-    const dt = new Date(Date.UTC(year, month - 1, day));
-    if (
-      dt.getUTCFullYear() !== year ||
-      dt.getUTCMonth() !== month - 1 ||
-      dt.getUTCDate() !== day
-    ) {
-      throw new Error('Invalid date');
-    }
-  } else {
-    throw new Error('Date must be YYYY or YYYY-MM-DD');
+  const year = String(input.year || '').trim();
+  if (!year) throw new Error('Year is required');
+  if (!/^\d{4}$/.test(year) || Number(year) < 1900 || Number(year) > 2100) {
+    throw new Error('Enter a valid year.');
   }
 
   const sourceUrl = String(input.sourceUrl || '').trim().slice(0, LIMITS.URL);
@@ -361,12 +368,6 @@ function buildCaseStudyDoc(input, techByName) {
     throw new Error('URL must start with http:// or https://');
   }
 
-  const contact = String(input.contact || '').trim().slice(0, LIMITS.CONTACT);
-  if (!contact) throw new Error('Contact email is required');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
-    throw new Error('Enter a valid contact email');
-  }
-
   const publishedId = newDocId();
   const doc = {
     _id: 'drafts.' + publishedId,
@@ -378,40 +379,34 @@ function buildCaseStudyDoc(input, techByName) {
     sensitiveThumbnail: true,
     technologies: technologies,
     headlineSegments: headlineSegments,
-    date: dateRaw,
+    year: year,
     sourceUrl: sourceUrl,
-    submitterContact: contact,
+    submitterAnonymous: !!submitter.anonymous,
+    listSubmitterPublicly: !!submitter.listPublicly,
   };
 
+  if (submitter.contact) doc.submitterContact = submitter.contact;
+  if (submitter.name) doc.submitterName = submitter.name;
+  if (submitter.affiliation) doc.submitterAffiliation = submitter.affiliation;
+
   if (input.source) doc.source = String(input.source).trim().slice(0, LIMITS.SOURCE);
-  if (input.venue) doc.venue = String(input.venue).trim().slice(0, LIMITS.VENUE);
 
   return {doc: doc, id: publishedId};
 }
 
 async function handleSubmit(req, res) {
   if (!PROJECT_ID) {
-    sendJson(res, 500, {error: 'SANITY_PROJECT_ID is not configured on the server'});
+    sendJson(res, 500, {error: 'Submissions are temporarily unavailable. Please try again later.'});
     return;
   }
   if (!WRITE_TOKEN) {
     sendJson(res, 500, {
-      error: 'SANITY_WRITE_TOKEN is not configured on the server (.env)',
+      error: 'Submissions are temporarily unavailable. Please try again later.',
     });
     return;
   }
 
   const ip = clientIp(req);
-  const rate = checkRateLimit(ip);
-  if (!rate.ok) {
-    sendJson(
-      res,
-      429,
-      {error: rate.error},
-      {'Retry-After': String(rate.retryAfterSec || 60)}
-    );
-    return;
-  }
 
   if (inFlight >= MAX_IN_FLIGHT) {
     sendJson(
@@ -444,6 +439,37 @@ async function handleSubmit(req, res) {
     return;
   }
 
+  const entries = Array.isArray(input.entries) ? input.entries : null;
+  if (!entries || !entries.length) {
+    sendJson(res, 400, {error: 'Add at least one entry'});
+    return;
+  }
+  if (entries.length > LIMITS.ENTRIES) {
+    sendJson(res, 400, {
+      error: 'You can submit up to ' + LIMITS.ENTRIES + ' entries at a time',
+    });
+    return;
+  }
+
+  let submitter;
+  try {
+    submitter = normalizeSubmitter(input.submitter);
+  } catch (e) {
+    sendJson(res, 400, {error: e.message || 'Please review your submission details.'});
+    return;
+  }
+
+  const rate = checkRateLimit(ip, entries.length);
+  if (!rate.ok) {
+    sendJson(
+      res,
+      429,
+      {error: rate.error},
+      {'Retry-After': String(rate.retryAfterSec || 60)}
+    );
+    return;
+  }
+
   inFlight += 1;
   try {
     const techs = await fetchTechnologies();
@@ -451,7 +477,17 @@ async function handleSubmit(req, res) {
     techs.forEach(function (t) {
       if (t && t.name) techByName[String(t.name)] = t;
     });
-    const built = buildCaseStudyDoc(input, techByName);
+    const built = entries.map(function (entry, index) {
+      try {
+        return buildCaseStudyDoc(entry, techByName, submitter);
+      } catch (err) {
+        const error = new Error(
+          'Entry ' + (index + 1) + ': ' + (err.message || 'Please review this entry.')
+        );
+        error.isEntryValidation = true;
+        throw error;
+      }
+    });
     await sanityFetch(
       '/data/mutate/' + encodeURIComponent(DATASET) + '?returnIds=true',
       {
@@ -461,14 +497,26 @@ async function handleSubmit(req, res) {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + WRITE_TOKEN,
         },
-        body: JSON.stringify({mutations: [{create: built.doc}]}),
+        body: JSON.stringify({
+          mutations: built.map(function (item) {
+            return {create: item.doc};
+          }),
+        }),
       }
     );
-    recordSubmit(ip);
-    sendJson(res, 200, {ok: true, draftId: built.doc._id, id: built.id});
+    recordSubmit(ip, built.length);
+    sendJson(res, 200, {
+      ok: true,
+      count: built.length,
+      ids: built.map(function (item) {
+        return item.id;
+      }),
+    });
   } catch (e) {
     console.error(e);
-    sendJson(res, 400, {error: e.message || 'Could not create draft'});
+    sendJson(res, e.isEntryValidation ? 400 : 500, {
+      error: e.isEntryValidation ? e.message : 'We couldn’t submit your entries. Please try again.',
+    });
   } finally {
     inFlight = Math.max(0, inFlight - 1);
   }
@@ -482,9 +530,18 @@ function safeJoin(root, urlPath) {
   return full;
 }
 
+const ROUTED_PAGES = new Set([
+  '/index.html', '/home.html', '/database.html', '/about.html',
+  '/primers.html', '/survivor-support.html',
+]);
+
 function serveStatic(req, res) {
   let urlPath = req.url.split('?')[0] || '/';
   if (urlPath === '/') urlPath = '/index.html';
+  const params = new URL(req.url, 'http://localhost').searchParams;
+  if (ROUTED_PAGES.has(urlPath) && params.get('content') !== '1') {
+    urlPath = '/shell.html';
+  }
 
   const filePath = safeJoin(ROOT, urlPath);
   if (!filePath) {

@@ -10,7 +10,7 @@
   var selectedTech = new Set();
   var selectedTypes = new Set();
   var searchQuery = '';
-  var sortKey = 'date';
+  var sortKey = 'year';
   var sortDir = 'desc';
 
   var els = {
@@ -35,7 +35,7 @@
   }
 
   function recordSearchBlob(r) {
-    var parts = [r.title, r.source, r.venue, r.summary, r.medium];
+    var parts = [r.title, r.source, r.medium];
     if (r.authors) parts = parts.concat(r.authors);
     if (r.technologies) parts = parts.concat(r.technologies);
     return utils.norm(parts.filter(Boolean).join(' '));
@@ -69,8 +69,8 @@
           sensitivity: 'base'
         });
       } else {
-        var at = utils.recordTimestamp(a);
-        var bt = utils.recordTimestamp(b);
+        var at = utils.recordYear(a);
+        var bt = utils.recordYear(b);
         cmp = at === bt ? 0 : at < bt ? -1 : 1;
         if (cmp === 0) {
           cmp = String(a.title || '').localeCompare(String(b.title || ''), undefined, {
@@ -232,15 +232,15 @@
 
     function syncKeyButton(animate) {
       if (!keyBtn) return;
-      var byDate = sortKey === 'date';
-      var label = byDate ? 'date' : 'a–z';
+      var byYear = sortKey === 'year';
+      var label = byYear ? 'year' : 'a–z';
       var labelEl = keyBtn.querySelector('.db-sort-btn-label');
       keyBtn.setAttribute('data-sort', sortKey);
       keyBtn.setAttribute(
         'aria-label',
-        byDate
-          ? 'Sort by date. Click to switch to a–z.'
-          : 'Sort a–z. Click to switch to date.'
+        byYear
+          ? 'Sort by year. Click to switch to a–z.'
+          : 'Sort a–z. Click to switch to year.'
       );
       function applyLabel() {
         if (labelEl) labelEl.textContent = label;
@@ -274,7 +274,7 @@
 
     if (keyBtn) {
       keyBtn.addEventListener('click', function () {
-        sortKey = sortKey === 'date' ? 'title' : 'date';
+        sortKey = sortKey === 'year' ? 'title' : 'year';
         syncKeyButton(true);
         renderResults();
       });
@@ -350,10 +350,7 @@
     }
     window.SanityClient.fetchPublishedCaseStudies()
       .then(function (result) {
-        var next = (result.records || []).filter(function (r) {
-          return r.provenance !== 'Annotated Bibliography';
-        });
-        mountData(next);
+        mountData(result.records || []);
       })
       .catch(function (err) {
         console.error(err);

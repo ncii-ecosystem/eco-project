@@ -173,10 +173,11 @@
 }
 
 .about-team-photo {
+  --about-photo: calc(var(--db-size-avatar) - var(--db-space-2));
   position: relative;
-  width: var(--db-size-avatar);
-  height: var(--db-size-avatar);
-  flex: 0 0 var(--db-size-avatar);
+  width: var(--about-photo);
+  height: var(--about-photo);
+  flex: 0 0 var(--about-photo);
   overflow: hidden;
   background: var(--db-ink);
   color: var(--db-bg);
@@ -320,14 +321,15 @@
     text-align: right;
   }
 
-  .about-org-photo,
-  .about-team-photo {
+  .about-org-photo {
     height: var(--db-size-avatar-sm);
   }
 
   .about-team-photo {
-    width: var(--db-size-avatar-sm);
-    flex-basis: var(--db-size-avatar-sm);
+    --about-photo: calc(var(--db-size-avatar-sm) - var(--db-space-2));
+    width: var(--about-photo);
+    height: var(--about-photo);
+    flex-basis: var(--about-photo);
   }
 
   .about-credits {

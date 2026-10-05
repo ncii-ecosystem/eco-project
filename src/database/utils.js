@@ -13,52 +13,12 @@ window.DatabaseUtils = (function () {
     return String(s || '').toLowerCase();
   }
 
-  function recordTimestamp(r) {
-    if (!r.date) return -Infinity;
-    var raw = String(r.date).trim();
-    var yearOnly = raw.match(/^(\d{4})$/);
-    if (yearOnly) return Date.UTC(Number(yearOnly[1]), 0, 1);
-    var t = Date.parse(raw);
-    if (!Number.isNaN(t)) return t;
-    return -Infinity;
+  function recordYear(r) {
+    return /^\d{4}$/.test(String(r.year || '')) ? Number(r.year) : -Infinity;
   }
 
-  function formatDisplayDate(r) {
-    if (!r.date) return '';
-    var raw = String(r.date).trim();
-    if (/^\d{4}$/.test(raw)) return raw;
-    var m = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (m) {
-      var year = Number(m[1]);
-      var month = Number(m[2]);
-      var day = Number(m[3]);
-      var d = new Date(Date.UTC(year, month - 1, day));
-      if (Number.isNaN(d.getTime())) return '';
-      if (day === 1 && month === 1) return String(year);
-      if (day === 1) {
-        return d.toLocaleDateString('en-US', {
-          month: 'long',
-          year: 'numeric',
-          timeZone: 'UTC'
-        });
-      }
-      return d.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-        timeZone: 'UTC'
-      });
-    }
-    var parsed = new Date(raw);
-    if (!Number.isNaN(parsed.getTime())) {
-      return parsed.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-        timeZone: 'UTC'
-      });
-    }
-    return '';
+  function formatDisplayYear(r) {
+    return /^\d{4}$/.test(String(r.year || '')) ? String(r.year) : '';
   }
 
   function fallbackColor(key) {
@@ -110,28 +70,20 @@ window.DatabaseUtils = (function () {
   function recordsToCsv(list) {
     var headers = [
       'title',
-      'authors',
-      'source',
-      'venue',
-      'date',
-      'medium',
+      'link',
+      'year',
       'provenance',
-      'technologies',
-      'url'
+      'technologies'
     ];
     var lines = [headers.join(',')];
     list.forEach(function (r) {
       lines.push(
         [
           csvEscape(r.title),
-          csvEscape((r.authors || []).join('; ')),
-          csvEscape(r.source),
-          csvEscape(r.venue),
-          csvEscape(formatDisplayDate(r) || r.date || ''),
-          csvEscape(r.medium),
-          csvEscape(r.provenance),
-          csvEscape((r.technologies || []).join('; ')),
-          csvEscape(r.sourceUrl || '')
+          csvEscape(r.sourceUrl || ''),
+          csvEscape(formatDisplayYear(r)),
+          csvEscape('http://ncii-ecosysem.org'),
+          csvEscape((r.technologies || []).join('; '))
         ].join(',')
       );
     });
@@ -166,8 +118,8 @@ window.DatabaseUtils = (function () {
   return {
     escapeHtml: escapeHtml,
     norm: norm,
-    recordTimestamp: recordTimestamp,
-    formatDisplayDate: formatDisplayDate,
+    recordYear: recordYear,
+    formatDisplayYear: formatDisplayYear,
     fallbackColor: fallbackColor,
     publisherLogoUrl: publisherLogoUrl,
     recordsToCsv: recordsToCsv,

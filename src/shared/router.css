@@ -1,0 +1,64 @@
+html.site-content {
+  --site-nav-h: 0px;
+}
+
+html.db-theme-dark .site-shell {
+  --db-bg: #6751d4;
+  --db-ink: #ffffff;
+}
+
+html.db-theme-dark .site-shell.ss-page {
+  --db-bg: var(--ss-green);
+}
+
+.site-shell {
+  margin: 0;
+  background: var(--db-bg);
+}
+
+.site-shell.dialog-open::after {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto;
+  height: var(--site-nav-h);
+  z-index: 700;
+  background: color-mix(in srgb, var(--db-ink) 28%, transparent);
+}
+
+#site-content {
+  position: fixed;
+  inset: var(--site-nav-h) 0 0;
+  width: 100%;
+  height: calc(100dvh - var(--site-nav-h));
+  border: 0;
+}
+
+.site-shell .site-topnav {
+  transition: transform 250ms ease, visibility 250ms;
+}
+
+.site-shell.story-started .site-topnav {
+  transform: translateY(-100%);
+  visibility: hidden;
+}
+
+.site-shell.story-started #site-content {
+  inset: 0;
+  height: 100dvh;
+}
+
+html.site-content .site-topnav {
+  display: none;
+}
+
+html.site-content body.db-page {
+  padding-top: 0;
+}
+
+html.site-content #cw-overlay {
+  top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-shell .site-topnav { transition: none; }
+}

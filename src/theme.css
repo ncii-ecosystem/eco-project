@@ -1,0 +1,553 @@
+/* ============================================================
+   theme.css — desktop look, matching the database / about pages
+   (white + purple ink, hairline rules, square corners, pastel role
+   chips, mono labels). Loaded after styles.css on the desktop
+   version only, so it can be removed to get the old look back.
+   ============================================================ */
+
+:root {
+  --p:        #6751d4;                 /* purple ink */
+  --p-2:      #8a77e6;                 /* lighter purple, for text on dark */
+  --p-tint:   rgba(103, 81, 212, 0.10);
+  --paper:    #ffffff;
+  --r-creation: #fbd4d0;
+  --r-dist:     #f9d9b0;
+  --r-prolif:   #fff3a8;
+  --r-infra:    #b8dce0;
+  --r-money:    #bff5b3;
+  --d:        #2b1d7a;                 /* deep purple, for edges and shadows on the purple field */
+  --hard:     6px 6px 0 var(--d);      /* flat offset shadow */
+  --hard-sm:  3px 3px 0 var(--d);
+
+  /* The neon accents used inside scenes become purple + pastel */
+  --pink:     #a99bf5;
+  --capri:    #b8dce0;
+  --lavender: #c9bff7;
+  --lilac:    #e4defb;
+  --signal:   #6751d4;
+  --glow-pink: none; --glow-capri: none; --glow-lavender: none;
+
+  /* Fonts follow the database / about pages: IBM Plex Sans for reading, PT Mono for everything that is a heading or a label */
+  --font-serif: 'PT Mono', ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, monospace;
+  --font-sans:  'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:  'PT Mono', ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, monospace;
+}
+
+/* PT Mono has one weight: don't fake a bold, keep headings in its regular cut */
+html { font-synthesis: style; }
+#notes-app, .dt-menubar { font-family: var(--font-sans); }
+.dt-menubar { font-family: var(--font-mono); }
+.chat-dataset-layer, .cdl-eyebrow, .cdl-meta { font-family: var(--font-mono); }
+h1, h2, h3, .dt-wp-head, .feed-logo { letter-spacing: 0; }
+
+/* No glow: flat colour only */
+body *, body *::before, body *::after { text-shadow: none !important; }
+
+/* ── Wallpaper: purple field, graph-paper grid ─────────── */
+#scene-intro {
+  background:
+    linear-gradient(rgba(255,255,255,0.09) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, rgba(255,255,255,0.09) 1px, transparent 1px) 0 0 / 44px 44px,
+    var(--p);
+}
+.mon-screen { background: var(--p); }
+
+/* Menu bar */
+.dt-menubar {
+  background: var(--paper); color: var(--p);
+  border-bottom: 1px solid var(--p);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  font-family: var(--font-mono); font-size: 12px; text-transform: lowercase;
+}
+.dt-menu-app { font-weight: 700; }
+.dt-menu-item, .dt-menubar-right, .dt-clock { color: var(--p); opacity: 0.8; }
+.dt-clock { opacity: 1; font-weight: 700; }
+
+/* Desktop icons: square pastel folders with a purple keyline */
+.dt-icon:hover { background: rgba(255,255,255,0.12); border-radius: 0; }
+.dt-icon-img {
+  border-radius: 0; border: 1px solid var(--p); box-shadow: var(--hard-sm);
+}
+.dt-icon-img::before { border-radius: 0; border: 1px solid var(--p); border-bottom: none; left: -1px; top: -8px; height: 8px; background: var(--dt-folder-bg); }
+.dt-icon-label { color: #fff; font-family: var(--font-mono); font-size: 10px; text-shadow: none; }
+.dt-icon--creation, .dt-icon--distribution, .dt-icon--discovery, .dt-icon--infra, .dt-icon--monetize { --dt-icon-color: var(--p); }
+
+/* Dock */
+.dt-dock {
+  background: var(--paper); border: 1px solid var(--p); border-radius: 0; box-shadow: var(--hard-sm);
+  backdrop-filter: none; -webkit-backdrop-filter: none; padding: 8px 12px; gap: 6px;
+}
+.dt-dock-item { width: 34px; height: 30px; border-radius: 0; border: 1px solid var(--p); color: var(--p) !important; }
+.dt-dock-item::before { display: none; }
+.dt-dock-item:hover { filter: none; transform: translateY(-6px); box-shadow: var(--hard-sm); }
+.dt-dock--neutral { background: #e4defb; }
+.dt-dock-sep { background: var(--p); opacity: 0.35; }
+
+/* ── Windows: hard-edged, hairline chrome ──────────────── */
+.mac-window {
+  border-radius: 0; border: 1px solid var(--d);
+  box-shadow: none;
+  transform: scale(0.12);                     /* grows out of its dock icon (origin set by motion.js) */
+  transition: opacity 0.35s ease, transform 0.6s cubic-bezier(0.2, 0.9, 0.25, 1.05), box-shadow 0.4s ease,
+              filter 0.4s ease, left 0.5s ease, width 0.5s ease, visibility 0.45s;
+}
+.mac-window.active { box-shadow: 10px 10px 0 var(--d); }
+.mac-window.dimmed { filter: none; }
+.mac-window.dimmed::before { content: ''; position: absolute; inset: 0; z-index: 60; pointer-events: none; background: rgba(43, 29, 122, 0.34); }
+.mac-window.raised::before { display: none; }
+/* windows that are not the live one stop their looping animations, so only what is on screen is being drawn */
+.mac-window.dimmed *, .mac-window.buried * { animation-play-state: paused !important; }
+.win-titlebar {
+  background: var(--paper); border-bottom: 1px solid var(--p); height: 34px;
+}
+.wtl { width: 11px; height: 11px; border-radius: 0; border: 1px solid var(--p); }
+.wtl-r { background: var(--r-creation); }
+.wtl-y { background: var(--r-prolif); }
+.wtl-g { background: var(--r-money); }
+.win-title { color: var(--p); font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-transform: lowercase; }
+.win-url {
+  color: var(--p); background: transparent; border: 1px solid var(--p); border-radius: 0; opacity: 0.85;
+  font-size: 10px;
+}
+#window-overlay.active { background: rgba(103, 81, 212, 0.28); }
+
+/* ── Notes app: a yellow sticky with a hard shadow ─────── */
+#notes-app { border-radius: 0; border: 1px solid var(--d); box-shadow: var(--hard); }
+.na-titlebar { background: var(--paper); border-bottom: 1px solid var(--p); }
+.na-tl { border-radius: 0; border: 1px solid var(--p); }
+.na-r { background: var(--r-creation); } .na-y { background: var(--r-prolif); } .na-g { background: var(--r-money); }
+.na-title-text { color: var(--p); font-family: var(--font-mono); font-weight: 700; text-transform: lowercase; }
+.na-toolbar-icon { color: var(--p); }
+.na-sidebar { background: #fff8cf; border-right: 1px solid var(--p); }
+.na-sb-head { color: var(--p); font-family: var(--font-mono); }
+.na-sb-item { border-bottom: 1px solid rgba(103, 81, 212, 0.25); }
+.na-sb-item:hover { background: var(--p-tint); }
+.na-sb-item.active, .na-sb-item.active:hover { background: var(--p); }
+.na-sb-item.active .na-sb-item-title, .na-sb-item.active .na-sb-item-preview { color: #fff; }
+.na-editor { background: var(--r-prolif); }
+.na-ed-title { color: var(--p); font-family: var(--font-serif); }
+.na-ed-date { color: var(--p); opacity: 0.6; font-family: var(--font-mono); }
+.na-ed-body, .na-ed-details { color: #241a5c; }
+.na-more-btn { color: var(--p); font-family: var(--font-mono); text-decoration: underline; text-underline-offset: 0.15em; }
+
+/* ── Notifications, hint, controls ─────────────────────── */
+.intro-notification, #scene-notif {
+  background: var(--paper); border: 1px solid var(--p); border-radius: 0; box-shadow: var(--hard);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+#scene-notif.pulsing { animation: sn-ring-p 2s ease-in-out infinite; }
+@keyframes sn-ring-p { 0%, 100% { box-shadow: var(--hard); } 50% { box-shadow: 9px 9px 0 var(--p); } }
+.intro-notif-app, .sn-app { color: var(--p); font-family: var(--font-mono); opacity: 0.8; }
+.intro-notif-title, .sn-title { color: #241a5c; }
+.notif-folder { border-radius: 0; border: 1px solid var(--p); }
+.sn-hint { color: var(--p); font-family: var(--font-mono); }
+
+.reader-hint {
+  background: var(--paper); color: var(--p); border: 1px solid var(--p); border-radius: 0; box-shadow: var(--hard-sm);
+  font-family: var(--font-mono); font-weight: 700; backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.rc-btn {
+  background: var(--paper); color: var(--p); border: 1px solid var(--p); border-radius: 0; box-shadow: var(--hard-sm);
+  font-family: var(--font-mono); backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.rc-btn:hover { background: var(--r-prolif); }
+.rc-btn[aria-pressed="true"] { background: var(--p); color: #fff; }
+
+/* Progress: a purple rule across the top edge */
+.progress-bar { background: transparent; height: 4px; }
+#progress-bar-fill { background: var(--r-prolif); box-shadow: 0 0 0 1px var(--p); }
+
+/* ── Content warning: purple page, white card ──────────── */
+.cw-overlay { background: var(--p); backdrop-filter: none; }
+.cw-box { background: var(--paper); border: 1px solid var(--p); border-radius: 0; box-shadow: 10px 10px 0 rgba(0,0,0,0.25); }
+.cw-title { color: var(--p); }
+.cw-body { color: #3b2f86; }
+.cw-btn { background: var(--p); border-radius: 0; font-family: var(--font-mono); text-transform: none; }
+.cw-btn:hover { opacity: 1; box-shadow: var(--hard-sm); }
+.cw-resources { color: var(--p); }
+
+/* ── Footer ────────────────────────────────────────────── */
+.endcard { background: var(--p); border-top: 1px solid var(--p); }
+.endcard-inner p, .endcard-note { color: #fff; }
+.endcard-resources { color: var(--r-prolif) !important; }
+
+/* Research panel */
+
+/* ── Opening title: the first thing you see ───────────── */
+.dt-wallpaper-title { left: 7%; max-width: min(760px, 62%); }
+.dt-wp-eyebrow {
+  color: #fff; font-size: 0.75rem; letter-spacing: 0.16em; margin-bottom: 18px;
+  display: inline-block; padding: 4px 10px; border: 1px solid #fff;
+}
+.dt-wp-head {
+  color: #fff; font-size: clamp(2.2rem, 5.4vw, 4.6rem); line-height: 1.05; font-weight: 900; letter-spacing: -0.02em;
+  margin-bottom: 28px;
+}
+.dt-wp-head span { display: inline-block; animation: dt-rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.dt-wp-head span:nth-child(2) { animation-delay: 0.08s; }
+.dt-wp-head span:nth-child(3) { animation-delay: 0.16s; }
+.dt-wp-head span:nth-child(4) { animation-delay: 0.24s; }
+.dt-wp-head span:nth-child(5) { animation-delay: 0.36s; }
+.dt-wp-mark { background: var(--r-prolif); color: var(--p); padding: 0 0.12em; box-shadow: 0.06em 0.06em 0 rgba(0,0,0,0.25); }
+.dt-wp-sub {
+  color: #fff; opacity: 0.9; animation: dt-rise 0.7s 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  font-size: 0.85rem; line-height: 1.6; max-width: 34ch; border-left: 3px solid var(--r-prolif); padding-left: 12px;
+}
+@keyframes dt-rise { from { opacity: 0; transform: translateY(0.4em); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .dt-wp-head span, .dt-wp-sub { animation: none; } }
+
+.cw-icon { color: var(--p); }
+
+/* ── Notes: bigger type, so the note is the thing you read ── */
+#notes-app { width: 340px; }
+html.notes-open { --notes-reserve: 360px; }
+.na-editor { padding: 14px 14px 16px; }
+.na-ed-date { font-size: 10px; }
+.na-ed-title { font-size: 21px; line-height: 1.15; margin-bottom: 10px; }
+.na-ed-body { font-size: 16px; line-height: 1.5; font-weight: 500; }
+.na-ed-details { font-size: 14px; line-height: 1.6; }
+.na-more-btn { font-size: 13px; margin-top: 12px; }
+.na-sb-item-title { font-size: 12px; }
+.na-sb-item-preview { font-size: 10px; }
+/* a new note flashes once, so a change is noticed */
+#notes-app.na-flash { animation: na-flash 1.4s ease-out 1; }
+@keyframes na-flash {
+  0%   { box-shadow: 6px 6px 0 var(--d), 0 0 0 0 rgba(255, 243, 168, 0.95); }
+  35%  { box-shadow: 6px 6px 0 var(--d), 0 0 0 12px rgba(255, 243, 168, 0.85); }
+  100% { box-shadow: 6px 6px 0 var(--d), 0 0 0 26px rgba(255, 243, 168, 0); }
+}
+@media (prefers-reduced-motion: reduce) { #notes-app.na-flash { animation: none; } }
+
+/* ── Quick exit ───────────────────────────────────────── */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.quick-exit {
+  position: fixed; left: 14px; bottom: 58px; z-index: 9500;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-transform: lowercase;
+  color: var(--p); background: var(--r-creation); border: 1px solid var(--p); box-shadow: var(--hard-sm);
+  padding: 7px 14px; cursor: pointer;
+}
+.quick-exit:hover { background: var(--p); color: #fff; }
+.quick-exit:focus-visible { outline: 2px solid var(--p); outline-offset: 3px; }
+
+/* ── Finale: every window at once, then whack-a-mole ──── */
+.step[data-fin] { height: 90vh; }
+.step[data-fin="end"] { height: 60vh; }
+
+.finale-mode #window-overlay { background: transparent; }
+.finale-mode .mac-window {
+  opacity: 1 !important; visibility: visible !important; filter: none !important; transform: none;
+  pointer-events: none; box-shadow: 5px 5px 0 var(--d);
+  transition: opacity 0.35s ease, transform 0.35s ease;      /* the gather itself is a transform animation (see finale.js) */
+}
+.finale-mode .mac-window:not(.fin-pop) { will-change: transform, opacity; }   /* each app window is its own layer, so leaving one does not repaint the rest */
+.fin-pop { contain: layout paint style; }
+.finale-mode .mac-window.fin-pop.fin-vanish { transform: none !important; }   /* pop-ups just fade: no scaling of dozens of layers */
+.finale-mode .mac-window::before { display: none; }
+.finale-mode .mac-window.fin-closing { opacity: 0 !important; transform: scale(0.86) !important; transition-delay: 0s; }
+.finale-mode .mac-window.fin-gone { visibility: hidden !important; }
+.fin-press { background: var(--p) !important; transform: scale(0.75); }
+
+.finale-mode .mac-window.fin-pop:not(.fin-in) { opacity: 0 !important; transform: scale(0.55) !important; }
+.finale-mode .mac-window.fin-pop {
+  transition: transform 0.45s cubic-bezier(0.2, 1.5, 0.4, 1), opacity 0.2s ease; transition-delay: 0s;
+}
+.fin-pop-body { background: var(--paper); padding: 14px; display: flex; flex-direction: column; gap: 9px; overflow: hidden; }
+.fp-line { display: block; height: 9px; width: 92%; border: 1px solid rgba(103,81,212,0.5);
+  background: repeating-linear-gradient(135deg, rgba(103,81,212,0.22) 0 5px, transparent 5px 10px); }
+.fp-line.short { width: 38%; height: 12px; background: var(--r-infra); border-color: var(--p); }
+.fp-line.med { width: 64%; }
+.fp-block { display: block; flex: 1; min-height: 26px; border: 1px solid var(--p);
+  background: repeating-linear-gradient(135deg, rgba(103,81,212,0.16) 0 6px, transparent 6px 12px), #f2efff; }
+
+.fin-cursor { position: absolute; left: 0; top: 0; z-index: 9000; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; }
+.fin-cursor.show { opacity: 1; }
+
+.fin-final {
+  position: absolute; z-index: 9400; left: calc((100% - var(--notes-reserve, 0px)) / 2); top: 50%; width: min(560px, calc(100% - var(--notes-reserve, 0px) - 60px));
+  transform: translate(-50%, -46%); opacity: 0; transition: opacity 0.6s ease, transform 0.6s ease;
+  background: var(--paper); border: 1px solid var(--d); box-shadow: 10px 10px 0 var(--d); padding: 28px 30px; text-align: center;
+}
+.fin-final.fin-in { opacity: 1; transform: translate(-50%, -50%); }
+.fin-final-title { font-family: var(--font-mono); font-size: clamp(1.1rem, 2.4vw, 1.9rem); line-height: 1.3; color: var(--p); }
+@media (prefers-reduced-motion: reduce) { .finale-mode .mac-window, .fin-final { transition-duration: 0.01ms !important; } }
+
+/* In the finale each window shows its whole scene, shrunk like a thumbnail */
+.finale-mode .mac-window:not(.fin-pop) .win-content > .scene { zoom: 0.5; width: 200%; height: 200%; }
+
+/* ── Chapter number in every window's title bar ── */
+.win-chip {
+  flex: none; margin-left: 8px; padding: 2px 7px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em;
+  color: var(--p); background: var(--r-prolif); border: 1px solid var(--p); white-space: nowrap;
+}
+
+/* ── Figures in the notes show their source on hover or focus ── */
+.src {
+  position: relative; cursor: help; border-bottom: 2px dotted var(--p); background: rgba(255, 255, 255, 0.55);
+}
+.src:hover, .src:focus-visible { background: var(--p); color: #fff; outline: none; }
+.src::after {
+  content: attr(data-src); position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 10; width: max-content; max-width: 230px;
+  padding: 5px 8px; background: var(--paper); color: var(--p); border: 1px solid var(--p); box-shadow: 3px 3px 0 var(--d);
+  font: 400 11px/1.35 var(--font-mono); text-transform: none; white-space: normal;
+  opacity: 0; pointer-events: none; transform: translateY(3px); transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.src:hover::after, .src:focus-visible::after { opacity: 1; transform: none; }
+
+/* Keep the page width steady when a scroll hold hides the scrollbar */
+html { scrollbar-gutter: stable; }
+
+/* ── Dock: interactive, and always on top ─────────────── */
+.dt-dock-wrap {
+  position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 8500; padding: 0;   /* above the finale's pop-ups, which climb past 150 */
+}
+.dt-dock-item { cursor: pointer; }
+.dt-dock-item:not(.visited):not(:hover) { opacity: 0.55; }
+.dt-dock-item.visited::after {
+  content: ''; position: absolute; left: 50%; bottom: -8px; width: 5px; height: 5px; margin-left: -2.5px; background: var(--p);
+}
+.dt-dock-item.current { transform: translateY(-6px); box-shadow: var(--hard-sm); }
+.dt-dock-item:focus-visible { outline: 2px solid var(--p); outline-offset: 3px; }
+.dt-dock-item.nope { animation: dock-nope 0.4s ease; }
+@keyframes dock-nope { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.in-outro .dt-dock-wrap { opacity: 0; visibility: hidden; pointer-events: none; }   /* the dock stays through the finale, so the reader can jump back to any app */
+@media (prefers-reduced-motion: reduce) { .dt-dock-item.nope { animation: none; } }
+
+/* ── Finale part 2: the windows leave one by one, and the map appears ── */
+.step[data-fin="clear"] { height: 220vh; }
+.step[data-fin="graph"] { height: 110vh; }
+.finale-mode .mac-window.fin-vanish { opacity: 0 !important; transform: scale(0.9) !important; pointer-events: none; transition-delay: 0s; }
+.fin-final.fin-out { opacity: 0 !important; }
+
+/* ── Content warning: three choices, the resources one is the coloured default ── */
+.cw-body { margin-bottom: 14px; }
+.cw-exit-note { color: var(--p); font-family: var(--font-mono); font-size: 0.85rem; margin: 0 0 22px; }
+.cw-actions { display: flex; flex-direction: column; gap: 10px; }
+.cw-actions .cw-btn {
+  display: block; width: 100%; box-sizing: border-box; padding: 13px 18px; text-align: center; text-decoration: none;
+  font-size: 0.85rem; line-height: 1.3; cursor: pointer; border: 1px solid var(--p);
+}
+.cw-btn--primary { background: var(--p); color: #fff; }
+.cw-btn--ghost { background: var(--paper); color: var(--p); }
+.cw-btn--ghost:hover { background: var(--r-prolif); box-shadow: var(--hard-sm); }
+.cw-btn--primary:hover { box-shadow: var(--hard-sm); }
+.cw-actions .cw-btn:focus-visible { outline: 2px solid var(--p); outline-offset: 3px; }
+.cw-fineprint { margin: 18px 0 0; font-size: 0.7rem; color: #3b2f86; opacity: 0.8; line-height: 1.5; }
+.cw-box { max-width: 500px; }
+
+/* ── Notifications you must click are yellow and alive ─ */
+.intro-notification, #scene-notif { background: var(--r-prolif); }
+.intro-notification.show { animation: notif-call 1.8s ease-in-out infinite; }
+@keyframes notif-call {
+  0%, 100% { box-shadow: 6px 6px 0 var(--d), 0 0 0 0 rgba(255, 243, 168, 0); transform: translateX(0) scale(1); }
+  50%      { box-shadow: 8px 8px 0 var(--d), 0 0 0 10px rgba(255, 243, 168, 0.75); transform: translateX(0) scale(1.03); }
+}
+.intro-notification { flex-wrap: wrap; cursor: pointer; }
+.intro-notif-cta, .sn-hint {
+  flex-basis: 100%; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--p);
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--p); text-align: right;
+}
+#scene-notif.show.pulsing { animation: notif-call 1.8s ease-in-out infinite; }
+.intro-notif-time { color: var(--p); opacity: 0.7; }
+@media (prefers-reduced-motion: reduce) { .intro-notification.show, #scene-notif.show.pulsing { animation: none; } }
+
+/* positioned by their own rules; the tip hangs above them */
+.rc-btn { position: relative; }
+#scene-notif { flex-wrap: wrap; }
+[data-tip]::after {
+  content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 10px); z-index: 20; width: max-content; max-width: 260px;
+  padding: 7px 10px; background: var(--paper); color: var(--p); border: 1px solid var(--p); box-shadow: 3px 3px 0 var(--d);
+  font: 400 12px/1.4 var(--font-mono); text-align: left; text-transform: none; white-space: normal;
+  opacity: 0; pointer-events: none; transform: translateY(4px); transition: opacity 0.15s ease, transform 0.15s ease;
+}
+[data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; transform: none; transition-delay: 0.25s; }
+.reader-controls { z-index: 9600; }   /* their tips sit above the exit button */
+
+/* ── The map (graph.js) ─────────────────────────────── */
+.eco-graph {
+  position: absolute; z-index: 300; inset: 0; padding: 10px 14px;
+  background:
+    linear-gradient(rgba(103,81,212,0.08) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, rgba(103,81,212,0.08) 1px, transparent 1px) 0 0 / 40px 40px,
+    var(--paper);
+  opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.5s ease, visibility 0.5s;
+  padding-right: calc(14px + var(--notes-reserve, 0px));
+  padding-bottom: 118px;                                /* the dock and the click hint stay on screen under the map */
+}
+.eco-graph.show { opacity: 1; visibility: visible; }
+.eco-graph.live { pointer-events: auto; }
+.eg-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+.eg-legend { opacity: 0; transition: opacity 0.5s ease; }
+.eco-graph.legend-in .eg-legend { opacity: 1; }
+.eg-legend-title { font: 400 25px var(--font-mono); fill: var(--p); }
+.eg-legend-label { font: 400 22px var(--font-mono); fill: #241a5c; }
+.eg-hint { font: 400 21px var(--font-mono); fill: var(--p); opacity: 0.8; }
+.eg-swatch { stroke: var(--p); stroke-width: 2; }
+
+.eg-edges { opacity: 0; transition: opacity 0.6s ease 0.1s; }
+.eco-graph.edges-in .eg-edges { opacity: 1; }
+.eg-line { fill: none; stroke: #2b1d7a; stroke-width: 3.5; }
+.eg-dot { fill: #2b1d7a; }
+.eg-head { fill: #2b1d7a; }
+.eg-edge.accent .eg-line, .eg-edge.accent .eg-dot, .eg-edge.accent .eg-head { stroke: #8c2f2a; fill: #8c2f2a; }
+.eg-edge.accent .eg-line { fill: none; }
+.eg-edge { transition: opacity 0.25s ease; }
+.eco-graph.has-selection .eg-edge:not(.on) { opacity: 0.18; }
+.eco-graph.has-selection .eg-edge.on .eg-line { stroke: var(--p); stroke-width: 6; }
+.eco-graph.has-selection .eg-edge.on .eg-dot, .eco-graph.has-selection .eg-edge.on .eg-head { fill: var(--p); }
+
+.eg-node { cursor: pointer; opacity: 0; transform: translateY(14px); transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.2, 0.9, 0.25, 1.1); outline: none; }
+.eg-node.in { opacity: 1; transform: none; }
+.eg-shadow { fill: #2b1d7a; }
+.eg-box { stroke: #2b1d7a; stroke-width: 2.5; transition: stroke-width 0.15s ease; }
+.eco-graph.live .eg-node:hover .eg-box, .eg-node:focus-visible .eg-box { stroke: var(--p); stroke-width: 6; }
+.eco-graph.live .eg-node:hover { transform: translate(-3px, -3px); }
+.eg-node.active .eg-box { stroke: var(--p); stroke-width: 7; }
+.eg-node.linked .eg-box { stroke: var(--p); stroke-width: 4; }
+.eco-graph.has-selection .eg-node:not(.active):not(.linked) { opacity: 0.4; }
+.eg-icon { font: 900 40px 'Font Awesome 6 Free'; fill: #2b1d7a; }
+.eg-icon.big { font-size: 48px; }
+.eg-title { font-family: var(--font-sans); font-weight: 700; fill: #241a5c; }
+.eg-h { font: 600 21px var(--font-sans); fill: #241a5c; }
+.eg-m { font: 400 19px var(--font-mono); fill: #3b2f86; }
+@media (prefers-reduced-motion: reduce) { .eg-node, .eco-graph, .eg-edges { transition-duration: 0.01ms !important; } }
+
+/* ── Notes: movable like a window ─────────────────────── */
+.na-titlebar { cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none; }
+.na-titlebar:focus-visible { outline: 2px solid var(--p); outline-offset: -4px; }
+#notes-app.na-dragging { transition: none !important; box-shadow: 10px 10px 0 var(--d); }
+#notes-app.na-dragging .na-titlebar { cursor: grabbing; }
+html.notes-open.notes-moved { --notes-reserve: 0px; }   /* once it's moved, windows use the whole screen */
+
+/* ── Every story window can be moved and resized (windows.js) ── */
+.mac-window .win-titlebar { cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none; }
+.mac-window.win-dragging { transition: none !important; }
+.mac-window.win-dragging .win-titlebar { cursor: grabbing; }
+body.win-busy, body.win-busy * { user-select: none !important; -webkit-user-select: none !important; }
+.win-rz { position: absolute; z-index: 6; touch-action: none; }
+.win-rz-n  { top: 0; left: 14px; right: 14px; height: 6px; cursor: ns-resize; }
+.win-rz-s  { bottom: 0; left: 14px; right: 14px; height: 7px; cursor: ns-resize; }
+.win-rz-e  { right: 0; top: 14px; bottom: 14px; width: 7px; cursor: ew-resize; }
+.win-rz-w  { left: 0; top: 14px; bottom: 14px; width: 6px; cursor: ew-resize; }
+.win-rz-ne { top: 0; right: 0; width: 16px; height: 16px; cursor: nesw-resize; }
+.win-rz-nw { top: 0; left: 0; width: 16px; height: 16px; cursor: nwse-resize; }
+.win-rz-se { bottom: 0; right: 0; width: 18px; height: 18px; cursor: nwse-resize; }
+.win-rz-sw { bottom: 0; left: 0; width: 16px; height: 16px; cursor: nesw-resize; }
+.finale-mode .win-rz, .fin-pop .win-rz { display: none; }
+/* a small grip in the bottom-right corner shows that the window can be resized */
+.mac-window:not(.fin-pop)::after {
+  content: ''; position: absolute; right: 4px; bottom: 4px; width: 10px; height: 10px; z-index: 7; pointer-events: none;
+  background: linear-gradient(135deg, transparent 50%, var(--p) 50%, var(--p) 58%, transparent 58%, transparent 72%, var(--p) 72%, var(--p) 80%, transparent 80%);
+  opacity: 0.6;
+}
+.finale-mode .mac-window::after { display: none; }
+
+/* story windows stay open: the traffic-light buttons are decoration only */
+.mac-window:not(.fin-pop) .wtl { pointer-events: none; cursor: default; }
+
+/* Notes: the first titlebar square is an x only while a note is expanded, to go back to less text */
+.na-r { position: relative; }
+#notes-app .na-tl { cursor: default; }
+#notes-app:not(.centered) .na-tl { pointer-events: none; }
+#notes-app.centered .na-r { cursor: pointer; }
+#notes-app.centered .na-r:hover, #notes-app.centered .na-r:focus-visible { background: var(--p); outline: none; }
+#notes-app.centered .na-r::after {
+  content: '\00d7'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font: 700 10px/1 var(--font-mono); color: var(--p); opacity: 0.75;
+}
+#notes-app.centered .na-r:hover::after, #notes-app.centered .na-r:focus-visible::after { color: #fff; opacity: 1; }
+
+/* a window the reader clicked to the front: fully lit, until the story moves on */
+.mac-window.raised:not(.buried) { box-shadow: 10px 10px 0 var(--d); }
+
+/* ── The last part: laws on the ecosystem map (policy.js) ─────────────── */
+.eco-graph .eg-svg { transition: opacity 0.5s ease; }
+.eco-graph.pol-away .eg-svg { opacity: 0; }
+.eco-graph.pol-on .eg-h, .eco-graph.pol-on .eg-m { opacity: 0; }       /* the boxes' small print gives way to the law tags */
+.eg-h, .eg-m { transition: opacity 0.4s ease; }
+.eg-node.in.pol-dim { opacity: 0.28; }
+.pol-tags, .pol-q { pointer-events: none; }
+.pol-tag { opacity: 0; transform: scale(0.85); transform-box: fill-box; transform-origin: center;
+  transition: opacity 0.35s ease var(--td, 0ms), transform 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) var(--td, 0ms); }
+.pol-tag.on { opacity: 1; transform: none; }
+.pol-tag-box { fill: #fff; stroke: #2b1d7a; stroke-width: 3; }
+.pol-tag-text { font: 700 22px var(--font-mono); fill: #2b1d7a; }
+.pol-tag.fed .pol-tag-box { fill: #2b1d7a; }
+.pol-tag.fed .pol-tag-text { fill: #fff; }
+.pol-tag.new .pol-tag-box { fill: var(--r-prolif); }
+.pol-tag.gap .pol-tag-box { stroke: #8c2f2a; stroke-dasharray: 9 6; }
+.pol-tag.gap .pol-tag-text { fill: #8c2f2a; }
+.pol-q { opacity: 0; transition: opacity 0.4s ease; }
+.eco-graph[data-pol="8"] .pol-q { opacity: 1; }
+.pol-q-dot { fill: var(--r-prolif); stroke: #2b1d7a; stroke-width: 4; }
+.pol-q-text { font: 900 42px var(--font-mono); fill: #2b1d7a; }
+.eco-graph.pol-edge-focus .eg-edge:not(.pol-edge) { opacity: 0.1; }
+.eg-edge.pol-edge .eg-line { stroke: var(--p); stroke-width: 9; stroke-dasharray: 16 10; animation: pol-dash 0.9s linear infinite; }
+.eg-edge.pol-edge .eg-dot, .eg-edge.pol-edge .eg-head { fill: var(--p); }
+@keyframes pol-dash { to { stroke-dashoffset: -26; } }
+.eg-node.pol-ripple .eg-box { stroke: var(--p); stroke-width: 9; animation: pol-ripple 1.4s ease-out 1; }
+@keyframes pol-ripple { 0% { stroke-width: 2; } 35% { stroke-width: 22; } 100% { stroke-width: 9; } }
+@media (prefers-reduced-motion: reduce) { .eg-edge.pol-edge .eg-line, .eg-node.pol-ripple .eg-box { animation: none; } .pol-tag { transition-duration: 0.01ms; } }
+
+/* cards along the bottom of the screen, one at a time */
+.pol-layer { position: absolute; inset: 0; z-index: 320; pointer-events: none; display: flex; align-items: flex-end; justify-content: center;
+  padding: 0 calc(16px + var(--notes-reserve, 0px)) 118px 16px; }
+.pol-band { position: relative; width: min(860px, 100%); }
+.pol-card { position: absolute; left: 0; right: 0; bottom: 0; background: var(--paper); border: 1px solid var(--p); box-shadow: 6px 6px 0 var(--d); padding: 12px 16px;
+  font: 400 14px/1.45 var(--font-sans); color: #241a5c; opacity: 0; visibility: hidden; transform: translateY(16px);
+  transition: opacity 0.35s ease, transform 0.4s ease, visibility 0.35s; }
+.pol-card.on { opacity: 1; visibility: visible; transform: none; }
+.pol-card h4 { margin: 0 0 4px; font: 700 12px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--p); }
+.pol-card p { margin: 0; }
+.pol-card blockquote { margin: 0 0 6px; padding-left: 10px; border-left: 3px solid var(--p); font-size: 13px; }
+.pol-stat { display: flex; align-items: center; gap: 16px; }
+.pol-stat b { font: 900 44px var(--font-mono); color: var(--p); white-space: nowrap; line-height: 1; }
+.pol-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pol-pair blockquote { margin: 0; }
+.pol-pair span { display: block; font: 700 11px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--p); margin-bottom: 3px; }
+.pol-pair em { font-style: normal; background: var(--r-prolif); padding: 0 4px; }
+
+/* the U.S. state map */
+.pol-map { position: absolute; inset: 0; z-index: 310; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; gap: 8px; align-content: stretch; overflow: hidden;
+  padding: 18px calc(20px + var(--notes-reserve, 0px)) 128px 22px; opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.5s ease, visibility 0.5s; font-family: var(--font-mono); color: #241a5c; }
+.pol-map.on { opacity: 1; visibility: visible; pointer-events: auto; }
+.pol-map h3 { margin: 0; font: 700 clamp(14px, 1.8vw, 22px) var(--font-mono); color: var(--p); }
+.pol-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, max-content); gap: 4px 28px; font-size: clamp(11px, 1.2vw, 15px); }
+.pol-n { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 50%; border: 1px solid #2b1d7a; margin-right: 8px; font-size: 0.85em; }
+.pol-list .r-dist .pol-n { background: var(--r-dist); } .pol-list .r-creation .pol-n { background: var(--r-creation); }
+.pol-us-wrap { position: relative; min-height: 0; min-width: 0; width: 100%; max-width: 1060px; margin: 0 auto; }
+.pol-us { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.pol-tile { fill: #fff; stroke: #2b1d7a; stroke-width: 1.5; }
+.pol-code { font: 700 15px var(--font-mono); fill: rgba(43, 29, 122, 0.45); }
+.pol-state.has .pol-code { fill: #2b1d7a; }
+.pol-state.has.r-creation .pol-tile { fill: var(--r-creation); } .pol-state.has.r-dist .pol-tile { fill: var(--r-dist); }
+.pol-ic { font: 900 16px 'Font Awesome 6 Free'; fill: #2b1d7a; }
+.pol-badge { fill: #fff; stroke: #2b1d7a; stroke-width: 1.5; }
+.pol-badge-n { font: 700 12px var(--font-mono); fill: #2b1d7a; }
+.pol-state.has { cursor: pointer; outline: none; transition: transform 0.15s ease; }
+.pol-state.has:hover .pol-tile, .pol-state.has:focus-visible .pol-tile { stroke: var(--p); stroke-width: 4; }
+.pol-role { font-size: clamp(11px, 1.2vw, 14px); display: flex; align-items: center; justify-content: flex-end; }
+.pol-role .sw { display: inline-block; width: 18px; height: 18px; border: 1px solid #2b1d7a; margin: 0 6px 0 14px; }
+.pol-role .r-creation { background: var(--r-creation); } .pol-role .r-dist { background: var(--r-dist); }
+
+/* the closing note that points to the database (not built yet) */
+.endcard-next { margin-top: 18px; }
+.endcard-soon { display: inline-block; text-decoration: none; cursor: pointer; font: 700 13px var(--font-mono); color: var(--p); background: var(--r-prolif); border: 1px solid var(--p); box-shadow: 4px 4px 0 var(--d); padding: 8px 14px; }
+
+.endcard-inner .endcard-credit { margin-top: 28px; font: 400 13px var(--font-mono); color: #fff; opacity: 0.85; letter-spacing: 0.04em; }
+.endcard-inner .endcard-credit strong { color: var(--r-prolif); font-weight: 700; }
+
+/* a chapter that ends on a note gets room after it, so the reader can read the note before the next app's notification arrives */
+.scroll-chapter:not([data-chapter="cover"]):has(> .step--k:last-child) { padding-bottom: 60vh; }
+
+.endcard-soon:hover, .endcard-soon:focus-visible { background: #fff; outline: none; transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--d); }
+
+/* "click me" hint on the maps */
+.pol-hint { position: absolute; z-index: 330; left: calc((100% - var(--notes-reserve, 0px)) / 2); bottom: 76px; transform: translate(-50%, 10px);
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--r-prolif); color: var(--p); border: 1px solid var(--p); box-shadow: 4px 4px 0 var(--d);
+  font: 700 13px var(--font-mono); letter-spacing: 0.02em; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s; }
+.pol-hint.on { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.pol-hint i { animation: pol-tap 1.3s ease-in-out infinite; }
+@keyframes pol-tap { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(4px, -5px); } }
+@media (prefers-reduced-motion: reduce) { .pol-hint i { animation: none; } }

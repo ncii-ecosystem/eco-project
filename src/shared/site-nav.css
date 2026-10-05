@@ -14,21 +14,27 @@
   color: var(--db-ink);
   border-bottom: 1px solid var(--db-ink);
   font-family: var(--db-font-mono);
-  font-size: var(--db-text-xs);
+  font-size: var(--db-text-md);
   line-height: 1;
   text-transform: lowercase;
 }
 
 .site-logo {
-  position: absolute;
-  left: var(--db-space-3);
-  top: 0;
+  position: relative;
   z-index: 2;
   display: inline-flex;
   align-items: center;
+  gap: var(--db-space-3);
   height: var(--site-nav-h);
+  min-width: 0;
   color: inherit;
   text-decoration: none;
+}
+
+.site-logo-name {
+  font-size: inherit;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .site-topnav .site-logo {
@@ -46,18 +52,6 @@
   width: auto;
 }
 
-.site-logo-img--dark {
-  display: none;
-}
-
-html.db-theme-dark .site-logo-img--light {
-  display: none;
-}
-
-html.db-theme-dark .site-logo-img--dark {
-  display: block;
-}
-
 .site-nav-tab {
   display: none;
 }
@@ -67,17 +61,22 @@ html.db-theme-dark .site-logo-img--dark {
 }
 
 .site-topnav nav {
-  width: 100%;
+  width: auto;
   display: flex;
-  justify-content: center;
-  padding-inline: calc(var(--site-nav-h) + var(--db-space-3));
+  justify-content: flex-end;
+  margin-left: auto;
+  padding-left: var(--db-space-4);
+}
+
+.site-topnav:has(.site-theme-toggle) nav {
+  padding-right: calc(var(--site-nav-h) + var(--db-space-2));
 }
 
 .site-topnav-links {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--db-space-4);
+  justify-content: flex-end;
+  gap: calc(var(--db-space-6) + var(--db-space-2));
   margin: 0;
   padding: 0;
   list-style: none;
@@ -98,6 +97,10 @@ html.db-theme-dark .site-logo-img--dark {
 .site-topnav a[aria-current="page"] {
   opacity: 1;
   font-weight: 700;
+}
+
+.site-topnav-links a[href="survivor-support.html"] {
+  color: var(--db-role-infra);
 }
 
 .site-theme-toggle {
@@ -125,7 +128,7 @@ html.db-theme-dark .site-logo-img--dark {
 }
 
 .site-theme-toggle-icon {
-  font-size: var(--db-text-xs);
+  font-size: var(--db-text-md);
   line-height: 1;
 }
 
@@ -200,7 +203,7 @@ html.db-theme-dark .site-logo-img--dark {
   .site-burger::before,
   .site-burger::after {
     display: block;
-    width: 1rem;
+    width: calc(var(--db-text-md) + var(--db-space-1));
     height: 1px;
     background: currentColor;
     transition: transform 0.2s ease;
@@ -276,10 +279,8 @@ html.db-theme-dark .site-logo-img--dark {
   .site-topnav nav {
     width: 100%;
     justify-content: center;
-  }
-
-  .site-topnav:has(.site-theme-toggle) nav {
-    padding-inline: 0;
+    margin-left: 0;
+    padding: 0;
   }
 
   .site-topnav-links {
@@ -287,7 +288,7 @@ html.db-theme-dark .site-logo-img--dark {
     align-items: center;
     justify-content: center;
     width: 100%;
-    gap: var(--db-space-5);
+    gap: var(--db-space-6);
     font-size: var(--db-text-lg);
     text-align: center;
   }

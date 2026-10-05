@@ -118,7 +118,6 @@ window.DatabaseRender = (function () {
   function metaLine(r) {
     var bits = [];
     if (r.source) bits.push(r.source);
-    if (r.venue) bits.push(r.venue);
     return bits.join(' — ');
   }
 
@@ -170,8 +169,8 @@ window.DatabaseRender = (function () {
     var escapeHtml = u().escapeHtml;
     var hasLink = !!r.sourceUrl;
     var authors =
-      r.authors && r.authors.length ? r.authors.join(', ') : '';
-    var time = u().formatDisplayDate(r);
+      r.authors || '';
+    var time = u().formatDisplayYear(r);
     var org = metaLine(r);
     var hideAuthors = authorsMatchOrg(authors, org, r);
     var showAuthors = authors && !hideAuthors;

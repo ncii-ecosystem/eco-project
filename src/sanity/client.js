@@ -12,69 +12,6 @@ window.SanityClient = (function () {
     };
   }
 
-  function parseAuthorEntry(raw) {
-    if (!raw) return null;
-    if (typeof raw === 'string') {
-      var s = raw.trim();
-      return s ? {name: s, isOrganization: false} : null;
-    }
-    if (typeof raw === 'object') {
-      var name = String(raw.name || raw.author || raw.fullName || '').trim();
-      if (!name) return null;
-      return {name: name, isOrganization: !!raw.isOrganization};
-    }
-    return null;
-  }
-
-  function formatAuthorDisplay(entry) {
-    var etAl = /\s+et\s+al\.?$/i.test(entry.name);
-    var base = entry.name.replace(/\s+et\s+al\.?$/i, '').trim();
-    if (!base) return '';
-    if (entry.isOrganization) {
-      return etAl ? base + ' et al.' : base;
-    }
-    if (base.indexOf(',') !== -1) {
-      var fromComma = base.split(',')[0].trim();
-      return etAl ? fromComma + ' et al.' : fromComma;
-    }
-    var parts = base.split(/\s+/).filter(Boolean);
-    var last = parts[parts.length - 1] || base;
-    return etAl ? last + ' et al.' : last;
-  }
-
-  function normalizeAuthors(raw) {
-    var list = [];
-    if (!raw) return list;
-
-    if (Array.isArray(raw)) {
-      list = raw.map(parseAuthorEntry).filter(Boolean);
-    } else if (typeof raw === 'string') {
-      var s = raw.trim();
-      if (/\bet\s+al\.?$/i.test(s) && s.indexOf('&') === -1) {
-        list = [parseAuthorEntry(s)].filter(Boolean);
-      } else if (s.indexOf('&') !== -1) {
-        list = s
-          .split(/\s*&\s*/)
-          .map(parseAuthorEntry)
-          .filter(Boolean);
-      } else {
-        list = s
-          .split(/[,;]/)
-          .map(function (p) {
-            return parseAuthorEntry(p.trim());
-          })
-          .filter(Boolean);
-      }
-    }
-
-    var display = list.map(formatAuthorDisplay).filter(Boolean);
-    if (display.length > 3) {
-      var head = display[0].replace(/\s+et\s+al\.?$/i, '');
-      return [head + ' et al.'];
-    }
-    return display;
-  }
-
   function normalizeMedium(raw) {
     if (!raw) return '';
     var s = String(raw).trim();
@@ -83,7 +20,11 @@ window.SanityClient = (function () {
       'news article': 'News Article',
       news: 'News Article',
       report: 'Report',
-      spreadsheet: 'Spreadsheet'
+      spreadsheet: 'Artifact',
+      artifact: 'Artifact',
+      misc: 'Misc',
+      'law & policy': 'Law & Policy',
+      'law and policy': 'Law & Policy'
     };
     return map[s.toLowerCase()] || s;
   }
@@ -115,14 +56,11 @@ window.SanityClient = (function () {
     return {
       id: String(doc._id || ''),
       title: String(doc.title || '').trim(),
-      authors: normalizeAuthors(doc.authors),
-      date: doc.date || null,
-      source: String(doc.source || '').trim() || String(doc.venue || '').trim(),
-      venue: doc.source ? String(doc.venue || '').trim() : '',
+      authors: String(doc.authors || '').trim(),
+      year: String(doc.year || '').trim(),
+      source: String(doc.source || '').trim(),
       medium: normalizeMedium(doc.medium),
-      provenance: String(doc.provenance || '').trim(),
       technologies: techs,
-      summary: String(doc.summary || '').trim(),
       sourceUrl: doc.sourceUrl ? String(doc.sourceUrl).trim() : '',
       imageUrl: sensitive ? '' : String(doc.imageUrl || '').trim(),
       sensitiveThumbnail: sensitive,
@@ -147,19 +85,16 @@ window.SanityClient = (function () {
   }
 
   var CASE_STUDIES_QUERY =
-    '*[_type == "caseStudy" && !(_id in path("drafts.**"))] | order(date desc) {' +
+    '*[_type == "caseStudy" && !(_id in path("drafts.**")) && (!defined(provenance) || provenance != "Annotated Bibliography")] | order(year desc) {' +
     '  _id,' +
     '  title,' +
     '  authors,' +
-    '  date,' +
+    '  year,' +
     '  source,' +
-    '  venue,' +
     '  medium,' +
-    '  provenance,' +
     '  sourceUrl,' +
     '  imageUrl,' +
     '  sensitiveThumbnail,' +
-    '  summary,' +
     '  "technologies": technologies[]->name,' +
     '  headlineSegments[]{' +
     '    text,' +

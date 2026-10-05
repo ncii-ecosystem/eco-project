@@ -20,7 +20,7 @@
   --role-infra:   #4f6fb0;
   --role-money:   #9a5bb0;
   --chrome-h:     72px;
-  --site-nav-h:   2rem;
+  --site-nav-h:   2.5rem;
   --chrome-top:   calc(var(--site-nav-h) + var(--chrome-h));
 }
 

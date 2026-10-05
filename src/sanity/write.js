@@ -10,17 +10,11 @@ window.SanityWrite = (function () {
       },
       credentials: 'same-origin',
       body: JSON.stringify({
-        title: input.title,
-        authors: input.authors,
-        date: input.date,
-        source: input.source,
-        venue: input.venue,
-        medium: input.medium,
-        sourceUrl: input.sourceUrl,
-        contact: input.contact,
-        technologies: input.technologies,
-        headlineAnnotations: input.headlineAnnotations
+        entries: input.entries,
+        submitter: input.submitter
       })
+    }).catch(function () {
+      throw new Error('We couldn’t submit your entries. Please try again.');
     }).then(function (res) {
       return res.text().then(function (text) {
         var json = null;
@@ -30,22 +24,14 @@ window.SanityWrite = (function () {
           json = null;
         }
         if (!res.ok) {
-          var msg =
-            (json && json.error) ||
-            text ||
-            res.statusText ||
-            'Submit failed';
-          if (res.status === 429) {
-            msg =
-              (json && json.error) ||
-              'Too many submissions. Please wait and try again.';
-          } else if (res.status === 503) {
-            msg =
-              (json && json.error) ||
-              'Server is busy. Please try again shortly.';
-          } else if (res.status === 404 || res.status === 405) {
-            msg =
-              'Submit API is not running.';
+          var msg = 'We couldn’t submit your entries. Please try again.';
+          if (res.status === 429 || res.status === 503) {
+            msg = 'We’re receiving a lot of submissions. Please try again later.';
+          } else if (res.status >= 500 || res.status === 404 || res.status === 405) {
+            msg = 'Submissions are temporarily unavailable. Please try again later.';
+          } else if (json && typeof json.error === 'string' &&
+              !/sanity|SANITY_|api\/|token|dataset|project.?id/i.test(json.error)) {
+            msg = json.error;
           }
           throw new Error(msg);
         }

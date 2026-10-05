@@ -1,5 +1,5 @@
 :root {
-  --site-nav-h: 2rem;
+  --site-nav-h: 2.5rem;
   --db-bg: #ffffff;
   --db-ink: #6751d4;
   --db-chip-ink: #6751d4;
@@ -38,4 +38,9 @@
   --font-sans:
     "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
+  --ss-green: #1f7a45;
+}
+
+body.ss-page {
+  min-height: 100vh;
 }
