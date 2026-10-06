@@ -12,6 +12,11 @@
   var searchQuery = '';
   var sortKey = 'year';
   var sortDir = 'desc';
+  var searchBlobs = new WeakMap();
+  var techCounts = new Map();
+  var typeCounts = new Map();
+  var titleCollator = new Intl.Collator(undefined, {sensitivity: 'base'});
+  var loadVersion = 0;
 
   var els = {
     search: document.getElementById('db-search'),
@@ -23,15 +28,11 @@
   };
 
   function countByTech(label) {
-    return records.filter(function (r) {
-      return (r.technologies || []).indexOf(label) !== -1;
-    }).length;
+    return techCounts.get(label) || 0;
   }
 
   function countByType(label) {
-    return records.filter(function (r) {
-      return r.medium === label;
-    }).length;
+    return typeCounts.get(label) || 0;
   }
 
   function recordSearchBlob(r) {
@@ -54,7 +55,7 @@
       if (!hit) return false;
     }
     if (searchQuery) {
-      if (recordSearchBlob(r).indexOf(searchQuery) === -1) return false;
+      if (searchBlobs.get(r).indexOf(searchQuery) === -1) return false;
     }
     return true;
   }
@@ -65,17 +66,13 @@
     list.sort(function (a, b) {
       var cmp = 0;
       if (sortKey === 'title') {
-        cmp = String(a.title || '').localeCompare(String(b.title || ''), undefined, {
-          sensitivity: 'base'
-        });
+        cmp = titleCollator.compare(String(a.title || ''), String(b.title || ''));
       } else {
         var at = utils.recordYear(a);
         var bt = utils.recordYear(b);
         cmp = at === bt ? 0 : at < bt ? -1 : 1;
         if (cmp === 0) {
-          cmp = String(a.title || '').localeCompare(String(b.title || ''), undefined, {
-            sensitivity: 'base'
-          });
+          cmp = titleCollator.compare(String(a.title || ''), String(b.title || ''));
         }
       }
       return cmp * dir;
@@ -111,15 +108,11 @@
   }
 
   function toggleSet(set, value, btn) {
-    if (set.has(value)) {
-      set.delete(value);
-      btn.classList.remove('is-active');
-      btn.setAttribute('aria-pressed', 'false');
-    } else {
-      set.add(value);
-      btn.classList.add('is-active');
-      btn.setAttribute('aria-pressed', 'true');
-    }
+    var active = !set.has(value);
+    if (active) set.add(value);
+    else set.delete(value);
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', String(active));
     renderResults();
   }
 
@@ -188,7 +181,7 @@
         '<div class="db-filter-group" role="group" aria-label="' +
         utils.escapeHtml(group.label) +
         '">' +
-        '<h3 class="db-filter-label">' +
+        '<h3 class="page-label">' +
         utils.escapeHtml(group.label) +
         '</h3>' +
         '<div class="db-filter-group-chips">';
@@ -334,6 +327,16 @@
 
   function mountData(nextRecords) {
     records = Array.isArray(nextRecords) ? nextRecords : [];
+    searchBlobs = new WeakMap();
+    techCounts.clear();
+    typeCounts.clear();
+    records.forEach(function (record) {
+      searchBlobs.set(record, recordSearchBlob(record));
+      typeCounts.set(record.medium, (typeCounts.get(record.medium) || 0) + 1);
+      new Set(record.technologies || []).forEach(function (technology) {
+        techCounts.set(technology, (techCounts.get(technology) || 0) + 1);
+      });
+    });
     selectedTech.clear();
     selectedTypes.clear();
     buildTypeFilters();
@@ -342,22 +345,23 @@
   }
 
   function loadFromSanity() {
+    var version = ++loadVersion;
     showSkeletons();
     if (!window.SanityClient || !window.SanityClient.fetchPublishedCaseStudies) {
-      showStatus('Sanity client missing.');
       mountData([]);
+      showStatus('The database is temporarily unavailable. Please try again later.');
       return;
     }
     window.SanityClient.fetchPublishedCaseStudies()
       .then(function (result) {
+        if (version !== loadVersion) return;
         mountData(result.records || []);
       })
       .catch(function (err) {
+        if (version !== loadVersion) return;
         console.error(err);
-        showStatus(
-          'Could not load records from Sanity. Check projectId in src/sanity/config.js.'
-        );
         mountData([]);
+        showStatus('The database could not be loaded. Please try again later.');
       });
   }
 

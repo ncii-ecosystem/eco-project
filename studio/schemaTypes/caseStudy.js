@@ -1,5 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { LIMITS } from "../../submit-constants.mjs";
+import { MEDIUMS, LIMITS } from "../../src/shared/submit-constants.mjs";
 
 export const caseStudy = defineType({
   name: "caseStudy",
@@ -42,14 +42,7 @@ export const caseStudy = defineType({
       title: "Type",
       type: "string",
       options: {
-        list: [
-          { title: "Research", value: "Research" },
-          { title: "News Article", value: "News Article" },
-          { title: "Report", value: "Report" },
-          { title: "Artifact", value: "Artifact" },
-          { title: "Law & Policy", value: "Law & Policy" },
-          { title: "Misc", value: "Misc" },
-        ],
+        list: MEDIUMS.map((medium) => ({ title: medium, value: medium })),
       },
       validation: (Rule) => Rule.required(),
     }),

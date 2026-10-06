@@ -102,17 +102,29 @@ window.DatabaseUtils = (function () {
     URL.revokeObjectURL(url);
   }
 
+  var flipTimers = new WeakMap();
+
   function runFlip(btn, midFn) {
     if (!btn) return;
+    var previous = flipTimers.get(btn);
+    if (previous) previous.forEach(window.clearTimeout);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      btn.classList.remove('is-flip');
+      midFn();
+      return;
+    }
     var flipMs = 350;
     var swapMs = 160;
     btn.classList.remove('is-flip');
     void btn.offsetWidth;
     btn.classList.add('is-flip');
-    window.setTimeout(midFn, swapMs);
-    window.setTimeout(function () {
-      btn.classList.remove('is-flip');
-    }, flipMs);
+    flipTimers.set(btn, [
+      window.setTimeout(midFn, swapMs),
+      window.setTimeout(function () {
+        btn.classList.remove('is-flip');
+        flipTimers.delete(btn);
+      }, flipMs)
+    ]);
   }
 
   return {

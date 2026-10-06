@@ -7,10 +7,6 @@ html.db-theme-dark .site-shell {
   --db-ink: #ffffff;
 }
 
-html.db-theme-dark .site-shell.ss-page {
-  --db-bg: var(--ss-green);
-}
-
 .site-shell {
   margin: 0;
   background: var(--db-bg);
@@ -51,7 +47,7 @@ html.site-content .site-topnav {
   display: none;
 }
 
-html.site-content body.db-page {
+html.site-content body.page-body {
   padding-top: 0;
 }
 

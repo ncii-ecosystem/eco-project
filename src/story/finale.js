@@ -229,6 +229,7 @@
   }
 
   function assemble() {
+    if (Eco.auxHide) Eco.auxHide();                     // the small pop-up windows belong to their own scenes, not to the grid
     wins = Eco.windows.all();
     cells = layout(wins.length);
     flipWindows(wins, () => {

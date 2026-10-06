@@ -7,7 +7,6 @@ window.SanityClient = (function () {
       projectId: String(c.projectId || '').trim(),
       dataset: String(c.dataset || 'production').trim(),
       apiVersion: String(c.apiVersion || '2024-01-01').trim(),
-      token: String(c.token || '').trim(),
       useCdn: c.useCdn !== false
     };
   }
@@ -119,14 +118,11 @@ window.SanityClient = (function () {
     var config = getConfig();
     if (!config.projectId) {
       return Promise.reject(
-        new Error('SANITY_PROJECT_ID is not configured in src/sanity/config.js')
+        new Error('SANITY_PROJECT_ID is not configured in the server environment')
       );
     }
 
     var headers = {Accept: 'application/json'};
-    if (config.token) {
-      headers.Authorization = 'Bearer ' + config.token;
-    }
 
     return fetchJson(buildQueryUrl(config, CASE_STUDIES_QUERY), {
       headers: headers,

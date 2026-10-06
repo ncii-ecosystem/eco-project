@@ -17,16 +17,15 @@ window.DatabaseRender = (function () {
     var icon = data().TECH_ICONS && data().TECH_ICONS[label];
     if (!icon) return '';
     return (
-      '<span class="db-filter-icon" aria-hidden="true">' +
+      '<span class="inline-icon" aria-hidden="true">' +
       '<i class="fas ' +
       icon +
       '"></i></span>'
     );
   }
 
-  function renderTitleHtml(r, options) {
+  function renderTitleHtml(r) {
     var escapeHtml = u().escapeHtml;
-    var withIcons = !options || options.icons !== false;
     var title = r.title || '';
     var anns = r.headlineAnnotations;
     if (!anns || !anns.length) return escapeHtml(title);
@@ -55,7 +54,7 @@ window.DatabaseRender = (function () {
       }
       if (bestIdx > 0) html += escapeHtml(remaining.slice(0, bestIdx));
       html +=
-        '<span class="db-hl ' +
+        '<span class="text-highlight ' +
         roleClassForTech(bestAnn.technology) +
         '" data-technology="' +
         escapeHtml(bestAnn.technology || '') +
@@ -63,12 +62,10 @@ window.DatabaseRender = (function () {
         escapeHtml(bestAnn.technology || '') +
         '">' +
         escapeHtml(bestAnn.text);
-      if (withIcons) {
-        html +=
-          ' <span class="db-hl-icon" aria-hidden="true" contenteditable="false">(' +
-          techIconHtml(bestAnn.technology) +
-          ')</span>';
-      }
+      html +=
+        ' <span class="text-highlight-icons" aria-hidden="true" contenteditable="false">(' +
+        techIconHtml(bestAnn.technology) +
+        ')</span>';
       html += '</span>';
       remaining = remaining.slice(bestIdx + bestAnn.text.length);
     }
@@ -115,19 +112,8 @@ window.DatabaseRender = (function () {
     );
   }
 
-  function metaLine(r) {
-    var bits = [];
-    if (r.source) bits.push(r.source);
-    return bits.join(' — ');
-  }
-
-  function authorsMatchOrg(authors, org, r) {
-    if (!authors) return false;
-    var a = u().norm(authors);
-    if (!a) return false;
-    if (org && a === u().norm(org)) return true;
-    if (r.source && a === u().norm(r.source)) return true;
-    return false;
+  function authorsMatchOrg(authors, org) {
+    return !!authors && !!org && u().norm(authors) === u().norm(org);
   }
 
   function mediaHtml(r) {
@@ -171,8 +157,8 @@ window.DatabaseRender = (function () {
     var authors =
       r.authors || '';
     var time = u().formatDisplayYear(r);
-    var org = metaLine(r);
-    var hideAuthors = authorsMatchOrg(authors, org, r);
+    var org = r.source || '';
+    var hideAuthors = authorsMatchOrg(authors, org);
     var showAuthors = authors && !hideAuthors;
 
     var inner =
@@ -184,10 +170,10 @@ window.DatabaseRender = (function () {
       techTagsHtml(r) +
       '</div>' +
       (time
-        ? '<div class="db-result-side-time">' + escapeHtml(time) + '</div>'
-        : '<div class="db-result-side-time" aria-hidden="true"></div>') +
+        ? '<div class="content-year">' + escapeHtml(time) + '</div>'
+        : '<div class="content-year" aria-hidden="true"></div>') +
       '</div>' +
-      '<h2 class="db-result-title">' +
+      '<h2 class="content-title">' +
       renderTitleHtml(r) +
       '</h2>' +
       '<div class="db-result-bottom' +
@@ -197,10 +183,10 @@ window.DatabaseRender = (function () {
         ? '<div class="db-result-org">' + escapeHtml(org) + '</div>'
         : '<div class="db-result-org" aria-hidden="true"></div>') +
       (showAuthors
-        ? '<div class="db-result-side-authors">' +
+        ? '<div class="content-authors">' +
           escapeHtml(authors) +
           '</div>'
-        : '<div class="db-result-side-authors" aria-hidden="true"></div>') +
+        : '<div class="content-authors" aria-hidden="true"></div>') +
       '</div>';
 
     var linkBlock = hasLink

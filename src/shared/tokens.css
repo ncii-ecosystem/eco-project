@@ -5,6 +5,9 @@
   --db-chip-ink: #6751d4;
   --db-selected-bg: #6751d4;
   --db-selected-fg: #ffffff;
+  --d: var(--db-chip-ink);
+  --hard: 6px 6px 0 var(--db-ink);
+  --hard-sm: 3px 3px 0 var(--db-ink);
   --db-role-creation: #fbd4d0;
   --db-role-distribution: #f9d9b0;
   --db-role-proliferation: #fff3a8;
@@ -25,12 +28,10 @@
   --db-lh: 1.4;
   --db-lh-loose: 1.5;
   --db-size-media: 8rem;
-  --db-size-media-short: 5.5rem;
   --db-size-media-xs: 3.5rem;
   --db-size-avatar: 4.5rem;
   --db-size-avatar-sm: 3.75rem;
   --db-size-control: 2.75rem;
-  --db-size-btn-min: 8rem;
   --db-size-rail: 20rem;
   --db-font-mono:
     "PT Mono", ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas,
@@ -38,9 +39,4 @@
   --font-sans:
     "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
-  --ss-green: #1f7a45;
-}
-
-body.ss-page {
-  min-height: 100vh;
 }

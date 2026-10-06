@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="src/shared/router.css" />
-<script src="src/shared/router.js"></script>
+<link rel="stylesheet" href="/src/shared/router.css" />
+<script src="/src/shared/router.js"></script>
 <meta charset="UTF-8" />
-<link rel="stylesheet" href="src/shared/tokens.css" />
-<link rel="stylesheet" href="src/shared/site-nav.css" />
-<script src="src/shared/theme-boot.js"></script>
+<link rel="stylesheet" href="/src/shared/tokens.css" />
+<link rel="stylesheet" href="/src/shared/site-nav.css" />
+<script src="/src/shared/theme-boot.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link id="site-favicon" rel="icon" type="image/svg+xml" href="assets/logo.svg" />
-<title>About — ncii-ecosystem</title>
+<link id="site-favicon" rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+<title>About</title>
 <meta name="description" content="About the AIG-NCII evidence index and the ecosystem paper that maps technologies facilitating AI-generated non-consensual intimate images." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,15 +21,15 @@
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 />
-<link rel="stylesheet" href="src/database/styles.css" />
-<link rel="stylesheet" href="src/about/styles.css" />
-<script src="src/shared/nav.js" defer></script>
+<link rel="stylesheet" href="/src/shared/page-styles.css" />
+<link rel="stylesheet" href="/src/about/styles.css" />
+<script src="/src/shared/nav.js" defer></script>
 </head>
-<body class="db-page about-page">
+<body class="page-body about-page">
 
 <header class="site-topnav">
-  <a class="site-logo" href="home.html" aria-label="ncii ecosystem">
-    <img class="site-logo-img" src="assets/logo.svg" alt="" width="28" height="28" />
+  <a class="site-logo" href="/home" aria-label="ncii ecosystem">
+    <img class="site-logo-img" src="/assets/logo.svg" alt="" width="28" height="28" />
     <span class="site-logo-name">ncii ecosystem</span>
   </a>
   <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
@@ -38,11 +38,11 @@
   <div class="site-nav-panel" id="site-nav-menu">
     <nav aria-label="Site">
       <ul class="site-topnav-links">
-        <li><a href="home.html">Home</a></li>
-        <li><a href="index.html">Story</a></li>
-        <li><a href="database.html">Database</a></li>
-        <li><a href="survivor-support.html">Survivor Support</a></li>
-        <li><a href="about.html" aria-current="page">About</a></li>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/story">Story</a></li>
+        <li><a href="/database">Database</a></li>
+        <li><a href="/survivor-support">Survivor Support</a></li>
+        <li><a href="/about" aria-current="page">About</a></li>
       </ul>
     </nav>
     <button type="button" class="site-theme-toggle" id="site-theme-toggle" aria-label="Switch to dark mode" title="Theme">
@@ -54,7 +54,7 @@
 <main class="about-layout">
   <header class="about-header">
     <div class="about-paper-title-block">
-      <h1 class="db-result-title about-paper-title">
+      <h1 class="content-title about-paper-title">
         How to Stop Playing Whack-a-Mole: Mapping the Ecosystem of Technologies Facilitating AI-Generated Non-Consensual Intimate Images
       </h1>
       <div class="about-paper-links">
@@ -63,8 +63,8 @@
       </div>
     </div>
     <aside class="about-authors" aria-label="Authors">
-      <div class="db-result-side-time">2026</div>
-      <div class="db-result-side-authors">
+      <div class="content-year">2026</div>
+      <div class="content-authors">
         Michelle L. Ding, Harini Suresh, Suresh Venkatasubramanian
       </div>
     </aside>
@@ -86,8 +86,8 @@
           <li>
             <span class="about-role-num" aria-hidden="true">1</span>
             <span class="about-role-content">
-              <span class="db-hl role-creation">
-                <span class="db-hl-icon" aria-hidden="true">(<span class="db-filter-icon"><i class="fas fa-database"></i></span><span class="db-filter-icon"><i class="fas fa-code"></i></span><span class="db-filter-icon"><i class="fas fa-magic"></i></span>)</span>
+              <span class="text-highlight role-creation">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-database"></i></span><span class="inline-icon"><i class="fas fa-code"></i></span><span class="inline-icon"><i class="fas fa-magic"></i></span>)</span>
                 Creation
               </span>
               <span class="about-role-detail">training datasets, generative AI models, and generative AI interfaces</span>
@@ -96,8 +96,8 @@
           <li>
             <span class="about-role-num" aria-hidden="true">2</span>
             <span class="about-role-content">
-              <span class="db-hl role-distribution">
-                <span class="db-hl-icon" aria-hidden="true">(<span class="db-filter-icon"><i class="fas fa-comment"></i></span>)</span>
+              <span class="text-highlight role-distribution">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-comment"></i></span>)</span>
                 Distribution
               </span>
               <span class="about-role-detail">distribution channels</span>
@@ -106,8 +106,8 @@
           <li>
             <span class="about-role-num" aria-hidden="true">3</span>
             <span class="about-role-content">
-              <span class="db-hl role-proliferation">
-                <span class="db-hl-icon" aria-hidden="true">(<span class="db-filter-icon"><i class="fas fa-users"></i></span><span class="db-filter-icon"><i class="fas fa-search"></i></span><span class="db-filter-icon"><i class="fas fa-bullhorn"></i></span><span class="db-filter-icon"><i class="fas fa-shopping-cart"></i></span>)</span>
+              <span class="text-highlight role-proliferation">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-users"></i></span><span class="inline-icon"><i class="fas fa-search"></i></span><span class="inline-icon"><i class="fas fa-bullhorn"></i></span><span class="inline-icon"><i class="fas fa-shopping-cart"></i></span>)</span>
                 Proliferation &amp; Discovery
               </span>
               <span class="about-role-detail">deepfake creation communities, search engines, advertisement platforms, app stores</span>
@@ -116,8 +116,8 @@
           <li>
             <span class="about-role-num" aria-hidden="true">4</span>
             <span class="about-role-content">
-              <span class="db-hl role-infra">
-                <span class="db-hl-icon" aria-hidden="true">(<span class="db-filter-icon"><i class="fas fa-laptop-code"></i></span><span class="db-filter-icon"><i class="fas fa-tools"></i></span>)</span>
+              <span class="text-highlight role-infra">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-laptop-code"></i></span><span class="inline-icon"><i class="fas fa-tools"></i></span>)</span>
                 Infrastructural Support
               </span>
               <span class="about-role-detail">developer platforms, critical service providers</span>
@@ -126,8 +126,8 @@
           <li>
             <span class="about-role-num" aria-hidden="true">5</span>
             <span class="about-role-content">
-              <span class="db-hl role-monetization">
-                <span class="db-hl-icon" aria-hidden="true">(<span class="db-filter-icon"><i class="fas fa-hand-holding-usd"></i></span>)</span>
+              <span class="text-highlight role-monetization">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-hand-holding-usd"></i></span>)</span>
                 Monetization
               </span>
               <span class="about-role-detail">payment processors</span>
@@ -144,7 +144,7 @@
     </article>
 
     <aside class="about-rail" aria-label="Team">
-      <p class="db-filter-label">Team</p>
+      <p class="page-label">Team</p>
       <ul class="about-team-list">
         <li class="about-team-person">
           <div class="about-team-photo" aria-hidden="true">
@@ -157,7 +157,7 @@
         </li>
         <li class="about-team-person">
           <div class="about-team-photo" aria-hidden="true">
-            <img src="assets/people/haya-bugshan.jpg" alt="" width="72" height="72" onerror="this.remove()" />
+            <img src="/assets/people/haya-bugshan.jpg" alt="" width="72" height="72" onerror="this.remove()" />
             <span class="about-team-initials">HB</span>
           </div>
           <div class="about-team-meta">
@@ -167,7 +167,7 @@
         </li>
         <li class="about-team-person">
           <div class="about-team-photo" aria-hidden="true">
-            <img src="assets/people/maja-mishevska.jpg" alt="" width="72" height="72" onerror="this.remove()" />
+            <img src="/assets/people/maja-mishevska.jpg" alt="" width="72" height="72" onerror="this.remove()" />
             <span class="about-team-initials">MM</span>
           </div>
           <div class="about-team-meta">
@@ -198,7 +198,7 @@
         <div class="about-org-photo" aria-hidden="true">
           <img
             class="about-org-logo"
-            src="assets/cntr-logo.png"
+            src="/assets/cntr-logo.png"
             alt=""
           />
         </div>
@@ -221,6 +221,6 @@
   </div>
 </main>
 
-<script src="src/shared/theme.js"></script>
+<script src="/src/shared/theme.js"></script>
 </body>
 </html>

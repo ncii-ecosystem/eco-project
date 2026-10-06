@@ -182,13 +182,16 @@
     if (!d || !Eco.showNote) return;
     const doc = new DOMParser().parseFromString(d.body, 'text/html');
     const paras = Array.from(doc.body.children);
-    const key = (paras.find(p => p.tagName === 'P') || paras[0]).textContent.trim();
+    const full = (paras.find(p => p.tagName === 'P') || paras[0]).textContent.trim();
+    const cut = /^(.+?[.!?])\s+(.*)$/s.exec(full);          // Notes show a short first sentence; the rest is behind "more"
+    const key = cut ? cut[1] : full;
     const rest = [];
     paras.forEach((node, i) => {
       if (i === 0) return;
       if (node.tagName === 'UL') node.querySelectorAll('li').forEach(li => rest.push('• ' + li.textContent.trim()));
       else rest.push(node.textContent.trim());
     });
+    if (cut && cut[2]) rest.unshift(cut[2]);
     const step = document.createElement('div');
     step.className = 'step step--k';
     step.dataset.nkey = 'node-' + id;

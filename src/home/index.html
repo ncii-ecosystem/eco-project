@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="src/shared/router.css" />
-<script src="src/shared/router.js"></script>
+<link rel="stylesheet" href="/src/shared/router.css" />
+<script src="/src/shared/router.js"></script>
 <meta charset="UTF-8" />
-<link rel="stylesheet" href="src/shared/tokens.css" />
-<link rel="stylesheet" href="src/shared/site-nav.css" />
-<script src="src/shared/theme-boot.js"></script>
+<link rel="stylesheet" href="/src/shared/tokens.css" />
+<link rel="stylesheet" href="/src/shared/site-nav.css" />
+<script src="/src/shared/theme-boot.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link id="site-favicon" rel="icon" type="image/svg+xml" href="assets/logo.svg" />
-<title>Primers — ncii-ecosystem</title>
-<meta name="description" content="Primers related to AIG-NCII and the technological ecosystem." />
+<link id="site-favicon" rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+<title>Home</title>
+<meta name="description" content="ncii ecosystem" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=PT+Mono&display=swap" rel="stylesheet" />
@@ -21,14 +21,14 @@
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 />
-<link rel="stylesheet" href="src/database/styles.css" />
-<script src="src/shared/nav.js" defer></script>
+<link rel="stylesheet" href="/src/shared/page-styles.css" />
+<script src="/src/shared/nav.js" defer></script>
 </head>
-<body class="db-page">
+<body class="page-body">
 
 <header class="site-topnav">
-  <a class="site-logo" href="home.html" aria-label="ncii ecosystem">
-    <img class="site-logo-img" src="assets/logo.svg" alt="" width="28" height="28" />
+  <a class="site-logo" href="/home" aria-label="ncii ecosystem">
+    <img class="site-logo-img" src="/assets/logo.svg" alt="" width="28" height="28" />
     <span class="site-logo-name">ncii ecosystem</span>
   </a>
   <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
@@ -37,11 +37,11 @@
   <div class="site-nav-panel" id="site-nav-menu">
     <nav aria-label="Site">
       <ul class="site-topnav-links">
-        <li><a href="home.html">Home</a></li>
-        <li><a href="index.html">Story</a></li>
-        <li><a href="database.html">Database</a></li>
-        <li><a href="survivor-support.html">Survivor Support</a></li>
-        <li><a href="about.html">About</a></li>
+        <li><a href="/home" aria-current="page">Home</a></li>
+        <li><a href="/story">Story</a></li>
+        <li><a href="/database">Database</a></li>
+        <li><a href="/survivor-support">Survivor Support</a></li>
+        <li><a href="/about">About</a></li>
       </ul>
     </nav>
     <button type="button" class="site-theme-toggle" id="site-theme-toggle" aria-label="Switch to dark mode" title="Theme">
@@ -50,10 +50,10 @@
   </div>
 </header>
 
-<main class="primers-layout">
-  <h1 class="db-filter-label">Primers</h1>
+<main>
+  <h1 class="page-label">Home</h1>
 </main>
 
-<script src="src/shared/theme.js"></script>
+<script src="/src/shared/theme.js"></script>
 </body>
 </html>

@@ -6,8 +6,8 @@ import {schemaTypes} from './schemaTypes'
 export default defineConfig({
   name: 'eco-system',
   title: 'ncii-ecosystem',
-  projectId: 'o2eq9t9a',
-  dataset: 'production',
+  projectId: process.env.SANITY_PROJECT_ID,
+  dataset: process.env.SANITY_DATASET || 'production',
   plugins: [structureTool(), visionTool()],
   schema: {
     types: schemaTypes,

@@ -1,5 +1,4 @@
 .site-topnav {
-  --site-nav-panel: min(var(--db-size-rail), 78vw);
   position: fixed;
   top: 0;
   left: 0;
@@ -48,7 +47,7 @@
 
 .site-logo-img {
   display: block;
-  height: calc(var(--site-nav-h) - var(--db-space-2));
+  height: calc(var(--site-nav-h) - var(--db-space-3));
   width: auto;
 }
 
@@ -99,8 +98,11 @@
   font-weight: 700;
 }
 
-.site-topnav-links a[href="survivor-support.html"] {
-  color: var(--db-role-infra);
+.site-topnav a[href*="survivor-support"] {
+  text-decoration: underline;
+  text-decoration-color: var(--db-role-monetization);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.15em;
 }
 
 .site-theme-toggle {
@@ -166,10 +168,6 @@
   .site-topnav {
     justify-content: space-between;
     width: 100%;
-    height: var(--site-nav-h);
-    padding: 0 var(--db-space-3) 0 var(--db-space-3);
-    border-bottom: 1px solid var(--db-ink);
-    background: var(--db-bg);
     overflow: visible;
   }
 
@@ -276,7 +274,8 @@
       visibility 0s;
   }
 
-  .site-topnav nav {
+  .site-topnav nav,
+  .site-topnav:has(.site-theme-toggle) nav {
     width: 100%;
     justify-content: center;
     margin-left: 0;

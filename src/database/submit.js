@@ -265,14 +265,7 @@ window.DatabaseSubmit = (function () {
       });
     });
     root.innerHTML = html;
-    root.querySelectorAll('[data-tech]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var label = btn.getAttribute('data-tech');
-        if (entry.techs.has(label)) entry.techs.delete(label);
-        else entry.techs.add(label);
-        renderTechChips();
-      });
-    });
+
   }
 
   var L = (window.DatabaseConstants && window.DatabaseConstants.LIMITS) || {};
@@ -494,6 +487,20 @@ window.DatabaseSubmit = (function () {
   }
 
   function bind() {
+    var techRoot = document.getElementById('db-sub-techs');
+    if (techRoot) {
+      techRoot.addEventListener('click', function (event) {
+        var button = event.target.closest('[data-tech]');
+        var entry = currentEntry();
+        if (!button || !techRoot.contains(button) || !entry) return;
+        var label = button.getAttribute('data-tech');
+        if (entry.techs.has(label)) entry.techs.delete(label);
+        else entry.techs.add(label);
+        var active = entry.techs.has(label);
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+    }
     var fields = [
       ['db-sub-title', MAX_TITLE],
       ['db-sub-source', MAX_SOURCE],

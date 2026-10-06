@@ -26,20 +26,24 @@
 
   paint(!savedIsDark());
 
+  window.addEventListener('storage', function (event) {
+    if (event.key === KEY || event.key === null) paint(!savedIsDark());
+  });
+
+  btn.addEventListener('animationend', function (event) {
+    if (event.animationName === 'site-theme-flip') btn.classList.remove('is-flip');
+  });
+
   btn.addEventListener('click', function () {
     var nextDark = !document.documentElement.classList.contains('db-theme-dark');
+    paint(!nextDark);
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      paint(!nextDark);
+      btn.classList.remove('is-flip');
     } else {
       btn.classList.remove('is-flip');
       void btn.offsetWidth;
       btn.classList.add('is-flip');
-      window.setTimeout(function () {
-        paint(!nextDark);
-      }, 160);
-      window.setTimeout(function () {
-        btn.classList.remove('is-flip');
-      }, 350);
+
     }
     try {
       localStorage.setItem(KEY, nextDark ? 'dark' : 'light');

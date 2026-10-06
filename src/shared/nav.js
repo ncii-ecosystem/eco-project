@@ -9,6 +9,8 @@
     tab.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   }
 
+  window.SiteNav = {close: function () { setOpen(false); }};
+
   tab.addEventListener('click', function () {
     setOpen(!header.classList.contains('is-open'));
   });

@@ -2,34 +2,14 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {MEDIUMS, LIMITS} from './submit-constants.mjs';
+import {MEDIUMS, LIMITS} from '../shared/submit-constants.mjs';
+import {loadDotEnv} from './env.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = __dirname;
+const ROOT = path.resolve(__dirname, '../..');
 const PORT = Number(process.env.PORT || 8000);
 
-function loadDotEnv() {
-  const envPath = path.join(ROOT, '.env');
-  if (!fs.existsSync(envPath)) return;
-  const text = fs.readFileSync(envPath, 'utf8');
-  text.split(/\r?\n/).forEach(function (line) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) return;
-    const eq = trimmed.indexOf('=');
-    if (eq === -1) return;
-    const key = trimmed.slice(0, eq).trim();
-    let val = trimmed.slice(eq + 1).trim();
-    if (
-      (val.startsWith('"') && val.endsWith('"')) ||
-      (val.startsWith("'") && val.endsWith("'"))
-    ) {
-      val = val.slice(1, -1);
-    }
-    if (!(key in process.env)) process.env[key] = val;
-  });
-}
-
-loadDotEnv();
+loadDotEnv(ROOT);
 
 const PROJECT_ID = String(process.env.SANITY_PROJECT_ID || '').trim();
 const DATASET = String(process.env.SANITY_DATASET || 'production').trim();
@@ -51,6 +31,7 @@ const ALLOWED_MEDIUMS = new Set(MEDIUMS);
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml',
@@ -395,11 +376,7 @@ function buildCaseStudyDoc(input, techByName, submitter) {
 }
 
 async function handleSubmit(req, res) {
-  if (!PROJECT_ID) {
-    sendJson(res, 500, {error: 'Submissions are temporarily unavailable. Please try again later.'});
-    return;
-  }
-  if (!WRITE_TOKEN) {
+  if (!PROJECT_ID || !WRITE_TOKEN) {
     sendJson(res, 500, {
       error: 'Submissions are temporarily unavailable. Please try again later.',
     });
@@ -523,24 +500,59 @@ async function handleSubmit(req, res) {
 }
 
 function safeJoin(root, urlPath) {
-  const decoded = decodeURIComponent(urlPath.split('?')[0]);
-  const cleaned = path.normalize(decoded).replace(/^(\.\.[/\\])+/, '');
-  const full = path.join(root, cleaned);
-  if (!full.startsWith(root)) return null;
+  let decoded;
+  try {
+    decoded = decodeURIComponent(urlPath.split('?')[0]);
+  } catch {
+    return null;
+  }
+  if (decoded.includes('\0') || decoded.includes('\\')) return null;
+  const parts = decoded.split('/').filter(Boolean);
+  if (!['src', 'assets'].includes(parts[0]) ||
+      parts.some(part => part.startsWith('.')) ||
+      (parts[0] === 'src' && ['server', 'unused'].includes(parts[1]))) return null;
+  const full = path.resolve(root, '.' + decoded);
+  const relative = path.relative(root, full);
+  if (relative.startsWith('..') || path.isAbsolute(relative)) return null;
+  if (!Object.hasOwn(MIME, path.extname(full).toLowerCase())) return null;
   return full;
 }
 
-const ROUTED_PAGES = new Set([
-  '/index.html', '/home.html', '/database.html', '/about.html',
-  '/primers.html', '/survivor-support.html',
+const PAGE_ROUTES = new Map([
+  ['/story', '/src/story/index.html'], ['/home', '/src/home/index.html'],
+  ['/database', '/src/database/index.html'], ['/about', '/src/about/index.html'],
+  ['/survivor-support', '/src/survivor-support/index.html'],
+]);
+const LEGACY_ROUTES = new Map([
+  ['/index.html', '/story'], ['/home.html', '/home'],
+  ['/database.html', '/database'], ['/about.html', '/about'],
+  ['/survivor-support.html', '/survivor-support'],
 ]);
 
 function serveStatic(req, res) {
   let urlPath = req.url.split('?')[0] || '/';
-  if (urlPath === '/') urlPath = '/index.html';
   const params = new URL(req.url, 'http://localhost').searchParams;
-  if (ROUTED_PAGES.has(urlPath) && params.get('content') !== '1') {
-    urlPath = '/shell.html';
+  if (urlPath === '/shell.html') urlPath = '/src/shared/shell.html';
+  const canonical = LEGACY_ROUTES.get(urlPath) ||
+    (urlPath.endsWith('/') && PAGE_ROUTES.has(urlPath.slice(0, -1)) ? urlPath.slice(0, -1) : null);
+  if (canonical) {
+    const query = new URL(req.url, 'http://localhost').search;
+    res.writeHead(308, {Location: canonical + query});
+    res.end();
+    return;
+  }
+  const pageFile = urlPath === '/' ? PAGE_ROUTES.get('/home') : PAGE_ROUTES.get(urlPath);
+  if (pageFile) {
+    urlPath = params.get('content') === '1' ? pageFile : '/src/shared/shell.html';
+  }
+
+  // Unknown page addresses return to Home; file requests retain file errors.
+  if (!pageFile && urlPath !== '/src/shared/shell.html' &&
+      !urlPath.startsWith('/src/') && !urlPath.startsWith('/assets/') &&
+      !urlPath.startsWith('/api/') && !urlPath.split('/').some(part => part.startsWith('.'))) {
+    res.writeHead(302, {Location: '/home'});
+    res.end();
+    return;
   }
 
   const filePath = safeJoin(ROOT, urlPath);
@@ -558,13 +570,31 @@ function serveStatic(req, res) {
     }
     const ext = path.extname(filePath).toLowerCase();
     const type = MIME[ext] || 'application/octet-stream';
-    res.writeHead(200, {'Content-Type': type});
-    fs.createReadStream(filePath).pipe(res);
+    res.writeHead(200, {'Content-Type': type, 'Content-Length': stat.size});
+    if (req.method === 'HEAD') {
+      res.end();
+      return;
+    }
+    const stream = fs.createReadStream(filePath);
+    stream.on('error', () => res.destroy());
+    stream.pipe(res);
   });
 }
 
 const server = http.createServer(async function (req, res) {
   const urlPath = (req.url || '/').split('?')[0];
+
+  if ((req.method === 'GET' || req.method === 'HEAD') && urlPath === '/api/config.js') {
+    const config = {projectId: PROJECT_ID, dataset: DATASET, apiVersion: API_VERSION, useCdn: true};
+    res.writeHead(200, {
+      'Content-Type': 'text/javascript; charset=utf-8',
+      'Cache-Control': 'no-store',
+    });
+    const script = 'window.SANITY_CONFIG = ' + JSON.stringify(config) + ';\n' +
+      'window.SUBMISSION_CONSTANTS = ' + JSON.stringify({MEDIUMS, LIMITS}) + ';\n';
+    res.end(req.method === 'HEAD' ? undefined : script);
+    return;
+  }
 
   if (req.method === 'POST' && urlPath === '/api/submit') {
     await handleSubmit(req, res);

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="src/shared/router.css" />
-<script src="src/shared/router.js"></script>
+<link rel="stylesheet" href="/src/shared/router.css" />
+<script src="/src/shared/router.js"></script>
 <meta charset="UTF-8" />
-<link rel="stylesheet" href="src/shared/tokens.css" />
-<link rel="stylesheet" href="src/shared/site-nav.css" />
-<script src="src/shared/theme-boot.js"></script>
+<link rel="stylesheet" href="/src/shared/tokens.css" />
+<link rel="stylesheet" href="/src/shared/site-nav.css" />
+<script src="/src/shared/theme-boot.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link id="site-favicon" rel="icon" type="image/svg+xml" href="assets/logo.svg" />
-<title>ncii-ecosystem</title>
+<link id="site-favicon" rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+<title>Database</title>
 <meta name="description" content="A public and living document compiling academic, civil society, advocacy, and journalistic work related to the creation pipeline behind AIG-NCII." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,8 +21,9 @@
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 />
-<link rel="stylesheet" href="src/database/styles.css" />
-<script src="src/shared/nav.js" defer></script>
+<link rel="stylesheet" href="/src/shared/page-styles.css" />
+<link rel="stylesheet" href="/src/database/styles.css" />
+<script src="/src/shared/nav.js" defer></script>
 <script>
 (function () {
   try {
@@ -38,7 +39,7 @@
 })();
 </script>
 </head>
-<body class="db-page db-split">
+<body class="page-body db-split">
 <script>
 (function () {
   var root = document.documentElement;
@@ -52,8 +53,8 @@
 </script>
 
 <header class="site-topnav">
-  <a class="site-logo" href="home.html" aria-label="ncii ecosystem">
-    <img class="site-logo-img" src="assets/logo.svg" alt="" width="28" height="28" />
+  <a class="site-logo" href="/home" aria-label="ncii ecosystem">
+    <img class="site-logo-img" src="/assets/logo.svg" alt="" width="28" height="28" />
     <span class="site-logo-name">ncii ecosystem</span>
   </a>
   <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
@@ -62,11 +63,11 @@
   <div class="site-nav-panel" id="site-nav-menu">
     <nav aria-label="Site">
       <ul class="site-topnav-links">
-        <li><a href="home.html">Home</a></li>
-        <li><a href="index.html">Story</a></li>
-        <li><a href="database.html" aria-current="page">Database</a></li>
-        <li><a href="survivor-support.html">Survivor Support</a></li>
-        <li><a href="about.html">About</a></li>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/story">Story</a></li>
+        <li><a href="/database" aria-current="page">Database</a></li>
+        <li><a href="/survivor-support">Survivor Support</a></li>
+        <li><a href="/about">About</a></li>
       </ul>
     </nav>
     <button type="button" class="site-theme-toggle" id="site-theme-toggle" aria-label="Switch to dark mode" title="Theme">
@@ -272,13 +273,13 @@
           <li>Search for a topic, author, or source, and narrow results by technology or type. Sort by year or title, and open an entry to read its original source.</li>
           <li>Choosing several technologies matches entries related to any of them. Technology, type, and search filters work together.</li>
           <li>Export your current results as CSV for further analysis.</li>
-          <li>Found a source we’re missing? Use “Submit entries” to help grow the collection. You can contribute anonymously or ask to be credited.</li>
+          <li>Submit a source we’re missing through “Submit entries” to help grow the collection. You can contribute anonymously or choose to be credited.</li>
         </ul>
       </section>
 
       <section aria-labelledby="db-docs-method">
         <h3 id="db-docs-method">Methodology</h3>
-        <p>We group sources using the framework from <a href="about.html">our research paper</a>: creation, distribution, proliferation and discovery, infrastructural support, and monetization. A source can cover more than one technology.</p>
+        <p>We group sources using the framework from <a href="/about">our research paper</a>: creation, distribution, proliferation and discovery, infrastructural support, and monetization. A source can cover more than one technology.</p>
         <p>The database brings together papers, articles, reports, and other sources we’ve collected so far. It doesn’t cover everything, and several entries may discuss the same event. Counts show how many sources we’ve collected, not how often harm occurs or which technologies matter most.</p>
       </section>
 
@@ -445,16 +446,16 @@
   </form>
 </dialog>
 
-<script src="src/sanity/config.js"></script>
-<script src="src/sanity/client.js"></script>
-<script src="src/sanity/write.js"></script>
-<script src="src/database/constants.js"></script>
-<script src="src/database/data.js"></script>
-<script src="src/database/utils.js"></script>
-<script src="src/database/render.js"></script>
-<script src="src/shared/dialog.js"></script>
-<script src="src/database/submit.js?v=6"></script>
-<script src="src/database/app.js"></script>
-<script src="src/shared/theme.js"></script>
+<script src="/api/config.js"></script>
+<script src="/src/sanity/client.js"></script>
+<script src="/src/sanity/write.js"></script>
+<script src="/src/database/constants.js"></script>
+<script src="/src/database/data.js"></script>
+<script src="/src/database/utils.js"></script>
+<script src="/src/database/render.js"></script>
+<script src="/src/shared/dialog.js"></script>
+<script src="/src/database/submit.js?v=6"></script>
+<script src="/src/database/app.js"></script>
+<script src="/src/shared/theme.js"></script>
 </body>
 </html>
