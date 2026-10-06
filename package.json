@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:pages": "node scripts/build-pages.mjs",
     "studio": "npm run dev --prefix studio",
     "site": "node src/server/server.mjs"
   }

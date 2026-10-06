@@ -1,5 +1,6 @@
 (function () {
   "use strict";
+  var staticHost = false;
 
   var pages = new Set([
     "story",
@@ -10,7 +11,8 @@
   ]);
 
   function pageName(url) {
-    var name = url.pathname
+    var pathname = staticHost ? url.pathname.replace(/\/index\.html$/, "/") : url.pathname;
+    var name = pathname
       .replace(/\/$/, "")
       .slice(1)
       .replace(/\.html$/, "");
@@ -72,6 +74,7 @@
   function init() {
     var frame = document.getElementById("site-content");
     if (!frame) return;
+    staticHost = document.body.hasAttribute("data-static-host");
     var header = document.querySelector(".site-topnav");
 
     function restoreNavigation() {
@@ -88,6 +91,7 @@
         return;
       }
       if (url.pathname !== "/") url.pathname = "/" + pageName(url);
+      if (staticHost && url.pathname !== "/") url.pathname += "/";
       url.searchParams.delete("content");
       restoreNavigation();
       document.body.classList.toggle(
@@ -109,6 +113,7 @@
         "survivor-support": "Survivor Support",
       };
       document.title = routeTitles[pageName(url)];
+      if (staticHost) url.pathname = "/src/" + pageName(url) + "/index.html";
       url.searchParams.set("content", "1");
       frame.contentWindow.location.replace(url.href);
     }
