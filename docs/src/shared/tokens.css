@@ -1,0 +1,42 @@
+:root {
+  --site-nav-h: 2.5rem;
+  --db-bg: #ffffff;
+  --db-ink: #6751d4;
+  --db-chip-ink: #6751d4;
+  --db-selected-bg: #6751d4;
+  --db-selected-fg: #ffffff;
+  --d: var(--db-chip-ink);
+  --hard: 6px 6px 0 var(--db-ink);
+  --hard-sm: 3px 3px 0 var(--db-ink);
+  --db-role-creation: #fbd4d0;
+  --db-role-distribution: #f9d9b0;
+  --db-role-proliferation: #fff3a8;
+  --db-role-infra: #b8dce0;
+  --db-role-monetization: #bff5b3;
+  --db-space-1: 0.25rem;
+  --db-space-2: 0.5rem;
+  --db-space-3: 0.75rem;
+  --db-space-4: 1rem;
+  --db-space-5: 1.25rem;
+  --db-space-6: 1.5rem;
+  --db-text-xs: 0.75rem;
+  --db-text-sm: 0.875rem;
+  --db-text-md: 1rem;
+  --db-text-lg: 1.25rem;
+  --db-muted: 0.72;
+  --db-lh-tight: 1.25;
+  --db-lh: 1.4;
+  --db-lh-loose: 1.5;
+  --db-size-media: 8rem;
+  --db-size-media-xs: 3.5rem;
+  --db-size-avatar: 4.5rem;
+  --db-size-avatar-sm: 3.75rem;
+  --db-size-control: 2.75rem;
+  --db-size-rail: 20rem;
+  --db-font-mono:
+    "PT Mono", ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas,
+    monospace;
+  --font-sans:
+    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}

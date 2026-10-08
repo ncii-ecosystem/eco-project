@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/src/shared/router.css" />
+<script src="/src/shared/router.js"></script>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/src/shared/tokens.css" />
+<link rel="stylesheet" href="/src/shared/site-nav.css" />
+<script src="/src/shared/theme-boot.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link id="site-favicon" rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+<title>About</title>
+<meta name="description" content="About the AIG-NCII evidence index and the ecosystem paper that maps technologies facilitating AI-generated non-consensual intimate images." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=PT+Mono&display=swap" rel="stylesheet" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+<link rel="stylesheet" href="/src/shared/page-styles.css" />
+<link rel="stylesheet" href="/src/about/styles.css" />
+<script src="/src/shared/nav.js" defer></script>
+</head>
+<body class="page-body about-page">
+
+<header class="site-topnav">
+  <a class="site-logo" href="/home" aria-label="ncii ecosystem">
+    <img class="site-logo-img" src="/assets/logo.svg" alt="" width="28" height="28" />
+    <span class="site-logo-name">ncii ecosystem</span>
+  </a>
+  <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
+    <span class="site-burger" aria-hidden="true"></span>
+  </button>
+  <div class="site-nav-panel" id="site-nav-menu">
+    <nav aria-label="Site">
+      <ul class="site-topnav-links">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/story">Story</a></li>
+        <li><a href="/database">Database</a></li>
+        <li><a href="/survivor-support">Survivor Support</a></li>
+        <li><a href="/about" aria-current="page">About</a></li>
+      </ul>
+    </nav>
+    <button type="button" class="site-theme-toggle" id="site-theme-toggle" aria-label="Switch to dark mode" title="Theme">
+      <i class="site-theme-toggle-icon fas fa-fw fa-moon" aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
+
+<main class="about-layout">
+  <header class="about-header">
+    <div class="about-paper-title-block">
+      <h1 class="content-title about-paper-title">
+        How to Stop Playing Whack-a-Mole: Mapping the Ecosystem of Technologies Facilitating AI-Generated Non-Consensual Intimate Images
+      </h1>
+      <div class="about-paper-links">
+        <a href="https://arxiv.org/abs/2602.04759" target="_blank" rel="noopener noreferrer">[Arxiv]</a>
+        <a href="https://arxiv.org/pdf/2602.04759" target="_blank" rel="noopener noreferrer">[PDF]</a>
+      </div>
+    </div>
+    <aside class="about-authors" aria-label="Authors">
+      <div class="content-year">2026</div>
+      <div class="content-authors">
+        Michelle L. Ding, Harini Suresh, Suresh Venkatasubramanian
+      </div>
+    </aside>
+  </header>
+
+  <div class="about-columns">
+    <article class="about-main">
+      <section class="about-abstract">
+        <p>
+          The last decade has witnessed a rapid advancement of generative AI technology that significantly scaled the accessibility of <strong>AI-generated non-consensual intimate images (AIG-NCII)</strong>, a form of image-based sexual abuse that disproportionately harms and silences women and girls. There is a patchwork of commendable efforts across industry, policy, academia, and civil society to address AIG-NCII. However, these efforts lack a shared, consistent mental model that clearly situates the technologies they target within the context of a large, interconnected, and ever-evolving technological ecosystem. As a result, interventions remain siloed and are difficult to evaluate and compare, leading to a reactive cycle of <strong>whack-a-mole</strong>.
+        </p>
+        <p>
+          Through a synthesis of over a hundred primary sources from academia, civil society, industry, and policy, we contribute the first comprehensive map of this ecosystem, including 11 categories of technologies that play one of <strong>five roles</strong> in facilitating AIG-NCII:
+        </p>
+      </section>
+
+      <section class="about-roles" aria-label="Roles in the ecosystem">
+        <ol class="about-role-list">
+          <li>
+            <span class="about-role-num" aria-hidden="true">1</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-creation">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-database"></i></span><span class="inline-icon"><i class="fas fa-code"></i></span><span class="inline-icon"><i class="fas fa-magic"></i></span>)</span>
+                Creation
+              </span>
+              <span class="about-role-detail">training datasets, generative AI models, and generative AI interfaces</span>
+            </span>
+          </li>
+          <li>
+            <span class="about-role-num" aria-hidden="true">2</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-distribution">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-comment"></i></span>)</span>
+                Distribution
+              </span>
+              <span class="about-role-detail">distribution channels</span>
+            </span>
+          </li>
+          <li>
+            <span class="about-role-num" aria-hidden="true">3</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-proliferation">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-users"></i></span><span class="inline-icon"><i class="fas fa-search"></i></span><span class="inline-icon"><i class="fas fa-bullhorn"></i></span><span class="inline-icon"><i class="fas fa-shopping-cart"></i></span>)</span>
+                Proliferation &amp; Discovery
+              </span>
+              <span class="about-role-detail">deepfake creation communities, search engines, advertisement platforms, app stores</span>
+            </span>
+          </li>
+          <li>
+            <span class="about-role-num" aria-hidden="true">4</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-infra">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-laptop-code"></i></span><span class="inline-icon"><i class="fas fa-tools"></i></span>)</span>
+                Infrastructural Support
+              </span>
+              <span class="about-role-detail">developer platforms, critical service providers</span>
+            </span>
+          </li>
+          <li>
+            <span class="about-role-num" aria-hidden="true">5</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-monetization">
+                <span class="text-highlight-icons" aria-hidden="true">(<span class="inline-icon"><i class="fas fa-hand-holding-usd"></i></span>)</span>
+                Monetization
+              </span>
+              <span class="about-role-detail">payment processors</span>
+            </span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="about-closing">
+        <p>
+          Our goal is to bridge the gaps and connects the dots to provide a clear, shared <strong>terminology</strong> and <strong>framework</strong> for stakeholders to move into the future of AIG-NCII prevention with clarity and foresight.
+        </p>
+      </section>
+    </article>
+
+    <aside class="about-rail" aria-label="Team">
+      <p class="page-label">Team</p>
+      <ul class="about-team-list">
+        <li class="about-team-person">
+          <div class="about-team-photo" aria-hidden="true">
+            <span class="about-team-initials">MD</span>
+          </div>
+          <div class="about-team-meta">
+            <span class="about-team-name">Michelle L. Ding</span>
+            <span class="about-team-role">Author</span>
+          </div>
+        </li>
+        <li class="about-team-person">
+          <div class="about-team-photo" aria-hidden="true">
+            <img src="/assets/people/haya-bugshan.jpg" alt="" width="72" height="72" onerror="this.remove()" />
+            <span class="about-team-initials">HB</span>
+          </div>
+          <div class="about-team-meta">
+            <span class="about-team-name">Haya Bugshan</span>
+            <span class="about-team-role">Design &amp; development</span>
+          </div>
+        </li>
+        <li class="about-team-person">
+          <div class="about-team-photo" aria-hidden="true">
+            <img src="/assets/people/maja-mishevska.jpg" alt="" width="72" height="72" onerror="this.remove()" />
+            <span class="about-team-initials">MM</span>
+          </div>
+          <div class="about-team-meta">
+            <span class="about-team-name">Maja Mishevska</span>
+            <span class="about-team-role">Design &amp; development</span>
+          </div>
+        </li>
+        <li class="about-team-person">
+          <div class="about-team-photo" aria-hidden="true">
+            <span class="about-team-initials">HS</span>
+          </div>
+          <div class="about-team-meta">
+            <span class="about-team-name">Harini Suresh</span>
+            <span class="about-team-role">Assistant Professor of Computer Science at Brown</span>
+          </div>
+        </li>
+        <li class="about-team-person">
+          <div class="about-team-photo" aria-hidden="true">
+            <span class="about-team-initials">SV</span>
+          </div>
+          <div class="about-team-meta">
+            <span class="about-team-name">Suresh Venkatasubramanian</span>
+            <span class="about-team-role">Professor of Data Science and Computer Science at Brown</span>
+          </div>
+        </li>
+      </ul>
+      <div class="about-org">
+        <div class="about-org-photo" aria-hidden="true">
+          <img
+            class="about-org-logo"
+            src="/assets/cntr-logo.png"
+            alt=""
+          />
+        </div>
+        <a
+          class="about-org-name"
+          href="https://cntr.brown.edu/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&utm_id=97760_v0_s00_e0_tv3"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Center for Technological Responsibility, Reimagination, and Redesign (CNTR)
+        </a>
+      </div>
+      <p class="about-credits">
+        Type:
+        <a href="https://fonts.google.com/specimen/PT+Mono" target="_blank" rel="noopener noreferrer">PT Mono</a>,
+        <a href="https://fonts.google.com/specimen/IBM+Plex+Sans" target="_blank" rel="noopener noreferrer">IBM Plex Sans</a><br />
+        Icons: <a href="https://fontawesome.com" target="_blank" rel="noopener noreferrer">Font Awesome</a>
+      </p>
+    </aside>
+  </div>
+</main>
+
+<script src="/src/shared/theme.js"></script>
+</body>
+</html>

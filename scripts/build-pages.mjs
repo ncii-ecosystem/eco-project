@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 import {MEDIUMS, LIMITS} from '../src/shared/submit-constants.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const output = path.join(root, 'dist');
+const output = path.join(root, 'docs');
 const pages = ['home', 'story', 'database', 'about', 'survivor-support'];
 const publicConfig = JSON.parse(await fs.readFile(path.join(root, 'src/sanity/public-config.json'), 'utf8'));
 const config = {
@@ -44,4 +44,4 @@ await fs.writeFile(databaseFile, database.replace(
 ));
 await fs.copyFile(path.join(root, 'CNAME'), path.join(output, 'CNAME'));
 await fs.writeFile(path.join(output, '.nojekyll'), '');
-console.log('GitHub Pages site built in dist/');
+console.log('GitHub Pages site built in docs/');

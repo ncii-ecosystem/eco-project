@@ -1,0 +1,340 @@
+.about-layout {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 var(--db-space-6);
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+
+.about-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: var(--db-space-5);
+  width: 100%;
+  padding: var(--db-space-3);
+  border-bottom: 1px solid var(--db-ink);
+}
+
+.about-columns {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  border-bottom: 1px solid var(--db-ink);
+}
+
+.about-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--db-space-4);
+  padding: var(--db-space-4) var(--db-space-3);
+}
+
+.about-rail {
+  flex: 0 0 var(--db-size-rail);
+  width: var(--db-size-rail);
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--db-space-4);
+  padding: var(--db-space-4) var(--db-space-3);
+  border-left: 1px solid var(--db-ink);
+}
+
+.about-paper-title-block {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--db-space-2);
+}
+
+.about-authors {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  align-self: stretch;
+  gap: var(--db-space-2);
+  text-align: right;
+  max-width: 18rem;
+}
+
+.about-paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--db-space-2);
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+}
+
+.about-paper-links a:hover,
+.about-org-name:hover,
+.about-credits a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  font-weight: 700;
+}
+
+.about-paper-title {
+  margin: 0;
+  max-width: 100%;
+  font-weight: normal;
+  overflow-wrap: anywhere;
+}
+
+.about-abstract,
+.about-closing,
+.about-roles,
+.about-role-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--db-space-4);
+}
+
+.about-abstract p,
+.about-closing p {
+  margin: 0;
+  font-size: var(--db-text-md);
+  line-height: var(--db-lh-loose);
+}
+
+.about-role-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.about-role-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--db-space-2);
+  align-items: baseline;
+  font-size: var(--db-text-lg);
+  line-height: var(--db-lh);
+  min-width: 0;
+}
+
+.about-role-num {
+  font-family: var(--db-font-mono);
+}
+
+.about-role-content {
+  min-width: 0;
+}
+
+.about-role-content .text-highlight {
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-lg);
+  line-height: var(--db-lh);
+  overflow-wrap: anywhere;
+}
+
+.about-role-detail {
+  display: block;
+  margin: var(--db-space-1) 0 0;
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+  opacity: var(--db-muted);
+  overflow-wrap: anywhere;
+}
+
+.about-rail .page-label {
+  width: 100%;
+  margin: 0;
+}
+
+.about-team-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--db-space-4);
+  width: 100%;
+}
+
+.about-team-person,
+.about-org {
+  display: flex;
+  align-items: center;
+  gap: var(--db-space-3);
+  width: 100%;
+  min-width: 0;
+}
+
+.about-team-photo {
+  --about-photo: calc(var(--db-size-avatar) - var(--db-space-2));
+  position: relative;
+  width: var(--about-photo);
+  height: var(--about-photo);
+  flex: 0 0 var(--about-photo);
+  overflow: hidden;
+  background: var(--db-ink);
+  color: var(--db-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-team-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-team-photo img[src=""] {
+  display: none;
+}
+
+.about-team-initials {
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-sm);
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.about-team-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--db-space-1);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.about-team-name {
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+}
+
+.about-team-role {
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+  opacity: var(--db-muted);
+}
+
+.about-org {
+  flex-wrap: nowrap;
+  margin: auto 0 var(--db-space-3);
+}
+
+.about-org-photo {
+  height: var(--db-size-avatar);
+  aspect-ratio: 128 / 175;
+  flex: 0 0 auto;
+}
+
+.about-org-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.about-org-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-xs);
+  line-height: var(--db-lh-tight);
+  overflow-wrap: anywhere;
+}
+
+.about-credits {
+  margin: 0;
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-xs);
+  line-height: var(--db-lh);
+  opacity: var(--db-muted);
+}
+
+.about-credits a:hover {
+  opacity: 1;
+}
+
+@media (max-width: 720px) {
+  .about-layout {
+    padding-bottom: 0;
+  }
+
+  .about-header,
+  .about-columns {
+    flex-direction: column;
+    gap: var(--db-space-3);
+  }
+
+  .about-columns {
+    gap: 0;
+    border-bottom: 0;
+  }
+
+  .about-main,
+  .about-rail,
+  .about-abstract,
+  .about-closing,
+  .about-roles,
+  .about-role-list,
+  .about-team-list {
+    gap: var(--db-space-3);
+  }
+
+  .about-main,
+  .about-rail {
+    padding: var(--db-space-3);
+  }
+
+  .about-rail {
+    flex-basis: auto;
+    width: 100%;
+    border-left: 0;
+    border-top: 1px solid var(--db-ink);
+  }
+
+  .about-authors {
+    flex-direction: row;
+    align-items: baseline;
+    align-self: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    max-width: none;
+    gap: var(--db-space-3);
+  }
+
+  .about-authors .content-year {
+    text-align: left;
+  }
+
+  .about-authors .content-authors {
+    min-width: 0;
+    text-align: right;
+  }
+
+  .about-org-photo {
+    height: var(--db-size-avatar-sm);
+  }
+
+  .about-team-photo {
+    --about-photo: calc(var(--db-size-avatar-sm) - var(--db-space-2));
+    width: var(--about-photo);
+    height: var(--about-photo);
+    flex-basis: var(--about-photo);
+  }
+
+  .about-credits {
+    padding-top: var(--db-space-2);
+    border-top: 1px solid var(--db-ink);
+    width: 100%;
+  }
+}
