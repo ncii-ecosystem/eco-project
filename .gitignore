@@ -8,3 +8,4 @@ studio/.sanity/
 *.log
 .vercel
 .claude/
+.wrangler/

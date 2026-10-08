@@ -12,7 +12,7 @@ const config = {
   dataset: process.env.SANITY_DATASET || publicConfig.dataset,
   apiVersion: publicConfig.apiVersion,
   useCdn: true,
-  submissionApiUrl: String(process.env.SUBMISSION_API_URL || '').trim().replace(/\/+$/, ''),
+  submissionApiUrl: String(process.env.SUBMISSION_API_URL || publicConfig.submissionApiUrl || '').trim().replace(/\/+$/, ''),
 };
 
 await fs.mkdir(output, {recursive: true});

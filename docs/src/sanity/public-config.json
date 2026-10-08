@@ -2,5 +2,6 @@
   "projectId": "o2eq9t9a",
   "dataset": "production",
   "apiVersion": "2024-01-01",
-  "useCdn": true
+  "useCdn": true,
+  "submissionApiUrl": "https://ncii-ecosystem-submissions.maja-mishevska.workers.dev"
 }
