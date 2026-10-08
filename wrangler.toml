@@ -1,0 +1,8 @@
+name = "ncii-ecosystem-submissions"
+main = "workers/submissions.mjs"
+compatibility_date = "2026-10-08"
+
+[vars]
+SANITY_PROJECT_ID = "o2eq9t9a"
+SANITY_DATASET = "production"
+ALLOWED_ORIGIN = "https://ncii-ecosystem.org"

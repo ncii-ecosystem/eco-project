@@ -12,6 +12,7 @@ const config = {
   dataset: process.env.SANITY_DATASET || publicConfig.dataset,
   apiVersion: publicConfig.apiVersion,
   useCdn: true,
+  submissionApiUrl: String(process.env.SUBMISSION_API_URL || '').trim().replace(/\/+$/, ''),
 };
 
 await fs.mkdir(output, {recursive: true});
@@ -36,12 +37,14 @@ await fs.writeFile(path.join(output, 'api/config.js'),
   'window.SANITY_CONFIG = ' + JSON.stringify(config) + ';\n' +
   'window.SUBMISSION_CONSTANTS = ' + JSON.stringify({MEDIUMS, LIMITS}) + ';\n');
 
-const databaseFile = path.join(output, 'src/database/index.html');
-const database = await fs.readFile(databaseFile, 'utf8');
-await fs.writeFile(databaseFile, database.replace(
-  '<button type="button" class="db-submit" id="db-submit">Submit entries</button>',
-  '<button type="button" class="db-submit" id="db-submit" disabled title="Submissions need a separately hosted backend">Submissions temporarily unavailable</button>',
-));
+if (!config.submissionApiUrl) {
+  const databaseFile = path.join(output, 'src/database/index.html');
+  const database = await fs.readFile(databaseFile, 'utf8');
+  await fs.writeFile(databaseFile, database.replace(
+    '<button type="button" class="db-submit" id="db-submit">Submit entries</button>',
+    '<button type="button" class="db-submit" id="db-submit" disabled title="Submissions need a separately hosted backend">Submissions temporarily unavailable</button>',
+  ));
+}
 await fs.copyFile(path.join(root, 'CNAME'), path.join(output, 'CNAME'));
 await fs.writeFile(path.join(output, '.nojekyll'), '');
 console.log('GitHub Pages site built in docs/');

@@ -2,13 +2,17 @@ window.SanityWrite = (function () {
   'use strict';
 
   function createDraftCaseStudy(input) {
-    return fetch('/api/submit', {
+    var config = window.SANITY_CONFIG || {};
+    var endpoint = String(config.submissionApiUrl || '').trim().replace(/\/+$/, '');
+    if (!endpoint) {
+      return Promise.reject(new Error('Submissions are temporarily unavailable. Please try again later.'));
+    }
+    return fetch(endpoint + '/api/submit', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
-      credentials: 'same-origin',
       body: JSON.stringify({
         entries: input.entries,
         submitter: input.submitter
