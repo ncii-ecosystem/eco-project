@@ -164,12 +164,14 @@
         const textNode = inputEl.firstChild;
         if (textNode && textNode.nodeType === 3) textNode.textContent = '';
       }
-      if (sendBtn) sendBtn.classList.remove('active');
+      if (sendBtn) { sendBtn.classList.remove('active'); sendBtn.disabled = true; }
       if (chatBody) {
         addChatBubble(chatBody, 'user', CHAT_PROMPT);
       }
+      handleInterface('think');
+      setTimeout(() => handleInterface('respond'), 1000);
     }
-    if (val === 'think' && !chatState.thinking) {
+    if (val === 'think' && !chatState.thinking && !chatState.responded) {
       chatState.thinking = true;
       showChatThinking(chatBody);
     }
@@ -194,6 +196,8 @@
       clickModel();
     }
   }
+
+  Eco.sendMessage = () => handleInterface('send');
 
   /* ── Assistant → dataset → back to the assistant → models ───────────────
      The pull-back into the dataset, the CSAM scan, the zoom back into the chat and the
@@ -594,6 +598,7 @@
     let i = 0;
     const cursor = inputEl.querySelector('.chat-cursor');
     const iv = setInterval(() => {
+      if (chatState.sent) { clearInterval(iv); return; }
       if (i < chars.length) {
         const textNode = inputEl.firstChild && inputEl.firstChild.nodeType === 3
           ? inputEl.firstChild
@@ -612,6 +617,10 @@
     const el = document.createElement('div');
     el.className = 'chat-bubble ' + type;
     el.textContent = text;
+    const attachment = document.createElement('div');
+    attachment.className = 'chat-attachment';
+    attachment.innerHTML = '<i class="far fa-file-image" aria-hidden="true"></i> attachment.png';
+    el.prepend(attachment);
     container.appendChild(el);
     container.scrollTop = container.scrollHeight;
   }
@@ -632,9 +641,10 @@
     if (!container) return;
     const el = document.createElement('div');
     el.className = 'chat-bubble ai';
-    el.innerHTML = `I can help with that! Here's what I generated based on the photo you described.<div class="redacted-block" style="width:170px;height:210px;margin-top:10px"><span class="redacted-label">⚠ Output redacted</span></div>`;
+    el.innerHTML = `I can help with that! Here's what I generated based on the photo you described.<div class="redacted-block"><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Output redacted</span></div>`;
     container.appendChild(el);
     container.scrollTop = container.scrollHeight;
+    setTimeout(() => Eco.showChatExplanation(), 1200);
   }
 
   /* ── SCENE: PRIVATE CHANNELS (DM) ───────────────── */
@@ -1211,7 +1221,7 @@
     dm:        { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-comment"></i></span>',       app: 'Messages', title: 'Unknown contact', body: 'did you see what’s going around' },
     models:    { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-code"></i></span>',            app: 'Models', title: 'Open weights vs. closed models', body: 'The same model, released in two ways.' },
     reddit:    { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-globe"></i></span>',         app: 'Forum', title: 'c/faceswaps', body: 'New posts are flooding in.' },
-    search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Search', title: 'Results are ready', body: 'About 34,200,000 results. No safety warning displayed.' },
+    search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Search', title: 'Results are ready', body: 'About 34,200,000 results.' },
     appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'Store', title: 'Trending in Photo & Video', body: 'A photo editor is climbing the charts.' },
     payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout', title: 'Complete your purchase', body: 'Monthly plan. Cards and wallets accepted.' },
     cloud:     { icon: '<span class="notif-folder notif-folder--infra"><i class="fas fa-cloud"></i></span>',                app: 'Cloud', title: 'Instance running', body: 'Compute instance · region-1. Infrastructure most people never see.' },

@@ -103,7 +103,7 @@
     cursor = document.createElement('div');
     cursor.className = 'fin-cursor';
     cursor.setAttribute('aria-hidden', 'true');
-    cursor.innerHTML = '<svg viewBox="0 0 24 24" width="30" height="30"><path d="M3 2 L3 19 L8 14.5 L11.2 21.5 L14 20.2 L10.8 13.3 L17.5 13 Z" fill="#fff" stroke="#2b1d7a" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+    cursor.innerHTML = '<i class="fas fa-arrow-pointer" aria-hidden="true"></i>';
     mon.appendChild(cursor);
     return cursor;
   }

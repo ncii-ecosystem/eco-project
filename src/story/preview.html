@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Story preview</title>
+  <link rel="stylesheet" href="/src/shared/tokens.css">
+  <style>
+    body { margin: 0; font: 14px/1.4 var(--font-sans); color: var(--db-ink); background: var(--db-bg); }
+    header { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 12px; border-bottom: 1px solid var(--db-ink); }
+    select { flex: 1; min-width: 180px; }
+    button, select { font: inherit; color: inherit; background: var(--db-bg); border: 1px solid var(--db-ink); padding: 6px 10px; }
+    button { cursor: pointer; }
+    iframe { display: block; width: 100%; height: calc(100dvh - 64px); border: 0; }
+    #status { padding: 0 12px; }
+  </style>
+  <script src="/src/story/preview.js" defer></script>
+</head>
+<body>
+  <header>
+    <strong>Story preview</strong>
+    <button id="previous" aria-label="Previous stage">Previous</button>
+    <select id="stage" aria-label="Story stage"></select>
+    <button id="next" aria-label="Next stage">Next</button>
+    <button id="refresh">Refresh</button>
+    <a href="/story">Open story</a>
+  </header>
+  <p id="status" role="status">Loading stages…</p>
+  <iframe id="preview" title="Selected story stage"></iframe>
+</body>
+</html>

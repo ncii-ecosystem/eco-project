@@ -159,8 +159,8 @@
     arrowEl = document.createElementNS(SVGNS, 'svg');
     arrowEl.setAttribute('class', 'win-arrow');
     arrowEl.setAttribute('aria-hidden', 'true');
-    arrowEl.innerHTML = '<defs><marker id="wa-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#2b1d7a"/></marker></defs>' +
-      '<path class="wa-line" fill="none" stroke="#2b1d7a" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 9" marker-end="url(#wa-head)"/>';
+    arrowEl.innerHTML = '<defs><marker id="wa-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--p)"/></marker></defs>' +
+      '<path class="wa-line" fill="none" stroke="var(--p)" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 9" marker-end="url(#wa-head)"/>';
     monScreen.appendChild(arrowEl);
     return arrowEl;
   }

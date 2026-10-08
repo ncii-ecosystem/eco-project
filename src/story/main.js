@@ -31,7 +31,6 @@
   });
 
   /* ── Content warning ──────────────────────────────── */
-  document.getElementById('cw-resources')?.focus();   // the coloured default choice
   cwBtn.addEventListener('click', () => {
     const navbar = document.querySelector('.site-topnav');
     navbar.classList.remove('is-open');
@@ -156,10 +155,31 @@
   const hintEl = document.getElementById('reader-hint');
   function showHint(text) {
     if (!hintEl) return;
-    hintEl.textContent = text;
+    hintEl.textContent = text.replace(/ ↓$/, '');
+    if (text.endsWith(' ↓')) {
+      const arrow = document.createElement('i');
+      arrow.className = 'fas fa-arrow-down';
+      arrow.setAttribute('aria-hidden', 'true');
+      hintEl.append(' ', arrow);
+    }
     hintEl.classList.add('show');
   }
   function hideHint() { if (hintEl) hintEl.classList.remove('show'); }
+
+  Eco.showChatExplanation = () => {
+    const step = document.querySelector('[data-chat="respond"]');
+    if (!step || step.getBoundingClientRect().top <= window.innerHeight * 0.5 || pendingChapter) return;
+    releaseHold();
+    markNavigating();
+    nextStepAt = 0;
+    step.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+  };
+
+  document.getElementById('chat-send-btn')?.addEventListener('click', (event) => {
+    event.currentTarget.disabled = true;
+    Eco.sendMessage();
+    document.querySelector('[data-chat="send"]')?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+  });
 
   /* ── Reader controls: sound + restart ────────── */
   const rcRestart = document.getElementById('rc-restart');
@@ -168,7 +188,7 @@
   function renderSound() {
     if (!rcSound) return;
     rcSound.setAttribute('aria-pressed', String(Eco.sound.on));
-    rcSound.textContent = 'Sound: ' + (Eco.sound.on ? 'on' : 'off');
+    rcSound.querySelector('i').className = 'fas ' + (Eco.sound.on ? 'fa-volume-high' : 'fa-volume-xmark');
   }
   renderSound();
   if (rcSound) rcSound.addEventListener('click', () => { Eco.sound.set(!Eco.sound.on); renderSound(); });
@@ -506,11 +526,11 @@
       if (expanding) {
         notesApp.classList.add('centered');
         if (naEdDetails) naEdDetails.classList.add('visible');
-        naMoreBtn.textContent = '↑ less';
+        naMoreBtn.innerHTML = '<i class="fas fa-chevron-up" aria-hidden="true"></i><span>less</span>';
       } else {
         notesApp.classList.remove('centered');
         if (naEdDetails) naEdDetails.classList.remove('visible');
-        naMoreBtn.textContent = '↓ more';
+        naMoreBtn.innerHTML = '<i class="fas fa-chevron-down" aria-hidden="true"></i><span>more</span>';
       }
     });
   }
@@ -604,12 +624,13 @@
   /* A step with an animation shows its note when the animation is done; the previous note stays until then */
   let noteDelayTimer = null;
   function updateNotesApp(stepEl, delayMs) {
+    if (!cwOverlay.classList.contains('hidden')) return;
     clearTimeout(noteDelayTimer);
     if (delayMs > 0 && !prefersReducedMotion()) { noteDelayTimer = setTimeout(() => renderNote(stepEl), delayMs); return; }
     renderNote(stepEl);
   }
   function renderNote(stepEl) {
-    if (!notesApp) return;
+    if (!notesApp || !cwOverlay.classList.contains('hidden')) return;
     // where the note sits: set while it is closed it just appears there; set while open it glides
     const pos = stepEl.dataset.pos || '';
     if (!notesOpen) notesApp.classList.add('na-snap', 'na-jump');   // closed: move to the new place without any animation...
@@ -637,7 +658,7 @@
     if (naEdTitle)   naEdTitle.textContent = label;
     if (naEdBody)    naEdBody.textContent  = '';
     if (naEdDetails) { naEdDetails.textContent = fullBody; naEdDetails.classList.remove('visible'); }
-    if (naMoreBtn)   { naMoreBtn.classList.toggle('visible', details.length > 0); naMoreBtn.textContent = '↓ more'; naMoreBtn.setAttribute('aria-expanded', 'false'); }
+    if (naMoreBtn)   { naMoreBtn.classList.toggle('visible', details.length > 0); naMoreBtn.innerHTML = '<i class="fas fa-chevron-down" aria-hidden="true"></i><span>more</span>'; naMoreBtn.setAttribute('aria-expanded', 'false'); }
     if (naCursor)    naCursor.style.opacity = '1';
 
     pushNoteToSidebar(curNote, true);
@@ -876,10 +897,14 @@
     // Notes app — fires on every step--k regardless of which scene
     if (element.classList.contains('step--k') && !Eco.intro.floodRunning) updateNotesApp(element, Math.min(animMs(element), 2400));
 
-    // the two notifications of the opening hold the story until the reader clicks them
+    // The first notification waits for a click; the story transition continues automatically.
     if (direction === 'down') {
       if (element.dataset.intro === 'newsfeed' && !Eco.intro.newsOpen) openGate('news', element);
-      else if (element.dataset.intro === 'go' && !Eco.intro.storyOpen) openGate('story', element);
+      else if (element.dataset.intro === 'go' && !Eco.intro.storyOpen) {
+        Eco.intro.storyOpen = true;
+        openFeedFromCards();
+        Eco.intro.refresh();
+      }
     }
 
     // pause the scroll for the length of this step's animation (forwards only, and not in the intro)
@@ -997,7 +1022,7 @@
     const open = detail.classList.toggle('is-open');
     btn.setAttribute('aria-expanded', open);
     detail.setAttribute('aria-hidden', String(!open));
-    btn.textContent = open ? 'Read less ▴' : 'Read more ▾';
+    btn.innerHTML = open ? 'Read less <i class="fas fa-chevron-up" aria-hidden="true"></i>' : 'Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>';
   });
 
   /* ── Initial scene ───────────────────────────────── */

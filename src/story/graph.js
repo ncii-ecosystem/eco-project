@@ -16,8 +16,8 @@
 
   /* role → fill colour (the site's pastel chips) */
   const ROLE = {
-    creation: 'var(--r-creation)', distribution: 'var(--r-dist)', discovery: 'var(--r-prolif)',
-    infra: 'var(--r-infra)', money: 'var(--r-money)',
+    creation: 'var(--role-creation)', distribution: 'var(--role-distribution)', discovery: 'var(--role-proliferation)',
+    infra: 'var(--role-infra)', money: 'var(--role-monetization)',
   };
 
   /* Icons are Font Awesome glyphs */
