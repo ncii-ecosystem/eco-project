@@ -156,7 +156,7 @@ window.DatabaseRender = (function () {
     var hasLink = !!r.sourceUrl;
     var authors =
       r.authors || '';
-    var time = u().formatDisplayYear(r);
+    var time = u().formatDisplayDate(r);
     var org = r.source || '';
     var hideAuthors = authorsMatchOrg(authors, org);
     var showAuthors = authors && !hideAuthors;
@@ -170,8 +170,8 @@ window.DatabaseRender = (function () {
       techTagsHtml(r) +
       '</div>' +
       (time
-        ? '<div class="content-year">' + escapeHtml(time) + '</div>'
-        : '<div class="content-year" aria-hidden="true"></div>') +
+        ? '<div class="content-date">' + escapeHtml(time) + '</div>'
+        : '<div class="content-date" aria-hidden="true"></div>') +
       '</div>' +
       '<h2 class="content-title">' +
       renderTitleHtml(r) +

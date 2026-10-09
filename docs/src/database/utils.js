@@ -13,12 +13,14 @@ window.DatabaseUtils = (function () {
     return String(s || '').toLowerCase();
   }
 
-  function recordYear(r) {
-    return /^\d{4}$/.test(String(r.year || '')) ? Number(r.year) : -Infinity;
+  function recordDate(r) {
+    var value = String(r.date || '');
+    return /^\d{4}/.test(value) ? Number(value.slice(0, 4)) : -Infinity;
   }
 
-  function formatDisplayYear(r) {
-    return /^\d{4}$/.test(String(r.year || '')) ? String(r.year) : '';
+  function formatDisplayDate(r) {
+    var value = String(r.date || '');
+    return /^\d{4}(?:-\d{2}(?:-\d{2})?)?$/.test(value) ? value : '';
   }
 
   function fallbackColor(key) {
@@ -70,8 +72,9 @@ window.DatabaseUtils = (function () {
   function recordsToCsv(list) {
     var headers = [
       'title',
+      'authors',
       'link',
-      'year',
+      'date',
       'provenance',
       'technologies'
     ];
@@ -80,8 +83,9 @@ window.DatabaseUtils = (function () {
       lines.push(
         [
           csvEscape(r.title),
+          csvEscape(r.authors || ''),
           csvEscape(r.sourceUrl || ''),
-          csvEscape(formatDisplayYear(r)),
+          csvEscape(formatDisplayDate(r)),
           csvEscape('http://ncii-ecosysem.org'),
           csvEscape((r.technologies || []).join('; '))
         ].join(',')
@@ -130,8 +134,8 @@ window.DatabaseUtils = (function () {
   return {
     escapeHtml: escapeHtml,
     norm: norm,
-    recordYear: recordYear,
-    formatDisplayYear: formatDisplayYear,
+    recordDate: recordDate,
+    formatDisplayDate: formatDisplayDate,
     fallbackColor: fallbackColor,
     publisherLogoUrl: publisherLogoUrl,
     recordsToCsv: recordsToCsv,

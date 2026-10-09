@@ -76,6 +76,17 @@ function saneString(value, limit) {
   return String(value || '').trim().slice(0, limit);
 }
 
+function validDate(value) {
+  const match = String(value || '').match(/^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/);
+  if (!match || Number(match[1]) < 1900 || Number(match[1]) > 2100) return false;
+  if (match[2] && (Number(match[2]) < 1 || Number(match[2]) > 12)) return false;
+  if (match[3]) {
+    const days = new Date(Date.UTC(Number(match[1]), Number(match[2]), 0)).getUTCDate();
+    if (Number(match[3]) < 1 || Number(match[3]) > days) return false;
+  }
+  return true;
+}
+
 function normalizeSubmitter(raw) {
   const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
   const submitter = {
@@ -122,12 +133,12 @@ function buildCaseStudyDoc(input, techByName, submitter) {
   const title = saneString(input.title, LIMITS.TITLE);
   const authors = saneString(input.authors, LIMITS.AUTHORS);
   const medium = saneString(input.medium, 100);
-  const year = saneString(input.year, 4);
+  const date = saneString(input.date, 10);
   const sourceUrl = saneString(input.sourceUrl, LIMITS.URL);
   if (!title) throw new Error('Title is required.');
   if (!authors) throw new Error('Author(s)/organization is required.');
   if (!ALLOWED_MEDIUMS.has(medium)) throw new Error('Invalid type.');
-  if (!/^\d{4}$/.test(year) || Number(year) < 1900 || Number(year) > 2100) throw new Error('Enter a valid year.');
+  if (!validDate(date)) throw new Error('Enter a valid date.');
   try {
     const url = new URL(sourceUrl);
     if (!['http:', 'https:'].includes(url.protocol)) throw new Error();
@@ -148,7 +159,7 @@ function buildCaseStudyDoc(input, techByName, submitter) {
     title,
     authors,
     medium,
-    year,
+    date,
     sourceUrl,
     provenance: 'Open Submission',
     sensitiveThumbnail: true,

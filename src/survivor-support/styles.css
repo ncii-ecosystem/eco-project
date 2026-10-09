@@ -20,6 +20,15 @@
   margin-top: calc(var(--db-space-5) * 2);
 }
 
+.ss-meta-line {
+  margin: calc(var(--db-space-5) * 2) 0 0;
+  color: var(--db-ink);
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+  opacity: var(--db-muted);
+}
+
 .ss-group-title {
   margin: 0 0 var(--db-space-4);
   font-family: var(--db-font-mono);

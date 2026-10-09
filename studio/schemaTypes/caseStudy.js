@@ -10,6 +10,7 @@ export const caseStudy = defineType({
       name: "title",
       title: "Title",
       type: "string",
+      description: "Name of the article or paper.",
       validation: (Rule) => Rule.required().max(LIMITS.TITLE),
     }),
     defineField({
@@ -17,17 +18,20 @@ export const caseStudy = defineType({
       title: "Author(s)",
       type: "string",
       validation: (Rule) => Rule.max(LIMITS.AUTHORS),
-      description: "For a non-paper, add organization/outlet",
+      description: "List of authors, state, or organizations.",
     }),
     defineField({
-      name: "year",
-      title: "Year",
+      name: "date",
+      title: "Date",
       type: "string",
+      description: "Use a year alone, or add month and day when available. For research papers, use the year preprinted or published; for news articles, the posted date; for technical reports, the posted year; and for legislation, the enacted year or proposed year for pending legislation.",
       validation: (Rule) =>
-        Rule.custom((value) => {
+        Rule.custom((value, context) => {
           if (!value) return true;
-          if (/^\d{4}$/.test(value) && Number(value) >= 1900 && Number(value) <= 2100) return true;
-          return "Enter a valid year.";
+          const fullDate = /^\d{4}-\d{2}-\d{2}$/.test(value);
+          const partialDate = /^\d{4}(?:-\d{2})?$/.test(value);
+          if (!fullDate && !partialDate) return "Use YYYY, YYYY-MM, or YYYY-MM-DD.";
+          return true;
         }),
     }),
     defineField({
@@ -35,7 +39,7 @@ export const caseStudy = defineType({
       title: "Source",
       type: "string",
       validation: (Rule) => Rule.max(LIMITS.SOURCE),
-      description: "For a paper, add the publication venue here",
+      description: "Publication venue, source, or institution.",
     }),
     defineField({
       name: "medium",
@@ -44,6 +48,7 @@ export const caseStudy = defineType({
       options: {
         list: MEDIUMS.map((medium) => ({ title: medium, value: medium })),
       },
+      description: "Research paper, news article, technical report, legislation, or artifact such as a spreadsheet, open letter, dataset, or GitHub repository.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -148,6 +153,7 @@ export const caseStudy = defineType({
       name: "technologies",
       title: "Technologies",
       type: "array",
+      description: "Technologies associated with the source.",
       validation: (Rule) => Rule.max(LIMITS.TECHNOLOGIES),
       of: [
         defineArrayMember({
@@ -190,13 +196,13 @@ export const caseStudy = defineType({
     select: {
       title: "title",
       subtitle: "medium",
-      year: "year",
+      date: "date",
       provenance: "provenance",
       contact: "submitterContact",
       anonymous: "submitterAnonymous",
     },
-    prepare({ title, subtitle, year, provenance, contact, anonymous }) {
-      const bits = [subtitle, year].filter(Boolean);
+    prepare({ title, subtitle, date, provenance, contact, anonymous }) {
+      const bits = [subtitle, date].filter(Boolean);
       if (provenance === "Open Submission") {
         const who = anonymous ? "anonymous" : contact;
         bits.unshift(who ? `Submission · ${who}` : "Submission");
@@ -209,9 +215,9 @@ export const caseStudy = defineType({
   },
   orderings: [
     {
-      title: "Year, newest",
-      name: "yearDesc",
-      by: [{ field: "year", direction: "desc" }],
+      title: "Date, newest",
+      name: "dateDesc",
+      by: [{ field: "date", direction: "desc" }],
     },
   ],
 });

@@ -56,7 +56,7 @@ window.SanityClient = (function () {
       id: String(doc._id || ''),
       title: String(doc.title || '').trim(),
       authors: String(doc.authors || '').trim(),
-      year: String(doc.year || '').trim(),
+      date: String(doc.date || '').trim(),
       source: String(doc.source || '').trim(),
       medium: normalizeMedium(doc.medium),
       technologies: techs,
@@ -84,11 +84,11 @@ window.SanityClient = (function () {
   }
 
   var CASE_STUDIES_QUERY =
-    '*[_type == "caseStudy" && !(_id in path("drafts.**")) && (!defined(provenance) || provenance != "Annotated Bibliography")] | order(year desc) {' +
+    '*[_type == "caseStudy" && !(_id in path("drafts.**")) && (!defined(provenance) || provenance != "Annotated Bibliography")] | order(date desc) {' +
     '  _id,' +
     '  title,' +
     '  authors,' +
-    '  year,' +
+    '  date,' +
     '  source,' +
     '  medium,' +
     '  sourceUrl,' +

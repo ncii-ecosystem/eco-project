@@ -549,6 +549,10 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
   min-width: 0;
 }
 
+.db-actions-credit {
+  opacity: var(--db-muted);
+}
+
 .db-submit,
 .db-export {
   appearance: none;
@@ -883,7 +887,7 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
   background: var(--db-role-monetization);
 }
 
-.db-result-bottom .content-year,
+.db-result-bottom .content-date,
 .db-result-bottom .content-authors {
   flex: 0 1 auto;
   text-align: right;
@@ -1034,6 +1038,36 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
 
 .db-docs li + li {
   margin-top: var(--db-space-2);
+}
+
+.db-docs-table-wrap {
+  overflow-x: auto;
+}
+
+.db-docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+}
+
+.db-docs-table th,
+.db-docs-table td {
+  padding: var(--db-space-2);
+  border: 1px solid var(--db-ink);
+  text-align: left;
+  vertical-align: top;
+}
+
+.db-docs-table thead th,
+.db-docs-table tbody th {
+  font-family: var(--db-font-mono);
+  font-weight: 400;
+}
+
+.db-docs-table thead th {
+  background: var(--db-ink);
+  color: var(--db-bg);
 }
 
 body.page-body .db-docs a {

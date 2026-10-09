@@ -4,8 +4,7 @@ window.DatabaseSubmit = (function () {
   var state = {
     entries: [],
     openIndex: 0,
-    publishing: false,
-    submitted: false
+    publishing: false
   };
 
   var limitUpdates = [];
@@ -46,7 +45,7 @@ window.DatabaseSubmit = (function () {
       techs: new Set(),
       authors: '',
       medium: '',
-      year: '',
+      date: '',
       source: '',
       url: ''
     };
@@ -67,7 +66,7 @@ window.DatabaseSubmit = (function () {
     entry.title = fieldValue('db-sub-title').slice(0, MAX_TITLE);
     entry.authors = fieldValue('db-sub-authors-input').trim();
     entry.medium = fieldValue('db-sub-medium');
-    entry.year = fieldValue('db-sub-year').trim();
+    entry.date = fieldValue('db-sub-date').trim();
     entry.source = fieldValue('db-sub-source').trim().slice(0, MAX_SOURCE);
     entry.url = fieldValue('db-sub-url').trim().slice(0, MAX_URL);
   }
@@ -78,12 +77,12 @@ window.DatabaseSubmit = (function () {
     var title = document.getElementById('db-sub-title');
     var authors = document.getElementById('db-sub-authors-input');
     var medium = document.getElementById('db-sub-medium');
-    var year = document.getElementById('db-sub-year');
+    var date = document.getElementById('db-sub-date');
     var source = document.getElementById('db-sub-source');
     var url = document.getElementById('db-sub-url');
     if (title) title.value = entry.title || '';
     if (authors) authors.value = entry.authors || '';
-    if (year) year.value = entry.year || '';
+    if (date) date.value = entry.date || '';
     if (source) source.value = entry.source || '';
     if (url) url.value = entry.url || '';
     if (medium) {
@@ -110,7 +109,6 @@ window.DatabaseSubmit = (function () {
     state.entries = [blankEntry()];
     state.openIndex = 0;
     state.publishing = false;
-    state.submitted = false;
     var saveBtn = document.getElementById('db-submit-save');
     var name = document.getElementById('db-sub-name');
     var affiliation = document.getElementById('db-sub-affiliation');
@@ -287,8 +285,15 @@ window.DatabaseSubmit = (function () {
     entry.title = title.value;
   }
 
-  function validateYear(value) {
-    return /^\d{4}$/.test(value) && Number(value) >= 1900 && Number(value) <= 2100;
+  function validateDate(value) {
+    var match = String(value || '').match(/^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/);
+    if (!match || Number(match[1]) < 1900 || Number(match[1]) > 2100) return false;
+    if (match[2] && (Number(match[2]) < 1 || Number(match[2]) > 12)) return false;
+    if (match[3]) {
+      var days = new Date(Date.UTC(Number(match[1]), Number(match[2]), 0)).getUTCDate();
+      if (Number(match[3]) < 1 || Number(match[3]) > days) return false;
+    }
+    return true;
   }
 
   function validateUrl(value) {
@@ -329,8 +334,8 @@ window.DatabaseSubmit = (function () {
     if (!entry.authors) return prefix + 'Author(s)/organization is required.';
     if (entry.authors.length > MAX_AUTHORS) return prefix + 'You’ve reached the maximum number of characters for this field.';
     if (!entry.medium) return prefix + 'Type is required.';
-    if (!entry.year) return prefix + 'Year is required.';
-    if (!validateYear(entry.year)) return prefix + 'Enter a valid year.';
+    if (!entry.date) return prefix + 'Date is required.';
+    if (!validateDate(entry.date)) return prefix + 'Enter a valid date.';
     if (!entry.url) return prefix + 'URL is required.';
     if (!validateUrl(entry.url)) return prefix + 'URL must start with http:// or https://.';
     return '';
@@ -340,10 +345,6 @@ window.DatabaseSubmit = (function () {
     updateIdentityUI();
     var button = document.getElementById('db-submit-save');
     if (!button) return;
-    if (state.submitted) {
-      button.disabled = false;
-      return;
-    }
     readOpenEntry();
     var submitter = readSubmitter();
     var problem = submitter.listPublicly && !submitter.name ? 'Name is required for public credit.' : '';
@@ -358,12 +359,6 @@ window.DatabaseSubmit = (function () {
 
   function submitEntry(event) {
     if (event) event.preventDefault();
-    if (state.submitted) {
-      resetFormState();
-      var title = document.getElementById('db-sub-title');
-      if (title) title.focus();
-      return;
-    }
     if (state.publishing) return;
 
     readOpenEntry();
@@ -419,7 +414,7 @@ window.DatabaseSubmit = (function () {
       return {
         title: String(entry.title || '').trim().slice(0, MAX_TITLE),
         authors: entry.authors,
-        year: entry.year,
+        date: entry.date,
         source: entry.source,
         medium: entry.medium,
         sourceUrl: entry.url,
@@ -438,13 +433,7 @@ window.DatabaseSubmit = (function () {
       submitter: submitter
     })
       .then(function () {
-        var buttonWidth = saveBtn.getBoundingClientRect().width;
         resetFormState();
-        state.submitted = true;
-        saveBtn.style.boxSizing = 'border-box';
-        saveBtn.style.width = buttonWidth + 'px';
-        saveBtn.textContent = 'Start new submission';
-        saveBtn.disabled = false;
         var count = payloadEntries.length;
         setStatus(count === 1
           ? 'Thanks for contributing! We’ve received your entry, and our researchers will take a look.'
@@ -508,7 +497,7 @@ window.DatabaseSubmit = (function () {
       ['db-sub-name', MAX_NAME],
       ['db-sub-affiliation', MAX_AFFILIATION],
       ['db-sub-contact', MAX_CONTACT],
-      ['db-sub-year', 4, 'Enter a valid year.'],
+      ['db-sub-date', 10, 'Enter a valid date.'],
       ['db-sub-authors-input', MAX_AUTHORS]
     ];
     fields.forEach(function (spec) {
@@ -522,8 +511,9 @@ window.DatabaseSubmit = (function () {
       hint.setAttribute('aria-live', 'polite');
       function updateLimit() {
         var message = '';
-        if (spec[0] === 'db-sub-year') {
-          if (input.value && !validateYear(input.value.trim())) message = spec[2];
+        if (spec[0] === 'db-sub-date') {
+          var medium = fieldValue('db-sub-medium');
+          if (input.value && !validateDate(input.value.trim())) message = spec[2];
         } else if (spec[0] === 'db-sub-url' && input.value.trim() && !validateUrl(input.value.trim())) {
           message = 'Enter a valid URL starting with http:// or https://.';
         } else if (spec[0] === 'db-sub-contact' && input.value.trim() && !validateContact(input.value.trim())) {

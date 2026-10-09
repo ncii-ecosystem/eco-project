@@ -241,6 +241,17 @@ function normalizeSubmitter(raw) {
   };
 }
 
+function validDate(value) {
+  const match = String(value || '').match(/^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/);
+  if (!match || Number(match[1]) < 1900 || Number(match[1]) > 2100) return false;
+  if (match[2] && (Number(match[2]) < 1 || Number(match[2]) > 12)) return false;
+  if (match[3]) {
+    const days = new Date(Date.UTC(Number(match[1]), Number(match[2]), 0)).getUTCDate();
+    if (Number(match[3]) < 1 || Number(match[3]) > days) return false;
+  }
+  return true;
+}
+
 function buildCaseStudyDoc(input, techByName, submitter) {
   const title = String(input.title || '').trim();
   const medium = String(input.medium || '').trim();
@@ -332,11 +343,9 @@ function buildCaseStudyDoc(input, techByName, submitter) {
     headlineSegments.push(entry);
   }
 
-  const year = String(input.year || '').trim();
-  if (!year) throw new Error('Year is required');
-  if (!/^\d{4}$/.test(year) || Number(year) < 1900 || Number(year) > 2100) {
-    throw new Error('Enter a valid year.');
-  }
+  const date = String(input.date || '').trim();
+  if (!date) throw new Error('Date is required');
+  if (!validDate(date)) throw new Error('Enter a valid date.');
 
   const sourceUrl = String(input.sourceUrl || '').trim().slice(0, LIMITS.URL);
   if (!sourceUrl) throw new Error('URL is required');
@@ -360,7 +369,7 @@ function buildCaseStudyDoc(input, techByName, submitter) {
     sensitiveThumbnail: true,
     technologies: technologies,
     headlineSegments: headlineSegments,
-    year: year,
+    date: date,
     sourceUrl: sourceUrl,
     submitterAnonymous: !!submitter.anonymous,
     listSubmitterPublicly: !!submitter.listPublicly,

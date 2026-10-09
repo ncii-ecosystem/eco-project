@@ -10,7 +10,7 @@
   var selectedTech = new Set();
   var selectedTypes = new Set();
   var searchQuery = '';
-  var sortKey = 'year';
+  var sortKey = 'date';
   var sortDir = 'desc';
   var searchBlobs = new WeakMap();
   var techCounts = new Map();
@@ -68,8 +68,8 @@
       if (sortKey === 'title') {
         cmp = titleCollator.compare(String(a.title || ''), String(b.title || ''));
       } else {
-        var at = utils.recordYear(a);
-        var bt = utils.recordYear(b);
+        var at = utils.recordDate(a);
+        var bt = utils.recordDate(b);
         cmp = at === bt ? 0 : at < bt ? -1 : 1;
         if (cmp === 0) {
           cmp = titleCollator.compare(String(a.title || ''), String(b.title || ''));
@@ -225,15 +225,15 @@
 
     function syncKeyButton(animate) {
       if (!keyBtn) return;
-      var byYear = sortKey === 'year';
-      var label = byYear ? 'year' : 'a–z';
+      var byDate = sortKey === 'date';
+      var label = byDate ? 'date' : 'a–z';
       var labelEl = keyBtn.querySelector('.db-sort-btn-label');
       keyBtn.setAttribute('data-sort', sortKey);
       keyBtn.setAttribute(
         'aria-label',
-        byYear
-          ? 'Sort by year. Click to switch to a–z.'
-          : 'Sort a–z. Click to switch to year.'
+        byDate
+          ? 'Sort by date. Click to switch to a–z.'
+          : 'Sort a–z. Click to switch to date.'
       );
       function applyLabel() {
         if (labelEl) labelEl.textContent = label;
@@ -267,7 +267,7 @@
 
     if (keyBtn) {
       keyBtn.addEventListener('click', function () {
-        sortKey = sortKey === 'year' ? 'title' : 'year';
+        sortKey = sortKey === 'date' ? 'title' : 'date';
         syncKeyButton(true);
         renderResults();
       });

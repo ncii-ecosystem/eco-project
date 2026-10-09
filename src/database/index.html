@@ -1,461 +1,711 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<link rel="stylesheet" href="/src/shared/router.css" />
-<script src="/src/shared/router.js"></script>
-<meta charset="UTF-8" />
-<link rel="stylesheet" href="/src/shared/tokens.css" />
-<link rel="stylesheet" href="/src/shared/site-nav.css" />
-<script src="/src/shared/theme-boot.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link id="site-favicon" rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
-<title>Database</title>
-<meta name="description" content="A public and living document compiling academic, civil society, advocacy, and journalistic work related to the creation pipeline behind AIG-NCII." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=PT+Mono&display=swap" rel="stylesheet" />
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-  integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-/>
-<link rel="stylesheet" href="/src/shared/page-styles.css" />
-<link rel="stylesheet" href="/src/database/styles.css" />
-<script src="/src/shared/nav.js" defer></script>
-<script>
-(function () {
-  try {
-    var mobile = window.matchMedia('(max-width: 720px)').matches;
-    if (mobile) {
-      if (localStorage.getItem('db-sidebar-collapsed-mobile') === '0') {
-        document.documentElement.classList.add('db-sidebar-expanded');
-      }
-    } else if (localStorage.getItem('db-sidebar-collapsed') === '1') {
-      document.documentElement.classList.add('db-sidebar-collapsed');
-    }
-  } catch (e) {}
-})();
-</script>
-</head>
-<body class="page-body db-split">
-<script>
-(function () {
-  var root = document.documentElement;
-  if (root.classList.contains('db-sidebar-collapsed')) {
-    document.body.classList.add('db-sidebar-collapsed');
-  }
-  if (root.classList.contains('db-sidebar-expanded')) {
-    document.body.classList.add('db-sidebar-expanded');
-  }
-})();
-</script>
+  <head>
+    <link rel="stylesheet" href="/src/shared/router.css" />
+    <script src="/src/shared/router.js"></script>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/shared/tokens.css" />
+    <link rel="stylesheet" href="/src/shared/site-nav.css" />
+    <script src="/src/shared/theme-boot.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      id="site-favicon"
+      rel="icon"
+      type="image/svg+xml"
+      href="/assets/logo.svg"
+    />
+    <title>Database</title>
+    <meta
+      name="description"
+      content="A public and living document compiling academic, civil society, advocacy, and journalistic work related to the creation pipeline behind AIG-NCII."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=PT+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/src/shared/page-styles.css" />
+    <link rel="stylesheet" href="/src/database/styles.css" />
+    <script src="/src/shared/nav.js" defer></script>
+    <script>
+      (function () {
+        try {
+          var mobile = window.matchMedia("(max-width: 720px)").matches;
+          if (mobile) {
+            if (localStorage.getItem("db-sidebar-collapsed-mobile") === "0") {
+              document.documentElement.classList.add("db-sidebar-expanded");
+            }
+          } else if (localStorage.getItem("db-sidebar-collapsed") === "1") {
+            document.documentElement.classList.add("db-sidebar-collapsed");
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="page-body db-split">
+    <script>
+      (function () {
+        var root = document.documentElement;
+        if (root.classList.contains("db-sidebar-collapsed")) {
+          document.body.classList.add("db-sidebar-collapsed");
+        }
+        if (root.classList.contains("db-sidebar-expanded")) {
+          document.body.classList.add("db-sidebar-expanded");
+        }
+      })();
+    </script>
 
-<header class="site-topnav">
-  <a class="site-logo" href="/home" aria-label="ncii ecosystem">
-    <img class="site-logo-img" src="/assets/logo.svg" alt="" width="28" height="28" />
-    <span class="site-logo-name">ncii ecosystem</span>
-  </a>
-  <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
-    <span class="site-burger" aria-hidden="true"></span>
-  </button>
-  <div class="site-nav-panel" id="site-nav-menu">
-    <nav aria-label="Site">
-      <ul class="site-topnav-links">
-        <li><a href="/home">Home</a></li>
-        <li><a href="/story">Story</a></li>
-        <li><a href="/database" aria-current="page">Database</a></li>
-        <li><a href="/survivor-support">Survivor Support</a></li>
-        <li><a href="/about">About</a></li>
-      </ul>
-    </nav>
-    <button type="button" class="site-theme-toggle" id="site-theme-toggle" aria-label="Switch to dark mode" title="Theme">
-      <i class="site-theme-toggle-icon fas fa-fw fa-moon" aria-hidden="true"></i>
-    </button>
-  </div>
-</header>
-
-<main class="db-layout">
-  <aside class="db-sidebar" id="side" aria-label="Database controls">
-    <div class="db-sidebar-wrapper">
-      <p class="db-intro">
-        A
-        <span class="db-intro-mark db-intro-mark--public" title="Open to the public">
-          public <span class="db-intro-mark-icon" aria-hidden="true">(<i class="db-intro-glyph fas fa-globe"></i>)</span>
-        </span>
-        and
-        <span class="db-intro-mark db-intro-mark--living" title="Updated over time">
-          living <span class="db-intro-mark-icon" aria-hidden="true">(<i class="db-intro-glyph fas fa-sync-alt"></i>)</span>
-        </span>
-        document compiling academic, civil society, advocacy, and journalistic work related to the creation pipeline behind AIG-NCII, the broader technological ecosystem, established best practices, and the role of AI companies in facilitating harm.
-        <button type="button" class="db-intro-info" id="db-intro-info" data-dialog-open="db-info-dialog" aria-haspopup="dialog" aria-controls="db-info-dialog" aria-label="Open database docs" title="Docs">
-          <!-- Lucide Info icon (ISC license): https://lucide.dev/license -->
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 16v-4M12 8h.01" />
-          </svg>
+    <header class="site-topnav">
+      <a class="site-logo" href="/home" aria-label="ncii ecosystem">
+        <img
+          class="site-logo-img"
+          src="/assets/logo.svg"
+          alt=""
+          width="28"
+          height="28"
+        />
+        <span class="site-logo-name">ncii ecosystem</span>
+      </a>
+      <button
+        type="button"
+        class="site-nav-tab"
+        aria-expanded="false"
+        aria-controls="site-nav-menu"
+        aria-label="Open menu"
+      >
+        <span class="site-burger" aria-hidden="true"></span>
+      </button>
+      <div class="site-nav-panel" id="site-nav-menu">
+        <nav aria-label="Site">
+          <ul class="site-topnav-links">
+            <li><a href="/home">Home</a></li>
+            <li><a href="/story">Story</a></li>
+            <li><a href="/database" aria-current="page">Database</a></li>
+            <li><a href="/survivor-support">Survivor Support</a></li>
+            <li><a href="/about">About</a></li>
+          </ul>
+        </nav>
+        <button
+          type="button"
+          class="site-theme-toggle"
+          id="site-theme-toggle"
+          aria-label="Switch to dark mode"
+          title="Theme"
+        >
+          <i
+            class="site-theme-toggle-icon fas fa-fw fa-moon"
+            aria-hidden="true"
+          ></i>
         </button>
-      </p>
+      </div>
+    </header>
 
-      <div class="db-sidebar-main">
-        <div class="db-search-row">
-          <div class="db-search" id="search">
-            <input
-              class="db-search-input"
-              type="text"
-              id="db-search"
-              placeholder="Search 0 entries"
-              autocomplete="off"
-              spellcheck="false"
-            />
-          </div>
-
-          <div class="db-sort" id="db-sort" role="group" aria-label="Sort results">
+    <main class="db-layout">
+      <aside class="db-sidebar" id="side" aria-label="Database controls">
+        <div class="db-sidebar-wrapper">
+          <p class="db-intro">
+            A
+            <span
+              class="db-intro-mark db-intro-mark--public"
+              title="Open to the public"
+            >
+              public
+              <span class="db-intro-mark-icon" aria-hidden="true"
+                >(<i class="db-intro-glyph fas fa-globe"></i>)</span
+              >
+            </span>
+            and
+            <span
+              class="db-intro-mark db-intro-mark--living"
+              title="Updated over time"
+            >
+              living
+              <span class="db-intro-mark-icon" aria-hidden="true"
+                >(<i class="db-intro-glyph fas fa-sync-alt"></i>)</span
+              >
+            </span>
+            document compiling academic, civil society, advocacy, and
+            journalistic work related to the creation pipeline behind AIG-NCII,
+            the broader technological ecosystem, established best practices, and
+            the role of AI companies in facilitating harm.
             <button
               type="button"
-              class="db-sort-btn"
-              id="db-sort-key"
-              data-sort="year"
-              aria-label="Sort by year. Click to switch to a–z."
+              class="db-intro-info"
+              id="db-intro-info"
+              data-dialog-open="db-info-dialog"
+              aria-haspopup="dialog"
+              aria-controls="db-info-dialog"
+              aria-label="Open database docs"
+              title="Docs"
             >
-              <span class="db-sort-btn-sizer" aria-hidden="true">year</span>
-              <span class="db-sort-btn-sizer" aria-hidden="true">a–z</span>
-              <span class="db-sort-btn-label">year</span>
+              <!-- Lucide Info icon (ISC license): https://lucide.dev/license -->
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4M12 8h.01" />
+              </svg>
             </button>
-            <button
-              type="button"
-              class="db-sort-arrow is-desc"
-              id="db-sort-dir"
-              title="Descending"
-              aria-label="Sort descending. Click to reverse."
-            >
-              <span class="db-sort-arrow-glyph">↓</span>
-            </button>
+          </p>
+
+          <div class="db-sidebar-main">
+            <div class="db-search-row">
+              <div class="db-search" id="search">
+                <input
+                  class="db-search-input"
+                  type="text"
+                  id="db-search"
+                  placeholder="Search 0 entries"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+
+              <div
+                class="db-sort"
+                id="db-sort"
+                role="group"
+                aria-label="Sort results"
+              >
+                <button
+                  type="button"
+                  class="db-sort-btn"
+                  id="db-sort-key"
+                  data-sort="date"
+                  aria-label="Sort by date. Click to switch to a–z."
+                >
+                  <span class="db-sort-btn-sizer" aria-hidden="true">date</span>
+                  <span class="db-sort-btn-sizer" aria-hidden="true">a–z</span>
+                  <span class="db-sort-btn-label">date</span>
+                </button>
+                <button
+                  type="button"
+                  class="db-sort-arrow is-desc"
+                  id="db-sort-dir"
+                  title="Descending"
+                  aria-label="Sort descending. Click to reverse."
+                >
+                  <span class="db-sort-arrow-glyph">↓</span>
+                </button>
+              </div>
+
+              <button
+                type="button"
+                class="db-sidebar-toggle"
+                id="db-sidebar-toggle"
+                aria-expanded="true"
+                aria-controls="db-filters-panel"
+                title="Put filters away"
+                aria-label="Put filters away"
+              >
+                <i
+                  class="db-sidebar-toggle-glyph db-sidebar-toggle-glyph--desktop fas fa-chevron-left"
+                  aria-hidden="true"
+                ></i>
+                <i
+                  class="db-sidebar-toggle-glyph db-sidebar-toggle-glyph--plus fas fa-plus"
+                  aria-hidden="true"
+                ></i>
+                <i
+                  class="db-sidebar-toggle-glyph db-sidebar-toggle-glyph--minus fas fa-minus"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+
+            <nav class="db-filters" id="filter" aria-label="Filters">
+              <div class="db-filter-section" id="db-filters-panel">
+                <div
+                  class="db-filter-block db-filter-block--types"
+                  id="db-type-filters"
+                ></div>
+              </div>
+              <div class="db-filter-section">
+                <div
+                  class="db-filter-block db-filter-block--tech"
+                  id="db-tech-filters"
+                ></div>
+              </div>
+            </nav>
           </div>
 
+          <div class="db-actions" id="actions">
+            <div class="db-action-row">
+              <button type="button" class="db-submit" id="db-submit">
+                Submit entries
+              </button>
+              <button type="button" class="db-submit" id="db-export">
+                Export 0 entries
+              </button>
+            </div>
+            <p class="db-meta-line db-actions-credit">Designed and built by Maja Mishevska</p>
+          </div>
+        </div>
+      </aside>
+
+      <div class="db-index" id="index">
+        <div
+          class="db-list"
+          id="db-results"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <div class="db-result db-result--skeleton" aria-hidden="true">
+            <div class="db-result-link">
+              <div class="db-result-top">
+                <span class="db-skel db-skel--chip"></span>
+                <span class="db-skel db-skel--chip db-skel--short"></span>
+              </div>
+              <div class="db-skel db-skel--title"></div>
+              <div class="db-skel db-skel--meta"></div>
+            </div>
+            <div class="db-result-media db-skel-media"></div>
+          </div>
+          <div class="db-result db-result--skeleton" aria-hidden="true">
+            <div class="db-result-link">
+              <div class="db-result-top">
+                <span class="db-skel db-skel--chip"></span>
+                <span class="db-skel db-skel--chip db-skel--short"></span>
+              </div>
+              <div class="db-skel db-skel--title"></div>
+              <div class="db-skel db-skel--meta"></div>
+            </div>
+            <div class="db-result-media db-skel-media"></div>
+          </div>
+          <div class="db-result db-result--skeleton" aria-hidden="true">
+            <div class="db-result-link">
+              <div class="db-result-top">
+                <span class="db-skel db-skel--chip"></span>
+                <span class="db-skel db-skel--chip db-skel--short"></span>
+              </div>
+              <div class="db-skel db-skel--title"></div>
+              <div class="db-skel db-skel--meta"></div>
+            </div>
+            <div class="db-result-media db-skel-media"></div>
+          </div>
+          <div class="db-result db-result--skeleton" aria-hidden="true">
+            <div class="db-result-link">
+              <div class="db-result-top">
+                <span class="db-skel db-skel--chip"></span>
+                <span class="db-skel db-skel--chip db-skel--short"></span>
+              </div>
+              <div class="db-skel db-skel--title"></div>
+              <div class="db-skel db-skel--meta"></div>
+            </div>
+            <div class="db-result-media db-skel-media"></div>
+          </div>
+          <div class="db-result db-result--skeleton" aria-hidden="true">
+            <div class="db-result-link">
+              <div class="db-result-top">
+                <span class="db-skel db-skel--chip"></span>
+                <span class="db-skel db-skel--chip db-skel--short"></span>
+              </div>
+              <div class="db-skel db-skel--title"></div>
+              <div class="db-skel db-skel--meta"></div>
+            </div>
+            <div class="db-result-media db-skel-media"></div>
+          </div>
+          <div class="db-result db-result--skeleton" aria-hidden="true">
+            <div class="db-result-link">
+              <div class="db-result-top">
+                <span class="db-skel db-skel--chip"></span>
+                <span class="db-skel db-skel--chip db-skel--short"></span>
+              </div>
+              <div class="db-skel db-skel--title"></div>
+              <div class="db-skel db-skel--meta"></div>
+            </div>
+            <div class="db-result-media db-skel-media"></div>
+          </div>
+          <div class="db-result db-result--skeleton" aria-hidden="true">
+            <div class="db-result-link">
+              <div class="db-result-top">
+                <span class="db-skel db-skel--chip"></span>
+                <span class="db-skel db-skel--chip db-skel--short"></span>
+              </div>
+              <div class="db-skel db-skel--title"></div>
+              <div class="db-skel db-skel--meta"></div>
+            </div>
+            <div class="db-result-media db-skel-media"></div>
+          </div>
+        </div>
+        <footer class="db-index-footer">
+          <p class="db-meta-line">Contributors: listed here.</p>
+        </footer>
+      </div>
+    </main>
+
+    <dialog
+      class="db-dialog"
+      id="db-info-dialog"
+      aria-labelledby="db-info-title"
+    >
+      <div class="db-dialog-panel">
+        <header class="db-dialog-header">
+          <h2 class="db-dialog-title" id="db-info-title">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" />
+            </svg>
+            Docs
+          </h2>
           <button
             type="button"
-            class="db-sidebar-toggle"
-            id="db-sidebar-toggle"
-            aria-expanded="true"
-            aria-controls="db-filters-panel"
-            title="Put filters away"
-            aria-label="Put filters away"
+            class="db-dialog-close"
+            data-dialog-close
+            aria-label="Close"
           >
-            <i class="db-sidebar-toggle-glyph db-sidebar-toggle-glyph--desktop fas fa-chevron-left" aria-hidden="true"></i>
-            <i class="db-sidebar-toggle-glyph db-sidebar-toggle-glyph--plus fas fa-plus" aria-hidden="true"></i>
-            <i class="db-sidebar-toggle-glyph db-sidebar-toggle-glyph--minus fas fa-minus" aria-hidden="true"></i>
+            ×
           </button>
-        </div>
+        </header>
+        <div class="db-dialog-body db-docs">
+          <section aria-labelledby="db-docs-use">
+            <h3 id="db-docs-use">How to use this database</h3>
+            <ul>
+              <li>
+                Search for a topic, author, or source, and narrow results by
+                technology or type. Sort by date or title, and open an entry to
+                read its original source.
+              </li>
+              <li>
+                Choosing several technologies matches entries related to any of
+                them. Technology, type, and search filters work together.
+              </li>
+              <li>Export your current results as CSV for further analysis.</li>
+              <li>
+                Submit a source we’re missing through “Submit entries” to help
+                grow the collection. You can contribute anonymously or choose to
+                be credited.
+              </li>
+            </ul>
+          </section>
 
-        <nav class="db-filters" id="filter" aria-label="Filters">
-          <div class="db-filter-section" id="db-filters-panel">
-            <div class="db-filter-block db-filter-block--types" id="db-type-filters"></div>
-          </div>
-          <div class="db-filter-section">
-            <div class="db-filter-block db-filter-block--tech" id="db-tech-filters"></div>
-          </div>
-        </nav>
-      </div>
-
-      <div class="db-actions" id="actions">
-        <div class="db-action-row">
-          <button type="button" class="db-submit" id="db-submit">Submit entries</button>
-          <button type="button" class="db-submit" id="db-export">Export 0 entries</button>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <div class="db-index" id="index">
-    <div class="db-list" id="db-results" aria-live="polite" aria-busy="true">
-      <div class="db-result db-result--skeleton" aria-hidden="true">
-        <div class="db-result-link">
-          <div class="db-result-top">
-            <span class="db-skel db-skel--chip"></span>
-            <span class="db-skel db-skel--chip db-skel--short"></span>
-          </div>
-          <div class="db-skel db-skel--title"></div>
-          <div class="db-skel db-skel--meta"></div>
-        </div>
-        <div class="db-result-media db-skel-media"></div>
-      </div>
-      <div class="db-result db-result--skeleton" aria-hidden="true">
-        <div class="db-result-link">
-          <div class="db-result-top">
-            <span class="db-skel db-skel--chip"></span>
-            <span class="db-skel db-skel--chip db-skel--short"></span>
-          </div>
-          <div class="db-skel db-skel--title"></div>
-          <div class="db-skel db-skel--meta"></div>
-        </div>
-        <div class="db-result-media db-skel-media"></div>
-      </div>
-      <div class="db-result db-result--skeleton" aria-hidden="true">
-        <div class="db-result-link">
-          <div class="db-result-top">
-            <span class="db-skel db-skel--chip"></span>
-            <span class="db-skel db-skel--chip db-skel--short"></span>
-          </div>
-          <div class="db-skel db-skel--title"></div>
-          <div class="db-skel db-skel--meta"></div>
-        </div>
-        <div class="db-result-media db-skel-media"></div>
-      </div>
-      <div class="db-result db-result--skeleton" aria-hidden="true">
-        <div class="db-result-link">
-          <div class="db-result-top">
-            <span class="db-skel db-skel--chip"></span>
-            <span class="db-skel db-skel--chip db-skel--short"></span>
-          </div>
-          <div class="db-skel db-skel--title"></div>
-          <div class="db-skel db-skel--meta"></div>
-        </div>
-        <div class="db-result-media db-skel-media"></div>
-      </div>
-      <div class="db-result db-result--skeleton" aria-hidden="true">
-        <div class="db-result-link">
-          <div class="db-result-top">
-            <span class="db-skel db-skel--chip"></span>
-            <span class="db-skel db-skel--chip db-skel--short"></span>
-          </div>
-          <div class="db-skel db-skel--title"></div>
-          <div class="db-skel db-skel--meta"></div>
-        </div>
-        <div class="db-result-media db-skel-media"></div>
-      </div>
-      <div class="db-result db-result--skeleton" aria-hidden="true">
-        <div class="db-result-link">
-          <div class="db-result-top">
-            <span class="db-skel db-skel--chip"></span>
-            <span class="db-skel db-skel--chip db-skel--short"></span>
-          </div>
-          <div class="db-skel db-skel--title"></div>
-          <div class="db-skel db-skel--meta"></div>
-        </div>
-        <div class="db-result-media db-skel-media"></div>
-      </div>
-      <div class="db-result db-result--skeleton" aria-hidden="true">
-        <div class="db-result-link">
-          <div class="db-result-top">
-            <span class="db-skel db-skel--chip"></span>
-            <span class="db-skel db-skel--chip db-skel--short"></span>
-          </div>
-          <div class="db-skel db-skel--title"></div>
-          <div class="db-skel db-skel--meta"></div>
-        </div>
-        <div class="db-result-media db-skel-media"></div>
-      </div>
-    </div>
-    <footer class="db-index-footer">
-      <p class="db-meta-line">Contributors: listed here.</p>
-    </footer>
-  </div>
-</main>
-
-<dialog class="db-dialog" id="db-info-dialog" aria-labelledby="db-info-title">
-  <div class="db-dialog-panel">
-    <header class="db-dialog-header">
-      <h2 class="db-dialog-title" id="db-info-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 16v-4M12 8h.01" />
-        </svg>
-        Docs
-      </h2>
-      <button type="button" class="db-dialog-close" data-dialog-close aria-label="Close">×</button>
-    </header>
-    <div class="db-dialog-body db-docs">
-      <section aria-labelledby="db-docs-use">
-        <h3 id="db-docs-use">How to use this database</h3>
-        <ul>
-          <li>Search for a topic, author, or source, and narrow results by technology or type. Sort by year or title, and open an entry to read its original source.</li>
-          <li>Choosing several technologies matches entries related to any of them. Technology, type, and search filters work together.</li>
-          <li>Export your current results as CSV for further analysis.</li>
-          <li>Submit a source we’re missing through “Submit entries” to help grow the collection. You can contribute anonymously or choose to be credited.</li>
-        </ul>
-      </section>
-
-      <section aria-labelledby="db-docs-method">
-        <h3 id="db-docs-method">Methodology</h3>
-        <p>We group sources using the framework from <a href="/about">our research paper</a>: creation, distribution, proliferation and discovery, infrastructural support, and monetization. A source can cover more than one technology.</p>
-        <p>The database brings together papers, articles, reports, and other sources we’ve collected so far. It doesn’t cover everything, and several entries may discuss the same event. Counts show how many sources we’ve collected, not how often harm occurs or which technologies matter most.</p>
-      </section>
-
-      <section aria-labelledby="db-docs-review">
-        <h3 id="db-docs-review">Submission moderation policy</h3>
-        <p>Researchers review each submission before it appears here, so your entry won’t be visible right away. We check that the source is relevant, the details are accurate, and it isn’t already listed. Submissions that meet these criteria are added to the collection.</p>
-      </section>
-
-    </div>
-  </div>
-</dialog>
-
-<dialog class="db-dialog" id="db-submit-dialog" aria-labelledby="db-submit-dialog-title">
-  <form class="db-dialog-panel" id="db-submit-form" method="dialog">
-    <header class="db-dialog-header">
-      <h2 class="db-dialog-title" id="db-submit-dialog-title">Submit entries</h2>
-      <button type="button" class="db-dialog-close" id="db-submit-close" aria-label="Close">×</button>
-    </header>
-
-    <div class="db-dialog-body">
-      <p class="db-sub-review-note">
-        Researchers review every submission before it appears in the database.
-      </p>
-
-      <section class="db-sub-section">
-        <div class="db-sub-entry-list" id="db-sub-entry-list"></div>
-        <button type="button" class="db-sub-add" id="db-sub-add-entry">+ add entry</button>
-
-        <div class="db-sub-editor" id="db-sub-editor">
-          <div class="db-submit-grid">
-            <div class="db-field db-field--title">
-              <span class="db-field-label">Title <span class="db-req" aria-hidden="true">*</span></span>
-              <input
-                class="db-field-input db-sub-title-input"
-                type="text"
-                id="db-sub-title"
-                name="title"
-                value=""
-                maxlength="500"
-                autocomplete="off"
-                aria-required="true"
-                aria-label="Title (required)"
-              />
+          <!--
+          <section aria-labelledby="db-docs-fields">
+            <h3 id="db-docs-fields">Associated fields</h3>
+            <div class="db-docs-table-wrap">
+              <table class="db-docs-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Field</th>
+                    <th scope="col">What to include</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Name</th>
+                    <td>Name of the article or paper.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Authors</th>
+                    <td>List of authors, state, or organizations.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Source</th>
+                    <td>Publication venue, source, or institution.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Type</th>
+                    <td>Research paper, news article, technical report, legislation, or artifact such as a spreadsheet, open letter, dataset, or GitHub repository.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Date</th>
+                    <td>Use month and year when available. For research papers, use the year preprinted or published; for news articles, the posted date; for technical reports, the posted year; and for legislation, the enacted year or proposed year for pending legislation.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Technologies</th>
+                    <td>Technologies associated with the source.</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+          </section>
+          -->
 
-            <div class="db-field">
-              <span class="db-field-label">Technologies</span>
-              <div class="db-sub-techs" id="db-sub-techs"></div>
+          <section aria-labelledby="db-docs-method">
+            <h3 id="db-docs-method">Methodology</h3>
+            <p>
+              We group sources using the framework from
+              <a href="/about">our research paper</a>: creation, distribution,
+              proliferation and discovery, infrastructural support, and
+              monetization. A source can cover more than one technology.
+            </p>
+            <p>
+              The database brings together papers, articles, reports, and other
+              sources we’ve collected so far. It doesn’t cover everything, and
+              several entries may discuss the same event. Counts show how many
+              sources we’ve collected, not how often harm occurs or which
+              technologies matter most.
+            </p>
+          </section>
+
+          <section aria-labelledby="db-docs-review">
+            <h3 id="db-docs-review">Submission moderation policy</h3>
+            <p>
+              Researchers review each submission before it appears here, so your
+              entry won’t be visible right away. We check that the source is
+              relevant, the details are accurate, and it isn’t already listed.
+              Submissions that meet these criteria are added to the collection.
+            </p>
+          </section>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog
+      class="db-dialog"
+      id="db-submit-dialog"
+      aria-labelledby="db-submit-dialog-title"
+    >
+      <form class="db-dialog-panel" id="db-submit-form" method="dialog">
+        <header class="db-dialog-header">
+          <h2 class="db-dialog-title" id="db-submit-dialog-title">
+            Submit entries
+          </h2>
+          <button
+            type="button"
+            class="db-dialog-close"
+            id="db-submit-close"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </header>
+
+        <div class="db-dialog-body">
+          <p class="db-sub-review-note">
+            Researchers review every submission before it appears in the
+            database.
+          </p>
+
+          <section class="db-sub-section">
+            <div class="db-sub-entry-list" id="db-sub-entry-list"></div>
+            <button type="button" class="db-sub-add" id="db-sub-add-entry">
+              + add entry
+            </button>
+
+            <div class="db-sub-editor" id="db-sub-editor">
+              <div class="db-submit-grid">
+                <div class="db-field db-field--title">
+                  <span class="db-field-label"
+                    >Title
+                    <span class="db-req" aria-hidden="true">*</span></span
+                  >
+                  <input
+                    class="db-field-input db-sub-title-input"
+                    type="text"
+                    id="db-sub-title"
+                    name="title"
+                    value=""
+                    maxlength="500"
+                    autocomplete="off"
+                    aria-required="true"
+                    aria-label="Title (required)"
+                  />
+                </div>
+
+                <div class="db-field">
+                  <span class="db-field-label">Technologies</span>
+                  <div class="db-sub-techs" id="db-sub-techs"></div>
+                </div>
+
+                <label class="db-field">
+                  <span class="db-field-label"
+                    >Author(s)/organization
+                    <span class="db-req" aria-hidden="true">*</span></span
+                  >
+                  <input
+                    class="db-field-input"
+                    type="text"
+                    id="db-sub-authors-input"
+                    name="authors"
+                    autocomplete="off"
+                    aria-required="true"
+                    aria-label="Author(s)/organization (required)"
+                  />
+                </label>
+
+                <label class="db-field">
+                  <span class="db-field-label"
+                    >URL <span class="db-req" aria-hidden="true">*</span></span
+                  >
+                  <input
+                    class="db-field-input"
+                    type="url"
+                    id="db-sub-url"
+                    name="sourceUrl"
+                    placeholder="https://"
+                    autocomplete="off"
+                    aria-required="true"
+                  />
+                </label>
+
+                <div class="db-submit-row">
+                  <label class="db-field">
+                    <span class="db-field-label"
+                      >Type
+                      <span class="db-req" aria-hidden="true">*</span></span
+                    >
+                    <select
+                      class="db-field-input"
+                      id="db-sub-medium"
+                      name="medium"
+                    ></select>
+                  </label>
+                  <label class="db-field">
+                    <span class="db-field-label"
+                      >Date
+                      <span class="db-req" aria-hidden="true">*</span></span
+                    >
+                    <input
+                      class="db-field-input"
+                      type="text"
+                      id="db-sub-date"
+                      name="date"
+                      placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
+                      maxlength="10"
+                      autocomplete="off"
+                      aria-required="true"
+                    />
+                  </label>
+                </div>
+
+                <label class="db-field">
+                  <span class="db-field-label">Source</span>
+                  <input
+                    class="db-field-input"
+                    type="text"
+                    id="db-sub-source"
+                    name="source"
+                    autocomplete="off"
+                    maxlength="300"
+                  />
+                </label>
+              </div>
             </div>
+          </section>
+
+          <hr class="db-sub-divider" />
+
+          <section class="db-sub-section" aria-label="Submitter details">
+            <p class="db-sub-review-note">
+              We’ll list your name and affiliation as a contributor to this
+              database only if you choose to be credited publicly. Your email
+              won’t be published.
+            </p>
 
             <label class="db-field">
-              <span class="db-field-label">Author(s)/organization <span class="db-req" aria-hidden="true">*</span></span>
+              <span class="db-field-label"
+                >Name
+                <span class="db-req" id="db-sub-name-req" hidden>*</span></span
+              >
               <input
                 class="db-field-input"
                 type="text"
-                id="db-sub-authors-input"
-                name="authors"
-                autocomplete="off"
-                aria-required="true"
-                aria-label="Author(s)/organization (required)"
+                id="db-sub-name"
+                name="submitterName"
+                autocomplete="name"
+                maxlength="200"
               />
             </label>
-
             <label class="db-field">
-              <span class="db-field-label">URL <span class="db-req" aria-hidden="true">*</span></span>
+              <span class="db-field-label">Affiliation</span>
               <input
                 class="db-field-input"
-                type="url"
-                id="db-sub-url"
-                name="sourceUrl"
-                placeholder="https://"
-                autocomplete="off"
-                aria-required="true"
+                type="text"
+                id="db-sub-affiliation"
+                name="submitterAffiliation"
+                autocomplete="organization"
+                maxlength="300"
               />
             </label>
-
-            <div class="db-submit-row">
-              <label class="db-field">
-                <span class="db-field-label">Type <span class="db-req" aria-hidden="true">*</span></span>
-                <select class="db-field-input" id="db-sub-medium" name="medium"></select>
-              </label>
-              <label class="db-field">
-                <span class="db-field-label">Year <span class="db-req" aria-hidden="true">*</span></span>
-                <input
-                  class="db-field-input"
-                  type="text"
-                  id="db-sub-year"
-                  name="year"
-                  placeholder="YYYY"
-                  inputmode="numeric"
-                  pattern="[0-9]{4}"
-                  maxlength="4"
-                  autocomplete="off"
-                  aria-required="true"
-                />
-              </label>
-            </div>
-
             <label class="db-field">
-              <span class="db-field-label">Source</span>
-              <input class="db-field-input" type="text" id="db-sub-source" name="source" autocomplete="off" maxlength="300" />
+              <span class="db-field-label">Email</span>
+              <input
+                class="db-field-input"
+                type="email"
+                id="db-sub-contact"
+                name="contact"
+                placeholder="you@example.com"
+                autocomplete="email"
+                maxlength="200"
+              />
             </label>
-
-          </div>
+            <label class="db-sub-check">
+              <input
+                class="db-sub-author-org-input"
+                type="checkbox"
+                id="db-sub-list-publicly"
+              />
+              <span class="db-sub-author-org-box" aria-hidden="true"></span>
+              <span class="db-sub-check-text"
+                >Credit me publicly as a contributor</span
+              >
+            </label>
+          </section>
         </div>
-      </section>
 
-      <hr class="db-sub-divider" />
+        <footer class="db-dialog-footer">
+          <p
+            class="db-dialog-status"
+            id="db-submit-status"
+            role="status"
+            hidden
+          ></p>
+          <div class="db-dialog-footer-actions">
+            <button type="button" class="db-submit" id="db-submit-cancel">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="db-submit db-submit--solid"
+              id="db-submit-save"
+              disabled
+            >
+              Submit for review
+            </button>
+          </div>
+        </footer>
+      </form>
+    </dialog>
 
-      <section class="db-sub-section" aria-label="Submitter details">
-        <p class="db-sub-review-note">
-          We’ll list your name and affiliation as a contributor only if you choose to be credited publicly. Your email won’t be published.
-        </p>
-
-        <label class="db-field">
-          <span class="db-field-label">Name <span class="db-req" id="db-sub-name-req" hidden>*</span></span>
-          <input
-            class="db-field-input"
-            type="text"
-            id="db-sub-name"
-            name="submitterName"
-            autocomplete="name"
-            maxlength="200"
-          />
-        </label>
-        <label class="db-field">
-          <span class="db-field-label">Affiliation</span>
-          <input
-            class="db-field-input"
-            type="text"
-            id="db-sub-affiliation"
-            name="submitterAffiliation"
-            autocomplete="organization"
-            maxlength="300"
-          />
-        </label>
-        <label class="db-field">
-          <span class="db-field-label">Email</span>
-          <input
-            class="db-field-input"
-            type="email"
-            id="db-sub-contact"
-            name="contact"
-            placeholder="you@example.com"
-            autocomplete="email"
-            maxlength="200"
-          />
-        </label>
-        <label class="db-sub-check">
-          <input class="db-sub-author-org-input" type="checkbox" id="db-sub-list-publicly" />
-          <span class="db-sub-author-org-box" aria-hidden="true"></span>
-          <span class="db-sub-check-text">Credit me publicly as a contributor</span>
-        </label>
-      </section>
-    </div>
-
-    <footer class="db-dialog-footer">
-      <p class="db-dialog-status" id="db-submit-status" role="status" hidden></p>
-      <div class="db-dialog-footer-actions">
-        <button type="button" class="db-submit" id="db-submit-cancel">Cancel</button>
-        <button type="submit" class="db-submit db-submit--solid" id="db-submit-save" disabled>Submit for review</button>
-      </div>
-    </footer>
-  </form>
-</dialog>
-
-<script src="/api/config.js?v=2"></script>
-<script src="/src/sanity/client.js"></script>
-<script src="/src/sanity/write.js?v=2"></script>
-<script src="/src/database/constants.js"></script>
-<script src="/src/database/data.js"></script>
-<script src="/src/database/utils.js"></script>
-<script src="/src/database/render.js"></script>
-<script src="/src/shared/dialog.js"></script>
-<script src="/src/database/submit.js?v=6"></script>
-<script src="/src/database/app.js"></script>
-<script src="/src/shared/theme.js"></script>
-</body>
+    <script src="/api/config.js?v=2"></script>
+    <script src="/src/sanity/client.js"></script>
+    <script src="/src/sanity/write.js?v=2"></script>
+    <script src="/src/database/constants.js"></script>
+    <script src="/src/database/data.js"></script>
+    <script src="/src/database/utils.js"></script>
+    <script src="/src/database/render.js"></script>
+    <script src="/src/shared/dialog.js"></script>
+    <script src="/src/database/submit.js?v=6"></script>
+    <script src="/src/database/app.js"></script>
+    <script src="/src/shared/theme.js"></script>
+  </body>
 </html>
