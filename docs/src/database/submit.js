@@ -596,6 +596,10 @@ window.DatabaseSubmit = (function () {
         closeSubmit();
       });
     }
+
+    if (new URLSearchParams(window.location.search).get('submit') === '1') {
+      openSubmit();
+    }
   }
 
   if (document.readyState === 'loading') {

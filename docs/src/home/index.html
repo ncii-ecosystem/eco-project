@@ -22,6 +22,7 @@
   referrerpolicy="no-referrer"
 />
 <link rel="stylesheet" href="/src/shared/page-styles.css" />
+<link rel="stylesheet" href="/src/home/styles.css" />
 <script src="/src/shared/nav.js" defer></script>
 </head>
 <body class="page-body">
@@ -50,8 +51,52 @@
   </div>
 </header>
 
-<main>
-  <h1 class="page-label">Home</h1>
+<main class="home-layout">
+  <header class="home-intro">
+    <h1 class="content-title home-title">What brings you here?</h1>
+    <div class="home-lede">
+      <p>This website communicates the findings of <a href="/about">a research paper</a> on the technologies that facilitate AI-generated non-consensual intimate images. Our goal is to make that research easier to understand and act on by offering practical ways to learn, find support, and explore the evidence.</p>
+    </div>
+  </header>
+
+  <nav class="home-paths" aria-label="Choose a path">
+    <a class="home-path home-path--support" href="/survivor-support">
+      <span class="home-path-media" aria-hidden="true"><span class="home-path-icon fas fa-hand-holding-heart"></span></span>
+      <span class="home-path-copy">
+        <span class="home-path-top"><span class="home-path-prompt">I need support</span><span class="home-path-arrow" aria-hidden="true">↗</span></span>
+        <span class="home-path-detail">Find survivor-centered support, removal tools, and guidance.</span>
+      </span>
+    </a>
+    <a class="home-path home-path--story" href="/story">
+      <span class="home-path-media" aria-hidden="true"><span class="home-path-icon fas fa-book-open"></span></span>
+      <span class="home-path-copy">
+        <span class="home-path-top"><span class="home-path-prompt">I want to learn</span><span class="home-path-arrow" aria-hidden="true">↗</span></span>
+        <span class="home-path-detail">Follow an interactive story about how AI-generated intimate-image abuse spreads.</span>
+      </span>
+    </a>
+    <a class="home-path home-path--database" href="/database">
+      <span class="home-path-media" aria-hidden="true"><span class="home-path-icon fas fa-database"></span></span>
+      <span class="home-path-copy">
+        <span class="home-path-top"><span class="home-path-prompt">I’m researching this issue</span><span class="home-path-arrow" aria-hidden="true">↗</span></span>
+        <span class="home-path-detail">Search the evidence database.</span>
+      </span>
+    </a>
+    <a class="home-path home-path--paper" href="/about">
+      <span class="home-path-media" aria-hidden="true"><span class="home-path-icon fas fa-file-alt"></span></span>
+      <span class="home-path-copy">
+        <span class="home-path-top"><span class="home-path-prompt">I want to read the paper</span><span class="home-path-arrow" aria-hidden="true">↗</span></span>
+        <span class="home-path-detail">Read the research and its ecosystem framework.</span>
+      </span>
+    </a>
+    <a class="home-path home-path--contribute" href="/database?submit=1">
+      <span class="home-path-media" aria-hidden="true"><span class="home-path-icon fas fa-plus"></span></span>
+      <span class="home-path-copy">
+        <span class="home-path-top"><span class="home-path-prompt">I want to contribute</span><span class="home-path-arrow" aria-hidden="true">↗</span></span>
+        <span class="home-path-detail">Add a source or resource to the evidence database.</span>
+      </span>
+    </a>
+  </nav>
+
 </main>
 
 <script src="/src/shared/theme.js"></script>
