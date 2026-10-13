@@ -542,7 +542,6 @@ function serveStatic(req, res) {
   let urlPath = req.url.split('?')[0] || '/';
   const params = new URL(req.url, 'http://localhost').searchParams;
   if (urlPath === '/shell.html') urlPath = '/src/shared/shell.html';
-  if (urlPath === '/story-preview' || urlPath === '/story-preview/') urlPath = '/src/story/preview.html';
   const canonical = LEGACY_ROUTES.get(urlPath) ||
     (urlPath.endsWith('/') && PAGE_ROUTES.has(urlPath.slice(0, -1)) ? urlPath.slice(0, -1) : null);
   if (canonical) {

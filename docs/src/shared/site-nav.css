@@ -100,7 +100,7 @@
 
 .site-topnav a[href*="survivor-support"] {
   text-decoration: underline;
-  text-decoration-color: var(--db-role-monetization);
+  text-decoration-color: var(--role-monetization);
   text-decoration-thickness: 2px;
   text-underline-offset: 0.15em;
 }

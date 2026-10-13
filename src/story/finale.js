@@ -4,12 +4,14 @@
    2. a cursor closes one window, and two pop-ups open in its place
    3. it closes another, three more open
    4. the last close floods the whole screen
-   Every step undoes itself when the reader scrolls back up.
+   Every stage can be restored when the reader navigates backward.
    ============================================================ */
 (function () {
   'use strict';
 
   const Eco = window.Eco;
+  const { setTimeout, clearTimeout, requestAnimationFrame } =
+    window.createStoryMotionScope(() => Eco.replaying);
   const mon = document.getElementById('mon-screen');
   if (!Eco || !mon) return;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -117,7 +119,7 @@
     const fromX = parseFloat(c.dataset.x || (mon.clientWidth * 0.62));
     const fromY = parseFloat(c.dataset.y || (mon.clientHeight + 30));
     c.classList.add('show');
-    if (reduced.matches) {
+    if ((Eco.replaying || reduced.matches)) {
       c.style.transform = `translate(${x}px, ${y}px)`;
       c.dataset.x = x; c.dataset.y = y;
       done();
@@ -150,15 +152,13 @@
       btn.classList.add('fin-press');
       later(() => {
         win.classList.add('fin-closing');
-        later(() => { win.classList.add('fin-gone'); then(); }, reduced.matches ? 0 : 330);
-      }, reduced.matches ? 0 : 180);
+        later(() => { win.classList.add('fin-gone'); then(); }, (Eco.replaying || reduced.matches) ? 0 : 330);
+      }, (Eco.replaying || reduced.matches) ? 0 : 180);
     });
   }
 
-  /* ── the windows leaving and the map arriving are driven by scroll position ── */
+  /* ── the windows leaving and the map arriving are controlled by the active narrative step ── */
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
-  const clearStep = document.querySelector('.step[data-fin="clear"]');
-  let clearTicking = false;
 
   let clearCache = null, lastHide = -1;
   function resetClear() {
@@ -196,17 +196,9 @@
   }
 
   function driveClear() {
-    clearTicking = false;
-    if (!clearStep) return;
-    if (done < ORDER.length) return;                         // nothing to clear until the flood has run
-    const r = clearStep.getBoundingClientRect();
-    applyClear(clamp01((window.innerHeight * 0.5 - r.top) / Math.max(1, r.height)));
+    const state = Eco.navigation?.active?.dataset.fin;
+    applyClear(state === 'clear' || state === 'graph' || Eco.policy?.STEPS.includes(state) || state === 'end' ? 1 : 0);
   }
-  window.addEventListener('scroll', () => {
-    if (clearTicking) return;
-    clearTicking = true;
-    requestAnimationFrame(driveClear);
-  }, { passive: true });
 
   /* ── stages ───────────────────────────────────────────── */
   /* Moving many heavy windows by changing their size every frame is what made this choppy. Instead each window
@@ -215,7 +207,7 @@
   function flipWindows(list, change, ms) {
     const first = list.map((w) => w.getBoundingClientRect());
     change();
-    if (reduced.matches) return;
+    if ((Eco.replaying || reduced.matches)) return;
     list.forEach((w, i) => {
       const f = first[i], l = w.getBoundingClientRect();
       if (!l.width || !l.height) return;
@@ -275,7 +267,7 @@
             top: b.top + (b.height - h) / 2 + shift[1] * cell.h * 0.45,
             width: w, height: h,
           }, POP_NAMES[popCount % POP_NAMES.length]));
-        }, reduced.matches ? 0 : 160 * k);
+        }, (Eco.replaying || reduced.matches) ? 0 : 160 * k);
       }
     });
     undoStack.push(() => {
@@ -301,7 +293,7 @@
       const cx = (cols - 1) / 2, cy = (rows - 1) / 2;
       order.sort((p, q) => Math.hypot(p[1] - cx, p[0] - cy) - Math.hypot(q[1] - cx, q[0] - cy));
       order.forEach(([r, c], i) => {
-        const delay = reduced.matches ? 0 : Math.round(i * 34 * (1 - i / (order.length * 1.6)));
+        const delay = (Eco.replaying || reduced.matches) ? 0 : Math.round(i * 34 * (1 - i / (order.length * 1.6)));
         later(() => {
           const jitter = ((r * 7 + c * 13) % 5) - 2;
           record.pops.push(makePop({
@@ -311,7 +303,7 @@
           }, POP_NAMES[i % POP_NAMES.length]));
         }, delay);
       });
-      const total = reduced.matches ? 0 : Math.round(order.length * 34 * 0.75) + 500;
+      const total = (Eco.replaying || reduced.matches) ? 0 : Math.round(order.length * 34 * 0.75) + 500;
       later(() => {
         const card = document.createElement('div');
         card.className = 'fin-final';

@@ -80,6 +80,7 @@
     function restoreNavigation() {
       document.body.classList.remove("dialog-open");
       document.body.classList.remove("story-started");
+      document.body.classList.remove("story-ending-visible");
       header.inert = false;
       window.SiteNav.close();
     }
@@ -128,6 +129,11 @@
       startStory: function () {
         document.body.classList.add("story-started");
         header.inert = true;
+      },
+      setStoryEndingVisible: function (visible) {
+        document.body.classList.toggle("story-ending-visible", visible);
+        header.inert = !visible || document.body.classList.contains("dialog-open");
+        if (!visible) window.SiteNav.close();
       },
       contentReady: function (title) {
         document.title = title;

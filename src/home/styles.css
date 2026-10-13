@@ -34,7 +34,7 @@
 .home-lede a {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: var(--db-role-monetization);
+  text-decoration-color: var(--role-monetization);
   text-underline-offset: 0.16em;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .home-path {
-  --home-path-accent: var(--db-role-creation);
+  --home-path-accent: var(--role-creation);
   --home-path-media-width: 10rem;
   --home-path-media-height: 6rem;
   display: grid;
@@ -75,12 +75,12 @@
   outline-offset: 3px;
 }
 
-.home-path--support { --home-path-accent: var(--db-role-monetization); }
-.home-path--removal { --home-path-accent: var(--db-role-distribution); }
-.home-path--story { --home-path-accent: var(--db-role-creation); }
-.home-path--database { --home-path-accent: var(--db-role-infra); }
-.home-path--contribute { --home-path-accent: var(--db-role-distribution); }
-.home-path--paper { --home-path-accent: var(--db-role-proliferation); }
+.home-path--support { --home-path-accent: var(--role-monetization); }
+.home-path--removal { --home-path-accent: var(--role-distribution); }
+.home-path--story { --home-path-accent: var(--role-creation); }
+.home-path--database { --home-path-accent: var(--role-infra); }
+.home-path--contribute { --home-path-accent: var(--role-distribution); }
+.home-path--paper { --home-path-accent: var(--role-proliferation); }
 
 .home-path-media {
   grid-area: media;

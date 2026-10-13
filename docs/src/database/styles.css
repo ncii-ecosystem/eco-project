@@ -490,23 +490,23 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
 
 .db-filter-btn.role-creation {
   color: var(--db-chip-ink);
-  background: var(--db-role-creation);
+  background: var(--role-creation);
 }
 .db-filter-btn.role-distribution {
   color: var(--db-chip-ink);
-  background: var(--db-role-distribution);
+  background: var(--role-distribution);
 }
 .db-filter-btn.role-proliferation {
   color: var(--db-chip-ink);
-  background: var(--db-role-proliferation);
+  background: var(--role-proliferation);
 }
 .db-filter-btn.role-infra {
   color: var(--db-chip-ink);
-  background: var(--db-role-infra);
+  background: var(--role-infra);
 }
 .db-filter-btn.role-monetization {
   color: var(--db-chip-ink);
-  background: var(--db-role-monetization);
+  background: var(--role-monetization);
 }
 
 .db-filter-btn[class*="role-"]:hover:not(.is-active) {
@@ -872,19 +872,19 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
 }
 
 .db-tech-tag.role-creation {
-  background: var(--db-role-creation);
+  background: var(--role-creation);
 }
 .db-tech-tag.role-distribution {
-  background: var(--db-role-distribution);
+  background: var(--role-distribution);
 }
 .db-tech-tag.role-proliferation {
-  background: var(--db-role-proliferation);
+  background: var(--role-proliferation);
 }
 .db-tech-tag.role-infra {
-  background: var(--db-role-infra);
+  background: var(--role-infra);
 }
 .db-tech-tag.role-monetization {
-  background: var(--db-role-monetization);
+  background: var(--role-monetization);
 }
 
 .db-result-bottom .content-date,

@@ -580,7 +580,7 @@
 /* Research note (opens when you click a highlight) */
 
 /* ═══ Assistant: a plain transcript ═════════════════════════ */
-.chat-stage {
+.chat-stage, .dm-stage {
   --chat-ink: var(--db-chip-ink);
   --chat-bg: var(--paper);
   --chat-padding: var(--db-space-4);
@@ -651,12 +651,12 @@
   padding: var(--db-space-3) var(--chat-padding);
   border: 1px solid var(--p);
 }
-.chat-bubble {
+.chat-bubble, .dm-msg {
   position: relative;
   max-width: 74%;
   margin-top: var(--db-space-2);
 }
-.chat-bubble::before {
+.chat-bubble::before, .dm-msg:not(.dm-typing)::before {
   position: absolute;
   top: -9px;
   left: 10px;
@@ -679,7 +679,7 @@
   margin-bottom: var(--db-space-2);
   font-family: var(--font-sans); font-size: var(--db-text-xs); font-weight: 400;
 }
-.chat-bubble.user::before {
+.chat-bubble.user::before, .dm-msg.dm-out::before {
   content: "you";
   left: auto;
   right: 10px;
@@ -694,6 +694,7 @@
 .chat-bubble.ai::before {
   content: "model";
 }
+.dm-msg.dm-in:not(.dm-typing)::before { content: "contact"; }
 .chat-bubble.ai .redacted-block {
   width: 150px;
   height: 190px;
@@ -911,6 +912,14 @@
   color: var(--p);
   font-family: var(--font-mono);
   opacity: 0.7;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.dm-status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--role-monetization);
+  flex-shrink: 0;
 }
 .dm-messages {
   background: linear-gradient(color-mix(in srgb, var(--p) 7%, transparent) 1px, transparent 1px) 0
@@ -932,6 +941,7 @@
   border-top: 1px solid var(--p);
   text-transform: lowercase;
 }
+.dm-msg .dm-attachment { margin: 0; max-width: 100%; }
 
 /* Mail */
 .email-stage {
@@ -1145,7 +1155,7 @@
   background: var(--paper);
   border: 1px solid var(--p);
   border-radius: 0;
-  box-shadow: var(--hard-sm);
+  box-shadow: none;
 }
 .mdf-card .redacted-block {
   width: 100%; height: 120px;
@@ -1157,6 +1167,26 @@
   font-family: var(--font-mono);
   border-top: 0;
 }
+/* Fit this companion window to its content instead of leaving a tall blank area. */
+.mon-screen:not(.finale-mode) .mac-window[data-chapter="mdf"] {
+  height: auto !important;
+  max-height: calc(100% - 56px);
+}
+.mon-screen:not(.finale-mode) .mac-window[data-chapter="mdf"] .win-content {
+  flex: 0 1 auto;
+}
+.mon-screen:not(.finale-mode) .mac-window[data-chapter="mdf"] #mdf,
+.mon-screen:not(.finale-mode) .mac-window[data-chapter="mdf"] .mdf-stage {
+  position: relative;
+  inset: auto;
+  height: auto;
+}
+.mdf-cards { margin-bottom: 0; }
+.mdf-stage { overflow: clip !important; }
+.mon-screen:not(.finale-mode) .mdf-stage:has(.mdf-offline.visible) {
+  min-height: 420px;
+}
+.mdf-offline-box { padding: 24px 28px; }
 .mdf-stats-row {
   color: var(--p);
   font-family: var(--font-mono);
@@ -1232,6 +1262,18 @@
   color: var(--p);
   border: 1px solid var(--p);
   border-radius: 0;
+}
+.google-chrome.results-ready .sr-item {
+  animation: search-result-arrive 420ms ease-out both;
+}
+.google-chrome.results-ready .sr-item:nth-child(2) { animation-delay: 90ms; }
+.google-chrome.results-ready .sr-item:nth-child(3) { animation-delay: 180ms; }
+@keyframes search-result-arrive {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .google-chrome.results-ready .sr-item { animation: none; }
 }
 .sr-list {
   display: flex;
@@ -1402,20 +1444,11 @@
 .pay-logo.gp,
 .pay-logo.cr {
   color: var(--p);
-  background: var(--paper);
+  background: var(--role-monetization);
   border: 1px solid var(--p);
   border-radius: 0;
   font-family: var(--font-mono);
   font-weight: 700;
-}
-.pay-logo:nth-child(3n + 1) {
-  background: var(--role-creation);
-}
-.pay-logo:nth-child(3n + 2) {
-  background: var(--role-proliferation);
-}
-.pay-logo:nth-child(3n + 3) {
-  background: var(--role-infra);
 }
 .payment-sheet {
   background: var(--paper);
@@ -1684,9 +1717,11 @@
   }
 }
 
-/* Checkout: the pay button breathes while the sheet is open */
+/* Checkout advances the narrative without a pulsing shadow. */
 .payment-sheet .ps-pay-btn {
-  animation: pay-breathe 1.8s ease-in-out infinite;
+  animation: none;
+  box-shadow: none;
+  cursor: pointer;
 }
 @keyframes pay-breathe {
   0%,
@@ -2509,4 +2544,35 @@
   .md-panel {
     transition-duration: 0.01ms;
   }
+}
+
+/* Mock windows stay fixed; feeds and long app listings retain their own scroll areas. */
+.scene:not(#scene-intro) { overflow: clip; }
+.scene-stage:not(.news-stage):not(.reddit-stage):not(.mdf-stage):not(.appstore-stage) {
+  overflow: clip;
+}
+
+/* Focus an existing ad to show an illustrative social-media placement. */
+.sr-social-context, .sr-social-sponsored, .sr-social-preview, .sr-social-actions { display: none; }
+.sr-ads.social-focus .sr-ad:not(.sr-ad-1) { opacity: 0; }
+.sr-ads.social-focus .sr-ad-1 {
+  left: 50%; right: auto; top: 18%;
+  width: min(320px, 85%); transform: translateX(-50%);
+  transition: left 500ms ease, top 500ms ease, width 500ms ease, transform 500ms ease;
+}
+.social-focus .sr-social-context {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; padding-bottom: 12px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--p);
+}
+.social-focus .sr-social-actions {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 12px; font-size: 18px;
+}
+.social-focus .sr-social-actions > :last-child { margin-left: auto; }
+.social-focus .sr-social-sponsored { display: block; font-size: 11px; margin-bottom: 12px; }
+.social-focus .sr-social-preview { display: flex; height: 130px; margin-bottom: 12px; }
+.social-focus .sr-ad-1 .sr-ad-tag, .social-focus .sr-ad-1 .sr-ad-x { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .sr-ads.social-focus .sr-ad-1 { transition: none; }
 }

@@ -23,6 +23,8 @@
 />
 <link rel="stylesheet" href="/src/shared/page-styles.css" />
 <link rel="stylesheet" href="/src/about/styles.css" />
+<link rel="stylesheet" href="/src/about/research.css" />
+<script type="module" src="/src/about/research.js"></script>
 <script src="/src/shared/nav.js" defer></script>
 </head>
 <body class="page-body about-page">
@@ -219,6 +221,37 @@
       </p>
     </aside>
   </div>
+
+  <section class="about-research" aria-labelledby="research-title">
+    <div class="research-header">
+    <h2 id="research-title">Explore the research:</h2>
+    <div class="research-views" role="group" aria-label="Research view">
+      <button type="button" data-view="system" aria-pressed="true"><i class="fas fa-project-diagram" aria-hidden="true"></i> System chart</button>
+      <button type="button" data-view="law" aria-pressed="false"><i class="fas fa-balance-scale" aria-hidden="true"></i> Law landscape</button>
+    </div>
+    </div>
+    <!-- Additional law topics paused for now.
+    <div id="research-law-controls" hidden>
+      <label for="research-law-topic">Explore a topic</label>
+      <select id="research-law-topic"></select>
+    </div>
+    -->
+    <div class="research-layout">
+      <div class="research-visual-scroll" tabindex="0" aria-label="Interactive research diagram">
+        <div id="research-visual"></div>
+      </div>
+      <aside class="research-details" aria-label="Selected explanation" aria-live="polite">
+        <div class="research-note-titlebar" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="research-note-content">
+        <h3 id="research-detail-title">State laws</h3>
+        <div id="research-detail-body"><p>Select a highlighted state to read its law.</p></div>
+        </div>
+      </aside>
+    </div>
+    <p id="research-error" role="status" hidden>The interactive views could not load. You can still read the paper using the links above.</p>
+  </section>
 </main>
 
 <script src="/src/shared/theme.js"></script>

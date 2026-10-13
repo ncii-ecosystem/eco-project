@@ -4,15 +4,13 @@
    Every box can be clicked: its explanation opens in the Notes window.
    finale.js drives how much of it is visible while the reader scrolls.
    ============================================================ */
-(function () {
-  'use strict';
+export function mountSystemChart({ Eco = window.Eco, mon = document.getElementById('mon-screen') } = {}) {
 
-  const Eco = window.Eco;
-  const mon = document.getElementById('mon-screen');
   if (!Eco || !mon) return;
 
   const NS = 'http://www.w3.org/2000/svg';
-  const W = 1648, H = 1628;                       // the figure's own coordinate space
+  const W = 1648;
+  let H = 1628;                       // the figure's own coordinate space
 
   /* role → fill colour (the site's pastel chips) */
   const ROLE = {
@@ -23,7 +21,7 @@
   /* Icons are Font Awesome glyphs */
   const ICON = {
     cart: '', bullhorn: '', search: '', laptop: '', database: '', code: '',
-    wand: '', comment: '', users: '', tools: '', money: '',
+    wand: '\uf0d0', comment: '', users: '', tools: '', money: '',
   };
 
   /* Boxes. Lines: ['h', text] = bold sub-heading. Only generic categories are drawn here; the real
@@ -42,11 +40,32 @@
     { id: 'dist-channels', role: 'distribution', x: 1273, y: 530, w: 325, h: 505, icon: 'comment', title: 'Distribution Channels', tall: true,
       lines: [['h', 'Private Channels'], ['gap'], ['h', 'Public Platforms']] },
     { id: 'dfcc', role: 'discovery', x: 28, y: 1131, w: 1570, h: 144, icon: 'users', title: 'Deepfake Creation Communities', wide: true,
-      lines: [['h', 'Private Channels'], ['h', 'Public Platforms']] },
+      lines: [['h', 'Private Channels and Public Platforms']] },
     { id: 'critical-providers', role: 'infra', x: 28, y: 1320, w: 1570, h: 122, icon: 'tools', title: 'Critical Service Providers', wide: true,
       lines: [['m', 'Cloud Service Providers, Domain Name Services, and Authentication Services']] },
     { id: 'payment-processors', role: 'money', x: 26, y: 1487, w: 1572, h: 116, icon: 'money', title: 'Payment Processors', wide: true, lines: [] },
   ];
+
+  function contentRows(n) {
+    const rows = [
+      { text: ICON[n.icon], className: 'eg-icon', size: 32, height: 36 },
+      { height: n.tall ? 20 : 10 },
+      { text: n.title, className: 'eg-title', size: 25, height: 30 },
+    ];
+    if (n.lines.length) rows.push({ height: n.tall ? 24 : 10 });
+    n.lines.forEach(line => {
+      if (line[0] === 'gap') rows.push({ height: n.tall ? 20 : 12 });
+      else rows.push({ text: line.slice(1).join(' '), className: line[0] === 'm' ? 'eg-m' : 'eg-h', size: 21, height: 28 });
+    });
+    return rows;
+  }
+  const middle = NODES.filter(node => node.tall);
+  const middleHeight = Math.max(...middle.map(node => contentRows(node).reduce((sum, row) => sum + row.height, 0) + 64));
+  middle.forEach(node => { node.h = middleHeight; });
+  const shift = 1035 - Math.max(...middle.map(node => node.y + node.h));
+  NODES.filter(node => node.y > 1035).forEach(node => { node.y -= shift; });
+  H -= shift;
+  const nodeById = Object.fromEntries(NODES.map(node => [node.id, node]));
 
   /* Links between boxes; `dir` says where the arrowhead goes */
   const XS = [189, 606, 1024, 1436];
@@ -61,11 +80,21 @@
     { a: 'ai-models', b: 'ai-interfaces', d: 'M775 765 H852', dots: [[775, 765]], head: [862, 765, 'right'] },
     { a: 'ai-interfaces', b: 'dist-channels', d: 'M1187 765 H1263', dots: [[1187, 765]], head: [1273, 765, 'right'] },
   ];
+  EDGES.filter(edge => nodeById[edge.a].tall && nodeById[edge.b].tall).forEach(edge => {
+    const a = nodeById[edge.a], b = nodeById[edge.b];
+    const y1 = a.y + a.h / 2, y2 = b.y + b.h / 2;
+    edge.d = `M${a.x + a.w} ${y1} L${b.x - 10} ${y2}`;
+    edge.dots = [[a.x + a.w, y1]];
+    edge.head = [b.x, y2, 'right'];
+  });
   const COMMUNITY_TARGETS = ['training-data', 'ai-models', 'ai-interfaces', 'dist-channels'];
   XS.forEach((x, i) => {
-    EDGES.push({ a: 'dfcc', b: COMMUNITY_TARGETS[i], d: `M${x} 1131 V1045`, dots: [[x, 1131]], head: [x, 1035, 'up'] });
-    EDGES.push({ a: 'dfcc', b: 'critical-providers', d: `M${x} 1275 V1320`, dots: [[x, 1275], [x, 1320]] });
-    EDGES.push({ a: 'critical-providers', b: 'payment-processors', d: `M${x} 1442 V1487`, dots: [[x, 1442], [x, 1487]] });
+    const target = nodeById[COMMUNITY_TARGETS[i]];
+    const community = nodeById.dfcc, providers = nodeById['critical-providers'], payments = nodeById['payment-processors'];
+    const bottom = target.y + target.h;
+    EDGES.push({ a: 'dfcc', b: target.id, d: `M${x} ${community.y} V${bottom + 10}`, dots: [[x, community.y]], head: [x, bottom, 'up'] });
+    EDGES.push({ a: 'dfcc', b: providers.id, d: `M${x} ${community.y + community.h} V${providers.y}`, dots: [[x, community.y + community.h], [x, providers.y]] });
+    EDGES.push({ a: providers.id, b: payments.id, d: `M${x} ${providers.y + providers.h} V${payments.y}`, dots: [[x, providers.y + providers.h], [x, payments.y]] });
   });
 
   /* What each box says when it is opened: the paper's own wording, the same text as the Notes entries */
@@ -106,7 +135,6 @@
     el('rect', { x: 33, y: y - 17, width: 28, height: 28, fill: ROLE[role], class: 'eg-swatch' }, legend);
     const t = el('text', { x: 80, y: y + 5, class: 'eg-legend-label' }, legend); t.textContent = label;
   });
-  const hint = el('text', { x: 33, y: 318, class: 'eg-hint' }, legend); hint.textContent = '↓ click any box to read about it';
 
   /* links go under the boxes */
   const edgeLayer = el('g', { class: 'eg-edges' }, svg);
@@ -130,31 +158,25 @@
     el('rect', { x: n.x + 8, y: n.y + 8, width: n.w, height: n.h, class: 'eg-shadow' }, g);
     el('rect', { x: n.x, y: n.y, width: n.w, height: n.h, fill: ROLE[n.role], class: 'eg-box' }, g);
 
-    const cx = n.x + n.w / 2;
-    if (n.wide || n.small) {
-      // icon top-left, text centred
-      const ic = el('text', { x: n.x + 46, y: n.y + 60, class: 'eg-icon', 'text-anchor': 'middle' }, g); ic.textContent = ICON[n.icon];
-    } else {
-      const ic = el('text', { x: cx, y: n.y + 88, class: 'eg-icon big', 'text-anchor': 'middle' }, g); ic.textContent = ICON[n.icon];
+    // Horizontal boxes use a left icon; middle boxes retain a centered stack.
+    const cx = n.tall ? n.x + n.w / 2 : n.x + 72;
+    if (!n.tall) {
+      const icon = el('text', { x: n.x + 36, y: n.y + n.h / 2,
+        class: 'eg-icon', 'text-anchor': 'middle', 'dominant-baseline': 'central',
+        style: 'font-size:32px' }, g);
+      icon.textContent = ICON[n.icon];
     }
-    const titleSize = n.tall ? 25 : (n.wide ? 30 : 27);
-    let y;
-    if (n.tall) y = n.y + 165; else if (n.wide) y = n.y + 52; else y = n.y + 46;
-    if (!n.lines.length && !n.tall) y = n.y + n.h / 2 + 10;   // title-only boxes: centred
-    const title = el('text', { x: cx, y, class: 'eg-title', 'text-anchor': 'middle', style: `font-size:${titleSize}px` }, g);
-    title.textContent = n.title;
-    y += n.tall ? 62 : 34;
-    n.lines.forEach((ln) => {
-      if (ln[0] === 'gap') { y += 26; return; }
-      if (ln[0] === 'hm') {
-        const t = el('text', { x: cx, y, class: 'eg-line-text', 'text-anchor': 'middle' }, g);
-        const a = el('tspan', { class: 'eg-h' }, t); a.textContent = ln[1];
-        const b = el('tspan', { class: 'eg-m' }, t); b.textContent = ln[2];
-        y += 32; return;
+    const rows = n.tall ? contentRows(n) : contentRows(n).slice(2);
+    const contentHeight = rows.reduce((height, row) => height + row.height, 0);
+    let y = n.y + (n.h - contentHeight) / 2;
+    rows.forEach(row => {
+      if (row.text) {
+        const text = el('text', { x: cx, y: y + row.height / 2,
+          class: row.className, 'text-anchor': n.tall ? 'middle' : 'start', 'dominant-baseline': 'central',
+          style: `font-size:${row.size}px` }, g);
+        text.textContent = row.text;
       }
-      const t = el('text', { x: cx, y, class: ln[0] === 'h' ? 'eg-h' : 'eg-m', 'text-anchor': 'middle' }, g);
-      t.textContent = ln[1];
-      y += ln[0] === 'h' ? 33 : 31;
+      y += row.height;
     });
     g.style.setProperty('--i', i);
     return g;
@@ -234,4 +256,18 @@
   };
   // the policy layer (policy.js) draws on the same map
   Eco.graph.ext = { root, svg, el, NODES, nodeEls, edgeEls, select, ICON };
-})();
+  return Eco.graph;
+}
+
+// Insert these fragments before initializing the story navigation.
+export const stepsHtml = `    <div class="step step--n" data-fin="clear"></div>
+    <div class="step step--k" data-fin="graph">
+      <span class="step-label">One System</span>
+      <p class="step-key-text">Behind all those windows is one connected system. Click any box to read what it does.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Redrawn from the paper’s map of the technologies that facilitate AI-generated non-consensual intimate images. Each box is a layer of technology, and the links show how they depend on one another.</p>
+      </div>
+    </div>
+`;
+export const dockHtml = `<div class="dt-dock-item dt-dock--neutral" title="Map" data-go="finale" data-step="[data-fin=&quot;graph&quot;]"><i class="fas fa-diagram-project"></i></div>`;

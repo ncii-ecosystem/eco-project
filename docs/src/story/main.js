@@ -1,19 +1,20 @@
 /* ============================================================
    The Ecosystem Behind the Image — main.js
-   Lofi desk + monitor scroll system
+   Desktop narrative with explicit step navigation
    ============================================================ */
 (function () {
   'use strict';
 
   const Eco = window.Eco;
-  const { prefersReducedMotion, scrollBehavior, escapeHtml, onActivate, store } = Eco;
+  const { setTimeout, clearTimeout, requestAnimationFrame } =
+    window.createStoryMotionScope(() => Eco.replaying);
+  const { prefersReducedMotion, escapeHtml, onActivate } = Eco;
 
   /* ── DOM refs ─────────────────────────────────────── */
   const monScreen    = document.getElementById('mon-screen');
-  const progressFill = document.getElementById('progress-bar-fill');
+  // const progressFill = document.getElementById('progress-bar-fill');
   const cwOverlay    = document.getElementById('cw-overlay');
   const cwBtn        = document.getElementById('cw-btn');
-  const sceneNotif   = document.getElementById('scene-notif');
 
   /* ── Exit: back to the content warning, with the story reset ── */
   function quickExit() {
@@ -25,13 +26,12 @@
   document.addEventListener('keydown', (e) => {   // Esc three times in a row also exits
     if (e.key !== 'Escape') return;
     escCount += 1;
-    clearTimeout(escTimer);
-    escTimer = setTimeout(() => { escCount = 0; }, 900);
+    window.clearTimeout(escTimer);
+    escTimer = window.setTimeout(() => { escCount = 0; }, 900);
     if (escCount >= 3) quickExit();
   });
 
   /* ── Content warning ──────────────────────────────── */
-  document.getElementById('cw-resources')?.focus();   // the coloured default choice
   cwBtn.addEventListener('click', () => {
     const navbar = document.querySelector('.site-topnav');
     navbar.classList.remove('is-open');
@@ -41,90 +41,13 @@
     setTimeout(startOpening, 700);
   });
 
-  const { CHAPTERS, NOTIF_CONFIG } = Eco;
+  const { CHAPTERS } = Eco;
 
-  /* ── Scroll gate state ────────────────────────────── */
-  // 'cover' pre-unlocked — its gate is the intro notification, not #scene-notif
-  const unlockedChapters = new Set(['intro', 'desk1', 'finale']);
-  const visitedChapters = new Set();   // apps the reader has opened, for the dock   // the finale has no gate
-  let scrollLocked = false;
-  let lockedScrollY = 0;
-  let pendingChapter = null;
-  let snClickHandler = null;
-
-  // Locking only stops the reader from going *forward* past the point they are at.
-  // Scrolling back up (or jumping back to an earlier app) always works.
-  let touchStartY = 0;
-  const atLimit = () => window.scrollY >= lockedScrollY - 1;
-
-  function snapBackIfLocked() {
-    if (scrollLocked && window.scrollY > lockedScrollY + 1) {
-      window.scrollTo({ top: lockedScrollY, behavior: 'instant' });
-    }
-  }
-  function blockDownWheel(e) { if (e.deltaY > 0 && atLimit()) e.preventDefault(); }
-  function noteTouch(e) { touchStartY = e.touches[0].clientY; }
-  function blockDownTouch(e) {
-    const dy = touchStartY - e.touches[0].clientY;     // finger moving up = page moving down
-    if (dy > 0 && atLimit()) e.preventDefault();
-  }
-  function blockDownKeys(e) {
-    if (['Space', 'PageDown', 'ArrowDown', 'End'].includes(e.code) && atLimit()) {
-      const tag = (e.target && e.target.tagName) || '';
-      if (!/^(INPUT|TEXTAREA|SELECT)$/.test(tag)) e.preventDefault();
-    }
-  }
-
-  function lockScroll() {
-    if (scrollLocked) return;
-    scrollLocked = true;
-    lockedScrollY = window.scrollY;
-    document.documentElement.classList.add('scroll-locked');
-    window.addEventListener('scroll', snapBackIfLocked, { passive: true });
-    window.addEventListener('wheel', blockDownWheel, { passive: false });
-    window.addEventListener('touchstart', noteTouch, { passive: true });
-    window.addEventListener('touchmove', blockDownTouch, { passive: false });
-    window.addEventListener('keydown', blockDownKeys);
-  }
-
-  function unlockScroll() {
-    scrollLocked = false;
-    document.documentElement.classList.remove('scroll-locked');
-    window.removeEventListener('scroll', snapBackIfLocked);
-    window.removeEventListener('wheel', blockDownWheel);
-    window.removeEventListener('touchstart', noteTouch);
-    window.removeEventListener('touchmove', blockDownTouch);
-    window.removeEventListener('keydown', blockDownKeys);
-  }
-
-  /* ── Scroll holds: while a step's animation plays, scrolling pauses ──
-     so nothing can be scrolled past. Gates keep priority over holds. */
-  let holdUntil = 0, holdTimer = null, holdOwnsLock = false, navUntil = 0;
-  const markNavigating = () => { navUntil = performance.now() + 2200; };   // programmatic jumps (dots, note list) never hold
-
-  function releaseHold() {
-    holdUntil = 0;
-    if (!holdOwnsLock) return;
-    holdOwnsLock = false;
-    if (pendingChapter) return;   // a gate took over while we were waiting: leave it locked
-    unlockScroll();
-    // cue that scrolling is free again; it stays until the reader scrolls
-    showHint('Scroll to continue ↓');
-    hintBaseY = window.scrollY; scrollHintPending = true;
-  }
-
-  function holdFor(ms) {
-    if (!ms || prefersReducedMotion() || performance.now() < navUntil) return;
-    const end = performance.now() + ms;
-    if (end <= holdUntil) return;
-    holdUntil = end;
-    if (!scrollLocked) { lockScroll(); holdOwnsLock = true; }
-    clearTimeout(holdTimer);
-    holdTimer = setTimeout(releaseHold, ms);
-  }
+  const visitedChapters = new Set();
+  let storyStarted = false;
 
   // how long each step's animation takes (ms); steps with a note also wait for the note to type out
-  const HOLD_MS = {
+  const ANIMATION_MS = {
     news:   { h0: 1500, h1: 1500, h2: 1500, h3: 1500, h4: 1500 },   // the marker sweep, the pop-up and the comments
     chat:   { type: 1300, send: 400, think: 900, respond: 700, dataset: 2500, scan: 2100, return: 3300, model: 2000 },
     md:     { open: 2400, closed: 2400, move: 2200 },
@@ -139,27 +62,18 @@
   function animMs(el) {                                              // how long the step's own animation runs
     const ds = el.dataset;
     let ms = 0;
-    Object.keys(HOLD_MS).forEach((key) => { if (ds[key] !== undefined) ms = Math.max(ms, HOLD_MS[key][ds[key]] || 0); });
+    Object.keys(ANIMATION_MS).forEach((key) => { if (ds[key] !== undefined) ms = Math.max(ms, ANIMATION_MS[key][ds[key]] || 0); });
     return ms;
   }
-  function holdMs(el) {
-    let ms = animMs(el);
-    if (el.classList.contains('step--k')) {                         // the note comes once the animation is done, then a beat to read it
-      const words = (el.querySelector('.step-key-text')?.textContent || '').trim().split(/\s+/).length;
-      const read = Math.min(2000, Math.max(900, 500 + words * 80));
-      ms = Math.max(ms, Math.min(ms, 2400) + read);
-    }
-    return ms;
-  }
-
-  /* ── Reader hint (bottom-centre caption) ─────────── */
-  const hintEl = document.getElementById('reader-hint');
-  function showHint(text) {
-    if (!hintEl) return;
-    hintEl.textContent = text;
-    hintEl.classList.add('show');
-  }
-  function hideHint() { if (hintEl) hintEl.classList.remove('show'); }
+  Eco.showChatExplanation = () => {};
+  Eco.showSearchExplanation = () => {
+    if (Eco.replaying || navigation.active?.dataset.search !== 'results') return;
+    navigation.goTo(document.querySelector('.step[data-search="annotate"]'));
+  };
+  document.getElementById('chat-send-btn')?.addEventListener('click', () => {
+    const step = document.querySelector('[data-chat="send"]');
+    if (navigation.active?.dataset.chat === 'type') navigation.goTo(step);
+  });
 
   /* ── Reader controls: sound + restart ────────── */
   const rcRestart = document.getElementById('rc-restart');
@@ -168,7 +82,7 @@
   function renderSound() {
     if (!rcSound) return;
     rcSound.setAttribute('aria-pressed', String(Eco.sound.on));
-    rcSound.textContent = 'Sound: ' + (Eco.sound.on ? 'on' : 'off');
+    rcSound.querySelector('i').className = 'fas ' + (Eco.sound.on ? 'fa-volume-high' : 'fa-volume-xmark');
   }
   renderSound();
   if (rcSound) rcSound.addEventListener('click', () => { Eco.sound.set(!Eco.sound.on); renderSound(); });
@@ -179,47 +93,6 @@
     window.scrollTo(0, 0);
     window.location.reload();
   });
-
-  function showSceneNotif(id) {
-    const cfg = NOTIF_CONFIG[id];
-    if (!cfg || !sceneNotif) return;
-    document.getElementById('sn-icon').innerHTML    = cfg.icon;
-    document.getElementById('sn-app').textContent   = cfg.app;
-    document.getElementById('sn-title').textContent = cfg.title;
-    document.getElementById('sn-body').textContent  = cfg.body;
-    sceneNotif.setAttribute('aria-label', 'Open ' + cfg.app + ': ' + cfg.title);
-    sceneNotif.classList.add('show', 'pulsing');
-    Eco.sound.notify();
-    // Remove any stale listener before adding a fresh one
-    if (snClickHandler) sceneNotif.removeEventListener('click', snClickHandler);
-    snClickHandler = () => unlockAndActivate(id);
-    sceneNotif.addEventListener('click', snClickHandler, { once: true });
-    sceneNotif.addEventListener('keydown', sceneNotifKey);
-    sceneNotif.focus({ preventScroll: true });
-  }
-
-  function sceneNotifKey(e) {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sceneNotif.click(); }
-  }
-
-  function dismissSceneNotif() {
-    if (!sceneNotif) return;
-    sceneNotif.classList.remove('show', 'pulsing');
-    sceneNotif.removeEventListener('keydown', sceneNotifKey);
-    hideHint();
-    if (snClickHandler) { sceneNotif.removeEventListener('click', snClickHandler); snClickHandler = null; }
-  }
-
-  function unlockAndActivate(id) {
-    pendingChapter = null;
-    unlockedChapters.add(id);
-    dismissSceneNotif();
-    unlockScroll();
-    activateChapter(id);
-  }
-
-  // Lock scroll at page load — intro notification is the first gate
-  lockScroll();
 
   /* ── Window tracking ─────────────────────────────── */
   let windowStack = [];               // chapter ids, most recent first
@@ -251,59 +124,73 @@
   /* Companion windows — spawned alongside their parent chapter */
   const WIN_COMPANIONS = { dm: 'dm-email', reddit: 'mdf', models: 'devplat' };
 
-  // While a gate or an animation holds the page, the reader can still go back but not ahead
-  const canJumpTo = (y) => !scrollLocked || y <= lockedScrollY + 2;
-  function scrollToChapter(id) {
-    const el = document.querySelector(`.scroll-chapter[data-chapter="${id}"]`);
-    if (!el || !canJumpTo(el.getBoundingClientRect().top + window.scrollY)) return;
-    markNavigating();
-    el.scrollIntoView({ behavior: farJump(el.getBoundingClientRect().top) });
-  }
-  // a long way: go there at once. Gliding through every app on the way would open and close each one, and that is what made it choppy
-  const farJump = (deltaY) => (Math.abs(deltaY) > window.innerHeight * 1.5 ? 'instant' : scrollBehavior());
-
-  /* ── Dock: each icon jumps back to (or ahead to) its app ── */
+  /* Dock and arrows use the same step index. Specific dock items own the
+     interval up to the next item, including items sharing a chapter. */
   const dockItems = Array.from(document.querySelectorAll('.dt-dock-item[data-go]'));
+  function dockTarget(item) {
+    return item.dataset.step ? document.querySelector(item.dataset.step)
+      : document.querySelector(`.scroll-chapter[data-chapter="${item.dataset.go}"] .step`);
+  }
   function syncDock() {
-    dockItems.forEach((item) => {
+    const candidates = dockItems.filter(item => !item.dataset.href)
+      .map(item => ({ item, index: steps.indexOf(dockTarget(item)) }))
+      .filter(entry => entry.index >= 0 && entry.index <= navigation.index)
+      .sort((a, b) => b.index - a.index);
+    const current = candidates[0]?.item || dockItems.find(item => !item.dataset.href && item.dataset.go === activeChapter);
+    syncWindowNumbers(current);
+    dockItems.forEach(item => {
       item.classList.toggle('visited', visitedChapters.has(item.dataset.go));
-      item.classList.toggle('current', item.dataset.go === activeChapter);
+      item.classList.toggle('current', item === current);
+      if (item === current) item.setAttribute('aria-current', 'step');
+      else item.removeAttribute('aria-current');
     });
-  }
-  function useDock(item) {
-    const id = item.dataset.go;
-    if (item.dataset.href) {
-      if (window.parent.SiteRouter) window.parent.SiteRouter.navigate(item.dataset.href);
-      else window.location.href = item.dataset.href;
-      return;
-    }   // the database page (Maja's) lives outside the story
-    if (!unlockedChapters.has(id)) {                // not opened yet: nudge instead of skipping ahead
-      item.classList.remove('nope'); void item.offsetWidth; item.classList.add('nope');
-      showHint('That app opens further down the story');
-      setTimeout(() => { if (!scrollLocked && !pendingChapter) hideHint(); }, 2200);
-      return;
-    }
-    hideHint();
-    if (item.dataset.step) {
-      const target = document.querySelector(item.dataset.step);
-      if (target && canJumpTo(target.getBoundingClientRect().top + window.scrollY)) { markNavigating(); target.scrollIntoView({ behavior: farJump(target.getBoundingClientRect().top), block: 'center' }); }
-    } else {
-      scrollToChapter(id);
+    if (current) {
+      const dock = current.closest('.dt-dock-wrap');
+      const itemBox = current.getBoundingClientRect(), dockBox = dock.getBoundingClientRect();
+      const delta = itemBox.left < dockBox.left ? itemBox.left - dockBox.left - 4
+        : itemBox.right > dockBox.right ? itemBox.right - dockBox.right + 4 : 0;
+      if (delta) dock.scrollBy({ left: delta, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
     }
   }
-  dockItems.forEach((item) => {
+  window.addEventListener('resize', () => { if (storyStarted) syncDock(); });
+  dockItems.forEach(item => {
     item.tabIndex = 0;
     item.setAttribute('role', 'button');
     item.setAttribute('aria-label', 'Go to ' + item.title);
-    onActivate(item, () => useDock(item));
-    item.addEventListener('animationend', () => item.classList.remove('nope'));
+    onActivate(item, () => {
+      if (item.dataset.href) {
+        if (window.parent.SiteRouter) window.parent.SiteRouter.navigate(item.dataset.href);
+        else window.location.href = item.dataset.href;
+      } else if (storyStarted) {
+        const target = dockTarget(item);
+        if (!navigation.goTo(target) && target?.dataset.fin === 'end') scrollToEnding();
+      }
+    });
   });
 
   /* ── Scene switching ─────────────────────────────── */
   let activeChapter = 'intro';
 
-  const CHAPTER_NUM = { cover: 1, interface: 2, models: 3, devplat: 3, reddit: 4, mdf: 4, search: 5, appstore: 6, payment: 7, cloud: 8, dm: 9, 'dm-email': 9 };
-  const CHAPTER_TOTAL = 9;
+  const numberedDockItems = dockItems.filter(item => !['intro', 'finale'].includes(item.dataset.go));
+  const CHAPTER_TOTAL = numberedDockItems.length;
+  const numberFor = title => numberedDockItems.findIndex(item => item.title === title) + 1;
+  const CHAPTER_NUM = {
+    interface: numberFor('Assistant'), models: numberFor('Models'), devplat: numberFor('Repos'),
+    reddit: numberFor('Communities'), mdf: numberFor('Communities'), search: numberFor('Search'),
+    appstore: numberFor('Apps'), payment: numberFor('Payments'), cloud: numberFor('Infrastructure'),
+    dm: numberFor('Channels'), 'dm-email': numberFor('Channels'),
+  };
+  function syncWindowNumbers(current) {
+    const sectionNumber = numberedDockItems.indexOf(current) + 1;
+    spawnedWindows.forEach((win, id) => {
+      const chip = win.querySelector('.win-chip');
+      if (!chip) return;
+      const sharedWindow = ['interface', 'search'].includes(id) && current?.dataset.go === id;
+      const number = sharedWindow && sectionNumber ? sectionNumber : CHAPTER_NUM[id];
+      chip.textContent = `${String(number).padStart(2, '0')} / ${String(CHAPTER_TOTAL).padStart(2, '0')}`;
+      chip.title = `Section ${number} of ${CHAPTER_TOTAL}`;
+    });
+  }
   function spawnWindow(wid, label, url, sceneId) {
     const pos = WIN_POSITIONS[wid] || { top: '44px', left: '4%', width: '88%', height: '80%' };
     const w = document.createElement('div');
@@ -322,7 +209,7 @@
         </div>
         <div class="win-title">${escapeHtml(label)}</div>
         <div class="win-url">${escapeHtml(url || '')}</div>
-        ${CHAPTER_NUM[wid] ? `<div class="win-chip" title="Chapter ${CHAPTER_NUM[wid]} of ${CHAPTER_TOTAL}">${String(CHAPTER_NUM[wid]).padStart(2, '0')} / ${String(CHAPTER_TOTAL).padStart(2, '0')}</div>` : ''}
+        ${CHAPTER_NUM[wid] ? `<div class="win-chip" title="Section ${CHAPTER_NUM[wid]} of ${CHAPTER_TOTAL}">${String(CHAPTER_NUM[wid]).padStart(2, '0')} / ${String(CHAPTER_TOTAL).padStart(2, '0')}</div>` : ''}
       </div>
       <div class="win-content"></div>
     `;
@@ -376,14 +263,8 @@
     },
   };
 
-  /* Jump ahead to a chapter the story itself opens (the cursor clicking the model picker) */
-  Eco.advanceTo = (id) => {
-    unlockedChapters.add(id);
-    holdUntil = 0; clearTimeout(holdTimer); holdOwnsLock = false;
-    if (pendingChapter === id) { pendingChapter = null; dismissSceneNotif(); }
-    if (scrollLocked) unlockScroll();
-    scrollToChapter(id);
-  };
+  // Animation callbacks never advance the narrative; only reader actions do.
+  Eco.advanceTo = () => {};
 
   /* Used by the finale: make sure every app has a window, in story order */
   const FINALE_ORDER = ['cover', 'interface', 'models', 'devplat', 'reddit', 'mdf', 'search', 'appstore', 'payment', 'cloud', 'dm', 'dm-email'];
@@ -399,15 +280,15 @@
     },
   };
 
-  function activateChapter(id) {
-    if (activeChapter === id) return;
+  function activateChapter(id, force = false) {
+    if (activeChapter === id && !force) return;
     activeChapter = id;
 
     const ch = CHAPTERS.find(c => c.id === id);
     if (!ch) return;
 
     visitedChapters.add(id);
-    syncDock();
+
     // the empty desktop (the opening and the beat before search): the windows step aside; every pop-up note window goes away
     const wasDesk = monScreen.classList.contains('desk-mode'), nowDesk = id === 'intro';           // only the opening hides the windows
     if (wasDesk && !nowDesk) {                                  // the windows that were behind simply come back; only the new one animates
@@ -420,7 +301,7 @@
       // the empty-desktop beat: every window is still there, all of them dimmed
       spawnedWindows.forEach((w) => { w.classList.remove('active', 'buried'); w.classList.add('dimmed'); });
       if (windowOverlay) windowOverlay.classList.remove('active');
-      setTimeout(() => syncNoteToChapter(id), 850);
+
       return;
     }
 
@@ -452,7 +333,7 @@
       }
     });
 
-    setTimeout(() => syncNoteToChapter(id), 850);        // once the scroll has settled and the window has opened
+
 
     document.documentElement.classList.add('notes-open');   // every window is laid out with room for Notes from the start
     const isNew = !spawnedWindows.has(id);
@@ -469,8 +350,8 @@
     if (companionId && spawnedWindows.has(companionId)) {
       const compWin = spawnedWindows.get(companionId);
       monScreen.appendChild(compWin);
-      compWin.classList.remove('dimmed');
-      compWin.classList.add('active');
+      compWin.classList.remove('active', 'dimmed');
+      compWin.classList.add('buried');
     }
 
     requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -485,7 +366,7 @@
     windowStack.filter(wid => !current.has(wid)).forEach((wid, i) => {
       spawnedWindows.get(wid)?.classList.toggle('buried', i >= 2);
     });
-    current.forEach(wid => spawnedWindows.get(wid)?.classList.remove('buried'));
+    spawnedWindows.get(id)?.classList.remove('buried');
   }
 
   /* ── NOTES APP ───────────────────────────────────── */
@@ -506,11 +387,11 @@
       if (expanding) {
         notesApp.classList.add('centered');
         if (naEdDetails) naEdDetails.classList.add('visible');
-        naMoreBtn.textContent = '↑ less';
+        naMoreBtn.innerHTML = '<i class="fas fa-chevron-up" aria-hidden="true"></i><span>less</span>';
       } else {
         notesApp.classList.remove('centered');
         if (naEdDetails) naEdDetails.classList.remove('visible');
-        naMoreBtn.textContent = '↓ more';
+        naMoreBtn.innerHTML = '<i class="fas fa-chevron-down" aria-hidden="true"></i><span>more</span>';
       }
     });
   }
@@ -584,8 +465,10 @@
   if (naClose) onActivate(naClose, () => {
     if (notesApp && notesApp.classList.contains('centered') && naMoreBtn) naMoreBtn.click();
   });
+  const revealedNotes = new WeakSet();
   let curNote      = null;
   let noteTimer    = null;
+  let preserveNotesDuringReplay = false;
 
   function openNotesApp() {
     if (notesOpen || !notesApp) return;
@@ -595,7 +478,7 @@
   }
 
   /* Making a new note easy to notice: a brief veil over the scene, a soft sound, and a bigger card for the first few */
-  let noteCount = 0, veilTimer = null;
+  let veilTimer = null;
   const veil = document.getElementById('note-veil');
   function flashVeil() {
     if (!veil || prefersReducedMotion()) return;
@@ -604,21 +487,28 @@
   /* A step with an animation shows its note when the animation is done; the previous note stays until then */
   let noteDelayTimer = null;
   function updateNotesApp(stepEl, delayMs) {
+    if (Eco.replaying) return;
+    if (!cwOverlay.classList.contains('hidden')) return;
     clearTimeout(noteDelayTimer);
     if (delayMs > 0 && !prefersReducedMotion()) { noteDelayTimer = setTimeout(() => renderNote(stepEl), delayMs); return; }
     renderNote(stepEl);
   }
   function renderNote(stepEl) {
-    if (!notesApp) return;
+    if (Eco.replaying) return;
+    if (!notesApp || !cwOverlay.classList.contains('hidden')) return;
     // where the note sits: set while it is closed it just appears there; set while open it glides
-    const pos = stepEl.dataset.pos || '';
+    const pos = ['n1', 'n2', 'n3', 'n4'].includes(stepEl.dataset.intro) ? 'center' : 'top';
+    notesApp.style.left = notesApp.style.top = notesApp.style.right = '';
+    document.documentElement.classList.remove('notes-moved');
     if (!notesOpen) notesApp.classList.add('na-snap', 'na-jump');   // closed: move to the new place without any animation...
     notesApp.classList.toggle('pos-center', pos === 'center');
     notesApp.classList.toggle('pos-top', pos === 'top');
     if (!notesOpen) { void notesApp.offsetWidth; notesApp.classList.remove('na-jump'); }   // ...then open from there, so it slides in from the side
     openNotesApp();
     if (notesApp.classList.contains('na-snap')) { void notesApp.offsetWidth; setTimeout(() => notesApp.classList.remove('na-snap'), 60); }
-    if (curNote && curNote.stepEl === stepEl) return;          // already showing this note: don't type it out again
+    if (curNote && curNote.stepEl === stepEl) {
+      return;
+    }
     const label   = stepEl.querySelector('.step-label')?.textContent.trim() || 'Note';
     const keyText = stepEl.querySelector('.step-key-text')?.innerHTML.trim() || '';
     const details = Array.from(stepEl.querySelectorAll('.step-detail p'))
@@ -637,7 +527,7 @@
     if (naEdTitle)   naEdTitle.textContent = label;
     if (naEdBody)    naEdBody.textContent  = '';
     if (naEdDetails) { naEdDetails.textContent = fullBody; naEdDetails.classList.remove('visible'); }
-    if (naMoreBtn)   { naMoreBtn.classList.toggle('visible', details.length > 0); naMoreBtn.textContent = '↓ more'; naMoreBtn.setAttribute('aria-expanded', 'false'); }
+    if (naMoreBtn)   { naMoreBtn.classList.toggle('visible', details.length > 0); naMoreBtn.innerHTML = '<i class="fas fa-chevron-down" aria-hidden="true"></i><span>more</span>'; naMoreBtn.setAttribute('aria-expanded', 'false'); }
     if (naCursor)    naCursor.style.opacity = '1';
 
     pushNoteToSidebar(curNote, true);
@@ -645,42 +535,17 @@
     notesApp.classList.remove('na-flash');
     void notesApp.offsetWidth;
     notesApp.classList.add('na-flash');
-    noteCount += 1;
     // the dim comes in as the note is typed out (never for the first notes, which come before the first notification)
     clearTimeout(veilTimer);
-    if (!['n1', 'n2', 'n3', 'n4'].includes(stepEl.dataset.intro) && !stepEl.dataset.nkey) veilTimer = setTimeout(flashVeil, 120);
-    if (Eco.sound && Eco.sound.note) Eco.sound.note();
+    // Background darkening on note changes is paused; keep the effect for later.
+    // if (!['n1', 'n2', 'n3', 'n4'].includes(stepEl.dataset.intro) && !stepEl.dataset.nkey) veilTimer = setTimeout(flashVeil, 120);
+    if (!Eco.replaying && Eco.sound && Eco.sound.note) Eco.sound.note();
     if (noteTimer) clearTimeout(noteTimer);
-    typeNote(keyText);
+    const animate = !revealedNotes.has(stepEl);
+    revealedNotes.add(stepEl);
+    typeNote(keyText, animate);
   }
 
-
-  /* ── Notes follow the scene ───────────────────────────────
-     A chapter's first note comes up as soon as its window opens (not after the last animation), and scrolling back up
-     brings back the note of the step above. The feed keeps its own rule: Notes first appears at the end of the feed. */
-  const allNotes = Array.from(document.querySelectorAll('.step--k'));
-  function syncNoteToChapter(id) {
-    if (id === 'intro' || id === 'finale') return;
-    if (id === 'cover' && !notesApp.classList.contains('open')) return;   // Notes has not appeared yet: the feed keeps it closed until its end
-    const chapterEl = document.querySelector(`.scroll-chapter[data-chapter="${id}"]`);
-    const ks = chapterEl ? Array.from(chapterEl.querySelectorAll('.step--k')) : [];
-    if (!ks.length) return;
-    const line = window.innerHeight * 0.5;
-    let pick = null;
-    ks.forEach((k) => { if (k.getBoundingClientRect().top <= line) pick = k; });   // the last note already passed
-    if (!pick) {
-      if (id === 'interface') { if (Eco.hideNote) Eco.hideNote(); return; }       // the chat types its message first; its note comes with the reply
-      pick = ks[0];
-    }
-    updateNotesApp(pick);
-  }
-  function noteBack(element) {
-    if (!element.classList.contains('step--k') || element.closest('.scroll-chapter')?.dataset.chapter === 'finale') return;
-    const i = allNotes.indexOf(element);
-    const prev = i > 0 ? allNotes[i - 1] : null;
-    if (prev && prev.closest('.scroll-chapter')?.dataset.chapter !== 'intro') updateNotesApp(prev);
-    else if (element.closest('.scroll-chapter')?.dataset.chapter === 'interface' && Eco.hideNote) Eco.hideNote();   // back above the chat's first note: the opening's notes belong to the desktop
-  }
 
   function pushNoteToSidebar(note, isActive) {
     // Keyed by the step's position so two steps with similar labels never collide
@@ -700,12 +565,7 @@
       preview.textContent = note.keyText.substring(0, 36) + '…';
       item.append(title, preview);
       onActivate(item, () => {
-        const chapter = note.stepEl.closest('.scroll-chapter') || document.querySelector(`.scroll-chapter[data-chapter="${note.stepEl.dataset.chapter || 'finale'}"]`);
-        if (!chapter || !canJumpTo(chapter.getBoundingClientRect().top + window.scrollY)) return;
-        markNavigating();
-        naSidebar.querySelectorAll('.na-sb-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-        chapter.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+        if (steps.includes(note.stepEl)) navigation.goTo(note.stepEl);
       });
       naSidebar.appendChild(item);
     }
@@ -713,10 +573,10 @@
   }
 
   /* A note appears word by word. Every word is laid out from the start, so the card keeps its size while it fills in. */
-  function typeNote(html) {
+  function typeNote(html, animate = true, onComplete = () => {}) {
     naEdBody.innerHTML = html;
     if (naCursor) naCursor.style.opacity = '0';
-    if (prefersReducedMotion()) return;
+    if (!animate || prefersReducedMotion()) { onComplete(); return; }
     const words = [];
     const walker = document.createTreeWalker(naEdBody, NodeFilter.SHOW_TEXT);
     const nodes = [];
@@ -737,12 +597,13 @@
     let i = 0;
     const per = Math.max(28, Math.min(70, 1500 / Math.max(1, words.length)));
     (function step() {
-      if (i >= words.length) return;
+      if (i >= words.length) { onComplete(); return; }
       words[i++].classList.add('on');
       noteTimer = setTimeout(step, per);
     })();
   }
   Eco.hideNote = function () {
+    if (Eco.replaying && preserveNotesDuringReplay) return;
     if (!notesApp) return;
     clearTimeout(noteTimer); clearTimeout(veilTimer); clearTimeout(noteDelayTimer);
     notesApp.classList.remove('open', 'centered');
@@ -751,7 +612,7 @@
     curNote = null;
   };
 
-  Eco.holdScroll = (ms) => holdFor(ms);
+  Eco.holdScroll = () => {};
   Eco.showNote = updateNotesApp;   // graph.js opens a box's explanation here
 
   /* ── Desktop clock ───────────────────────────────── */
@@ -767,21 +628,14 @@
   updateClock();
   setInterval(updateClock, 10000);
 
-  /* ── Opening notification ─────────────────────────── */
-  let scrollHintPending = false;
-  let hintBaseY = 0;
-  /* The reader starts the story by scrolling: notes appear on the empty desktop one after another. */
+  /* The content warning is the only entry gate. */
   function startOpening() {
-    // the desktop starts up (wallpaper, icons one by one, the dock), then the first note arrives from the side
-    setTimeout(() => monScreen.classList.remove('booting'), 300);
+    monScreen.classList.remove('booting');
+    // Let the wallpaper, desktop icons, and dock finish their original entrance.
     setTimeout(() => {
-      openingDone = true;
-      unlockScroll();
-      storyStarted = true; armIdleHint();
-      const first = document.querySelector('.step[data-intro="n1"]');
-      if (first) requestStep(first);
-      setTimeout(() => { showHint('Scroll to continue ↓'); hintBaseY = window.scrollY; scrollHintPending = true; }, 2200);
-    }, 3000);
+      storyStarted = true;
+      navigation.goTo(0);
+    }, prefersReducedMotion() ? 0 : 3000);
   }
 
   /* "Story starts here": the headline cards fade out one after another, and the new wallpaper sweeps across */
@@ -795,198 +649,209 @@
     });
   }
 
-  /* A gate: a notification that waits for a click. The story is held at its step until then. */
-  let gateKind = null;
-  function openGate(kind, stepEl) {
-    const notif = document.getElementById(kind === 'news' ? 'intro-notif' : 'story-notif');
-    if (!notif || gateKind) return;
-    gateKind = kind;
-    nextStepAt = performance.now() + 1e9;                       // later steps wait in the queue
-    const hold = stepEl.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.5 + 4;
-    if (window.scrollY > hold + 30) window.scrollTo({ top: hold, behavior: 'instant' });
-    lockScroll();
-    hideHint();
-    notif.classList.add('show');
-    Eco.sound.notify();
-    notif.focus({ preventScroll: true });
-    onActivate(notif, () => {
-      if (!notif.classList.contains('show')) return;
-      notif.classList.remove('show');
-      gateKind = null;
-      if (kind === 'news') Eco.intro.newsOpen = true; else Eco.intro.storyOpen = true;
-      if (kind === 'story') openFeedFromCards();
-      Eco.intro.refresh();
-      nextStepAt = 0;
-      unlockScroll();
-      markNavigating();
-      const next = document.querySelector(kind === 'news' ? '.step[data-intro="flood"]' : '.step[data-intro="t2"]');
-      const go = () => { if (next) next.scrollIntoView({ behavior: scrollBehavior(), block: 'center' }); drainSteps(); };
-      if (kind === 'story' && !prefersReducedMotion()) setTimeout(go, 1900);    // let the new wallpaper sweep across first
-      else go();
+  /* One source of truth for the narrative. Scene prerequisites are restored
+     without motion in the same frame, then only the selected step animates. */
+  // Notifications are narrative states, so back/forward navigation restores them.
+  document.querySelectorAll('.scroll-chapter').forEach(chapter => {
+    const id = chapter.dataset.chapter === 'intro' ? 'cover' : chapter.dataset.chapter;
+    if (!Eco.NOTIF_CONFIG[id]) return;
+    const anchor = id === 'cover' ? chapter.querySelector('[data-intro="n4"]')
+      : chapter.previousElementSibling?.matches('.scroll-chapter')
+        ? chapter.previousElementSibling.querySelector('.step:last-child') : null;
+    if (!anchor) return;
+    const step = document.createElement('div');
+    step.className = 'step step--n';
+    step.dataset.notification = id;
+    const label = document.createElement('span');
+    label.className = 'step-label';
+    label.textContent = Eco.NOTIF_CONFIG[id].app + ' notification';
+    step.append(label);
+    anchor.after(step);
+  });
+  const steps = Array.from(document.querySelectorAll('.scroll-chapter .step'));
+  const chapterStepsByElement = new Map();
+  const noteForStep = new Map();
+  document.querySelectorAll('.scroll-chapter').forEach(chapter => {
+    const chapterSteps = Array.from(chapter.querySelectorAll('.step'));
+    chapterStepsByElement.set(chapter, chapterSteps);
+    let note = null;
+    chapterSteps.forEach(step => {
+      if (step.classList.contains('step--k')) note = step;
+      noteForStep.set(step, note);
     });
+  });
+  const previous = document.getElementById('story-previous');
+  const next = document.getElementById('story-next');
+  const status = document.getElementById('story-status');
+  const navigation = new window.StoryNavigation(steps, renderStep);
+  Eco.navigation = navigation;
+  const sceneNotification = document.getElementById('scene-notif');
+  sceneNotification?.setAttribute('role', 'button');
+  sceneNotification?.setAttribute('aria-label', 'Dismiss notification');
+  onActivate(sceneNotification, () => {
+    sceneNotification.classList.remove('show', 'pulsing');
+    navigation.move(1);
+  });
+  function showChapterNotification(id) {
+    const config = Eco.NOTIF_CONFIG[id];
+    if (!config || !sceneNotification) return;
+    // Revisiting a notification must put its destination back behind the gate.
+    [id, WIN_COMPANIONS[id]].filter(Boolean).forEach(wid => {
+      const win = spawnedWindows.get(wid);
+      win?.classList.remove('active', 'raised');
+      win?.classList.add('buried');
+      win?.getAnimations().forEach(animation => {
+        if (animation.effect?.getTiming().iterations !== Infinity) animation.finish();
+      });
+    });
+    sceneNotification.setAttribute('aria-label', 'Begin ' + config.app);
+    document.getElementById('sn-icon').innerHTML = config.icon;
+    ['app', 'title', 'body'].forEach(key => {
+      document.getElementById('sn-' + key).textContent = config[key];
+    });
+    sceneNotification.classList.add('show');
+    Eco.sound?.notify?.();
+  }
+  document.documentElement.classList.add('story-discrete');
+  document.getElementById('scroll-root').setAttribute('aria-hidden', 'true');
+
+  function scrollToEnding() {
+    const endcard = document.querySelector('.endcard');
+    if (endcard) window.scrollTo({ top: endcard.offsetTop, behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
   }
 
-
-  /* ── Progress bar ────────────────────────────────── */
-  function updateProgress() {
-    const total = document.body.scrollHeight - window.innerHeight;
-    const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
-    progressFill.style.transform = `scaleX(${pct / 100})`;
+  function syncEndingNavbar() {
+    const endcard = document.querySelector('.endcard');
+    const visible = document.documentElement.classList.contains('in-outro') &&
+      endcard && endcard.getBoundingClientRect().top <= window.innerHeight / 2;
+    const navbar = document.querySelector('.site-topnav');
+    navbar.classList.toggle('is-hidden', !visible);
+    navbar.inert = !visible;
+    if (!visible) navbar.classList.remove('is-open');
+    window.parent.SiteRouter?.setStoryEndingVisible(Boolean(visible));
   }
-  /* A reader who stops scrolling gets the cue again after a few seconds */
-  let idleTimer = null, storyStarted = false;
-  function armIdleHint() {
-    clearTimeout(idleTimer);
-    if (!storyStarted) return;
-    idleTimer = setTimeout(() => {
-      const atEnd = window.scrollY >= document.body.scrollHeight - window.innerHeight - 60;
-      if (scrollLocked || pendingChapter || atEnd || monScreen.classList.contains('finale-mode')) return;
-      showHint('Scroll to continue ↓');
-      hintBaseY = window.scrollY; scrollHintPending = true;
-    }, 4500);
+  window.addEventListener('scroll', syncEndingNavbar, { passive: true });
+  window.addEventListener('resize', () => { if (storyStarted) syncEndingNavbar(); });
+
+  function settleRestoredAnimations() {
+    document.querySelectorAll('.mac-window, .aux-win, #hl-grid, #flood-layer')
+      .forEach(root => root.getAnimations({ subtree: true }).forEach(animation => {
+        if (animation.effect?.getTiming().iterations !== Infinity) animation.finish();
+      }));
   }
-  window.addEventListener('scroll', armIdleHint, { passive: true });
-  let progTicking = false;
-  window.addEventListener('scroll', () => { if (!progTicking) { progTicking = true; requestAnimationFrame(() => { progTicking = false; updateProgress(); }); } }, { passive: true });
-  window.addEventListener('scroll', () => {
-    if (scrollHintPending && Math.abs(window.scrollY - hintBaseY) > 80) { scrollHintPending = false; hideHint(); }
-  }, { passive: true });
 
+  let lastRenderedStep = null;
+  function renderStep(element, index) {
+    const headlineNotes = ['zoomnote', 'grok', 'tech', 'taxo', 'story'];
+    const retainHeadlines = headlineNotes.includes(lastRenderedStep?.dataset.intro) &&
+      ['grok', 'tech', 'taxo', 'story'].includes(element.dataset.intro);
+    lastRenderedStep = element;
+    naEdBody?.querySelectorAll('.nw').forEach(word => word.classList.add('on'));
+    if (element.dataset.fin !== 'end' && document.documentElement.classList.contains('in-outro')) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.documentElement.classList.remove('in-outro');
+    }
+    clearTimeout(noteTimer); clearTimeout(noteDelayTimer); clearTimeout(veilTimer);
+    if (!retainHeadlines) Eco.cancelSceneMotion();
+    sceneNotification?.classList.remove('show', 'pulsing');
+    veil?.classList.remove('go');
+    // Cancel only story animations; the loader and warning have their own lifecycle.
+    if (!retainHeadlines) document.querySelectorAll('.mac-window, .aux-win, #hl-grid, #flood-layer')
+      .forEach(root => root.getAnimations({ subtree: true }).forEach(animation => animation.cancel()));
+    const chapter = element.closest('.scroll-chapter');
+    const id = chapter.dataset.chapter;
+    const chapterChanged = activeChapter !== id;
+    preserveNotesDuringReplay = !chapterChanged && notesOpen;
+    if (!retainHeadlines) {
+      document.documentElement.classList.add('story-restoring');
+      Eco.replaying = true;
+      try {
+        Eco.finale?.undo('assemble');
+        Eco.policy?.reset();
+        Eco.resetScene(id);
+        Eco.hideNote();
+        activateChapter(id, true);
+        if (id !== 'intro') {
+          Eco.intro.storyOpen = true;
+          monScreen.classList.add('flood-gone');
+        }
+        const chapterSteps = chapterStepsByElement.get(chapter);
+        for (const step of chapterSteps) {
+          if (step === element) break;
+          applyStep(step);
+        }
+      } finally {
+        // Commit prerequisite styles before enabling the selected step's motion.
+        void monScreen.offsetHeight;
+        Eco.replaying = false;
+        preserveNotesDuringReplay = false;
+        document.documentElement.classList.remove('story-restoring');
+      }
+      // Restored CSS entrance effects belong to earlier steps. Finish them before
+      // painting; the selected step can then start its own animation below.
+      settleRestoredAnimations();
+    }
+    if (chapterChanged && !prefersReducedMotion()) {
+      const win = spawnedWindows.get(id);
+      win?.animate([{ opacity: 0, transform: 'scale(0.94) translateY(10px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 480, easing: 'cubic-bezier(0.2, 0.85, 0.2, 1)' });
+    }
+    applyStep(element);
+    const note = noteForStep.get(element);
+    if (note && !Eco.intro.floodRunning) updateNotesApp(note, Math.min(animMs(element), 2400));
+    if (!chapterChanged && (element.dataset.note || element.dataset.notification)) {
+      settleRestoredAnimations();
+    }
+    previous.disabled = index === 0;
+    next.disabled = index === steps.length - 1;
+    status.textContent = `Step ${index + 1} of ${steps.length}: ${element.querySelector('.step-label')?.textContent.trim() || chapter.dataset.chapter}`;
+    // progressFill.style.transform = `scaleX(${index / (steps.length - 1)})`;
+    document.documentElement.classList.toggle('in-outro', element.dataset.fin === 'end');
+    syncEndingNavbar();
+    syncDock();
+    if (element.dataset.notification) showChapterNotification(element.dataset.notification);
+    if (element.dataset.fin === 'end') scrollToEnding();
+    window.dispatchEvent(new CustomEvent('story:step', { detail: { element, index, chapter: id } }));
+  }
 
-
-  /* ── SCROLLAMA setup ─────────────────────────────── */
-  const scroller = typeof scrollama === 'function' ? scrollama() : null;
-  if (!scroller) console.warn('scrollama failed to load — scroll-driven animations are disabled.');
-
-  /* Steps run in order, one at a time. Scrollama only reports a step when it happens to see it cross the
-     trigger line, so a quick flick could skip one: every scroll frame also checks the steps of the open app,
-     and any that were passed without playing are queued, then played in order (each after the last one's pause). */
-  const entered = new WeakSet();      // steps that have played
-  const queued = new Set();           // steps waiting for their turn
-  let nextStepAt = 0, drainTimer = null;
-  const stepOrder = new Map(Array.from(document.querySelectorAll('.step')).map((el, i) => [el, i]));
-
-  function playStep(element, direction) {
-    entered.add(element);
-    Eco.handleStep(element.dataset, direction);
+  function applyStep(element) {
+    if (element.dataset.intro === 'go') {
+      Eco.intro.storyOpen = true;
+      if (!Eco.replaying) openFeedFromCards();
+    }
+    Eco.handleStep(element.dataset, 'down');
+    if (element.dataset.chat === 'send' && !Eco.replaying) {
+      setTimeout(() => {
+        if (navigation.active !== element) return;
+        Eco.handleStep({ chat: 'think' }, 'down');
+        setTimeout(() => {
+          if (navigation.active === element) {
+            navigation.goTo(document.querySelector('.step[data-chat="respond"]'));
+          }
+        }, prefersReducedMotion() ? 0 : 900);
+      }, prefersReducedMotion() ? 0 : 400);
+    }
     if (['switchemail', 'annotate-email'].includes(element.dataset.dm)) openCompanion('dm');
     if (['mdf', 'annotate-mdf'].includes(element.dataset.rc)) openCompanion('reddit');
     if (['move', 'annotate-dev'].includes(element.dataset.md)) openCompanion('models');
-
-    // Notes app — fires on every step--k regardless of which scene
-    if (element.classList.contains('step--k') && !Eco.intro.floodRunning) updateNotesApp(element, Math.min(animMs(element), 2400));
-
-    // the two notifications of the opening hold the story until the reader clicks them
-    if (direction === 'down') {
-      if (element.dataset.intro === 'newsfeed' && !Eco.intro.newsOpen) openGate('news', element);
-      else if (element.dataset.intro === 'go' && !Eco.intro.storyOpen) openGate('story', element);
-    }
-
-    // pause the scroll for the length of this step's animation (forwards only, and not in the intro)
-    if (direction === 'down' && (element.closest('.scroll-chapter')?.dataset.chapter !== 'intro' || element.classList.contains('step--k'))) {
-      const ms = holdMs(element);
-      holdFor(ms);
-      nextStepAt = performance.now() + (prefersReducedMotion() ? 0 : ms);
-    }
+    if (element.dataset.fin === 'end') Eco.graph?.setProgress(1);
   }
 
-  function drainSteps() {
-    clearTimeout(drainTimer);
-    if (!queued.size || !openingDone) return;
-    const wait = nextStepAt - performance.now();
-    if (wait > 16) { drainTimer = setTimeout(drainSteps, wait); return; }
-    const sorted = Array.from(queued).sort((a, b) => stepOrder.get(a) - stepOrder.get(b));
-    const next = sorted[0];
-    queued.delete(next);
-    // the feed highlights each replace the last, so when several were skipped only the latest one needs to play
-    const supersededByLater = next.dataset.news !== undefined && sorted.some((el) => el !== next && el.dataset.news !== undefined);
-    if (supersededByLater) entered.add(next);
-    else if (!entered.has(next)) playStep(next, 'down');
-    if (queued.size) drainTimer = setTimeout(drainSteps, supersededByLater ? 0 : Math.max(16, nextStepAt - performance.now()));
-  }
-
-  let openingDone = false;                // the desktop opening plays first; no step is taken before it ends
-  function requestStep(element) {
-    if (!openingDone) return;
-    if (entered.has(element) || queued.has(element)) return;
-    queued.add(element);
-    drainSteps();
-  }
-
-  // the trigger line of a step (scrollama's default is half way down the screen)
-  const stepLine = (el) => window.innerHeight * (parseFloat(el.dataset.offset) || 0.5);
-  let catchTicking = false;
-  function catchUpSteps() {
-    catchTicking = false;
-    if (performance.now() < navUntil || monScreen.classList.contains('finale-mode')) return;
-    const chapterEl = document.querySelector(`.scroll-chapter[data-chapter="${activeChapter}"]`);
-    if (!chapterEl) return;
-    for (const el of chapterEl.querySelectorAll('.step')) {
-      if (entered.has(el) || queued.has(el)) continue;
-      if (el.getBoundingClientRect().top > stepLine(el)) break;     // in order: nothing later has been reached either
-      queued.add(el);
-    }
-    drainSteps();                                                   // all the missed ones are queued first, so they play as one ordered run
-    // the same the other way: steps that were scrolled back above without being undone
-    const all = Array.from(chapterEl.querySelectorAll('.step')).reverse();
-    for (const el of all) {
-      if (!entered.has(el) || el.getBoundingClientRect().top <= stepLine(el)) continue;
-      entered.delete(el);
-      queued.delete(el);
-      Eco.handleStepExit(el.dataset, 'up');
-      noteBack(el);
-    }
-  }
-  window.addEventListener('scroll', () => { if (!catchTicking) { catchTicking = true; requestAnimationFrame(catchUpSteps); } }, { passive: true });
-
-  if (scroller) scroller.setup({
-    step: '.step',
-    offset: 0.5,
-    debug: false,
-  }).onStepEnter(({ element, direction }) => {
-    if (direction === 'down') requestStep(element);
-    else if (!entered.has(element)) {                                  // scrolling back up into a step keeps the old behaviour...
-      if (element.getBoundingClientRect().top > stepLine(element) + 60) return;   // ...unless it was never really reached (a snap-back, a fling)
-      playStep(element, direction);
-    }
-    else Eco.handleStep(element.dataset, direction);
-  }).onStepExit(({ element, direction }) => {
-    if (direction === 'up') { if (!entered.delete(element)) return; queued.delete(element); }
-    Eco.handleStepExit(element.dataset, direction);
-    if (direction === 'up') noteBack(element);
+  previous.addEventListener('click', () => navigation.move(-1));
+  next.addEventListener('click', () => navigation.move(1));
+  document.querySelector('.ps-pay-btn')?.addEventListener('click', () => {
+    if (activeChapter === 'payment') navigation.move(1);
   });
-
-  /* ── IntersectionObserver for chapter switching ───── */
-  const scrollChapters = Array.from(document.querySelectorAll('.scroll-chapter'));
-  let gateBase = null;   // the app that was showing when a gate appeared
-  function updateChapterFromScroll() {
-    const triggerY = window.innerHeight * 0.4;
-    let current = null;
-    for (const el of scrollChapters) {
-      const rect = el.getBoundingClientRect();
-      if (rect.top <= triggerY) current = el.dataset.chapter;
-    }
-    if (!current) return;
-    if (gateKind) return;                                                              // an opening notification is waiting for its click
-    if (!Eco.intro.storyOpen && current !== 'intro') current = 'intro';               // a fast scroll can overshoot: the opening still has to be played first
-    if (unlockedChapters.has(current)) {            // anywhere already opened: follow the scroll, up or down
-      if (current !== activeChapter) activateChapter(current);
-      return;
-    }
-    if (scrollLocked) {                             // back at a closed gate: show the app that was open before it
-      if (pendingChapter && gateBase && activeChapter !== gateBase) activateChapter(gateBase);
-      return;
-    }
-    if (current === activeChapter) return;
-    if (current !== pendingChapter) {               // every new app waits behind its notification: the reader clicks it to open
-      pendingChapter = current;
-      gateBase = activeChapter;
-      showSceneNotif(current);
-      lockScroll();
-    }
-  }
-  let chapTicking = false;
-  window.addEventListener('scroll', () => { if (!chapTicking) { chapTicking = true; requestAnimationFrame(() => { chapTicking = false; updateChapterFromScroll(); }); } }, { passive: true });
+  previous.disabled = next.disabled = true;
+  document.addEventListener('keydown', event => {
+    if (!storyStarted || event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="slider"], [role="dialog"], [role="alertdialog"], .win-titlebar, .na-titlebar, .eg-node')) return;
+    const isSpace = event.key === ' ';
+    if (isSpace && event.target.closest('button, a[href], [role="button"], summary')) return;
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && !isSpace) return;
+    event.preventDefault();
+    navigation.move(event.key === 'ArrowLeft' ? -1 : 1);
+  });
 
   /* ── Step-expand buttons ─────────────────────────── */
   document.addEventListener('click', (e) => {
@@ -997,7 +862,7 @@
     const open = detail.classList.toggle('is-open');
     btn.setAttribute('aria-expanded', open);
     detail.setAttribute('aria-hidden', String(!open));
-    btn.textContent = open ? 'Read less ▴' : 'Read more ▾';
+    btn.innerHTML = open ? 'Read less <i class="fas fa-chevron-up" aria-hidden="true"></i>' : 'Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>';
   });
 
   /* ── Initial scene ───────────────────────────────── */
@@ -1005,17 +870,5 @@
   const firstScene = document.getElementById('scene-intro');
   if (firstScene) firstScene.classList.add('active');
 
-
-  /* ── Resize handler ──────────────────────────────── */
-  window.addEventListener('resize', () => {
-    if (scroller) scroller.resize();
-  });
-
-  /* ── Initial load ────────────────────────────────── */
-  window.addEventListener('load', () => {
-    const introScene = document.getElementById('scene-intro');
-    if (introScene) introScene.classList.add('active');
-    updateProgress();
-  });
 
 })();

@@ -6,6 +6,9 @@
 (function () {
   'use strict';
   const Eco = window.Eco = {};
+  const { setTimeout, clearTimeout, setInterval, clearInterval, requestAnimationFrame, cancelAnimationFrame } =
+    window.createStoryMotionScope(() => Eco.replaying);
+  Eco.cancelSceneMotion = window.cancelStoryMotion;
 
   // Always start at the top (the story is gated, so a restored mid-page scroll position would skip ahead)
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -13,7 +16,7 @@
 
   /* ── Helpers ──────────────────────────────────────── */
   const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const prefersReducedMotion = () => reducedMotionQuery.matches;
+  const prefersReducedMotion = () => Eco.replaying || reducedMotionQuery.matches;
   const scrollBehavior = () => (prefersReducedMotion() ? 'auto' : 'smooth');
   const escapeHtml = (str) => String(str).replace(/[&<>"']/g,
     (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -164,12 +167,13 @@
         const textNode = inputEl.firstChild;
         if (textNode && textNode.nodeType === 3) textNode.textContent = '';
       }
-      if (sendBtn) sendBtn.classList.remove('active');
+      if (sendBtn) { sendBtn.classList.remove('active'); sendBtn.disabled = true; }
       if (chatBody) {
         addChatBubble(chatBody, 'user', CHAT_PROMPT);
       }
+
     }
-    if (val === 'think' && !chatState.thinking) {
+    if (val === 'think' && !chatState.thinking && !chatState.responded) {
       chatState.thinking = true;
       showChatThinking(chatBody);
     }
@@ -195,13 +199,14 @@
     }
   }
 
+  Eco.sendMessage = () => handleInterface('send');
+
   /* ── Assistant → dataset → back to the assistant → models ───────────────
      The pull-back into the dataset, the CSAM scan, the zoom back into the chat and the
      click on the model are timed animations that start when their scroll step is reached
      and fully undo when the reader scrolls back above it (see handleStepExit). */
   let pending = [];              // timeouts for the running sequence
-  let revealDoneAt = 0;          // when the pull-back finishes, so the sort never overlaps it
-  let wallBuilt = false;
+  // Dataset transitions are scheduled through the scene motion scope.
   let flightAnim = null;
   const later = (fn, ms) => { const id = setTimeout(fn, ms); pending.push(id); return id; };
   const clearPending = () => { pending.forEach(clearTimeout); pending = []; };
@@ -217,7 +222,6 @@
     const key = cols + 'x' + rows;
     if (key === wallKey) return;
     wallKey = key;
-    wallBuilt = true;
     const special = grid.querySelector('.cdl-tile-special');
     const all = Array.from(grid.querySelectorAll('.cdl-tile'));
     const size = Math.max(all.length, cols * rows - 3);      // the 2x2 tile takes four cells
@@ -279,7 +283,6 @@
     void layer.offsetWidth;
     tiles.forEach((t) => t.classList.add('tile-in'));
     later(() => { tiles.forEach((t) => { t.style.transitionDelay = ''; }); layer.classList.remove('revealing'); }, last + 800);
-    revealDoneAt = performance.now() + (reduced ? 0 : Math.max(last + 300, 900));
 
     if (source && special && !reduced) {
       const rr = source.getBoundingClientRect();
@@ -308,7 +311,6 @@
   function resetDataset() {
     clearPending();
     resetScan();
-    revealDoneAt = 0;
     if (flightAnim) { flightAnim.cancel(); flightAnim = null; }
     document.querySelectorAll('.cdl-flight').forEach(f => f.remove());
     const layer = document.getElementById('chat-dataset-layer');
@@ -507,19 +509,6 @@
     revealPoints(panel);
   }
 
-  function resetModels() {
-    mdClear();
-    ['md-open', 'md-closed'].forEach((id) => {
-      const p = document.getElementById(id);
-      if (!p) return;
-      p.classList.remove('run');
-      p.querySelectorAll('.md-points li').forEach((li) => li.classList.remove('on'));
-    });
-    const copies = document.getElementById('md-copies'); if (copies) copies.textContent = '';
-    const reqs = document.getElementById('md-reqs'); if (reqs) reqs.textContent = '';
-    const c = document.getElementById('md-count'); if (c) { c.dataset.run = '0'; c.textContent = '1'; }
-  }
-
   /* ── SCENE: DEVELOPER PLATFORM — open-weight models are hosted here ──── */
   function devplatPlay() {
     const rows = document.getElementById('dp-rows');
@@ -540,12 +529,12 @@
     rows.appendChild(frag);
     requestAnimationFrame(() => requestAnimationFrame(() => rows.querySelectorAll('.dp-row').forEach((r) => r.classList.add('in'))));
     count.dataset.run = '1';
-    countTo(count, 35000, 1800, '');
+    if (count) count.textContent = '35,000+';
   }
   function devplatReset() {
     const rows = document.getElementById('dp-rows'); if (rows) rows.textContent = '';
     const scene = document.getElementById('devplat'); if (scene) scene.classList.remove('played');
-    const count = document.getElementById('dp-count'); if (count) { count.dataset.run = '0'; count.textContent = '0'; }
+    const count = document.getElementById('dp-count'); if (count) { count.dataset.run = '0'; count.textContent = '35,000+'; }
   }
 
   function handleModels(val) {
@@ -594,6 +583,7 @@
     let i = 0;
     const cursor = inputEl.querySelector('.chat-cursor');
     const iv = setInterval(() => {
+      if (chatState.sent) { clearInterval(iv); return; }
       if (i < chars.length) {
         const textNode = inputEl.firstChild && inputEl.firstChild.nodeType === 3
           ? inputEl.firstChild
@@ -612,6 +602,10 @@
     const el = document.createElement('div');
     el.className = 'chat-bubble ' + type;
     el.textContent = text;
+    const attachment = document.createElement('div');
+    attachment.className = 'chat-attachment';
+    attachment.innerHTML = '<i class="far fa-file-image" aria-hidden="true"></i> attachment.png';
+    el.prepend(attachment);
     container.appendChild(el);
     container.scrollTop = container.scrollHeight;
   }
@@ -632,9 +626,10 @@
     if (!container) return;
     const el = document.createElement('div');
     el.className = 'chat-bubble ai';
-    el.innerHTML = `I can help with that! Here's what I generated based on the photo you described.<div class="redacted-block" style="width:170px;height:210px;margin-top:10px"><span class="redacted-label">⚠ Output redacted</span></div>`;
+    el.innerHTML = `I can help with that! Here's what I generated based on the photo you described.<div class="redacted-block"><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Output redacted</span></div>`;
     container.appendChild(el);
     container.scrollTop = container.scrollHeight;
+
   }
 
   /* ── SCENE: PRIVATE CHANNELS (DM) ───────────────── */
@@ -647,29 +642,31 @@
   }
 
   /* Messages arrive one at a time; an incoming one shows a typing bubble first */
-  let dmQueue = Promise.resolve();
   function showDmMsg(idx) {
     const container = document.getElementById('dm-messages-imessage');
     const msgs = Array.from(document.querySelectorAll('.dm-step'));
-    msgs.filter((m, i) => i <= idx && !m.classList.contains('visible') && !m.dataset.queued).forEach((m) => {
-      m.dataset.queued = '1';
-      dmQueue = dmQueue.then(() => new Promise((resolve) => {
-        const reveal = () => {
-          m.classList.add('visible');
-          if (container) container.scrollTop = container.scrollHeight;
-          setTimeout(resolve, prefersReducedMotion() ? 0 : 200);
-        };
-        if (prefersReducedMotion() || !m.classList.contains('dm-in') || !container) { reveal(); return; }
-        const typing = document.createElement('div');
-        typing.className = 'dm-msg dm-in dm-typing visible';
-        typing.setAttribute('aria-hidden', 'true');
-        typing.innerHTML = '<span></span><span></span><span></span>';
-        container.insertBefore(typing, m);
-        container.scrollTop = container.scrollHeight;
-        setTimeout(() => { typing.remove(); reveal(); }, 520);
-      }));
+    let delay = 0;
+    msgs.filter((m, i) => i <= idx && !m.classList.contains('visible')).forEach(m => {
+      const incoming = m.classList.contains('dm-in');
+      const reveal = () => {
+        m.classList.add('visible');
+        container?.querySelector('.dm-typing')?.remove();
+        if (container) container.scrollTop = container.scrollHeight;
+      };
+      if (prefersReducedMotion()) { reveal(); return; }
+      setTimeout(() => {
+        if (incoming && container) {
+          const typing = document.createElement('div');
+          typing.className = 'dm-msg dm-in dm-typing visible';
+          typing.setAttribute('aria-hidden', 'true');
+          typing.innerHTML = '<span></span><span></span><span></span>';
+          container.insertBefore(typing, m);
+        }
+      }, delay);
+      delay += incoming ? 520 : 0;
+      setTimeout(reveal, delay);
+      delay += 200;
     });
-    if (container) container.scrollTop = container.scrollHeight;
   }
 
   /* ── SCENE: PUBLIC CHANNELS (Reddit) ────────────── */
@@ -716,6 +713,10 @@
       typeSearchQuery('undress AI app free');
     }
     if (val === 'ads') showAds();
+    if (val === 'instagram') {
+      showAds();
+      document.getElementById('sr-ads')?.classList.add('social-focus');
+    }
   }
 
   /* pop-up ads arrive one after another over the results */
@@ -732,7 +733,7 @@
     adTimers.forEach(clearTimeout); adTimers = [];
     const box = document.getElementById('sr-ads');
     if (!box) return;
-    box.classList.remove('on');
+    box.classList.remove('on', 'social-focus');
     box.querySelectorAll('.sr-ad').forEach((ad) => ad.classList.remove('in'));
   }
 
@@ -740,9 +741,22 @@
     const el = document.getElementById('google-query');
     const cursor = document.getElementById('google-cursor');
     if (!el) return;
+    const chrome = el.closest('.google-chrome');
+    const meta = chrome.querySelector('.google-results-meta');
+    chrome.classList.remove('results-ready');
+    meta?.setAttribute('aria-hidden', 'true');
+    if (cursor) cursor.hidden = false;
+    const showResults = () => {
+      chrome.classList.add('results-ready');
+      meta?.removeAttribute('aria-hidden');
+      if (cursor) cursor.hidden = true;
+      if (!Eco.replaying) {
+        setTimeout(() => Eco.showSearchExplanation?.(), prefersReducedMotion() ? 0 : 800);
+      }
+    };
     if (prefersReducedMotion()) {
       el.textContent = query;
-      if (cursor) cursor.style.opacity = '0';
+      showResults();
       return;
     }
     el.textContent = '';
@@ -752,7 +766,7 @@
       i++;
       if (i >= query.length) {
         clearInterval(interval);
-        if (cursor) setTimeout(() => cursor.style.opacity = '0', 800);
+        setTimeout(showResults, 250);
       }
     }, 50);
   }
@@ -869,7 +883,7 @@
      A wall of headlines scrolls past, the desktop starts, notes narrate on it, the five headlines arrive as cards,
      and the story begins. The steps are numbered; the screen is always drawn for "the last step played",
      so scrolling forwards, backwards, or jumping gives the same picture. */
-  const INTRO = ['n1', 'n2', 'n3', 'n4', 'newsfeed', 'flood', 'zoomnote', 'grok', 'tech', 'taxo', 'story', 'go', 't2', 't3'];
+  const INTRO = ['n1', 'n2', 'n3', 'n4', 'flood', 'zoomnote', 'grok', 'tech', 'taxo', 'story', 'go', 't2', 't3'];
   Eco.intro = { cur: -1, newsOpen: false, storyOpen: false, steps: INTRO, };
   document.querySelectorAll('#cover .tech').forEach((t) => { if (/Grok/.test(t.textContent)) t.classList.add('gk'); });
   function applyIntro(i, play) {
@@ -896,10 +910,6 @@
     if (!inStory && Eco.intro.flights) { Eco.intro.flights.forEach((a) => a.cancel()); Eco.intro.flights = []; }
     // the note: none before the first one and while the headlines arrive; otherwise the latest note passed
     if (!Eco.showNote) return;
-    if (i === INTRO.indexOf('flood') && flood.done && !flood.running) {     // the surge is over: say what comes next
-      const zn = document.querySelector('.step--k[data-intro="zoomnote"]');
-      if (zn) { Eco.showNote(zn); return; }
-    }
     if (i < 0 || flood.running || i === INTRO.indexOf('flood')) { if (Eco.hideNote) Eco.hideNote(); return; }
     for (let n = i; n >= 0; n--) {
       const el = document.querySelector(`.step--k[data-intro="${INTRO[n]}"]`);
@@ -907,26 +917,20 @@
     }
   }
   Eco.intro.refresh = () => applyIntro(Eco.intro.cur);
-  // a quick jump (the gate snapping the reader back, a fling) can make the scroll library report steps that were not really
-  // crossed; the step's real position decides, so the note and the scene never flicker through a step that was skipped
-  const stepLine = () => window.innerHeight * 0.5;
+  // Intro states are selected explicitly, independent of document geometry.
   function handleIntro(val, direction) {
     const i = INTRO.indexOf(val);
     if (i < 0) return;
-    const el = document.querySelector(`.step[data-intro="${val}"]`);
-    if (direction === 'up' && el && el.getBoundingClientRect().top > stepLine() + 60) return;     // not actually reached
     Eco.intro.cur = i;
-    applyIntro(i, direction === 'down' ? val : null);
+    applyIntro(i, direction === 'down' && !Eco.replaying ? val : null);
     // after the zoom note has had its moment, the cards open up on their own: no scrolling needed
-    if (val === 'zoomnote' && direction === 'down') {
+    if (val === 'zoomnote' && direction === 'down' && !Eco.replaying) {
       later2(() => { if (flood.done && !flood.zoomed && !flood.running && Eco.intro.cur >= INTRO.indexOf('zoomnote')) floodZoom(); }, 2000);
     }
   }
   function exitIntro(val) {
     const i = INTRO.indexOf(val);
     if (i < 0) return;
-    const el = document.querySelector(`.step[data-intro="${val}"]`);
-    if (el && el.getBoundingClientRect().top < stepLine() - 60) return;                         // still well above the line: not really left
     Eco.intro.cur = i - 1;
     applyIntro(i - 1);
   }
@@ -1108,7 +1112,6 @@
       lay.classList.remove('run');
       Eco.intro.refresh();                                                  // the zoom note comes up...
       if (Eco.holdScroll) Eco.holdScroll(4600);
-      later2(() => { if (flood.done && !flood.zoomed && !flood.running) floodZoom(); }, 2100);   // ...and the cards open on their own
     }, t + 500 + 5 * 110 + 700);
   }
   // ...and then open up, into the cards the notes go on to talk about
@@ -1207,26 +1210,48 @@
   /* ── Notification content per chapter ───────────── */
   Eco.NOTIF_CONFIG = {
     cover:     { icon: '<span class="notif-folder notif-folder--neutral"><i class="fas fa-camera-retro"></i></span>',          app: 'NewsFeed', title: 'Trending now', body: 'Five headlines. Five different stories.' },
-    interface: { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-magic"></i></span>',         app: 'Assistant', title: 'Awaiting your response', body: 'Your session is ready. Reply to continue.' },
-    dm:        { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-comment"></i></span>',       app: 'Messages', title: 'Unknown contact', body: 'did you see what’s going around' },
-    models:    { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-code"></i></span>',            app: 'Models', title: 'Open weights vs. closed models', body: 'The same model, released in two ways.' },
-    reddit:    { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-globe"></i></span>',         app: 'Forum', title: 'c/faceswaps', body: 'New posts are flooding in.' },
-    search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Search', title: 'Results are ready', body: 'About 34,200,000 results. No safety warning displayed.' },
-    appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'Store', title: 'Trending in Photo & Video', body: 'A photo editor is climbing the charts.' },
-    payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout', title: 'Complete your purchase', body: 'Monthly plan. Cards and wallets accepted.' },
-    cloud:     { icon: '<span class="notif-folder notif-folder--infra"><i class="fas fa-cloud"></i></span>',                app: 'Cloud', title: 'Instance running', body: 'Compute instance · region-1. Infrastructure most people never see.' },
+    interface: { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-magic"></i></span>',         app: 'Assistant', title: 'AI interfaces', body: 'Chatbots and apps give people an easy way to use AI models.' },
+    dm:        { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-comment"></i></span>',       app: 'Messages', title: 'Sharing images', body: 'Images can spread through private messages and public websites.' },
+    models:    { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-code"></i></span>',            app: 'Models', title: 'Open and closed models', body: 'Who controls a model affects who can use or change it.' },
+    reddit:    { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-globe"></i></span>',         app: 'Forum', title: 'Deepfake creation communities', body: 'Online groups share tools and advice for creating deepfakes.' },
+    search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Search', title: 'Search engines', body: 'Search results can lead people to abusive tools and websites.' },
+    appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'Store', title: 'App stores', body: 'App stores can make these tools easy to find and download.' },
+    payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout', title: 'Payment services', body: 'Payment services let these businesses charge customers.' },
+    cloud:     { icon: '<span class="notif-folder notif-folder--infra"><i class="fas fa-cloud"></i></span>',                app: 'Cloud', title: 'Infrastructure', body: 'Servers, storage, and other services keep these apps online.' },
   };
 
-  /* ── Outro: once the closing footer scrolls in, the scene UI steps aside ── */
-  const outro = document.querySelector('.endcard');
-  if (outro) {
-    const syncOutro = () => {
-      const past = outro.getBoundingClientRect().top < window.innerHeight * 0.5;
-      document.documentElement.classList.toggle('in-outro', past);
+  // Keep the original nodes (and their listeners) when restoring scene markup.
+  // Dynamic bubbles/cards are discarded, while controls retain their identity.
+  function capture(node) {
+    const attrs = node.nodeType === 1 ? Array.from(node.attributes, a => [a.name, a.value]) : null;
+    const value = node.nodeValue;
+    const children = Array.from(node.childNodes, child => ({ node: child, restore: capture(child) }));
+    return () => {
+      if (attrs) {
+        Array.from(node.attributes).forEach(a => node.removeAttribute(a.name));
+        attrs.forEach(([name, value]) => node.setAttribute(name, value));
+      } else node.nodeValue = value;
+      if (node.nodeType === 1) node.replaceChildren(...children.map(child => child.node));
+      children.forEach(child => child.restore());
+      if (node.nodeType === 1) node.scrollTop = 0;
     };
-    window.addEventListener('scroll', syncOutro, { passive: true });
-    window.addEventListener('resize', syncOutro);
-    syncOutro();
   }
-
+  const baselines = new Map(Array.from(document.querySelectorAll('.scene:not(#scene-intro), .aux-win'), node => [node.id, capture(node)]));
+  Eco.resetScene = id => {
+    clearPending(); mdClear(); resetAds(); floodClear();
+    cancelAnimationFrame(countAnim);
+    Eco.intro.flights?.forEach(animation => animation.cancel());
+    Eco.intro.cur = -1; Eco.intro.newsOpen = false; Eco.intro.storyOpen = false;
+    Eco.intro.refresh();
+    Eco.auxHide();
+    const companions = { models: 'devplat', reddit: 'mdf', dm: 'dm-email' };
+    [id, companions[id], 'aux-nudifier', 'aux-pubsite'].forEach(key => baselines.get(key)?.());
+    chatState = { typed: false, sent: false, thinking: false, responded: false, datasetShown: false, scanShown: false, returned: false, modelClicked: false };
+    searchTyped = false; redditBanShown = false;
+    appstoreState = { filled: false, highlighted: false, overlayShown: false };
+    payState = { siteShown: false, logosShown: false, sheetShown: false };
+    cloudState = { statsShown: false, alertShown: false };
+    wallKey = '';
+    Eco.fx?.unsplitModels();
+  };
 })();

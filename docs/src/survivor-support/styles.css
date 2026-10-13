@@ -54,19 +54,19 @@
 }
 
 .ss-resource--removal {
-  --db-bg: var(--db-role-infra);
+  --db-bg: var(--role-infra);
 }
 
 .ss-resource--reporting {
-  --db-bg: var(--db-role-distribution);
+  --db-bg: var(--role-distribution);
 }
 
 .ss-resource--support {
-  --db-bg: var(--db-role-monetization);
+  --db-bg: var(--role-monetization);
 }
 
 .ss-resource--legal {
-  --db-bg: var(--db-role-proliferation);
+  --db-bg: var(--role-proliferation);
 }
 
 .ss-resource:has(> a:hover) {

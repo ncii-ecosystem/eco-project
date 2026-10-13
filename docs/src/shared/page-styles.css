@@ -108,23 +108,23 @@ body.page-body a {
 
 .text-highlight.role-creation {
   color: var(--db-chip-ink);
-  background: var(--db-role-creation);
+  background: var(--role-creation);
 }
 .text-highlight.role-distribution {
   color: var(--db-chip-ink);
-  background: var(--db-role-distribution);
+  background: var(--role-distribution);
 }
 .text-highlight.role-proliferation {
   color: var(--db-chip-ink);
-  background: var(--db-role-proliferation);
+  background: var(--role-proliferation);
 }
 .text-highlight.role-infra {
   color: var(--db-chip-ink);
-  background: var(--db-role-infra);
+  background: var(--role-infra);
 }
 .text-highlight.role-monetization {
   color: var(--db-chip-ink);
-  background: var(--db-role-monetization);
+  background: var(--role-monetization);
 }
 
 .content-year,

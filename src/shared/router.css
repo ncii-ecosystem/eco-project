@@ -33,7 +33,7 @@ html.db-theme-dark .site-shell {
   transition: transform 250ms ease, visibility 250ms;
 }
 
-.site-shell.story-started .site-topnav {
+.site-shell.story-started:not(.story-ending-visible) .site-topnav {
   transform: translateY(-100%);
   visibility: hidden;
 }

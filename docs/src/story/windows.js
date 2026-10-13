@@ -116,6 +116,7 @@
       });
     }
 
+    /* Resizing disabled for now.
     DIRS.forEach((dir) => {
       const h = document.createElement('span');
       h.className = 'win-rz win-rz-' + dir;
@@ -126,6 +127,7 @@
       h.addEventListener('pointercancel', end);
       win.appendChild(h);
     });
+    */
 
     // any click inside brings it forward
     win.addEventListener('pointerdown', () => { if (!interaction && !mon.classList.contains('finale-mode')) raise(win); });

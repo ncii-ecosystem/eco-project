@@ -73,7 +73,7 @@ body *, body *::before, body *::after { text-shadow: none !important; }
 
 /* Dock */
 .dt-dock {
-  background: var(--paper); border: 1px solid var(--p); border-radius: 0; box-shadow: var(--hard-sm);
+  background: var(--paper); border: 1px solid var(--p); border-radius: 0; box-shadow: none;
   backdrop-filter: none; -webkit-backdrop-filter: none; padding: 8px 12px; gap: 6px;
 }
 .dt-dock-item { width: 34px; height: 34px; border-radius: 0; border: 1px solid var(--p); color: var(--p) !important; }
@@ -91,6 +91,14 @@ body *, body *::before, body *::after { text-shadow: none !important; }
               filter 0.4s ease, left 0.5s ease, width 0.5s ease, visibility 0.45s;
 }
 .mac-window.active { box-shadow: var(--window-shadow-lg); }
+.mac-window, .mac-window *, .aux-win, .aux-win *, #hl-grid, #hl-grid *, #flood-layer, #flood-layer * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+#notes-app .na-ed-body, #notes-app .na-ed-body *, #notes-app .na-ed-details {
+  -webkit-user-select: text;
+  user-select: text;
+}
 .mac-window.dimmed { filter: none; }
 .mac-window.dimmed::before { content: ''; position: absolute; inset: 0; z-index: 60; pointer-events: none; background: color-mix(in srgb, var(--p) 34%, transparent); }
 .mac-window.raised::before { display: none; }
@@ -135,7 +143,7 @@ body *, body *::before, body *::after { text-shadow: none !important; }
 .intro-notification, #scene-notif { border: 1px solid var(--p); border-radius: 0; box-shadow: none;
   backdrop-filter: none; -webkit-backdrop-filter: none;
 }
-#scene-notif.pulsing { animation: sn-ring-p 2s ease-in-out infinite; }
+#scene-notif.pulsing { animation: none; }
 @keyframes sn-ring-p { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--role-proliferation) 0%, transparent); } 50% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--role-proliferation) 75%, transparent); } }
 .intro-notif-app, .sn-app { color: var(--p); font-family: var(--font-mono); }
 .notif-folder { border-radius: 0; border: 1px solid var(--p); color: var(--p); }
@@ -253,11 +261,16 @@ body *, body *::before, body *::after { text-shadow: none !important; }
   background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--p) 16%, transparent) 0 6px, transparent 6px 12px), #f2efff; }
 
 .fin-cursor { position: absolute; left: 0; top: 0; z-index: 9000; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; }
-.fin-cursor > i { font-size: 30px; color: var(--paper); -webkit-text-stroke: 1px var(--db-chip-ink); }
+.fin-cursor > i {
+  font-size: 30px;
+  color: var(--db-chip-ink);
+  -webkit-text-stroke: 2px #fff;
+  paint-order: stroke fill;
+}
 .fin-cursor.show { opacity: 1; }
 
 .fin-final {
-  position: absolute; z-index: 9400; left: calc((100% - var(--notes-reserve, 0px)) / 2); top: 50%; width: min(560px, calc(100% - var(--notes-reserve, 0px) - 60px));
+  position: absolute; z-index: 9400; left: 50%; top: 50%; width: min(560px, calc(100% - 60px));
   transform: translate(-50%, -46%); opacity: 0; transition: opacity 0.6s ease, transform 0.6s ease;
   background: var(--paper); border: 1px solid var(--d); box-shadow: var(--window-shadow-lg); padding: 28px 30px; text-align: center;
 }
@@ -316,9 +329,10 @@ html { scrollbar-gutter: stable; }
   flex-basis: 100%; border-top: 1px solid var(--p);
   font-family: var(--font-mono); font-weight: 700; color: var(--p); text-align: right;
 }
-#scene-notif.show.pulsing { animation: notif-call 1.8s ease-in-out infinite; }
+#scene-notif.show { animation: notif-call 1.8s ease-in-out infinite; }
+.intro-notification:focus, #scene-notif:focus { outline: none; }
 .intro-notif-time { opacity: 0.7; }
-@media (prefers-reduced-motion: reduce) { .intro-notification.show, #scene-notif.show.pulsing { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .intro-notification.show, #scene-notif.show { animation: none; } }
 
 /* positioned by their own rules; the tip hangs above them */
 .rc-btn { position: relative; }
@@ -510,7 +524,21 @@ body.win-busy, body.win-busy * { user-select: none !important; -webkit-user-sele
 
 /* the closing note that points to the database (not built yet) */
 .endcard-next { margin-top: 18px; }
-.endcard-soon { display: inline-block; text-decoration: none; cursor: pointer; font: 700 13px var(--font-mono); color: var(--p); background: var(--role-proliferation); border: 1px solid var(--p); box-shadow: var(--hard-sm); padding: 8px 14px; }
+.endcard-soon { display: inline-flex; align-items: baseline; gap: var(--db-space-2); text-decoration: none; cursor: pointer; font: 700 13px var(--font-mono); color: var(--p); background: var(--role-proliferation); border: 1px solid var(--p); box-shadow: var(--hard-sm); padding: 8px 14px; }
+.endcard-soon > span, #cw-resources > span, .intro-notif-cta > span, .sn-hint > span {
+  flex: 0 0 auto;
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: var(--db-text-md);
+  font-weight: 400;
+  font-style: normal;
+  line-height: var(--db-lh);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+#cw-resources > span, .intro-notif-cta > span, .sn-hint > span {
+  display: inline-block; margin-left: var(--db-space-2);
+}
 
 .endcard-inner .endcard-credit { margin-top: 28px; font: 400 13px var(--font-mono); color: #fff; opacity: 0.85; letter-spacing: 0.04em; }
 .endcard-inner .endcard-credit strong { color: var(--role-proliferation); font-weight: 700; }
@@ -518,7 +546,7 @@ body.win-busy, body.win-busy * { user-select: none !important; -webkit-user-sele
 /* a chapter that ends on a note gets room after it, so the reader can read the note before the next app's notification arrives */
 .scroll-chapter:not([data-chapter="cover"]):has(> .step--k:last-child) { padding-bottom: 60vh; }
 
-.endcard-soon:hover, .endcard-soon:focus-visible { background: #fff; outline: none; transform: translate(-2px, -2px); box-shadow: var(--hard); }
+.endcard-soon:hover, .endcard-soon:focus-visible { background: #fff; outline: none; box-shadow: var(--hard-sm); }
 
 /* "click me" hint on the maps */
 .pol-hint { position: absolute; z-index: 330; left: calc((100% - var(--notes-reserve, 0px)) / 2); bottom: 76px; transform: translate(-50%, 10px);
@@ -532,12 +560,13 @@ body.win-busy, body.win-busy * { user-select: none !important; -webkit-user-sele
 /* ── Notifications: a proper banner size (the wording stays as short as Michelle left it) ─ */
 .intro-notification, #scene-notif { padding: 9px 12px 8px 10px; gap: 9px; }
 #scene-notif { top: -200px; }
-#scene-notif.show { top: 18px; }
+#scene-notif { left: 50%; right: auto; margin-left: calc(min(268px, 100vw - 36px) / -2); }
+#scene-notif.show { top: 16px; }
 .intro-notif-app, .sn-app { opacity: 1; }
 .intro-notif-cta, .sn-hint { font-size: 11px; margin-top: 6px; padding-top: 6px; }
 .sn-hint { position: static; }
 /* the opening notification drops in from the top centre, so it never covers the desktop icons */
-.intro-notification { right: auto; left: 50%; transform: translateY(-180%); }
+.intro-notification { top: 16px; right: auto; left: 50%; transform: translateY(-180%); }
 .intro-notification.show { transform: none; }
 @keyframes notif-call {
   0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--role-proliferation) 0%, transparent); }
@@ -563,7 +592,15 @@ html:not(.notes-moved) #notes-app:not(.pos-center):not(.pos-top):not(.centered) 
 }
 #notes-app .na-sidebar, #notes-app .na-ed-date, #notes-app .na-ed-title, #notes-app .na-cursor { display: none !important; }
 #notes-app .na-panes { min-height: 0; }
-#notes-app .na-editor { padding: 20px 22px 18px; }
+#notes-app .na-editor { padding: 26px 28px 24px; }
+@media (min-width: 701px) {
+  html:not(.notes-moved) #notes-app:not(.centered) {
+    top: 28px; right: 28px; left: auto; translate: none;
+  }
+  html #notes-app.open.pos-center:not(.centered) {
+    top: 50%; right: 50%; left: auto; translate: 50% -50%;
+  }
+}
 #notes-app .na-ed-body, #notes-app .na-ed-details {
   font-family: var(--font-sans); color: var(--ink-d); font-size: 26px; line-height: 1.28; font-weight: 700;
 }
@@ -695,8 +732,8 @@ html.notes-open { --notes-reserve: 360px; }
 .mon-screen:not(.booting) .dt-icon:nth-child(3) { transition-delay: 1.1s; } .mon-screen:not(.booting) .dt-icon:nth-child(4) { transition-delay: 1.25s; }
 .mon-screen:not(.booting) .dt-icon:nth-child(5) { transition-delay: 1.4s; } .mon-screen:not(.booting) .dt-icon:nth-child(6) { transition-delay: 1.55s; }
 .dt-dock-wrap { transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.25, 1), opacity 0.4s ease; }
-.mon-screen.booting .dt-dock-wrap { transform: translateX(-50%) translateY(180%); }
-.mon-screen:not(.booting) .dt-dock-wrap { transition-delay: 1.8s; }
+body:has(.mon-screen.booting) .dt-dock-wrap { transform: translateX(-50%) translateY(180%); }
+body:has(.mon-screen:not(.booting)) .dt-dock-wrap { transition-delay: 1.8s; }
 @media (prefers-reduced-motion: reduce) { #hl-wall, #scene-intro, .dt-icon, .dt-dock-wrap { transition-duration: 0.01ms !important; transition-delay: 0s !important; } }
 
 /* the headline cards give way to the Feed window; it stays on the desktop once the story has begun */
@@ -776,8 +813,8 @@ html.notes-open { --notes-reserve: 360px; }
 .na-jump { transition: none !important; }
 .mac-window[data-chapter="cover"] { transition: opacity 0.35s ease, box-shadow 0.4s ease, filter 0.4s ease, visibility 0.45s !important; will-change: auto; }
 .mac-window[data-chapter="cover"] .win-titlebar { transition: none; }
-.mon-screen.flood-full .dt-dock-wrap, .mon-screen.flood-full .reader-hint { opacity: 1; }
-.mon-screen.flood-run .dt-dock-wrap, .mon-screen.flood-run .reader-hint { opacity: 0; }
+body:has(.mon-screen.flood-full) .dt-dock-wrap, .mon-screen.flood-full .reader-hint { opacity: 1; }
+body:has(.mon-screen.flood-run) .dt-dock-wrap, .mon-screen.flood-run .reader-hint { opacity: 0; }
 
 /* the five headline cards */
 .hl-card .hl-text { font-weight: 800; letter-spacing: -0.01em; }
@@ -1030,3 +1067,78 @@ html.notes-open { --notes-reserve: 360px; }
 /* once the five cards are open, the surge behind them is gone: a clear desktop */
 #flood-layer { transition: opacity 0.9s ease; }
 #flood-layer.cleared { opacity: 0; }
+
+/* Explicit narrative controls: reuse the reader button appearance. */
+.story-discrete, .story-discrete body { height: 100%; overflow: hidden; }
+.story-discrete { --story-bottom-reserve: calc(60px + env(safe-area-inset-bottom, 0px)); }
+.story-discrete body { background: var(--p); }
+/* Keep window geometry clear of the controls, but let the original wallpaper
+   fill the viewport as one continuous animated surface. */
+.story-discrete .monitor-bezel, .story-discrete .mon-screen { overflow: visible; }
+.story-discrete #scene-intro { bottom: calc(-1 * var(--story-bottom-reserve)); }
+.story-discrete #scroll-root { display: none; }
+.story-navigation { margin-left: auto; display: flex; gap: 8px; pointer-events: auto; }
+.rc-btn:disabled { opacity: 0.35; cursor: default; }
+.rc-btn:disabled:hover { background: var(--db-bg); color: var(--db-ink); }
+.story-discrete .monitor-wrap { bottom: var(--story-bottom-reserve); }
+.story-discrete .reader-controls { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+.story-discrete .endcard { display: none; }
+.story-discrete.in-outro, .story-discrete.in-outro body { height: auto; overflow-x: hidden; overflow-y: auto; }
+.story-discrete.in-outro .monitor-wrap {
+  position: absolute; bottom: auto; height: calc(100dvh - var(--story-bottom-reserve));
+}
+.story-discrete.in-outro .endcard {
+  display: flex; align-items: center; justify-content: center;
+  position: relative; inset: auto; margin-top: 100dvh; min-height: 100dvh;
+  padding-bottom: calc(var(--story-bottom-reserve) + 24px);
+}
+.story-discrete.in-outro .reader-controls .rc-btn { opacity: 1; visibility: visible; pointer-events: auto; }
+.story-discrete.in-outro .reader-controls .rc-btn:disabled { opacity: 0.35; }
+.story-discrete.in-outro .dt-dock-wrap { opacity: 1; visibility: visible; pointer-events: auto; z-index: 9600; }
+.story-discrete .scene-stage, .story-discrete .na-editor { overscroll-behavior: contain; }
+@media (max-width: 1000px) {
+  .story-discrete .dt-dock-wrap { width: calc(100% - 16px); max-width: calc(100% - 16px); justify-content: flex-start; overflow-x: auto; padding: 8px 4px; }
+  .story-discrete .dt-dock { width: max-content; }
+  .story-discrete #notes-app { max-height: calc(100dvh - 140px); }
+}
+
+.story-restoring :is(.mac-window, .aux-win, #hl-grid, #flood-layer),
+.story-restoring :is(.mac-window, .aux-win, #hl-grid, #flood-layer) * {
+  transition: none !important; animation: none !important;
+}
+.story-navigation [data-tip]::after { left: auto; right: 0; }
+@media (max-width: 1000px) {
+  .story-discrete .dt-dock-wrap { bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
+  .story-discrete { --story-bottom-reserve: calc(132px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width: 700px) {
+  html.story-discrete.notes-open { --notes-reserve: 0px; }
+  .story-discrete #notes-app:not(.centered) {
+    left: 12px; right: 12px; bottom: calc(140px + env(safe-area-inset-bottom, 0px));
+    width: auto; max-height: 32dvh; min-height: 0;
+    top: auto !important; translate: none !important;
+  }
+  .story-discrete #notes-app.centered { left: 12px; right: 12px; width: auto; max-height: 65dvh; }
+  .story-discrete .mon-screen:not(.finale-mode) .mac-window {
+    left: 8px !important; top: 12px !important; width: calc(100% - 16px) !important;
+    height: calc(100% - 24px) !important;
+  }
+  .story-discrete:has(#notes-app.open) .mon-screen:not(.desk-mode):not(.finale-mode) .mac-window { height: calc(100% - 32dvh - 24px) !important; }
+  .story-discrete .win-url { display: none; }
+}
+
+/* One position for introductory notes, one for every subsequent note. */
+html.story-discrete #notes-app.open:not(.centered) {
+  top: 28px !important;
+  right: 28px;
+  bottom: auto;
+  left: auto;
+  width: min(340px, calc(100vw - 56px));
+  max-height: calc(100dvh - var(--story-bottom-reserve) - 56px);
+  translate: none !important;
+}
+html.story-discrete #notes-app.open.pos-center:not(.centered) {
+  top: 50% !important;
+  right: 50%;
+  translate: 50% -50% !important;
+}

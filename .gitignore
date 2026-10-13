@@ -9,3 +9,4 @@ studio/.sanity/
 .vercel
 .claude/
 .wrangler/
+dist/

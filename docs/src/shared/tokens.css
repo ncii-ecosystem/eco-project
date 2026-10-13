@@ -8,11 +8,12 @@
   --d: var(--db-chip-ink);
   --hard: 6px 6px 0 var(--db-ink);
   --hard-sm: 3px 3px 0 var(--db-ink);
-  --db-role-creation: #fbd4d0;
-  --db-role-distribution: #f9d9b0;
-  --db-role-proliferation: #fff3a8;
-  --db-role-infra: #b8dce0;
-  --db-role-monetization: #bff5b3;
+  --hard-lg: 10px 10px 0 var(--db-ink);
+  --role-creation: #fbd4d0;
+  --role-distribution: #f9d9b0;
+  --role-proliferation: #fff3a8;
+  --role-infra: #b8dce0;
+  --role-monetization: #bff5b3;
   --db-space-1: 0.25rem;
   --db-space-2: 0.5rem;
   --db-space-3: 0.75rem;
