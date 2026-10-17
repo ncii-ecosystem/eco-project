@@ -1,0 +1,310 @@
+/* ═══ Messages ══════════════════════════════════════════════ */
+.dm-stage {
+  background: var(--paper);
+}
+.dm-screen,
+.dm-screen-imessage {
+  background: var(--paper);
+}
+.dm-header-bar {
+  border-bottom: 1px solid var(--p);
+  background: var(--paper);
+}
+.dm-avatar {
+  border-radius: 0;
+  background: var(--role-distribution);
+  color: var(--p);
+  border: 1px solid var(--p);
+  font-family: var(--db-font-mono);
+}
+.dm-contact-name {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  font-size: 16px;
+}
+.dm-status {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  opacity: 0.7;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.dm-status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--role-monetization);
+  flex-shrink: 0;
+}
+.dm-messages {
+  background: linear-gradient(color-mix(in srgb, var(--p) 7%, transparent) 1px, transparent 1px) 0
+    0 / 100% 28px;
+  gap: 12px;
+}
+.dm-timestamp {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  background: var(--paper);
+  padding: 0 8px;
+  border: 1px solid var(--p);
+  text-transform: lowercase;
+}
+.dm-attachment {
+  border-radius: 0;
+}
+.dm-input-bar {
+  border-top: 1px solid var(--p);
+  text-transform: lowercase;
+}
+.dm-msg .dm-attachment { margin: 0; max-width: 100%; }
+
+/* Mail */
+.email-stage {
+  background: var(--paper);
+}
+.email-app-header {
+  background: var(--role-distribution);
+  border-bottom: 1px solid var(--p);
+}
+.email-app-logo {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  text-transform: lowercase;
+}
+.email-subject {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  font-size: 20px;
+  font-weight: 900;
+  padding-top: 16px;
+}
+.email-meta {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  border-bottom: 1px solid var(--p);
+  overflow-wrap: anywhere;
+}
+.email-body {
+  color: var(--p);
+  border-left: 6px solid var(--role-distribution);
+  margin: 16px;
+  padding: 0 16px;
+  min-height: 0;
+  gap: 12px;
+  overflow-wrap: anywhere;
+}
+.email-body p { margin: 0; }
+.email-body > * { flex-shrink: 0; }
+.email-body p:last-child {
+  color: var(--p) !important;
+  font-family: var(--db-font-mono);
+}
+
+/* ═══ Forum ═════════════════════════════════════════════════ */
+.reddit-stage,
+.pub-screen-reddit {
+  background: var(--paper);
+}
+.reddit-chrome {
+  background: var(--paper);
+}
+.reddit-header {
+  background: var(--paper);
+  border-bottom: 1px solid var(--p);
+}
+.reddit-logo {
+  color: var(--paper);
+  background: var(--p);
+  font-family: var(--db-font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 3px 8px;
+  text-transform: lowercase;
+}
+.reddit-search-bar {
+  background: var(--paper);
+  border: 1px solid var(--p);
+  border-radius: 0;
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  font-size: 12px;
+}
+
+.reddit-post-meta {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+}
+.reddit-sub {
+  color: var(--p);
+  background: var(--role-proliferation);
+  padding: 1px 6px;
+  border: 1px solid var(--p);
+}
+.reddit-post-title {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+.reddit-post-awards {
+  display: flex;
+  gap: 14px;
+  color: var(--p);
+  font-family: var(--db-font-mono);
+}
+.rc {
+  border-left: 3px solid var(--p);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--p) 6%, transparent), transparent 40%);
+}
+.rc-user {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+}
+.rc-pts {
+  color: var(--p);
+  opacity: 0.7;
+}
+.rc-text {
+  color: var(--p);
+}
+.rc.removed {
+  color: var(--p);
+}
+.rc.removed .rc-text {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  font-style: normal;
+  display: inline-block;
+  padding: 2px 8px;
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--p) 16%, transparent) 0 6px,
+    transparent 6px 12px
+  );
+  border: 1px solid var(--p);
+}
+/* the ban notice */
+.reddit-banned {
+  background: #efeafd;
+}
+.reddit-banned-box {
+  border-radius: 0;
+  border: 1px solid var(--p);
+  box-shadow: none;
+  background: var(--paper);
+}
+.reddit-banned-snoo {
+  color: var(--p);
+  font-size: 48px;
+}
+.reddit-banned-snoo-sub {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+}
+.reddit-banned-divider {
+  background: var(--p);
+}
+.reddit-banned-rule {
+  background: var(--p);
+  color: #fff;
+  border-radius: 0;
+  font-family: var(--db-font-mono);
+}
+.reddit-banned-title {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  font-weight: 900;
+  font-size: 22px;
+}
+.reddit-banned-sub {
+  color: var(--p);
+}
+.reddit-banned-sub strong {
+  color: var(--p);
+}
+.reddit-banned-meta {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+}
+
+/* ═══ NSFWFakes (companion) ═══════════════════════════════ */
+.mdf-stage {
+  background: var(--paper);
+}
+.mdf-site-header {
+  background: var(--p);
+  border-bottom: 1px solid var(--d);
+}
+.mdf-logo {
+  color: var(--role-proliferation);
+  font-family: var(--db-font-mono);
+  text-transform: lowercase;
+  letter-spacing: -0.02em;
+}
+.mdf-tagline {
+  color: #fff;
+  font-family: var(--db-font-mono);
+  opacity: 0.9;
+}
+.mdf-section-label {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  text-transform: lowercase;
+}
+.mdf-card {
+  background: var(--paper);
+  border: 1px solid var(--p);
+  border-radius: 0;
+  box-shadow: none;
+}
+.mdf-card .redacted-block {
+  width: 100%; height: 120px;
+  border-radius: 0 !important;
+  border-width: 0 0 1px 0;
+}
+.mdf-card-meta {
+  color: var(--p);
+  font-family: var(--db-font-mono);
+  border-top: 0;
+}
+/* Fit this companion window to its content instead of leaving a tall blank area. */
+.mon-screen:not(.finale-mode) .mac-window[data-chapter="mdf"] {
+  height: auto !important;
+  max-height: calc(100% - 56px);
+}
+.mon-screen:not(.finale-mode) .mac-window[data-chapter="mdf"] .win-content {
+  flex: 0 1 auto;
+}
+.mon-screen:not(.finale-mode) .mac-window[data-chapter="mdf"] #mdf,
+.mon-screen:not(.finale-mode) .mac-window[data-chapter="mdf"] .mdf-stage {
+  position: relative;
+  inset: auto;
+  height: auto;
+}
+.mdf-cards { margin-bottom: 0; }
+.mdf-stage { overflow: clip !important; }
+.mon-screen:not(.finale-mode) .mdf-stage {
+  height: 420px !important;
+  min-height: 420px;
+}
+.mdf-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mdf-offline-box { padding: 24px 28px; }
+.mdf-offline {
+  background: color-mix(in srgb, var(--p) 92%, transparent);
+}
+.mdf-offline-box {
+  background: var(--paper);
+  border: 1px solid var(--d);
+  border-radius: 0;
+  box-shadow: var(--hard);
+}
+.mdf-offline-icon {
+  color: var(--p);
+  font-size: 40px;
+}
+.mdf-offline-title {
+  color: var(--p);
+}
+.mdf-offline-msg {
+  color: var(--p);
+}

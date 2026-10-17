@@ -1,9 +1,4 @@
-/* ============================================================
-   graph.js — the map the windows resolve into (desktop only)
-   The paper's diagram of the technologies behind AIG-NCII, drawn as an SVG.
-   Every box can be clicked: its explanation opens in the Notes window.
-   finale.js drives how much of it is visible while the reader scrolls.
-   ============================================================ */
+/* Interactive SVG of the paper's technology ecosystem, used by the About explorer. */
 export function mountSystemChart({ Eco = window.Eco, mon = document.getElementById('mon-screen') } = {}) {
 
   if (!Eco || !mon) return;
@@ -157,13 +152,14 @@ export function mountSystemChart({ Eco = window.Eco, mon = document.getElementBy
     const g = el('g', { class: 'eg-node', tabindex: 0, role: 'button', 'data-id': n.id, 'aria-label': n.title + ': open the note about this box' }, nodeLayer);
     el('rect', { x: n.x + 8, y: n.y + 8, width: n.w, height: n.h, class: 'eg-shadow' }, g);
     el('rect', { x: n.x, y: n.y, width: n.w, height: n.h, fill: ROLE[n.role], class: 'eg-box' }, g);
+    const content = !n.tall ? el('g', { class: 'eg-content' }, g) : g;
 
     // Horizontal boxes use a left icon; middle boxes retain a centered stack.
     const cx = n.tall ? n.x + n.w / 2 : n.x + 72;
     if (!n.tall) {
       const icon = el('text', { x: n.x + 36, y: n.y + n.h / 2,
         class: 'eg-icon', 'text-anchor': 'middle', 'dominant-baseline': 'central',
-        style: 'font-size:32px' }, g);
+        style: 'font-size:32px' }, content);
       icon.textContent = ICON[n.icon];
     }
     const rows = n.tall ? contentRows(n) : contentRows(n).slice(2);
@@ -173,7 +169,7 @@ export function mountSystemChart({ Eco = window.Eco, mon = document.getElementBy
       if (row.text) {
         const text = el('text', { x: cx, y: y + row.height / 2,
           class: row.className, 'text-anchor': n.tall ? 'middle' : 'start', 'dominant-baseline': 'central',
-          style: `font-size:${row.size}px` }, g);
+          style: `font-size:${row.size}px` }, content);
         text.textContent = row.text;
       }
       y += row.height;
@@ -181,6 +177,33 @@ export function mountSystemChart({ Eco = window.Eco, mon = document.getElementBy
     g.style.setProperty('--i', i);
     return g;
   });
+
+  function centerWideContent() {
+    // Measure all labels before changing SVG geometry.
+    const measured = NODES.flatMap((node, index) => {
+      if (node.tall) return [];
+      const content = nodeEls[index].querySelector('.eg-content');
+      const texts = [...content.querySelectorAll('text:not(.eg-icon)')];
+      const width = Math.max(...texts.map(text => text.getBBox().width));
+      const title = content.querySelector('.eg-title');
+      const icon = content.querySelector('.eg-icon');
+      return [{ node, content, texts, width, title, icon, iconWidth: icon.getBBox().width }];
+    });
+    measured.forEach(({ node, texts, width, title, icon }) => {
+      texts.forEach(text => {
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('x', node.x + 72 + width / 2);
+      });
+      icon.setAttribute('y', title.getAttribute('y'));
+    });
+    const iconPositions = measured.map(({ title, iconWidth }) => title.getBBox().x - 16 - iconWidth / 2);
+    measured.forEach(({ icon }, index) => icon.setAttribute('x', iconPositions[index]));
+    const offsets = measured.map(({ node, content }) => {
+      const bounds = content.getBBox();
+      return node.x + node.w / 2 - bounds.x - bounds.width / 2;
+    });
+    measured.forEach(({ content }, index) => content.setAttribute('transform', `translate(${offsets[index]} 0)`));
+  }
 
   /* ── behaviour ─────────────────────────────────────────── */
   let selected = null;
@@ -240,6 +263,7 @@ export function mountSystemChart({ Eco = window.Eco, mon = document.getElementBy
   const order = ['dev-platforms', 'search-engines', 'app-stores', 'ad-platforms', 'training-data', 'ai-models', 'ai-interfaces',
                  'dist-channels', 'dfcc', 'critical-providers', 'payment-processors'];
   Eco.graph = {
+    centerWideContent,
     setProgress(p) {
       const shown = p > 0.02;
       root.classList.toggle('show', shown);
@@ -254,7 +278,7 @@ export function mountSystemChart({ Eco = window.Eco, mon = document.getElementBy
     },
     select,
   };
-  // the policy layer (policy.js) draws on the same map
+  // The law explorer shares the ecosystem geometry.
   Eco.graph.ext = { root, svg, el, NODES, nodeEls, edgeEls, select, ICON };
   return Eco.graph;
 }

@@ -1,0 +1,271 @@
+/* ═══ Assistant: a plain transcript ═════════════════════════ */
+.chat-stage, .dm-stage {
+  --chat-ink: var(--db-chip-ink);
+  --chat-bg: var(--paper);
+  --chat-padding: var(--db-space-4);
+  --chat-gap: var(--db-space-3);
+  background: var(--chat-bg);
+}
+.chat-chrome {
+  background: var(--paper);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  width: 100%;
+  height: 100%;
+  transition:
+    transform 0.8s cubic-bezier(0.5, 0, 0.2, 1),
+    opacity 0.7s ease;
+}
+.chat-chrome.leaving {
+  transform: scale(0.94);
+  opacity: 0;
+}
+.chat-header {
+  background: var(--chat-bg);
+  border-bottom: 1px solid var(--chat-ink);
+  padding: var(--chat-gap) var(--chat-padding);
+  gap: var(--chat-gap);
+  flex-wrap: wrap;
+}
+.chat-model-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--chat-ink);
+  border-radius: 0;
+  padding: var(--db-space-1) var(--db-space-2);
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-xs);
+  font-weight: 400;
+  line-height: var(--db-lh-tight);
+  letter-spacing: normal;
+}
+.chat-model-badge {
+  background: var(--chat-bg);
+  color: var(--chat-ink);
+}
+.chat-body {
+  padding: var(--chat-padding);
+  gap: var(--chat-gap);
+  background: var(--chat-bg);
+}
+.chat-bubble,
+.dm-msg {
+  border-radius: 0;
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh-loose);
+  padding: var(--db-space-3) var(--chat-padding);
+  border: 1px solid var(--p);
+}
+.chat-bubble, .dm-msg {
+  position: relative;
+  max-width: 74%;
+  margin-top: var(--db-space-2);
+}
+.chat-bubble::before, .dm-msg:not(.dm-typing)::before {
+  position: absolute;
+  top: -9px;
+  left: 10px;
+  padding: 0 6px;
+  background: var(--chat-bg);
+  font-family: var(--db-font-mono);
+  font-size: 10px;
+  color: var(--chat-ink);
+  text-transform: lowercase;
+}
+.chat-bubble.user,
+.dm-msg.dm-out {
+  background: var(--p);
+  color: #fff;
+  border-radius: 0;
+  box-shadow: none;
+}
+.chat-attachment {
+  display: flex; align-items: center; gap: var(--db-space-1);
+  margin-bottom: var(--db-space-2);
+  font-family: var(--font-sans); font-size: var(--db-text-xs); font-weight: 400;
+}
+.chat-bubble.user::before, .dm-msg.dm-out::before {
+  content: "you";
+  left: auto;
+  right: 10px;
+}
+.chat-bubble.ai,
+.dm-msg.dm-in {
+  background: var(--paper);
+  color: var(--p);
+  border-radius: 0;
+  box-shadow: none;
+}
+.chat-bubble.ai::before {
+  content: "model";
+}
+.dm-msg.dm-in:not(.dm-typing)::before { content: "contact"; }
+.chat-bubble.ai .redacted-block {
+  width: 150px;
+  height: 190px;
+  margin-top: 10px;
+}
+.chat-typing-dots {
+  background: var(--chat-bg);
+  border: 1px solid var(--chat-ink);
+  border-radius: 0;
+}
+.chat-typing-dots span {
+  border-radius: 0;
+  background: var(--chat-ink);
+}
+@keyframes dotpulse {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.chat-footer,
+.dm-input-bar {
+  background: var(--paper);
+  color: var(--p);
+  font-family: var(--db-font-mono);
+}
+.chat-footer {
+  padding: var(--chat-gap) var(--chat-padding);
+  border-top: 1px solid var(--chat-ink);
+}
+.chat-input-wrap {
+  background: var(--chat-bg);
+  border: 1px solid var(--chat-ink);
+  border-radius: 0;
+  box-shadow: none;
+  padding: var(--db-space-2);
+  gap: var(--chat-gap);
+}
+.chat-input-text {
+  color: var(--chat-ink);
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh);
+}
+.chat-cursor {
+  background: var(--chat-ink);
+  border-radius: 0;
+}
+.chat-send-btn {
+  background: var(--db-bg);
+  color: var(--db-ink);
+  border: 1px solid var(--db-ink);
+  border-radius: 0;
+  width: 30px;
+  height: 30px;
+}
+
+/* ═══ Assistant → models: the pull-back ═════════════════════ */
+.chat-dataset-layer {
+  background:
+    var(--paper);
+  font-family: var(--db-font-mono);
+  padding: 14px 16px 14px;
+  gap: 12px;
+}
+.cdl-header {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cdl-grid {
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, 84px);
+  grid-auto-rows: 84px;
+  grid-auto-flow: dense;
+  justify-content: center;
+  align-content: start;
+  flex: 0 1 auto;
+  padding: 6px;
+  overflow: hidden;
+}
+.cdl-tile {
+  align-self: stretch;
+  aspect-ratio: auto;
+}
+.cdl-tile.cdl-tile-special {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.cdl-tile-extra::before {
+  display: none;
+}
+.cdl-tile {
+  border-radius: 0;
+  border: 1px solid var(--p);
+  filter: none;
+  --c1: var(--role-creation);
+  --c2: #fff;
+  background: repeating-conic-gradient(var(--c1) 0% 25%, var(--c2) 0% 50%) 0 0 /
+    25% 25%;
+  transform: scale(0.6);
+  opacity: 0;
+  transition:
+    opacity 0.3s ease,
+    transform 0.55s cubic-bezier(0.2, 1.3, 0.4, 1),
+    background-color 0.3s;
+}
+.cdl-tile:nth-child(odd) {
+  --c1: var(--role-proliferation);
+} /* the wall starts out yellow and blue */
+.cdl-tile:nth-child(even) {
+  --c1: var(--role-infra);
+}
+.cdl-tile::before {
+  color: var(--p);
+  background: var(--paper);
+  border-top: 1px solid var(--p);
+  font-size: 7px;
+  padding: 2px 3px;
+}
+.cdl-tile::after {
+  display: none;
+}
+.cdl-tile.tile-in {
+  opacity: 1;
+  transform: none;
+}
+/* while the wall builds, each tile gets its own compositor layer so the pop-in doesn't repaint the gradients */
+.chat-dataset-layer.revealing .cdl-tile {
+  will-change: transform, opacity;
+}
+.cdl-tile.cdl-tile-special {
+  border: 2px solid var(--p);
+  box-shadow: none;
+  z-index: 2;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--p) 16%, transparent) 0 6px,
+      transparent 6px 12px
+    ),
+    #f2efff;
+  filter: none;
+}
+.cdl-tile.cdl-tile-special::after {
+  display: flex;
+  content: "generated";
+  inset: auto 0 0 0;
+  height: auto;
+  padding: 2px 4px;
+  font-size: 8px;
+  background: var(--role-creation);
+  color: var(--p);
+  border-top: 1px solid var(--p);
+  font-family: var(--db-font-mono);
+  text-transform: uppercase;
+  justify-content: center;
+}
+.cdl-tile.cdl-tile-special::before {
+  display: none;
+}

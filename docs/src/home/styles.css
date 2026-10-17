@@ -1,7 +1,9 @@
 .home-layout {
+  position: relative;
+  z-index: 1;
   width: 100%;
   margin: 0 auto;
-  padding: var(--db-space-5) 0 calc(var(--db-space-6) * 2);
+  padding: var(--db-space-5) 0 var(--db-space-4);
 }
 
 .home-intro {
@@ -39,20 +41,21 @@
 }
 
 .home-paths {
-  margin: var(--db-space-6) 0 calc(var(--db-space-6) * 2);
+  margin: var(--db-space-6) 0 0;
   border-top: 1px solid var(--db-ink);
-  overflow: clip;
+  overflow: visible;
 }
 
 .home-path {
   --home-path-accent: var(--role-creation);
   --home-path-media-width: 10rem;
-  --home-path-media-height: 6rem;
+  --home-path-media-height: 6.5rem;
   display: grid;
   grid-template-areas: "media copy";
   grid-template-columns: var(--home-path-media-width) minmax(0, 1fr);
   gap: calc(var(--db-space-5) + var(--db-space-3));
   align-items: stretch;
+  transition: grid-template-columns 0.35s ease;
   padding-inline: max(
     var(--db-space-3),
     calc((100vw - 72rem) / 2 + var(--db-space-3))
@@ -70,13 +73,11 @@
   text-underline-offset: 0.15em;
 }
 
-.home-path:focus-visible {
-  outline: 2px solid var(--db-ink);
-  outline-offset: 3px;
+.home-path:focus {
+  outline: none;
 }
 
 .home-path--support { --home-path-accent: var(--role-monetization); }
-.home-path--removal { --home-path-accent: var(--role-distribution); }
 .home-path--story { --home-path-accent: var(--role-creation); }
 .home-path--database { --home-path-accent: var(--role-infra); }
 .home-path--contribute { --home-path-accent: var(--role-distribution); }
@@ -87,28 +88,32 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: var(--home-path-media-width);
-  min-width: var(--home-path-media-width);
+  width: 100%;
+  min-width: 0;
   min-height: var(--home-path-media-height);
   overflow: visible;
+  transition: min-height 0.35s ease;
 }
 
 .home-path-media::before {
   position: absolute;
   inset: 0;
   background: var(--home-path-accent);
+  z-index: 1;
+  transition: opacity 0.35s ease;
   content: "";
-  filter: blur(16px) saturate(1.08);
-  opacity: 0.92;
+  filter: var(--media-preview-filter);
+  opacity: var(--media-preview-opacity);
   pointer-events: none;
-  transform: scale(1.18);
+  transform: scale(var(--media-preview-scale));
 }
 
 .home-path-icon {
   position: relative;
-  z-index: 1;
-  color: var(--db-ink);
+  z-index: 2;
+  color: var(--db-chip-ink);
   font-size: var(--db-text-lg);
+  transition: opacity 0.2s ease;
 }
 
 .home-path-copy {
@@ -141,9 +146,8 @@
 }
 
 .home-path-arrow {
-  flex: 0 0 auto;
-  font-size: var(--db-text-md);
-  line-height: var(--db-lh);
+  font-family: var(--font-sans);
+  font-size: inherit;
 }
 
 @media (max-width: 560px) {
@@ -153,16 +157,84 @@
 
   .home-path {
     --home-path-media-width: 6rem;
-    --home-path-media-height: 7rem;
-    grid-template-areas: "media copy";
-    grid-template-columns: var(--home-path-media-width) minmax(0, 1fr);
+    --home-path-media-height: 6.5rem;
     gap: var(--db-space-5);
     padding-inline: var(--db-space-3);
   }
 
-  .home-path-media {
-    width: var(--home-path-media-width);
-    min-width: var(--home-path-media-width);
-    min-height: var(--home-path-media-height);
+}
+
+
+.home-path-preview {
+  pointer-events: none;
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: #fff;
+  filter: var(--media-preview-filter);
+  transform: scale(var(--media-preview-scale));
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+}
+
+.home-path:has(.home-path-media:hover),
+.home-path:focus-visible {
+  grid-template-columns: min(22rem, 40vw) minmax(0, 1fr);
+}
+
+.home-path:has(.home-path-media:hover) .home-path-media,
+.home-path:focus-visible .home-path-media {
+  min-height: clamp(9rem, 18vw, 13rem);
+}
+
+.home-path:has(.home-path-media:hover) .home-path-preview,
+.home-path:focus-visible .home-path-preview {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.home-path:has(.home-path-media:hover) .home-path-media::before,
+.home-path:has(.home-path-media:hover) .home-path-icon,
+.home-path:focus-visible .home-path-media::before,
+.home-path:focus-visible .home-path-icon {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-path,
+  .home-path-media,
+  .home-path-media::before,
+  .home-path-preview,
+  .home-path-icon {
+    transition: none;
+  }
+}
+
+/* Keep the desktop layout stable while individual previews expand. */
+@media (min-width: 901px) {
+  .home-layout {
+    height: calc(100dvh - var(--site-nav-h));
+    min-height: calc(100dvh - var(--site-nav-h));
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-intro {
+    flex: 0 0 auto;
+  }
+
+  .home-paths {
+    display: grid;
+    grid-template-rows: repeat(5, minmax(min-content, 1fr));
+    flex: 1 1 auto;
+    max-height: calc(5 * 6.5rem + 5px);
+  }
+
+  .home-path {
+    --home-path-media-height: 0px;
   }
 }

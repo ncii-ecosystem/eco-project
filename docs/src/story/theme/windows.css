@@ -1,0 +1,142 @@
+/* ── Notes: movable like a window ─────────────────────── */
+.na-titlebar {
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: auto;
+}
+.na-titlebar:focus-visible {
+  outline: 2px solid var(--p);
+  outline-offset: -4px;
+}
+html.notes-open.notes-moved {
+  --notes-reserve: 0px;
+}
+
+/* ── Every story window can be moved and resized (windows.js) ── */
+.mac-window .win-titlebar {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.mac-window.win-dragging {
+  transition: none !important;
+}
+.mac-window.win-dragging .win-titlebar {
+  cursor: grabbing;
+}
+body.win-busy,
+body.win-busy * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+.finale-mode .mac-window::after {
+  display: none;
+}
+
+/* story windows stay open: the traffic-light buttons are decoration only */
+.mac-window:not(.fin-pop) .wtl {
+  pointer-events: none;
+  cursor: default;
+}
+
+/* Notes: the first titlebar square is an x only while a note is expanded, to go back to less text */
+.na-r {
+  position: relative;
+}
+#notes-app .na-tl {
+  cursor: default;
+}
+#notes-app:not(.centered) .na-tl {
+  pointer-events: none;
+}
+#notes-app.centered .na-r {
+  cursor: pointer;
+}
+#notes-app.centered .na-r:hover,
+#notes-app.centered .na-r:focus-visible {
+  background: var(--p);
+  outline: none;
+}
+#notes-app.centered .na-r::after {
+  content: "\00d7";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 400 12px/1 var(--font-sans);
+  color: var(--p);
+}
+#notes-app.centered .na-r:hover::after,
+#notes-app.centered .na-r:focus-visible::after {
+  color: #fff;
+  opacity: 1;
+}
+
+/* a window the reader clicked to the front: fully lit, until the story moves on */
+.mac-window.raised:not(.buried) {
+  box-shadow: var(--window-shadow-lg);
+}
+
+/* Closing links to the database and support resources. */
+.endcard-next {
+  margin-top: 18px;
+}
+.endcard-soon {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--db-space-2);
+  text-decoration: none;
+  cursor: pointer;
+  font: 700 13px var(--db-font-mono);
+  color: var(--p);
+  background: var(--role-proliferation);
+  border: 1px solid var(--p);
+  box-shadow: var(--hard-sm);
+  padding: 8px 14px;
+}
+.endcard-soon > span {
+  flex: 0 0 auto;
+  font-family: var(--font-sans);
+  font-size: var(--db-text-md);
+  font-weight: 400;
+  font-style: normal;
+  line-height: var(--db-lh);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.intro-notif-cta > span,
+.sn-hint > span {
+  display: inline;
+  font-family: var(--font-sans);
+  font-size: inherit;
+  font-weight: 400;
+  line-height: inherit;
+}
+
+.endcard-inner .endcard-credit {
+  margin-top: 28px;
+  font: 400 13px var(--db-font-mono);
+  color: #fff;
+  opacity: 0.85;
+  letter-spacing: 0.04em;
+}
+.endcard-inner .endcard-credit strong {
+  color: var(--role-proliferation);
+  font-weight: 700;
+}
+
+/* a chapter that ends on a note gets room after it, so the reader can read the note before the next app's notification arrives */
+.scroll-chapter:not([data-chapter="cover"]):has(> .step--k:last-child) {
+  padding-bottom: 60vh;
+}
+
+.endcard-soon:hover,
+.endcard-soon:focus-visible {
+  background: #fff;
+  outline: none;
+  box-shadow: var(--hard-sm);
+}

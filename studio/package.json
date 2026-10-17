@@ -8,10 +8,11 @@
     "deploy": "node ../src/server/run-studio.mjs deploy"
   },
   "dependencies": {
-    "@sanity/vision": "^3.72.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "sanity": "^3.72.1",
+    "@sanity/vision": "^5.31.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sanity": "^5.31.2",
+    "sanity-plugin-csv-import": "^0.1.1",
     "styled-components": "^6.1.15"
   }
 }

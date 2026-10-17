@@ -1,0 +1,661 @@
+/* ═══ Authentic-looking headlines: each format has its real parts, and grey boxes where other text would be ═══ */
+#flood-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+.mon-screen.flood-gone #flood-layer {
+  opacity: 0;
+}
+#flood-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(33, 22, 100, 0.55);
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+#flood-layer.dim::after {
+  opacity: 1;
+}
+#flood-count {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9998;
+  padding: 4px 14px;
+  background: var(--notification-red);
+  color: #fff;
+  border: 0;
+  box-shadow: none;
+  font: 700 13px var(--db-font-mono);
+}
+.flood-card {
+  position: absolute;
+  transform-origin: 50% 50%;
+}
+.flood-card.flood-real,
+#hl-grid .hl-card {
+  box-shadow: var(--window-shadow);
+}
+.flood-card.flood-example {
+  border: 0;
+  box-shadow: none;
+}
+.flood-card.flood-example::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+  background:
+    repeating-linear-gradient(90deg, var(--ink-d) 0 10px, transparent 10px 18px)
+      top / 100% 2px no-repeat,
+    repeating-linear-gradient(90deg, var(--ink-d) 0 10px, transparent 10px 18px)
+      bottom / 100% 2px no-repeat,
+    repeating-linear-gradient(0deg, var(--ink-d) 0 10px, transparent 10px 18px)
+      left / 2px 100% no-repeat,
+    repeating-linear-gradient(0deg, var(--ink-d) 0 10px, transparent 10px 18px)
+      right / 2px 100% no-repeat;
+}
+.hl-card.fx {
+  --fs: clamp(13px, 1.1vw, 17px);
+}
+
+.fx {
+  font-size: var(--fs, 13px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  background: #fff;
+  color: var(--ink-d);
+  border: 1px solid var(--d);
+  box-shadow: 0.45em 0.45em 0 var(--ink-d);
+}
+.fx .f-text {
+  display: block;
+  margin: auto 0;
+  padding: 0.45em 0.95em;
+  font: 800 1.5em/1.22 var(--font-sans);
+}
+.fx .sk {
+  display: block;
+  height: 0.6em;
+  background: var(--p-tint);
+}
+.fx .sk.light {
+  background: rgba(255, 255, 255, 0.3);
+}
+.fx .sk.dark {
+  background: var(--p-tint);
+}
+.fx .f-foot .sk {
+  width: 2.2em;
+}
+.fx .sk.w8 {
+  width: 8%;
+}
+.fx .sk.w10 {
+  width: 10%;
+}
+.fx .sk.w14 {
+  width: 14%;
+}
+.fx .sk.w16 {
+  width: 16%;
+}
+.fx .sk.w22 {
+  width: 22%;
+}
+.fx .sk.w28 {
+  width: 28%;
+}
+.fx .sk.w30 {
+  width: 30%;
+}
+.fx .sk.w35 {
+  width: 35%;
+}
+.fx .sk.w40 {
+  width: 40%;
+}
+.fx .sk.w55 {
+  width: 55%;
+}
+.fx .sk.w60 {
+  width: 60%;
+}
+.fx .sk.w65 {
+  width: 65%;
+}
+.fx .sk.w70 {
+  width: 70%;
+}
+.fx .sk.w78 {
+  width: 78%;
+}
+.fx .sk.w80 {
+  width: 80%;
+}
+.fx .sk.w90 {
+  width: 90%;
+}
+.fx .sk.w92 {
+  width: 92%;
+}
+.fx .sk.w95 {
+  width: 95%;
+}
+.fx .sk.w100 {
+  width: 100%;
+}
+
+.fx .f-foot .sk.w8,
+.fx .f-foot .sk.w10 {
+  width: 2.2em;
+}
+.fx .f-av {
+  flex: none;
+  width: 2.4em;
+  height: 2.4em;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--p);
+  color: #fff;
+  font: 700 0.85em var(--font-sans);
+}
+.fx .f-img {
+  height: 4.6em;
+  flex: none;
+  margin: 0.2em 0.95em 0.5em;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: repeating-linear-gradient(
+    135deg,
+    #d6e4f0 0 0.6em,
+    #eef5fb 0.6em 1.2em
+  );
+}
+.fx .f-para {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+  padding: 0.45em 0.95em 0.8em;
+  flex: none;
+}
+.fx .f-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.6em 0.95em;
+  flex: none;
+}
+.fx .f-foot span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+.fx small {
+  font: 400 0.72em var(--db-font-mono);
+}
+/* a post on X */
+.fx-x {
+  background: #e9f4fd;
+}
+.fx-x .f-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.85em 0.95em 0.1em;
+}
+.fx-x .f-av {
+  background: #1d9bf0;
+}
+.fx-x .f-who {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  flex-wrap: wrap;
+  font-size: 0.95em;
+}
+.fx-x .f-who .sk {
+  flex-basis: 100%;
+  width: 35%;
+}
+.fx-x .f-chk {
+  color: #1d9bf0;
+  font-size: 0.85em;
+}
+.fx-x .f-src {
+  font-size: 1.3em;
+  color: var(--ink-d);
+}
+.fx-x .f-foot {
+  color: var(--ink-d);
+  justify-content: space-between;
+}
+/* a photo-sharing post */
+.fx-ig {
+  background: #fff;
+}
+.fx-ig .f-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.6em 0.8em;
+  font-size: 0.95em;
+}
+.fx-ig .f-ring {
+  padding: 2px;
+  border-radius: 50%;
+  display: inline-flex;
+}
+.fx-ig .f-ring .f-av {
+  background: #fff;
+  color: #8134af;
+  border: 2px solid #fff;
+  width: 2.1em;
+  height: 2.1em;
+}
+.fx-ig .f-more {
+  margin-left: auto;
+}
+.fx-ig .f-tile {
+  flex: 1;
+  display: flex;
+}
+.fx-ig .f-tile .f-text {
+  text-align: center;
+  padding: 0.6em 1em;
+}
+.fx-ig .f-foot {
+  justify-content: flex-start;
+  gap: 0.9em;
+  font-size: 1.1em;
+  padding-bottom: 0.2em;
+}
+.fx-ig .f-r {
+  margin-left: auto;
+}
+.fx-ig .f-cap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  padding: 0.3em 0.95em 0.8em;
+}
+/* a news site */
+.fx-news {
+  background: #fff7e6;
+}
+.fx-news .f-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  padding: 0.55em 0.95em;
+  background: var(--ink-d);
+  color: #fff;
+}
+.fx-news .f-brand {
+  margin-right: auto;
+  font: 800 1.05em var(--font-sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.fx-news .f-bar .sk {
+  width: 16%;
+  height: 0.5em;
+}
+.fx-news .f-kick {
+  padding: 0.8em 0.95em 0;
+  font: 700 0.72em var(--db-font-mono);
+  letter-spacing: 0.14em;
+  color: #c2370c;
+}
+.fx-news .f-text {
+  font-family: var(--font-sans);
+  color: var(--ink-d);
+  margin-top: 0.3em;
+}
+.fx-news .f-by {
+  display: flex;
+  gap: 0.7em;
+  padding: 0 0.95em 0.2em;
+}
+.fx-news .f-by .sk {
+  height: 0.5em;
+}
+.fx-news .f-img {
+  background: repeating-linear-gradient(
+    135deg,
+    #ecd9b8 0 0.6em,
+    #fff2dc 0.6em 1.2em
+  );
+}
+/* a magazine */
+.fx-mag {
+  background: #ffc8d8;
+}
+.fx-mag .f-mast {
+  padding: 0.5em 0.95em;
+  border-bottom: 0.3em solid var(--ink-d);
+}
+.fx-mag .f-mast b {
+  font: 900 1.9em var(--font-sans);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-d);
+}
+.fx-mag .f-text {
+  text-transform: none;
+  font-weight: 900;
+  color: var(--ink-d);
+  letter-spacing: 0.01em;
+}
+.fx-mag .f-foot {
+  background: var(--ink-d);
+  color: #fff;
+}
+.fx-wire {
+  border-color: var(--p);
+  box-shadow: 0.45em 0.45em 0 var(--ink-d);
+}
+.fx-wire .f-bandw {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.5em 0.95em;
+  background: #ff6a2b;
+  color: #fff;
+}
+.fx-wire .f-bandw b {
+  font: 800 0.95em var(--font-sans);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fx-wire .f-bandw small {
+  margin-left: auto;
+}
+.fx-wire .f-flag {
+  padding: 0.1em 0.7em;
+  background: #fff;
+  color: #c2370c;
+  font: 800 0.75em var(--font-sans);
+  letter-spacing: 0.14em;
+}
+.fx-wire .f-foot {
+  background: #ffe3d4;
+  color: #c2370c;
+}
+/* a desktop notification */
+.fx-notif {
+  flex-direction: row;
+  gap: 0.8em;
+  padding: 0.8em;
+  border-radius: 0.9em;
+  background: rgba(250, 250, 255, 0.97);
+  border-color: color-mix(in srgb, var(--p) 40%, transparent);
+}
+.fx-notif .f-icon,
+.fx-push .f-icon {
+  flex: none;
+  width: 2.7em;
+  height: 2.7em;
+  display: grid;
+  place-items: center;
+  border-radius: 0.65em;
+  background: var(--notification-red);
+  color: #fff;
+  font: 800 1em var(--font-sans);
+}
+.fx-notif .f-nb {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+}
+.fx-notif .f-nh,
+.fx-push .f-nh {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font: 600 0.8em var(--font-sans);
+  color: var(--ink-d);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.fx-notif .f-nh small,
+.fx-push .f-nh small {
+  margin-left: auto;
+  text-transform: none;
+}
+.fx-notif .f-text,
+.fx-push .f-text {
+  margin: 0;
+  padding: 0;
+  line-height: 1.22;
+}
+/* a phone alert */
+.fx-push {
+  padding: 0.8em 0.9em;
+  gap: 0.5em;
+  border-radius: 1.3em;
+  background: rgba(238, 238, 246, 0.98);
+  border-color: color-mix(in srgb, var(--p) 35%, transparent);
+}
+.fx-push .f-icon {
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 0.4em;
+  background: #34c759;
+  font-size: 0.8em;
+}
+/* a forum post */
+.fx-reddit {
+  flex-direction: row;
+  background: #fff;
+}
+.fx-reddit .f-vote {
+  flex: none;
+  width: 2.7em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.7em 0;
+  background: #f0f1f3;
+  color: #ff4500;
+}
+.fx-reddit .f-vote .sk {
+  width: 1.4em;
+  height: 0.5em;
+}
+.fx-reddit .f-rb {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.fx-reddit .f-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.6em 0.8em 0;
+  font-size: 0.8em;
+}
+.fx-reddit .f-sub b {
+  color: var(--ink-d);
+}
+.fx-reddit .f-av {
+  width: 1.9em;
+  height: 1.9em;
+  background: #ff4500;
+}
+.fx-reddit .f-text {
+  padding: 0.3em 0.8em;
+}
+.fx-reddit .f-foot {
+  justify-content: flex-start;
+  gap: 1.4em;
+  color: var(--ink-d);
+  padding-top: 0.2em;
+}
+/* a video */
+.fx-vid .f-thumb {
+  position: relative;
+  flex: 1;
+  min-height: 5em;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 1.8em;
+}
+.fx-vid .f-thumb small {
+  position: absolute;
+  right: 0.5em;
+  bottom: 0.4em;
+  padding: 0 0.4em;
+  background: var(--ink-d);
+  color: #fff;
+  font-size: 0.4em;
+}
+.fx-vid .f-text {
+  margin: 0;
+  padding: 0.55em 0.95em 0.2em;
+}
+.fx-vid .f-chan {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.3em 0.95em 0.8em;
+  font-size: 0.9em;
+}
+.fx-vid .f-chan .f-av {
+  width: 1.9em;
+  height: 1.9em;
+  background: #c4302b;
+}
+.fx-vid .f-chan .sk {
+  margin-left: 0.2em;
+}
+
+/* flat colours, no gradients; bigger, heavier headlines */
+.fx-ig .f-tile {
+  background: #ffc7a6;
+}
+.fx-ig .f-ring {
+  background: #dd2a7b;
+}
+.fx-vid .f-thumb {
+  background: #4a37b0;
+}
+.fx .f-text {
+  font-weight: 900;
+  font-size: 1.95em;
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+}
+.flood-card .f-text {
+  font-size: 1.6em;
+}
+.fx-news .f-text {
+  font-weight: 800;
+}
+
+/* Keep the five sourced headlines neutral so role highlights carry the color. */
+:is(.flood-real, .flood-example, #hl-grid .hl-card) {
+  background: var(--paper);
+  color: var(--p);
+  border-color: var(--ink-d);
+  box-shadow: var(--window-shadow);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card)
+  :is(.o, .r, .f-src, .f-more, .f-who, .f-nh, .f-by, .f-cap, .f-chan, .f-sub, .f-foot, .f-kick, .f-flag) {
+  color: var(--p);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card)
+  :is(.f-bar, .f-bandw, .f-mast, .f-av, .f-icon, .f-thumb, .f-vote) {
+  color: var(--paper);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card)
+  :is(.f-bar, .f-bandw, .f-mast) :is(b, small) {
+  color: inherit;
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card) .f-text {
+  color: var(--ink-d);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card) .f-text i {
+  color: var(--ink-d);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card)
+  :is(.f-bar, .f-bandw, .f-mast) {
+  background: var(--p);
+  color: var(--paper);
+  border-color: var(--p);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card) .f-mast b {
+  color: var(--paper);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card) :is(.f-av, .f-ring) {
+  background: var(--p);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card) .f-ring .f-av {
+  background: var(--paper);
+  color: var(--p);
+  border-color: var(--paper);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card)
+  :is(.f-chk, .f-kick, .f-flag, .f-foot) {
+  color: var(--p);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card)
+  :is(.f-tile, .f-flag, .f-foot) {
+  background: var(--paper);
+}
+:is(.flood-real, .flood-example, #hl-grid .hl-card) .f-img {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--p-tint) 0 0.6em,
+    var(--paper) 0.6em 1.2em
+  );
+  border-color: var(--p);
+}
+/* Surrounding examples remain distinct from the five sourced headlines. */
+#flood-layer .flood-card.flood-example {
+  border: 0;
+  box-shadow: none;
+}
+.flood-card.flood-example :is(.f-icon, .f-thumb, .f-vote) {
+  background: var(--p);
+  color: var(--paper);
+}
+.flood-card.flood-example :is(.f-sub b, .f-nh, .f-chan, .f-vote .sk) {
+  color: var(--p);
+}
+.flood-card.flood-example .f-vote .sk {
+  background: var(--paper);
+}
+.flood-card.flood-example :is(.f-av, .f-chan .f-av) {
+  background: var(--p);
+  color: var(--paper);
+}
+.fx-notif .f-text,
+.fx-push .f-text {
+  font-size: 1.3em;
+}
+.fx-reddit .f-text {
+  font-size: 1.6em;
+}
+.fx-vid .f-text {
+  font-size: 1.5em;
+}
+.flood-card.fx-vid .f-text {
+  font-size: 1.35em;
+}

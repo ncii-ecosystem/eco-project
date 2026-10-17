@@ -1,0 +1,388 @@
+/* ═══ Cover: a social feed (anonymized, in the site's own look) ═══ */
+.news-stage {
+  overflow-y: auto;
+  container-type: inline-size;
+  background: var(--paper);
+}
+.news-chrome {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.feed {
+  font-family: var(--font-sans);
+  color: var(--ink-d);
+  padding-bottom: 48px;
+}
+.feed-row {
+  display: grid;
+  grid-template-columns: minmax(
+    0,
+    640px
+  ); /* the suggestions panel is commented out in index.html */
+  gap: 28px;
+  justify-content: center;
+  padding: 22px 24px 0;
+  align-items: start;
+}
+.feed-main {
+  min-width: 0;
+}
+@container (max-width: 980px) {
+  .feed-row {
+    grid-template-columns: minmax(0, 640px);
+  }
+  .post-comments {
+    display: none;
+  }
+}
+.fs-title {
+  font: 700 11px var(--db-font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--p);
+  margin-bottom: 10px;
+}
+.fs-title i {
+  margin-right: 4px;
+}
+.fc-set {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+/* the comments belong to their post: a box beside it, tied to it by a short line */
+.feed-post {
+  position: relative;
+}
+.post-comments {
+  position: absolute;
+  right: calc(100% + 30px);
+  bottom: 14px;
+  width: 250px;
+  background: var(--paper);
+  border: 1px solid var(--p);
+  box-shadow: var(--hard-sm);
+  padding: 12px 14px 14px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-10px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    visibility 0.3s;
+}
+.post-comments.show {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.post-comments::after {
+  content: "";
+  position: absolute;
+  left: 100%;
+  bottom: 26px;
+  width: 30px;
+  height: 2px;
+  background: var(--p);
+}
+.post-comments::before {
+  content: "";
+  position: absolute;
+  left: calc(100% + 26px);
+  bottom: 22px;
+  width: 10px;
+  height: 10px;
+  background: var(--p);
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-comments {
+    transition-duration: 0.01ms;
+  }
+}
+.fc-set li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+.post-comments.show .fc-set li {
+  opacity: 1;
+  transform: none;
+}
+.post-comments.show .fc-set li:nth-child(1) {
+  transition-delay: 0.15s;
+}
+.post-comments.show .fc-set li:nth-child(2) {
+  transition-delay: 0.45s;
+}
+.post-comments.show .fc-set li:nth-child(3) {
+  transition-delay: 0.75s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fc-set li {
+    transition-duration: 0.01ms;
+    transition-delay: 0s !important;
+  }
+}
+.fc-av {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--p);
+  background: var(--role-proliferation);
+  color: var(--p);
+  display: grid;
+  place-items: center;
+  font: 700 11px var(--db-font-mono);
+}
+.fc-set li:nth-child(2) .fc-av {
+  background: var(--role-infra);
+}
+.fc-set li:nth-child(3) .fc-av {
+  background: var(--role-creation);
+}
+.fc-set b {
+  display: block;
+  font: 700 11px var(--db-font-mono);
+  color: var(--p);
+}
+.fc-set p {
+  margin: 1px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.feed-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 14px 0 0;
+}
+
+.feed-post {
+  background: var(--paper);
+  border: 1px solid var(--p);
+  box-shadow: none;
+  padding-top: 12px;
+}
+.fp-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px 10px;
+}
+.fp-av {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--role-infra);
+  color: var(--p);
+  border: 1px solid var(--p);
+  display: grid;
+  place-items: center;
+  font: 700 14px var(--db-font-mono);
+  flex: 0 0 auto;
+}
+.feed-post[data-tone="0"] .fp-av {
+  background: var(--role-creation);
+}
+.feed-post[data-tone="1"] .fp-av {
+  background: var(--role-proliferation);
+}
+.feed-post[data-tone="3"] .fp-av {
+  background: var(--role-monetization);
+}
+.feed-post[data-tone="4"] .fp-av {
+  background: var(--role-distribution);
+}
+.mac-window[data-chapter="cover"] .fp-av { background: var(--p); color: var(--paper); }
+.fp-who > span { color: var(--p); opacity: 0.6; }
+.fp-who {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  line-height: 1.25;
+}
+.fp-who b {
+  font: 700 13px var(--db-font-mono);
+  color: var(--p);
+}
+.fp-who small {
+  font: 400 11px var(--db-font-mono);
+  color: var(--p);
+  opacity: 0.65;
+}
+.fp-dots {
+  color: var(--p);
+  letter-spacing: 2px;
+}
+
+/* the post "image" is a headline card, tinted per post */
+.fp-media {
+  position: relative;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  overflow: hidden;
+  background: var(--paper);
+  border-top: 1px solid var(--p);
+  border-bottom: 1px solid var(--p);
+}
+.fp-headline {
+  margin: 0;
+  font: 900 clamp(21px, 2.8vw, 30px)/1.16 var(--font-sans);
+  letter-spacing: -0.015em;
+  color: var(--ink-d);
+}
+.fp-actions {
+  display: flex;
+  gap: 16px;
+  padding: 12px 16px;
+  color: var(--p);
+  font-size: 19px;
+}
+.fp-actions i:last-child {
+  margin-left: auto;
+}
+
+/* the highlighted headline: a marker pen sweeps over the words, and the technology words inside get the darker stroke */
+.nh {
+  --hl: #c9c2f3;
+  --hl-strong: #9f93ea;
+  cursor: pointer;
+  border-bottom: 2px dotted var(--p);
+  background: linear-gradient(var(--hl), var(--hl)) no-repeat 0 90% / 0% 78%;
+  transition: background-size 0.55s cubic-bezier(0.4, 0.1, 0.2, 1);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 1px 2px;
+}
+.nh[data-role="creation"] {
+  --hl: #f8b8b1;
+  --hl-strong: #ef8c82;
+}
+.nh[data-role="dist"] {
+  --hl: #f7cd92;
+  --hl-strong: #efae57;
+}
+.nh[data-role="prolif"] {
+  --hl: #ffe873;
+  --hl-strong: #f5cf27;
+}
+.nh[data-role="infra"] {
+  --hl: #9ad5dc;
+  --hl-strong: #62b9c4;
+}
+.nh[data-role="money"] {
+  --hl: #9ce88b;
+  --hl-strong: #5fd14b;
+}
+.nh:hover,
+.nh.active {
+  background-size: 100% 78%;
+  border-bottom-color: transparent;
+}
+.nh:focus-visible {
+  outline: 2px solid var(--d);
+  outline-offset: 2px;
+}
+.mac-window[data-chapter="cover"] .nh { cursor: default; border: 0; background: none; padding: 0; }
+.mac-window[data-chapter="cover"] .nh .tech {
+  border: 0; background-image: none; color: var(--ink-d);
+  font-weight: inherit; transition: none;
+}
+.tech {
+  display: inline;
+  font-weight: 700;
+  padding: 0 3px;
+  border: 1px solid var(--p);
+  white-space: nowrap;
+  color: var(--ink-d);
+  background: linear-gradient(var(--hl-strong), var(--hl-strong)) no-repeat 0
+    50% / 0% 100%;
+  transition: background-size 0.35s ease 0.35s;
+}
+.tech i {
+  font-size: 0.8em;
+  margin-left: 4px;
+}
+.tech[data-role="creation"] {
+  background-color: var(--role-creation);
+  --hl-strong: #ef8c82;
+}
+.tech[data-role="dist"] {
+  background-color: var(--role-distribution);
+  --hl-strong: #efae57;
+}
+.tech[data-role="prolif"] {
+  background-color: var(--role-proliferation);
+  --hl-strong: #f5cf27;
+}
+.tech[data-role="infra"] {
+  background-color: var(--role-infra);
+  --hl-strong: #62b9c4;
+}
+.tech[data-role="money"] {
+  background-color: var(--role-monetization);
+  --hl-strong: #5fd14b;
+}
+/* a selected headline marks its technology words a second time, heavier */
+.nh:hover .tech,
+.nh.active .tech {
+  background-size: 100% 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nh,
+  .tech {
+    transition-duration: 0.01ms;
+    transition-delay: 0s;
+  }
+}
+
+/* small pop-up over the card: what this headline names */
+.nh-pop {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  background: var(--paper);
+  border: 1px solid var(--p);
+  box-shadow: none;
+  color: var(--p);
+  padding: 10px 34px 10px 12px;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+.nh-pop.show {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.nh-pop p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nh-pop {
+    transition-duration: 0.01ms;
+  }
+}

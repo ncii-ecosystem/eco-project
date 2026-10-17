@@ -1,0 +1,334 @@
+/* ═══ Making the note unmistakable ═══ */
+#notes-app {
+  border: 1px solid var(--d);
+  box-shadow: var(--window-shadow-lg);
+}
+@media (prefers-reduced-motion: reduce) {
+  #notes-app.na-flash {
+    animation: none;
+  }
+}
+#note-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 64;
+  pointer-events: none;
+  background: rgba(31, 20, 96, 0.5);
+  opacity: 0;
+}
+#note-veil.go {
+  animation: note-veil 2.1s ease-in-out 1;
+}
+@keyframes note-veil {
+  0% {
+    opacity: 0;
+  }
+  22% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* the flood: notifications arrive from every side and take over the whole screen */
+.flood-card {
+  --fs: clamp(10px, 0.95vw, 15px);
+  transform: translate(var(--fx, 0), var(--fy, 0)) scale(0.85)
+    rotate(var(--rot, 0deg));
+  opacity: 0.9;
+}
+.flood-card.in {
+  transform: translate(0, 0) scale(1) rotate(var(--rot, 0deg));
+  opacity: 1;
+}
+.flood-card.now {
+  transition: none;
+}
+
+/* one size for every note; a brighter yellow */
+#notes-app .na-ed-details {
+  border-top-color: var(--p);
+}
+
+/* a softer, buttery post-it yellow */
+#notes-app,
+#notes-app .na-editor {
+  background: var(--role-proliferation);
+}
+
+/* the note does not jump between notes: no pop, and one steady card size that only grows for a long note */
+#notes-app.na-flash {
+  animation: none;
+}
+#notes-app {
+  min-height: 330px;
+}
+#notes-app .na-panes {
+  flex: 1 1 auto;
+}
+#notes-app .na-editor {
+  display: flex;
+  flex-direction: column;
+}
+#notes-app .na-more-btn {
+  margin-top: auto;
+  padding-top: 16px;
+}
+#notes-app .na-ed-details {
+  margin-bottom: 8px;
+}
+
+/* the surge → the five cards */
+.hl-grid {
+  z-index: 5;
+}
+#scene-intro.story-mode #flood-layer {
+  opacity: 0;
+}
+.flood-real {
+  box-shadow: 0.45em 0.45em 0 var(--d);
+}
+/* no blur filters or soft shadows on dozens of cards: a dim and hard shadows look the same and cost far less */
+#flood-layer.zoomed .flood-card:not(.flood-real) {
+  filter: none;
+  opacity: 0.55;
+}
+.flood-card {
+  transition:
+    transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity 0.25s ease;
+}
+.fx-notif,
+.fx-push {
+  box-shadow: var(--window-shadow-sm);
+}
+.fx {
+  contain: layout style;
+}
+.flood-card {
+  backface-visibility: hidden;
+}
+#flood-layer.run .flood-card {
+  will-change: transform, opacity;
+}
+#flood-layer.dim .flood-card {
+  will-change: auto;
+}
+#scene-intro::before {
+  will-change: clip-path;
+}
+.hl-card {
+  will-change: transform, opacity;
+}
+#notes-app {
+  will-change: transform;
+}
+#note-veil {
+  will-change: opacity;
+}
+
+/* once the five cards are open, the surge behind them is gone: a clear desktop */
+#flood-layer {
+  transition: opacity 0.9s ease;
+}
+#flood-layer.cleared {
+  opacity: 0;
+}
+
+/* Explicit narrative controls: reuse the reader button appearance. */
+.story-discrete,
+.story-discrete body {
+  height: 100%;
+  overflow: hidden;
+}
+.story-discrete {
+  --story-bottom-reserve: calc(60px + env(safe-area-inset-bottom, 0px));
+}
+.story-discrete body {
+  background: var(--p);
+}
+/* Keep window geometry clear of the controls, but let the original wallpaper
+   fill the viewport as one continuous animated surface. */
+.story-discrete .monitor-bezel,
+.story-discrete .mon-screen {
+  overflow: visible;
+}
+.story-discrete #scene-intro {
+  bottom: calc(-1 * var(--story-bottom-reserve));
+}
+.story-discrete #scroll-root {
+  display: none;
+}
+.story-navigation {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+.story-navigation-tip {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--story-bottom-reserve) + 12px);
+  transform: translateX(-50%);
+  z-index: 9601;
+  width: max-content;
+  max-width: min(460px, calc(100vw - 24px));
+  margin: 0;
+  padding: 7px 10px;
+  background: var(--paper);
+  color: var(--p);
+  border: 1px solid var(--p);
+  box-shadow: none;
+  font: 400 12px/1.4 var(--db-font-mono);
+  text-align: center;
+  text-wrap: balance;
+  pointer-events: none;
+}
+.story-navigation-tip[hidden] {
+  display: none;
+}
+.rc-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.rc-btn:disabled:hover {
+  background: var(--db-bg);
+  color: var(--db-ink);
+}
+.story-discrete .monitor-wrap {
+  bottom: var(--story-bottom-reserve);
+}
+.story-discrete .reader-controls {
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+}
+.story-discrete .endcard {
+  display: none;
+}
+.story-discrete.in-outro,
+.story-discrete.in-outro body {
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.story-discrete.in-outro .monitor-wrap {
+  position: absolute;
+  bottom: auto;
+  height: calc(100dvh - var(--story-bottom-reserve));
+}
+.story-discrete.in-outro .endcard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  inset: auto;
+  margin-top: 100dvh;
+  min-height: 100dvh;
+  padding-bottom: calc(var(--story-bottom-reserve) + 24px);
+}
+.story-discrete.in-outro .reader-controls .rc-btn {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.story-discrete.in-outro .reader-controls .rc-btn:disabled {
+  opacity: 0.35;
+}
+.story-discrete.in-outro .dt-dock-wrap {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 9600;
+}
+.story-discrete .scene-stage,
+.story-discrete .na-editor {
+  overscroll-behavior: contain;
+}
+@media (max-width: 1000px) {
+  .story-discrete .dt-dock-wrap {
+    width: calc(100% - 16px);
+    max-width: calc(100% - 16px);
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 8px 4px;
+  }
+  .story-discrete .dt-dock {
+    width: max-content;
+  }
+  .story-discrete #notes-app {
+    max-height: calc(100dvh - 140px);
+  }
+}
+
+.story-restoring :is(.mac-window, .aux-win, #hl-grid, #flood-layer),
+.story-restoring :is(.mac-window, .aux-win, #hl-grid, #flood-layer) * {
+  transition: none !important;
+  animation: none !important;
+}
+.story-navigation [data-tip]::after {
+  left: auto;
+  right: 0;
+}
+@media (max-width: 1000px) {
+  .story-discrete .dt-dock-wrap {
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+  .story-discrete {
+    --story-bottom-reserve: calc(132px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (max-width: 700px) {
+  html.story-discrete.notes-open {
+    --notes-reserve: 0px;
+  }
+  .story-discrete #notes-app:not(.centered) {
+    left: 12px;
+    right: 12px;
+    bottom: calc(140px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-height: 32dvh;
+    min-height: 0;
+    top: auto !important;
+    translate: none !important;
+  }
+  .story-discrete #notes-app.centered {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: 65dvh;
+  }
+  .story-discrete .mon-screen:not(.finale-mode) .mac-window {
+    left: 8px !important;
+    top: 12px !important;
+    width: calc(100% - 16px) !important;
+    height: calc(100% - 24px) !important;
+  }
+  .story-discrete:has(#notes-app.open)
+    .mon-screen:not(.desk-mode):not(.finale-mode)
+    .mac-window {
+    height: calc(100% - 32dvh - 24px) !important;
+  }
+}
+
+html.story-discrete #notes-app.open:not(.centered) {
+  top: 28px !important;
+  right: 28px;
+  bottom: auto;
+  left: auto;
+  width: min(340px, calc(100vw - 56px));
+  max-height: calc(100dvh - var(--story-bottom-reserve) - 56px);
+  translate: none !important;
+}
+html.story-discrete #notes-app.open.pos-center:not(.centered) {
+  top: 50% !important;
+  right: 50%;
+  translate: 50% -50% !important;
+}
+
+#notes-app.na-faded {
+  opacity: 0 !important;
+  pointer-events: none;
+}

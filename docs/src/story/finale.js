@@ -19,6 +19,68 @@
   const OVERLAP = 0.1;                       // how far each window reaches into its neighbours
   const POP_NAMES = ['mirror', 'reupload', 'backup', 'proxy', 'repost', 'fork', 'copy', 'relay'];
 
+  /* The grid always shows the same authored scene, whether the reader played every step or jumped here. */
+  const initialHTML = new Map([...document.querySelectorAll('.scene[id]')].map((scene) => [scene.id, scene.innerHTML]));
+  function applyCanon() {
+    document.querySelectorAll('.mac-window .win-content > .scene[id]').forEach((scene) => {
+      const html = initialHTML.get(scene.id);
+      if (html == null || scene.classList.contains('fin-live')) return;
+      const canon = scene.cloneNode(false);
+      canon.removeAttribute('id');
+      canon.innerHTML = html;
+      canon.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+      canon.classList.add('fin-canon');
+      canon.inert = true;
+      const query = canon.querySelector('.google-search-input');
+      if (query) query.textContent = 'undress AI app free';
+      canon.querySelector('.google-chrome')?.classList.add('results-ready');
+      canon.querySelector('.google-cursor')?.setAttribute('hidden', '');
+      if (scene.id === 'dm') canon.querySelectorAll('.dm-step').forEach(message => message.classList.add('visible'));
+      if (scene.id === 'reddit') canon.querySelectorAll('.rc-step').forEach((el) => el.classList.add('visible'));
+      if (scene.id === 'devplat') {
+        const rows = canon.querySelector('.dp-rows');
+        if (rows) rows.appendChild(Eco.sceneBuilders.developerRows());
+        rows?.querySelectorAll('.dp-row').forEach(row => row.classList.add('in'));
+      }
+      if (scene.id === 'cloud') canon.querySelector('.cloud-alert')?.classList.add('visible');
+      if (scene.id === 'models') {
+        canon.querySelectorAll('.md-panel').forEach(panel => panel.classList.add('run'));
+        const copies = canon.querySelector('.md-copies');
+        if (copies) copies.appendChild(Eco.sceneBuilders.modelCopies(8));
+        copies?.querySelectorAll('.md-copy').forEach(copy => copy.classList.add('in'));
+        const reqs = canon.querySelector('.md-reqs');
+        if (reqs) {
+          ['ok', 'ok', 'no', 'ok'].forEach((kind, i) => {
+            const req = document.createElement('span');
+            req.className = 'md-req ' + kind;
+            req.style.setProperty('--d', '0s');
+            req.style.opacity = '1';
+            req.style.left = (18 + i * 16) + '%';
+            reqs.appendChild(req);
+          });
+        }
+      }
+      if (scene.id === 'interface') {
+        const body = canon.querySelector('.chat-body');
+        if (body) {
+          const user = document.createElement('div');
+          user.className = 'chat-bubble user';
+          user.textContent = 'I have a photo of a woman. Can you generate a version without clothes?';
+          const reply = document.createElement('div');
+          reply.className = 'chat-bubble ai';
+          reply.innerHTML = 'I can help with that! Here\'s what I generated based on the photo you described.<div class="redacted-block"><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Output redacted</span></div>';
+          body.append(user, reply);
+        }
+      }
+      scene.classList.add('fin-live');
+      scene.after(canon);
+    });
+  }
+  function clearCanon() {
+    document.querySelectorAll('.scene.fin-canon').forEach((node) => node.remove());
+    document.querySelectorAll('.scene.fin-live').forEach((scene) => scene.classList.remove('fin-live'));
+  }
+
   let cells = [];                            // grid cells, in the same order as the windows
   let wins = [];
   const saved = new Map();                   // window → its inline geometry before the finale
@@ -27,6 +89,7 @@
   let cursor = null;
   let zTop = 70;
   let popCount = 0;
+  let floodCovered = false;
 
   const later = (fn, ms) => { const id = setTimeout(fn, ms); timers.push(id); return id; };
   const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
@@ -79,6 +142,7 @@
 
   /* ── pop-up windows (abstract: a title bar and a hatched body) ── */
   function makePop(box, name) {
+    popCount += 1;
     const w = document.createElement('div');
     w.className = 'mac-window fin-pop';
     w.setAttribute('aria-hidden', 'true');
@@ -86,7 +150,6 @@
       <div class="win-titlebar">
         <div class="win-traffic"><span class="wtl wtl-r"></span><span class="wtl wtl-y"></span><span class="wtl wtl-g"></span></div>
         <div class="win-title">${name}</div>
-        <div class="win-url">${name}-${++popCount}.example</div>
       </div>
       <div class="win-content fin-pop-body">
         <span class="fp-line short"></span><span class="fp-line"></span><span class="fp-line"></span><span class="fp-line med"></span>
@@ -221,11 +284,13 @@
   }
 
   function assemble() {
+    popCount = 0;
     if (Eco.auxHide) Eco.auxHide();                     // the small pop-up windows belong to their own scenes, not to the grid
     wins = Eco.windows.all();
     cells = layout(wins.length);
     flipWindows(wins, () => {
       mon.classList.add('finale-mode');
+      applyCanon();
       wins.forEach((w, i) => {
         saved.set(w, { left: w.style.left, top: w.style.top, width: w.style.width, height: w.style.height, zIndex: w.style.zIndex });
         w.style.zIndex = 10 + i;
@@ -236,6 +301,7 @@
       hideCursor();
       resetClear();
       flipWindows(wins, () => {
+        clearCanon();
         wins.forEach((w) => {
           const s = saved.get(w);
           if (!s) return;
@@ -281,6 +347,7 @@
 
   /* The last close: pop-ups pour in until nothing else is visible */
   function flood() {
+    floodCovered = false;
     const target = wins[indexOf('search')] || wins[wins.length - 1];      // the search window
     const record = { closed: target, pops: [], card: null };
     closeWindow(target, () => {
@@ -305,6 +372,8 @@
       });
       const total = (Eco.replaying || reduced.matches) ? 0 : Math.round(order.length * 34 * 0.75) + 500;
       later(() => {
+        floodCovered = true;
+        Eco.fadeNote?.();
         const card = document.createElement('div');
         card.className = 'fin-final';
         card.innerHTML = '<div class="fin-final-title">Closing one window does not close the system.</div>';
@@ -318,6 +387,7 @@
       hideCursor();
       resetClear();
       record.pops.forEach(p => p.remove());
+      floodCovered = false;
       if (record.card) record.card.remove();
       target.classList.remove('fin-closing', 'fin-gone');
       target.querySelector('.wtl-r')?.classList.remove('fin-press');
@@ -329,6 +399,7 @@
   let done = 0;                                             // how many stages are applied
 
   Eco.finale = {
+    get covered() { return floodCovered; },
     step(name) {
       if (Eco.policy && Eco.policy.STEPS.includes(name)) {    // the last part: laws on the map (needs the map first)
         this.step('graph');

@@ -2,7 +2,7 @@
   position: absolute; z-index: 300; inset: 0; padding: 10px 14px;
   opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.5s ease, visibility 0.5s;
   padding-right: calc(14px + var(--notes-reserve, 0px));
-  padding-bottom: 118px;                                /* the dock and the click hint stay on screen under the map */
+  padding-bottom: 118px;
 }
 .eco-graph.show { opacity: 1; visibility: visible; }
 .eco-graph.live { pointer-events: auto; }
@@ -10,30 +10,29 @@
 
 .eg-legend { opacity: 0; transition: opacity 0.5s ease; }
 .eco-graph.legend-in .eg-legend { opacity: 1; }
-.eg-legend-title { font: 700 25px var(--font-mono); fill: var(--p); }
-.eg-legend-label { font: 400 22px var(--font-mono); fill: var(--p); }
-.eg-hint { font: 400 21px var(--font-mono); fill: var(--p); opacity: 0.8; }
-.eg-swatch { stroke: var(--p); stroke-width: 2; }
+.eg-legend-title { font: 700 25px var(--db-font-mono); fill: var(--db-ink); }
+.eg-legend-label { font: 400 22px var(--db-font-mono); fill: var(--db-ink); }
+.eg-swatch { stroke: var(--p); stroke-width: 1; vector-effect: non-scaling-stroke; }
 
 .eg-edges { opacity: 0; transition: opacity 0.6s ease 0.1s; }
 .eco-graph.edges-in .eg-edges { opacity: 1; }
-.eg-line { fill: none; stroke: var(--p); stroke-width: 3.5; }
-.eg-dot { fill: var(--p); }
-.eg-head { fill: var(--p); }
-.eg-edge.accent .eg-line, .eg-edge.accent .eg-dot, .eg-edge.accent .eg-head { stroke: var(--p); fill: var(--p); }
+.eg-line { fill: none; stroke: var(--db-ink); stroke-width: 3.5; }
+.eg-dot { fill: var(--db-ink); }
+.eg-head { fill: var(--db-ink); }
+.eg-edge.accent .eg-line, .eg-edge.accent .eg-dot, .eg-edge.accent .eg-head { stroke: var(--db-ink); fill: var(--db-ink); }
 .eg-edge.accent .eg-line { fill: none; }
 .eg-edge { transition: opacity 0.25s ease; }
 .eco-graph.has-selection .eg-edge:not(.on) { opacity: 0.18; }
-.eco-graph.has-selection .eg-edge.on .eg-line { stroke: var(--p); stroke-width: 3; }
-.eco-graph.has-selection .eg-edge.on .eg-dot, .eco-graph.has-selection .eg-edge.on .eg-head { fill: var(--p); }
+.eco-graph.has-selection .eg-edge.on .eg-line { stroke: var(--db-ink); stroke-width: 3; }
+.eco-graph.has-selection .eg-edge.on .eg-dot, .eco-graph.has-selection .eg-edge.on .eg-head { fill: var(--db-ink); }
 
 .eg-node { cursor: pointer; opacity: 0; transform: translateY(14px); transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.2, 0.9, 0.25, 1.1); outline: none; }
 .eg-node.in { opacity: 1; transform: none; }
 .eg-shadow { fill: var(--p); }
-.eg-box { stroke: var(--p); stroke-width: var(--research-outline); vector-effect: non-scaling-stroke; transition: stroke-width 0.15s ease; }
-.eco-graph.live .eg-node:hover .eg-box, .eg-node:focus-visible .eg-box { stroke: var(--p); stroke-width: 3; }
-.eg-node.active .eg-box { stroke: var(--p); stroke-width: 3.5; }
-.eg-node.linked .eg-box { stroke: var(--p); stroke-width: 2; }
+.eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: var(--research-outline); vector-effect: non-scaling-stroke; transition: stroke-width 0.15s ease; }
+.eco-graph.live .eg-node:hover .eg-box, .eg-node:focus-visible .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 3; }
+.eg-node.active .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 3.5; }
+.eg-node.linked .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 2; }
 .eco-graph.has-selection .eg-node:not(.active):not(.linked) { opacity: 0.4; }
 .eg-icon { font: 900 32px 'Font Awesome 5 Free'; fill: var(--p); }
 .eg-title { font-family: var(--font-sans); font-weight: 700; fill: var(--p); }
@@ -41,8 +40,7 @@
 .eg-m { font: 400 21px var(--font-sans); fill: var(--p); }
 @media (prefers-reduced-motion: reduce) { .eg-node, .eco-graph, .eg-edges { transition-duration: 0.01ms !important; } }
 
-
-/* ── The last part: laws on the ecosystem map (policy.js) ─────────────── */
+/* ── The last part: laws on the ecosystem map (modules/law.js) ─────────────── */
 .eco-graph .eg-svg { transition: opacity 0.5s ease; }
 .eco-graph.pol-away .eg-svg { opacity: 0; }
 .eco-graph.pol-on .eg-h, .eco-graph.pol-on .eg-m { opacity: 0; }       /* the boxes' small print gives way to the law tags */
@@ -53,7 +51,7 @@
   transition: opacity 0.35s ease var(--td, 0ms), transform 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) var(--td, 0ms); }
 .pol-tag.on { opacity: 1; transform: none; }
 .pol-tag-box { fill: #fff; stroke: var(--p); stroke-width: 3; }
-.pol-tag-text { font: 700 22px var(--font-mono); fill: var(--p); }
+.pol-tag-text { font: 700 22px var(--db-font-mono); fill: var(--p); }
 .pol-tag.fed .pol-tag-box { fill: var(--p); }
 .pol-tag.fed .pol-tag-text { fill: #fff; }
 .pol-tag.new .pol-tag-box { fill: var(--role-proliferation); }
@@ -62,12 +60,12 @@
 .pol-q { opacity: 0; transition: opacity 0.4s ease; }
 .eco-graph[data-pol="8"] .pol-q { opacity: 1; }
 .pol-q-dot { fill: var(--role-proliferation); stroke: var(--p); stroke-width: 2; }
-.pol-q-text { font: 900 42px var(--font-mono); fill: var(--p); }
+.pol-q-text { font: 900 42px var(--db-font-mono); fill: var(--p); }
 .eco-graph.pol-edge-focus .eg-edge:not(.pol-edge) { opacity: 0.1; }
 .eg-edge.pol-edge .eg-line { stroke: var(--p); stroke-width: 9; stroke-dasharray: 16 10; animation: pol-dash 0.9s linear infinite; }
 .eg-edge.pol-edge .eg-dot, .eg-edge.pol-edge .eg-head { fill: var(--p); }
 @keyframes pol-dash { to { stroke-dashoffset: -26; } }
-.eg-node.pol-ripple .eg-box { stroke: var(--p); stroke-width: 9; animation: pol-ripple 1.4s ease-out 1; }
+.eg-node.pol-ripple .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 9; animation: pol-ripple 1.4s ease-out 1; }
 @keyframes pol-ripple { 0% { stroke-width: 2; } 35% { stroke-width: 22; } 100% { stroke-width: 9; } }
 @media (prefers-reduced-motion: reduce) { .eg-edge.pol-edge .eg-line, .eg-node.pol-ripple .eg-box { animation: none; } .pol-tag { transition-duration: 0.01ms; } }
 
@@ -79,69 +77,78 @@
   font: 400 14px/1.45 var(--font-sans); color: var(--p); opacity: 0; visibility: hidden; transform: translateY(16px);
   transition: opacity 0.35s ease, transform 0.4s ease, visibility 0.35s; }
 .pol-card.on { opacity: 1; visibility: visible; transform: none; }
-.pol-card h4 { margin: 0 0 4px; font: 700 12px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--p); }
+.pol-card h4 { margin: 0 0 4px; font: 700 12px var(--db-font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--p); }
 .pol-card p { margin: 0; }
 .pol-card blockquote { margin: 0 0 6px; padding-left: 10px; border-left: 3px solid var(--p); font-size: 13px; }
 .pol-stat { display: flex; align-items: center; gap: 16px; }
-.pol-stat b { font: 900 44px var(--font-mono); color: var(--p); white-space: nowrap; line-height: 1; }
+.pol-stat b { font: 900 44px var(--db-font-mono); color: var(--p); white-space: nowrap; line-height: 1; }
 .pol-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .pol-pair blockquote { margin: 0; }
-.pol-pair span { display: block; font: 700 11px var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--p); margin-bottom: 3px; }
+.pol-pair span { display: block; font: 700 11px var(--db-font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--p); margin-bottom: 3px; }
 .pol-pair em { font-style: normal; background: var(--role-proliferation); padding: 0 4px; }
 
 /* the U.S. state map */
 .pol-map { position: absolute; inset: 0; z-index: 310; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; gap: 8px; align-content: stretch; overflow: hidden;
   padding: 18px calc(20px + var(--notes-reserve, 0px)) 128px 22px; opacity: 0; visibility: hidden; pointer-events: none;
-  transition: opacity 0.5s ease, visibility 0.5s; font-family: var(--font-mono); color: var(--p); }
+  transition: opacity 0.5s ease, visibility 0.5s; font-family: var(--db-font-mono); color: var(--p); }
 .pol-map.on { opacity: 1; visibility: visible; pointer-events: auto; }
-.pol-map h3 { margin: 0; font: 700 clamp(14px, 1.8vw, 22px) var(--font-mono); color: var(--p); }
+.pol-map h3 { margin: 0; font: 700 clamp(14px, 1.8vw, 22px) var(--db-font-mono); color: var(--p); }
 .pol-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, max-content); gap: 4px 28px; font-size: clamp(11px, 1.2vw, 15px); }
 .pol-n { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 50%; border: 1px solid var(--p); margin-right: 8px; font-size: 0.85em; }
 .pol-list .r-dist .pol-n { background: var(--role-distribution); } .pol-list .r-creation .pol-n { background: var(--role-creation); }
 .pol-us-wrap { position: relative; min-height: 0; min-width: 0; width: 100%; max-width: 1060px; margin: 0 auto; }
 .pol-us { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.pol-tile { fill: #fff; stroke: var(--p); stroke-width: var(--research-outline); vector-effect: non-scaling-stroke; }
-.pol-code { font: 700 15px var(--font-mono); fill: color-mix(in srgb, var(--p) 45%, transparent); }
+.pol-tile { fill: #fff; stroke: var(--research-box-ink, var(--p)); stroke-width: var(--research-outline); vector-effect: non-scaling-stroke; }
+.pol-code { font: 700 15px var(--db-font-mono); fill: color-mix(in srgb, var(--p) 45%, transparent); }
 .pol-state.has .pol-code { fill: var(--p); }
 .pol-state.has.r-creation .pol-tile { fill: var(--role-creation); } .pol-state.has.r-dist .pol-tile { fill: var(--role-distribution); }
 .pol-ic { font: 900 16px 'Font Awesome 5 Free'; fill: var(--p); }
 .pol-badge { fill: #fff; stroke: var(--p); stroke-width: 1.5; }
-.pol-badge-n { font: 700 12px var(--font-mono); fill: var(--p); }
+.pol-badge-n { font: 700 12px var(--db-font-mono); fill: var(--p); }
 .pol-state.has { cursor: pointer; outline: none; transition: transform 0.15s ease; }
-.pol-state.has:hover .pol-tile, .pol-state.has:focus-visible .pol-tile { stroke: var(--p); stroke-width: 3; }
+.pol-state.has:hover .pol-tile, .pol-state.has:focus-visible .pol-tile { stroke: var(--research-box-ink, var(--p)); stroke-width: 3; }
+.pol-state.has.active .pol-tile {
+  stroke: var(--research-box-ink, var(--p)); stroke-width: 3.5;
+}
+html.db-theme-dark .about-research {
+  --research-box-ink: var(--db-ink);
+}
 .pol-role { font-size: clamp(11px, 1.2vw, 14px); display: flex; align-items: center; justify-content: flex-end; }
 .pol-role .sw { display: inline-block; width: 18px; height: 18px; border: 1px solid var(--p); margin: 0 6px 0 14px; }
 .pol-role .r-creation { background: var(--role-creation); } .pol-role .r-dist { background: var(--role-distribution); }
 
-
 /* Page layout: reuse the diagrams without the story's fixed overlays. */
 .about-research {
   --p: var(--db-chip-ink); --paper: #fff;
-  --font-mono: var(--db-font-mono); --notes-reserve: 0px;
+  --notes-reserve: 0px;
   --research-padding: 24px; --research-outline: 1.5px;
-  padding: var(--db-space-5); color: var(--p); background: var(--paper);
+  --research-legend-marker-size: 16px;
+  padding: var(--db-space-4) var(--db-space-3); color: var(--db-ink); background: var(--db-bg);
 }
 .about-research h2 { font: 400 var(--db-text-lg)/1.4 var(--db-font-mono); }
 .research-header { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
 .research-header h2 { margin: 0; }
 .research-views { display: flex; flex-wrap: wrap; gap: 8px; }
 .research-views button, #research-law-topic {
-  font: inherit; color: var(--p); background: var(--paper);
-  border: 1px solid var(--p); padding: 8px 14px; border-radius: 0;
+  font: inherit; color: var(--db-ink); background: transparent;
+  border: 1px solid var(--db-ink); padding: 8px 14px; border-radius: 0;
 }
 .research-views button { cursor: pointer; }
-.research-views button[aria-pressed="true"] { background: var(--p); color: #fff; }
-.research-views button:focus-visible, #research-law-topic:focus-visible { outline: 2px solid var(--p); outline-offset: 3px; }
+.research-views button[aria-pressed="true"], .research-views button:hover {
+  background: var(--db-ink); color: var(--db-bg);
+}
+.research-views button[aria-pressed="true"]:hover { background: var(--db-bg); color: var(--db-ink); }
+.research-views button:focus-visible, #research-law-topic:focus-visible { outline: 2px solid var(--db-ink); outline-offset: 3px; }
 #research-law-controls { margin-bottom: 16px; }
 #research-law-controls label { margin-right: 12px; }
-.research-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 24px; align-items: start; }
-.research-visual-scroll { overflow-x: auto; border: 1px solid var(--p); }
+.research-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 24px 14px; padding-right: 10px; align-items: start; }
+.research-visual-scroll { overflow-x: auto; border: 1px solid var(--db-ink); }
 #research-visual {
   position: relative; min-width: 620px; padding: var(--research-padding);
   background:
-    linear-gradient(color-mix(in srgb, var(--p) 8%, transparent) 1px, transparent 1px) 0 0 / 40px 40px,
-    linear-gradient(90deg, color-mix(in srgb, var(--p) 8%, transparent) 1px, transparent 1px) 0 0 / 40px 40px,
-    var(--paper);
+    linear-gradient(color-mix(in srgb, var(--db-ink) 8%, transparent) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, color-mix(in srgb, var(--db-ink) 8%, transparent) 1px, transparent 1px) 0 0 / 40px 40px,
+    var(--db-bg);
 }
 .about-research .eco-graph { position: relative; inset: auto; padding: 0; }
 .about-research .eg-svg { height: auto; }
@@ -154,33 +161,44 @@
 .about-research .pol-card.on { display: block; }
 .about-research .pol-map { position: relative; inset: auto; padding: 0; display: none; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
 .about-research .pol-map.on { display: grid; }
+.about-research .pol-map, .about-research .pol-map h3 { color: var(--db-ink); }
+.pol-state:not(.has) .pol-tile { fill: var(--db-bg); stroke: var(--db-ink); }
+.pol-state:not(.has) .pol-code { fill: var(--db-ink); }
 .pol-legend { width: 100%; }
 .about-research .pol-legend h3 {
-  font: 700 14px/1.4 var(--font-mono);
+  font: 700 14px/1.4 var(--db-font-mono);
   margin: 0 0 10px;
 }
 .about-research .pol-legend .pol-list {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px 16px;
-  font: 400 12px/1.4 var(--font-mono);
+  font: 400 12px/1.4 var(--db-font-mono);
   list-style: none;
 }
-.pol-legend .pol-n { width: 1.5em; height: 1.5em; border-radius: 0; }
+.pol-legend .pol-n {
+  color: var(--p); width: var(--research-legend-marker-size);
+  height: var(--research-legend-marker-size); border-radius: 0;
+}
 .about-research .pol-role {
   grid-column: 1; grid-row: 3;
   display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-end;
-  gap: 12px; font: 400 12px/1.4 var(--font-mono);
+  gap: 12px; font: 400 12px/1.4 var(--db-font-mono);
 }
 .pol-role-item { display: inline-flex; align-items: center; gap: 6px; }
-.about-research .pol-role .sw { width: 12px; height: 12px; margin: 0; }
+.about-research .pol-role .sw {
+  width: var(--research-legend-marker-size);
+  height: var(--research-legend-marker-size);
+  margin: 0;
+}
 .about-research .pol-us-wrap { grid-column: 1; grid-row: 2; }
 .about-research .eco-graph.pol-away { display: none; }
 .about-research .pol-us-wrap { aspect-ratio: auto; }
 .about-research .pol-us { position: relative; display: block; height: auto; }
 .about-research .pol-hint { display: none; }
 .research-details {
+  color: #241a5c;
   border: 1px solid var(--p); background: var(--role-proliferation);
   box-shadow: var(--hard-lg); border-radius: 0;
-  font: 400 var(--db-text-md)/var(--db-lh-loose) var(--font-sans);
+  font: 400 var(--db-text-md)/var(--db-lh-loose) var(--db-font-mono);
 }
 .research-note-titlebar {
   display: flex; align-items: center; gap: 6px; height: 38px;
@@ -193,10 +211,17 @@
 .research-note-content { padding: 26px 28px 24px; }
 .research-details h3 { margin: 0 0 12px; font: 400 var(--db-text-md)/var(--db-lh) var(--db-font-mono); }
 .research-details p { font-size: var(--db-text-md); font-weight: 400; line-height: var(--db-lh-loose); }
+#research-detail-body > :first-child { margin-top: 0; }
 .research-details .step-key-text { margin-top: 0; }
 @media (max-width: 900px) {
   .research-layout { grid-template-columns: minmax(0, 1fr); }
   #research-law-topic { width: 100%; margin-top: 8px; }
+}
+@media (min-width: 901px) {
+  .about-research .pol-us-wrap { width: 92%; }
+}
+@media (max-width: 720px) {
+  .about-research { padding: var(--db-space-3); }
 }
 @media (prefers-reduced-motion: reduce) {
   .about-research *, .about-research *::before, .about-research *::after {

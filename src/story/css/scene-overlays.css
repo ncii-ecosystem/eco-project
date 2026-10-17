@@ -1,0 +1,227 @@
+/* ═══ Search: pop-up ads ════════════════════════════════════ */
+.google-chrome {
+  position: relative;
+}
+.sr-ads {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.sr-ad {
+  position: absolute;
+  width: 210px;
+  padding: 10px 12px 12px;
+  background: #fff;
+  border: 1px solid var(--p);
+  box-shadow: var(--hard-sm);
+  font-family: var(--font-sans);
+  color: var(--p);
+  opacity: 0;
+  transform: translateY(14px) scale(0.9);
+  transition:
+    opacity 0.35s ease,
+    transform 0.45s cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+.sr-ad.in {
+  opacity: 1;
+  transform: none;
+}
+.sr-ad-1 {
+  right: 6%;
+  top: 34%;
+}
+.sr-ad-2 {
+  left: 7%;
+  top: 56%;
+}
+.sr-ad-3 {
+  right: 16%;
+  top: 64%;
+}
+.sr-ad b {
+  display: block;
+  font: 700 14px var(--db-font-mono);
+  color: var(--p);
+  margin: 4px 0 2px;
+}
+.sr-ad p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.sr-ad-tag {
+  font: 700 10px var(--db-font-mono);
+  background: var(--role-proliferation);
+  border: 1px solid var(--p);
+  padding: 0 5px;
+  color: var(--p);
+}
+.sr-ad-x {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  color: var(--p);
+  font-size: 16px;
+  line-height: 1;
+}
+.sr-ad-btn {
+  display: inline-block;
+  font: 700 11px var(--db-font-mono);
+  background: var(--p);
+  color: #fff;
+  padding: 3px 10px;
+}
+
+/* ═══ The arrow between the models window and the developer platform ═══ */
+.win-arrow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 250;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  overflow: visible;
+}
+.win-arrow.show {
+  opacity: 1;
+}
+.finale-mode .win-arrow {
+  display: none;
+}
+
+/* the two windows share the screen, so their content adapts to how wide it is */
+.md-stage,
+.dp-stage {
+  container-type: inline-size;
+}
+@container (max-width: 640px) {
+  .md-stage {
+    padding: 10px;
+    gap: 8px;
+  }
+  .md-panels {
+    gap: 8px;
+  }
+  .md-panel {
+    padding: 8px 9px;
+    gap: 6px;
+  }
+  .md-label {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+  .md-arena {
+    min-height: 90px;
+  }
+  .md-model {
+    width: 54px;
+    height: 54px;
+    font-size: 10px;
+  }
+  .md-model .fa-cube, .md-output-user {
+    font-size: 16px;
+  }
+  .md-copy {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+  .md-points li {
+    font-size: 10.5px;
+    padding-left: 14px;
+  }
+  .dp-cards {
+    grid-template-columns: 1fr;
+  }
+  .dp-card span {
+    display: none;
+  }
+  .dp-body {
+    padding: 10px;
+    gap: 10px;
+  }
+  .dp-tab {
+    display: none;
+  }
+}
+.dp-card b,
+.dp-row b,
+.dp-tag {
+  white-space: nowrap;
+}
+.dp-row {
+  overflow: hidden;
+  flex-wrap: nowrap;
+}
+
+/* the ban card and the offline card cover the page they sit on: they follow the window's scroll instead of scrolling away and leaving a gap */
+.reddit-banned,
+.mdf-offline {
+  top: var(--sy, 0px);
+  bottom: auto;
+  height: 100%;
+}
+.reddit-stage > .reddit-banned {
+  inset: 0; height: auto; padding: 16px;
+  justify-content: center;
+}
+
+/* the model name is a plain label now (not a dropdown); the cursor still clicks it */
+.chat-model-badge {
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
+/* each model panel appears with its own step: closed first (it is held by the company), then open */
+.md-panel {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+.md-panel.run {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .md-panel {
+    transition-duration: 0.01ms;
+  }
+}
+
+/* Mock windows stay fixed; feeds and long app listings retain their own scroll areas. */
+.scene:not(#scene-intro) { overflow: clip; }
+.scene-stage:not(.news-stage):not(.reddit-stage):not(.mdf-stage):not(.appstore-stage) {
+  overflow: clip;
+}
+
+/* Focus an existing ad to show an illustrative social-media placement. */
+.sr-social-context, .sr-social-sponsored, .sr-social-preview, .sr-social-actions { display: none; }
+.sr-ads.social-focus .sr-ad:not(.sr-ad-1) { opacity: 0; }
+.sr-ads.social-focus .sr-ad-1 {
+  left: 50%; right: auto; top: 18%;
+  width: min(320px, 85%); transform: translateX(-50%);
+  transition: left 500ms ease, top 500ms ease, width 500ms ease, transform 500ms ease;
+}
+.social-focus .sr-social-context {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; padding-bottom: 12px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--p);
+}
+.social-focus .sr-social-actions {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 12px; font-size: 18px;
+}
+.social-focus .sr-social-actions > :last-child { margin-left: auto; }
+.social-focus .sr-social-sponsored { display: block; font-size: 11px; margin-bottom: 12px; }
+.social-focus .sr-social-preview { display: flex; height: 130px; margin-bottom: 12px; }
+.social-focus .sr-ad-1 .sr-ad-tag, .social-focus .sr-ad-1 .sr-ad-x { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .sr-ads.social-focus .sr-ad-1 { transition: none; }
+}

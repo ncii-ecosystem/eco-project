@@ -12,7 +12,6 @@
 
   /* ── DOM refs ─────────────────────────────────────── */
   const monScreen    = document.getElementById('mon-screen');
-  // const progressFill = document.getElementById('progress-bar-fill');
   const cwOverlay    = document.getElementById('cw-overlay');
   const cwBtn        = document.getElementById('cw-btn');
 
@@ -49,7 +48,7 @@
   // how long each step's animation takes (ms); steps with a note also wait for the note to type out
   const ANIMATION_MS = {
     news:   { h0: 1500, h1: 1500, h2: 1500, h3: 1500, h4: 1500 },   // the marker sweep, the pop-up and the comments
-    chat:   { type: 1300, send: 400, think: 900, respond: 700, dataset: 2500, scan: 2100, return: 3300, model: 2000 },
+    chat:   { type: 1300, send: 400, think: 900, respond: 700, dataset: 0, scan: 0, return: 0, model: 2000 },
     md:     { open: 2400, closed: 2400, move: 2200 },
     dm:     { msg0: 800, msg1: 800, msg2: 500, 'annotate-imessage': 1800, switchemail: 600, 'annotate-email': 500 },
     rc:     { 0: 500, 1: 500, 2: 500, 3: 500, 4: 500, ban: 600, mdf: 600, 'annotate-mdf': 700 },
@@ -66,6 +65,15 @@
     return ms;
   }
   Eco.showChatExplanation = () => {};
+  Eco.showDmExplanation = () => {
+    if (Eco.replaying || navigation.active?.dataset.dm !== 'msg2') return;
+    navigation.goTo(document.querySelector('.step[data-dm="annotate-imessage"]'));
+  };
+  document.getElementById('dm-send-btn')?.addEventListener('click', event => {
+    if (navigation.active?.dataset.dm !== 'msg0' || event.currentTarget.disabled) return;
+    event.currentTarget.blur();
+    navigation.goTo(document.querySelector('.step[data-dm="msg2"]'));
+  });
   Eco.showSearchExplanation = () => {
     if (Eco.replaying || navigation.active?.dataset.search !== 'results') return;
     navigation.goTo(document.querySelector('.step[data-search="annotate"]'));
@@ -101,13 +109,13 @@
 
   /* Per-chapter window geometry — staggered so windows overlap naturally */
   const WIN_POSITIONS = {
-    cover:      { top: '24px',  left: '8px',   width: '90%', height: '88%' },
+    cover:      { top: '24px',  left: '8px',   width: '74%', height: '88%' },
     interface:  { top: '34px',  left: '10%',   width: '84%', height: '84%' },
     models:     { top: '30px',  left: '8%',    width: '80%', height: '82%' },
     devplat:    { top: '46px',  left: '49%',   width: '48%', height: '78%' },
     dm:         { top: '18px',  left: '3%',    width: '42%', height: '84%' },
-    'dm-email': { top: '36px',  left: '44%',   width: '52%', height: '80%' },
-    reddit:     { top: '52px',  left: '2%',    width: '50%', height: '76%' },
+    'dm-email': { top: '36px',  left: '44%',   width: '52%', height: '86%' },
+    reddit:     { top: '52px',  left: '2%',    width: '56%', height: '88%' },
     mdf:        { top: '28px',  left: '46%',   width: '51%', height: '78%' },
     search:     { top: '64px',  left: '4%',    width: '88%', height: '70%' },
     appstore:   { top: '30px',  left: '8%',    width: '86%', height: '82%' },
@@ -154,10 +162,12 @@
   }
   window.addEventListener('resize', () => { if (storyStarted) syncDock(); });
   dockItems.forEach(item => {
-    item.tabIndex = 0;
+    item.tabIndex = -1;
     item.setAttribute('role', 'button');
     item.setAttribute('aria-label', 'Go to ' + item.title);
-    onActivate(item, () => {
+    item.addEventListener('click', () => {
+      item.blur();
+      dismissNavigationTip();
       if (item.dataset.href) {
         if (window.parent.SiteRouter) window.parent.SiteRouter.navigate(item.dataset.href);
         else window.location.href = item.dataset.href;
@@ -180,12 +190,26 @@
     appstore: numberFor('Apps'), payment: numberFor('Payments'), cloud: numberFor('Infrastructure'),
     dm: numberFor('Channels'), 'dm-email': numberFor('Channels'),
   };
+  const TECHNOLOGY_TITLES = {
+    interface: 'Generative AI Interfaces', models: 'Generative AI Models',
+    devplat: 'Developer Platforms', reddit: 'Deepfake Creation Communities',
+    mdf: 'Deepfake Creation Communities', search: 'Search Engines',
+    appstore: 'App Stores', payment: 'Payment Processors', cloud: 'Critical Service Providers',
+    dm: 'Distribution Channels', 'dm-email': 'Distribution Channels',
+  };
+  function technologyTitle(id, current) {
+    if (id === 'interface' && current?.title === 'Datasets') return 'Training Datasets';
+    return TECHNOLOGY_TITLES[id];
+  }
   function syncWindowNumbers(current) {
     const sectionNumber = numberedDockItems.indexOf(current) + 1;
     spawnedWindows.forEach((win, id) => {
+      const heading = technologyTitle(id, current);
+      if (heading && current?.dataset.go === id) win.querySelector('.win-title').textContent = heading;
       const chip = win.querySelector('.win-chip');
       if (!chip) return;
       const sharedWindow = ['interface', 'search'].includes(id) && current?.dataset.go === id;
+      if (['interface', 'search'].includes(id) && !sharedWindow) return;
       const number = sharedWindow && sectionNumber ? sectionNumber : CHAPTER_NUM[id];
       chip.textContent = `${String(number).padStart(2, '0')} / ${String(CHAPTER_TOTAL).padStart(2, '0')}`;
       chip.title = `Section ${number} of ${CHAPTER_TOTAL}`;
@@ -194,7 +218,8 @@
   function spawnWindow(wid, label, url, sceneId) {
     const pos = WIN_POSITIONS[wid] || { top: '44px', left: '4%', width: '88%', height: '80%' };
     const w = document.createElement('div');
-    w.className = 'mac-window';
+    w.className = 'mac-window win-new';
+    window.setTimeout(() => w.classList.remove('win-new'), 800);
     w.dataset.chapter = wid;
     w.style.top    = pos.top;
     w.style.left   = fitLeft(pos.left);
@@ -207,8 +232,7 @@
           <span class="wtl wtl-y"></span>
           <span class="wtl wtl-g"></span>
         </div>
-        <div class="win-title">${escapeHtml(label)}</div>
-        <div class="win-url">${escapeHtml(url || '')}</div>
+        <div class="win-title">${escapeHtml(technologyTitle(wid, dockItems.find(item => item.classList.contains('current'))) || label)}</div>
         ${CHAPTER_NUM[wid] ? `<div class="win-chip" title="Section ${CHAPTER_NUM[wid]} of ${CHAPTER_TOTAL}">${String(CHAPTER_NUM[wid]).padStart(2, '0')} / ${String(CHAPTER_TOTAL).padStart(2, '0')}</div>` : ''}
       </div>
       <div class="win-content"></div>
@@ -359,12 +383,10 @@
       win.classList.add('active');
     }));
 
-    // Keep only the two most recent background windows visible so old ones
-    // don't pile up behind the current scene
-    const current = new Set([id, companionId]);
+    // Earlier windows remain stacked behind the current scene.
     windowStack = [id, companionId, ...windowStack].filter((wid, i, a) => wid && a.indexOf(wid) === i);
-    windowStack.filter(wid => !current.has(wid)).forEach((wid, i) => {
-      spawnedWindows.get(wid)?.classList.toggle('buried', i >= 2);
+    windowStack.filter(wid => wid !== companionId).forEach(wid => {
+      spawnedWindows.get(wid)?.classList.remove('buried');
     });
     spawnedWindows.get(id)?.classList.remove('buried');
   }
@@ -379,6 +401,24 @@
   const naCursor    = document.getElementById('na-cursor');
   const naMoreBtn   = document.getElementById('na-more-btn');
   let notesOpen     = false;
+  const navigationTip = document.getElementById('story-navigation-tip');
+  let navigationTipShown = false;
+  let navigationTipMotion = null;
+  function dismissNavigationTip() {
+    if (!navigationTip || navigationTip.hidden) return;
+    const current = getComputedStyle(navigationTip);
+    const start = { opacity: current.opacity, transform: current.transform };
+    navigationTipMotion?.cancel();
+    if (prefersReducedMotion()) { navigationTip.hidden = true; return; }
+    navigationTipMotion = navigationTip.animate([
+      start, { opacity: 0, transform: 'translate(-50%, 8px)' },
+    ], { duration: 200, easing: 'ease', fill: 'forwards' });
+    navigationTipMotion.onfinish = () => {
+      navigationTip.hidden = true;
+      navigationTipMotion.cancel();
+      navigationTipMotion = null;
+    };
+  }
 
   if (naMoreBtn) {
     naMoreBtn.addEventListener('click', () => {
@@ -395,71 +435,6 @@
       }
     });
   }
-  /* Notes can be moved around like a window: drag the title bar (arrow keys work too);
-     double-click it, or press Home, to put it back. */
-  const naBar = notesApp && notesApp.querySelector('.na-titlebar');
-  if (naBar) {
-    const root = document.documentElement;
-    let drag = null;
-    naBar.title = 'Drag to move · double-click to put it back';
-    naBar.tabIndex = 0;
-    naBar.setAttribute('role', 'group');
-    naBar.setAttribute('aria-label', 'Notes title bar: drag, or use the arrow keys, to move the window. Home puts it back.');
-
-    const clampTo = (x, y) => {
-      const r = notesApp.getBoundingClientRect();
-      return [Math.min(Math.max(x, 90 - r.width), window.innerWidth - 90), Math.min(Math.max(y, 0), window.innerHeight - 44)];
-    };
-    const place = (x, y) => {
-      const [cx, cy] = clampTo(x, y);
-      notesApp.style.left = cx + 'px';
-      notesApp.style.top = cy + 'px';
-    };
-    const takeOver = () => {                       // switch from right-anchored to explicit left/top
-      const r = notesApp.getBoundingClientRect();
-      notesApp.style.left = r.left + 'px';
-      notesApp.style.top = r.top + 'px';
-      notesApp.style.right = 'auto';
-      root.classList.add('notes-moved');
-    };
-    const putBack = () => {
-      notesApp.style.left = notesApp.style.top = notesApp.style.right = '';
-      root.classList.remove('notes-moved');
-    };
-
-    naBar.addEventListener('pointerdown', (e) => {
-      if (e.button !== 0 || e.target.closest('.na-tl') || !notesApp.classList.contains('open')) return;
-      takeOver();
-      const r = notesApp.getBoundingClientRect();
-      drag = { dx: e.clientX - r.left, dy: e.clientY - r.top };
-      notesApp.classList.add('na-dragging');
-      naBar.setPointerCapture(e.pointerId);
-      e.preventDefault();
-    });
-    naBar.addEventListener('pointermove', (e) => { if (drag) place(e.clientX - drag.dx, e.clientY - drag.dy); });
-    const endDrag = () => { drag = null; notesApp.classList.remove('na-dragging'); };
-    naBar.addEventListener('pointerup', endDrag);
-    naBar.addEventListener('pointercancel', endDrag);
-    naBar.addEventListener('dblclick', (e) => { if (!e.target.closest('.na-tl')) putBack(); });
-    naBar.addEventListener('keydown', (e) => {
-      const step = e.shiftKey ? 80 : 24;
-      const move = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
-      if (move) {
-        e.preventDefault();
-        if (!root.classList.contains('notes-moved')) takeOver();
-        const r = notesApp.getBoundingClientRect();
-        place(r.left + move[0], r.top + move[1]);
-      } else if (e.key === 'Home') { e.preventDefault(); putBack(); }
-    });
-    window.addEventListener('resize', () => {
-      if (!root.classList.contains('notes-moved')) return;
-      const r = notesApp.getBoundingClientRect();
-      place(r.left, r.top);
-    });
-    // expanding or collapsing a note uses its own layout, so the window goes back first
-    if (naMoreBtn) naMoreBtn.addEventListener('click', putBack);
-  }
-
   // The first titlebar square (an x while a note is expanded) puts it back to less text
   const naClose = document.getElementById('na-close');
   if (naClose) onActivate(naClose, () => {
@@ -496,6 +471,8 @@
   function renderNote(stepEl) {
     if (Eco.replaying) return;
     if (!notesApp || !cwOverlay.classList.contains('hidden')) return;
+    notesApp.classList.remove('na-faded');
+    notesApp.inert = false;
     // where the note sits: set while it is closed it just appears there; set while open it glides
     const pos = ['n1', 'n2', 'n3', 'n4'].includes(stepEl.dataset.intro) ? 'center' : 'top';
     notesApp.style.left = notesApp.style.top = notesApp.style.right = '';
@@ -505,12 +482,20 @@
     notesApp.classList.toggle('pos-top', pos === 'top');
     if (!notesOpen) { void notesApp.offsetWidth; notesApp.classList.remove('na-jump'); }   // ...then open from there, so it slides in from the side
     openNotesApp();
+    if (!navigationTipShown && navigationTip) {
+      navigationTipShown = true;
+      navigationTip.hidden = false;
+      if (!prefersReducedMotion()) navigationTipMotion = navigationTip.animate([
+        { opacity: 0, transform: 'translate(-50%, 8px)' },
+        { opacity: 1, transform: 'translate(-50%, 0)' },
+      ], { duration: 200, easing: 'ease' });
+    }
     if (notesApp.classList.contains('na-snap')) { void notesApp.offsetWidth; setTimeout(() => notesApp.classList.remove('na-snap'), 60); }
     if (curNote && curNote.stepEl === stepEl) {
       return;
     }
     const label   = stepEl.querySelector('.step-label')?.textContent.trim() || 'Note';
-    const keyText = stepEl.querySelector('.step-key-text')?.innerHTML.trim() || '';
+    const keyText = stepEl.querySelector('.step-key-text')?.innerHTML.replace(/\s+/g, ' ').trim() || '';
     const details = Array.from(stepEl.querySelectorAll('.step-detail p'))
                          .map(p => p.textContent.trim()).filter(Boolean);
     const fullBody = details.join('\n\n');
@@ -537,8 +522,6 @@
     notesApp.classList.add('na-flash');
     // the dim comes in as the note is typed out (never for the first notes, which come before the first notification)
     clearTimeout(veilTimer);
-    // Background darkening on note changes is paused; keep the effect for later.
-    // if (!['n1', 'n2', 'n3', 'n4'].includes(stepEl.dataset.intro) && !stepEl.dataset.nkey) veilTimer = setTimeout(flashVeil, 120);
     if (!Eco.replaying && Eco.sound && Eco.sound.note) Eco.sound.note();
     if (noteTimer) clearTimeout(noteTimer);
     const animate = !revealedNotes.has(stepEl);
@@ -555,7 +538,7 @@
       item = document.createElement('div');
       item.className = 'na-sb-item';
       item.dataset.nkey = key;
-      item.tabIndex = 0;
+      item.tabIndex = -1;
       item.setAttribute('role', 'button');
       const title = document.createElement('div');
       title.className = 'na-sb-item-title';
@@ -602,18 +585,24 @@
       noteTimer = setTimeout(step, per);
     })();
   }
+  Eco.fadeNote = () => {
+    clearTimeout(noteTimer); clearTimeout(noteDelayTimer);
+    notesApp?.classList.add('na-faded');
+    if (notesApp) notesApp.inert = true;
+  };
   Eco.hideNote = function () {
     if (Eco.replaying && preserveNotesDuringReplay) return;
     if (!notesApp) return;
     clearTimeout(noteTimer); clearTimeout(veilTimer); clearTimeout(noteDelayTimer);
-    notesApp.classList.remove('open', 'centered');
+    notesApp.classList.remove('open', 'centered', 'na-faded');
+    notesApp.inert = false;
     if (activeChapter === 'intro' || activeChapter === 'desk1') document.documentElement.classList.remove('notes-open');   // between apps the windows keep their room, so they do not resize
     notesOpen = false;
     curNote = null;
   };
 
   Eco.holdScroll = () => {};
-  Eco.showNote = updateNotesApp;   // graph.js opens a box's explanation here
+  Eco.showNote = updateNotesApp;
 
   /* ── Desktop clock ───────────────────────────────── */
   function updateClock() {
@@ -688,8 +677,17 @@
   const sceneNotification = document.getElementById('scene-notif');
   sceneNotification?.setAttribute('role', 'button');
   sceneNotification?.setAttribute('aria-label', 'Dismiss notification');
+  function forwardFromNotification() {
+    if (navigation.active?.dataset.notification === 'models') {
+      sceneNotification?.classList.remove('show', 'pulsing');
+      Eco.startModelClick?.();
+      return true;
+    }
+    return false;
+  }
   onActivate(sceneNotification, () => {
     sceneNotification.classList.remove('show', 'pulsing');
+    if (forwardFromNotification()) return;
     navigation.move(1);
   });
   function showChapterNotification(id) {
@@ -707,7 +705,8 @@
     sceneNotification.setAttribute('aria-label', 'Begin ' + config.app);
     document.getElementById('sn-icon').innerHTML = config.icon;
     ['app', 'title', 'body'].forEach(key => {
-      document.getElementById('sn-' + key).textContent = config[key];
+      const node = document.getElementById('sn-' + key);
+      if (node) node.textContent = config[key];
     });
     sceneNotification.classList.add('show');
     Eco.sound?.notify?.();
@@ -741,10 +740,33 @@
   }
 
   let lastRenderedStep = null;
+  const windowEntrySteps = new Map(CHAPTERS.filter(chapter => chapter.scene).map(chapter => [
+    chapter.id, steps.findIndex(step => step.closest('.scroll-chapter')?.dataset.chapter === chapter.id),
+  ]));
+  [['devplat', '[data-md="move"]'], ['mdf', '[data-rc="mdf"]'], ['dm-email', '[data-dm="switchemail"]']]
+    .forEach(([id, selector]) => windowEntrySteps.set(id, steps.indexOf(document.querySelector(`.step${selector}`))));
   function renderStep(element, index) {
+    const navigatingBackward = lastRenderedStep && index < steps.indexOf(lastRenderedStep);
+    const previousShadows = new Map(Array.from(spawnedWindows.values(), win => [win, getComputedStyle(win).boxShadow]));
+    const retainModels = activeChapter === 'models' &&
+      element.closest('.scroll-chapter')?.dataset.chapter === 'models' &&
+      lastRenderedStep && index === steps.indexOf(lastRenderedStep) + 1;
+    const retainSearch = activeChapter === 'search' &&
+      element.closest('.scroll-chapter')?.dataset.chapter === 'search' &&
+      lastRenderedStep && index > steps.indexOf(lastRenderedStep) &&
+      document.querySelector('#search .google-chrome')?.classList.contains('results-ready');
+    const closingWindows = new Set();
+    spawnedWindows.forEach((win, id) => {
+      const entry = windowEntrySteps.get(id);
+      if (entry >= 0 && entry > index && !win.classList.contains('story-future') &&
+          getComputedStyle(win).visibility === 'visible' && Number(getComputedStyle(win).opacity) > 0) {
+        closingWindows.add(win);
+      }
+    });
     const headlineNotes = ['zoomnote', 'grok', 'tech', 'taxo', 'story'];
     const retainHeadlines = headlineNotes.includes(lastRenderedStep?.dataset.intro) &&
       ['grok', 'tech', 'taxo', 'story'].includes(element.dataset.intro);
+    const retainScene = retainHeadlines || retainModels || retainSearch;
     lastRenderedStep = element;
     naEdBody?.querySelectorAll('.nw').forEach(word => word.classList.add('on'));
     if (element.dataset.fin !== 'end' && document.documentElement.classList.contains('in-outro')) {
@@ -752,17 +774,17 @@
       document.documentElement.classList.remove('in-outro');
     }
     clearTimeout(noteTimer); clearTimeout(noteDelayTimer); clearTimeout(veilTimer);
-    if (!retainHeadlines) Eco.cancelSceneMotion();
+    if (!retainScene) Eco.cancelSceneMotion();
     sceneNotification?.classList.remove('show', 'pulsing');
     veil?.classList.remove('go');
     // Cancel only story animations; the loader and warning have their own lifecycle.
-    if (!retainHeadlines) document.querySelectorAll('.mac-window, .aux-win, #hl-grid, #flood-layer')
+    if (!retainScene) document.querySelectorAll('.mac-window, .aux-win, #hl-grid, #flood-layer')
       .forEach(root => root.getAnimations({ subtree: true }).forEach(animation => animation.cancel()));
     const chapter = element.closest('.scroll-chapter');
     const id = chapter.dataset.chapter;
     const chapterChanged = activeChapter !== id;
     preserveNotesDuringReplay = !chapterChanged && notesOpen;
-    if (!retainHeadlines) {
+    if (!retainScene) {
       document.documentElement.classList.add('story-restoring');
       Eco.replaying = true;
       try {
@@ -796,19 +818,44 @@
       win?.animate([{ opacity: 0, transform: 'scale(0.94) translateY(10px)' }, { opacity: 1, transform: 'none' }],
         { duration: 480, easing: 'cubic-bezier(0.2, 0.85, 0.2, 1)' });
     }
-    applyStep(element);
+    // Revisiting an automatic response shows its completed state and waits for input.
+    const restoreAutomaticStep = navigatingBackward &&
+      (element.dataset.search === 'results' || element.dataset.chat === 'send' || element.dataset.dm === 'msg2');
+    if (restoreAutomaticStep) Eco.replaying = true;
+    try { applyStep(element); }
+    finally { if (restoreAutomaticStep) Eco.replaying = false; }
+    if (restoreAutomaticStep) settleRestoredAnimations();
     const note = noteForStep.get(element);
     if (note && !Eco.intro.floodRunning) updateNotesApp(note, Math.min(animMs(element), 2400));
+    if (element.dataset.fin === 'flood' && Eco.finale?.covered) Eco.fadeNote();
     if (!chapterChanged && (element.dataset.note || element.dataset.notification)) {
       settleRestoredAnimations();
     }
     previous.disabled = index === 0;
     next.disabled = index === steps.length - 1;
     status.textContent = `Step ${index + 1} of ${steps.length}: ${element.querySelector('.step-label')?.textContent.trim() || chapter.dataset.chapter}`;
-    // progressFill.style.transform = `scaleX(${index / (steps.length - 1)})`;
     document.documentElement.classList.toggle('in-outro', element.dataset.fin === 'end');
     syncEndingNavbar();
     syncDock();
+    spawnedWindows.forEach((win, id) => {
+      const entry = windowEntrySteps.get(id);
+      const future = entry >= 0 && entry > index;
+      win.classList.toggle('story-future', future);
+      win.inert = future;
+      const oldShadow = previousShadows.get(win);
+      const newShadow = getComputedStyle(win).boxShadow;
+      if (!future && oldShadow !== undefined && oldShadow !== newShadow && !prefersReducedMotion()) {
+        win.animate([{ boxShadow: oldShadow }, { boxShadow: newShadow }], {
+          duration: 350, easing: 'ease-in-out',
+        });
+      }
+      if (future && closingWindows.has(win) && !prefersReducedMotion()) {
+        win.animate([
+          { opacity: 0.55, transform: 'scale(1)', visibility: 'visible' },
+          { opacity: 0, transform: 'scale(0.97) translateY(6px)', visibility: 'visible' },
+        ], { duration: 180, easing: 'ease-out' });
+      }
+    });
     if (element.dataset.notification) showChapterNotification(element.dataset.notification);
     if (element.dataset.fin === 'end') scrollToEnding();
     window.dispatchEvent(new CustomEvent('story:step', { detail: { element, index, chapter: id } }));
@@ -837,19 +884,31 @@
     if (element.dataset.fin === 'end') Eco.graph?.setProgress(1);
   }
 
-  previous.addEventListener('click', () => navigation.move(-1));
-  next.addEventListener('click', () => navigation.move(1));
-  document.querySelector('.ps-pay-btn')?.addEventListener('click', () => {
-    if (activeChapter === 'payment') navigation.move(1);
+  previous.addEventListener('click', () => {
+    dismissNavigationTip();
+    navigation.move(-1);
+  });
+  next.addEventListener('click', () => {
+    dismissNavigationTip();
+    if (forwardFromNotification()) return;
+    navigation.move(1);
+  });
+  document.querySelector('.ps-pay-btn')?.addEventListener('click', event => {
+    if (activeChapter !== 'payment' || event.currentTarget.disabled) return;
+    event.currentTarget.disabled = true;
+    event.currentTarget.textContent = 'Payment submitted';
+    navigation.move(1);
   });
   previous.disabled = next.disabled = true;
   document.addEventListener('keydown', event => {
     if (!storyStarted || event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="slider"], [role="dialog"], [role="alertdialog"], .win-titlebar, .na-titlebar, .eg-node')) return;
     const isSpace = event.key === ' ';
-    if (isSpace && event.target.closest('button, a[href], [role="button"], summary')) return;
+    if (isSpace && !event.target.closest('.dt-dock-item') && event.target.closest('button, a[href], [role="button"], summary')) return;
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && !isSpace) return;
     event.preventDefault();
+    dismissNavigationTip();
+    if (event.key !== 'ArrowLeft' && forwardFromNotification()) return;
     navigation.move(event.key === 'ArrowLeft' ? -1 : 1);
   });
 

@@ -1,0 +1,23 @@
+/* Shared appearance for illustrated story scenes. Loaded after the desktop theme. */
+
+:root {
+  --ink-d: #241a5c;
+}
+
+/* Shared building blocks ---------------------------------- */
+.redacted-block {
+  border-radius: 0 !important;
+  border: 1px solid var(--p);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--p) 16%, transparent) 0 6px,
+      transparent 6px 12px
+    ),
+    #f2efff;
+}
+
+.scene-stage {
+  font-family: var(--font-sans);
+  color: var(--p);
+}

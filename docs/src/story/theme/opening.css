@@ -1,0 +1,403 @@
+/* ── The five headlines: Instagram-style cards on the desktop ── */
+.dt-canvas {
+  z-index: 1;
+}
+.hl-grid {
+  position: absolute;
+  left: 2.5%;
+  top: 4%;
+  right: 100px;
+  bottom: 92px;
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  gap: 18px;
+  transition:
+    opacity 0.5s ease,
+    transform 0.6s ease;
+}
+.hl-card:nth-child(5) {
+  grid-column: 3;
+  grid-row: 2;
+}
+.hl-grid.away {
+  opacity: 0;
+  transform: scale(0.96) translateY(12px);
+}
+.hl-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--d);
+  box-shadow: var(--window-shadow);
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  transition:
+    opacity 0.45s ease,
+    transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.05);
+}
+.hl-card.on {
+  opacity: 1;
+  transform: none;
+}
+/* the words, picked out in three stages: Grok, then every technology, then the taxonomy colours and icons */
+.tk {
+  display: inline;
+  padding: 0 3px;
+  font-weight: inherit;
+  background: linear-gradient(var(--hc, transparent), var(--hc, transparent)) 0
+    100% / 0% 100% no-repeat;
+  transition:
+    background-size 0.7s ease,
+    background-color 0.4s ease;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.tk i {
+  display: inline-block;
+  max-width: 0;
+  margin-left: 0;
+  opacity: 0;
+  overflow: hidden;
+  vertical-align: -0.05em;
+  font-size: 0.8em;
+  transition:
+    max-width 0.5s ease,
+    opacity 0.5s ease,
+    margin 0.5s ease;
+}
+.hl-grid.s1 .tk.gk {
+  --hc: #fff39a;
+  background-size: 100% 100%;
+  font-weight: 800;
+}
+.hl-grid.s2 .tk:not(.gk) {
+  --hc: #ddd6ff;
+  background-size: 100% 100%;
+  font-weight: 800;
+}
+.hl-grid.s3 .tk {
+  background-size: 100% 100%;
+  font-weight: 800;
+}
+.hl-grid.s3 .tk i {
+  max-width: 1.4em;
+  margin-left: 5px;
+  opacity: 1;
+}
+.hl-grid.s3 .tk[data-role="creation"] {
+  --hc: var(--role-creation);
+}
+.hl-grid.s3 .tk[data-role="dist"] {
+  --hc: var(--role-distribution);
+}
+.hl-grid.s3 .tk[data-role="prolif"] {
+  --hc: var(--role-proliferation);
+}
+.hl-grid.s3 .tk[data-role="infra"] {
+  --hc: var(--role-infra);
+}
+.hl-grid.s3 .tk[data-role="money"] {
+  --hc: var(--role-monetization);
+}
+
+/* ── Transition into the story: a deeper wallpaper sweeps across the desktop from the notification ── */
+#scene-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px) 0 0 / 44px
+      44px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px) 0 0 /
+      44px 44px,
+    radial-gradient(
+      120% 100% at 85% 0%,
+      var(--p) 0%,
+      var(--p) 45%,
+      var(--d) 100%
+    );
+  clip-path: circle(0% at 50% 3%);
+  transition: clip-path 1.5s cubic-bezier(0.65, 0, 0.25, 1);
+}
+#scene-intro.story-mode::before {
+  clip-path: circle(160% at 50% 3%);
+}
+/* a note on the empty desktop: the open windows step aside */
+.mon-screen.desk-mode .mac-window {
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(0.94) !important;
+}
+
+/* ── Small pop-up windows used by a few notes ── */
+.aux-win {
+  position: absolute;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--d);
+  box-shadow: var(--window-shadow-lg);
+  left: calc((100% - var(--notes-reserve, 0px)) * 0.3);
+  top: 44%;
+  width: calc((100% - var(--notes-reserve, 0px)) * 0.62);
+  height: 40%;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.96);
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.05),
+    visibility 0.4s;
+}
+.aux-win.in {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+#aux-nudifier {
+  left: calc((100% - var(--notes-reserve, 0px)) * 0.18);
+  top: 16%;
+  width: calc((100% - var(--notes-reserve, 0px)) * 0.74);
+  height: 66%;
+}
+.aux-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+.aux-body .pay-site-hero {
+  padding: 18px 28px;
+  gap: 36px;
+}
+#aux-pubsite {
+  top: 26%;
+  left: calc((100% - var(--notes-reserve, 0px)) * 0.2);
+  width: calc((100% - var(--notes-reserve, 0px)) * 0.58);
+  height: 52%;
+}
+.pub-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--p);
+  background: var(--cool);
+  font-family: var(--db-font-mono);
+  color: var(--p);
+}
+.pub-logo {
+  font-weight: 700;
+}
+.pub-stat {
+  font-size: 12px;
+}
+.pub-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+  padding: 12px 16px;
+}
+.pub-tile {
+  position: relative;
+  border: 1px solid var(--p);
+  background: repeating-linear-gradient(135deg, #efeaff 0 8px, #fff 8px 16px);
+  opacity: 0;
+  transform: scale(0.9);
+  transition:
+    opacity 0.35s ease,
+    transform 0.4s ease;
+}
+.pub-tile span {
+  position: absolute;
+  right: 6px;
+  bottom: 5px;
+  font: 400 10px var(--db-font-mono);
+  background: #fff;
+  border: 1px solid var(--p);
+  padding: 0 4px;
+  color: var(--p);
+}
+.aux-win.in .pub-tile {
+  opacity: 1;
+  transform: none;
+}
+.aux-win.in .pub-tile:nth-child(2) {
+  transition-delay: 0.18s;
+}
+.aux-win.in .pub-tile:nth-child(3) {
+  transition-delay: 0.36s;
+}
+.aux-win.in .pub-tile:nth-child(4) {
+  transition-delay: 0.54s;
+}
+.aux-win.in .pub-tile:nth-child(5) {
+  transition-delay: 0.72s;
+}
+.aux-win.in .pub-tile:nth-child(6) {
+  transition-delay: 0.9s;
+}
+.pub-foot {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-top: 1px solid var(--p);
+  font: 400 12px var(--db-font-mono);
+  color: var(--p);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hl-card,
+  .tk,
+  .tk i,
+  .aux-win,
+  .pub-tile,
+  #scene-intro::before {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}
+.nw {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.nw.on {
+  opacity: 1;
+}
+#notes-app .na-ed-body b {
+  font-weight: 400;
+}
+
+/* ── Notes glide / appear without flying across the screen ── */
+#notes-app {
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity 0.35s ease,
+    right 0.6s ease-in-out,
+    top 0.6s ease-in-out,
+    width 0.5s ease,
+    height 0.5s ease;
+}
+#notes-app.na-snap {
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity 0.35s ease,
+    right 0s,
+    top 0s,
+    width 0s,
+    height 0s;
+}
+#notes-app:not(.open).pos-center,
+#notes-app:not(.open).pos-top {
+  transform: translateY(16px);
+  opacity: 0;
+}
+.mac-window.no-anim {
+  transition: none !important;
+}
+
+/* the headline cards fly into the Feed window; it stays visible on the desktop once the story has begun */
+.hl-grid.away {
+  transition-delay: 0.5s;
+}
+.hl-card {
+  background: linear-gradient(180deg, #f1edff 0, #fff 38%);
+}
+/* the desktop starts up: wallpaper, then the icons one by one, then the dock */
+.mon-screen.booting #scene-intro {
+  opacity: 0;
+}
+.dt-dock-wrap {
+  transition:
+    transform 0.8s cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity 0.4s ease;
+}
+body:has(.mon-screen.booting) .dt-dock-wrap {
+  transform: translateX(-50%) translateY(180%);
+}
+body:has(.mon-screen:not(.booting)) .dt-dock-wrap {
+  transition-delay: 1.8s;
+}
+@media (prefers-reduced-motion: reduce) {
+  #scene-intro,
+.dt-dock-wrap {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}
+/* pulling back from the wall onto the desktop */
+#scene-intro {
+  transform-origin: 50% 50%;
+  transition:
+    opacity 0.9s ease,
+    transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.mon-screen.booting #scene-intro {
+  transform: scale(1.08);
+}
+
+/* a note for the middle of the desktop arrives from the right-hand side and settles there */
+#notes-app:not(.open).pos-center {
+  transform: translateX(calc(50vw + 240px));
+  opacity: 1;
+}
+#notes-app.pos-center {
+  transition:
+    transform 0.85s cubic-bezier(0.2, 0.8, 0.25, 1),
+    opacity 0.35s ease,
+    right 0.6s ease-in-out,
+    top 0.6s ease-in-out,
+    width 0.5s ease,
+    height 0.5s ease;
+}
+#notes-app.pos-center.na-snap {
+  transition:
+    transform 0.85s cubic-bezier(0.2, 0.8, 0.25, 1),
+    opacity 0.35s ease,
+    right 0s,
+    top 0s,
+    width 0s,
+    height 0s;
+}
+
+/* ── The flood: the Feed takes the whole screen, then dims and shrinks back ── */
+.mac-window[data-chapter="cover"] .win-titlebar {
+  max-height: 60px;
+}
+
+/* Headline cards and the Feed window share these entrance behaviors. */
+.na-jump {
+  transition: none !important;
+}
+.mac-window[data-chapter="cover"] {
+  transition:
+    opacity 0.35s ease,
+    box-shadow 0.4s ease,
+    filter 0.4s ease,
+    visibility 0.45s !important;
+  will-change: auto;
+}
+.mac-window[data-chapter="cover"] .win-titlebar {
+  transition: none;
+}
+
+.hl-card small {
+  font: 400 10px var(--db-font-mono);
+  opacity: 0.75;
+}
+.hl-card .tk i {
+  display: inline-block;
+}

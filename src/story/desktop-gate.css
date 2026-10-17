@@ -1,0 +1,30 @@
+.story-desktop-notice {
+  display: none;
+}
+
+.story-desktop-notice .desktop-only-support {
+  text-decoration: underline;
+  text-decoration-color: var(--role-monetization);
+  text-underline-offset: 0.15em;
+}
+
+.story-desktop-notice .cw-btn:focus-visible {
+  outline: 2px solid var(--db-ink);
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px), (hover: none) and (pointer: coarse) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body > :not(.site-topnav):not(#desktop-only-notice):not(script):not(style) {
+    display: none !important;
+  }
+
+  .story-desktop-notice {
+    display: flex;
+  }
+}

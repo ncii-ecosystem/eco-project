@@ -1,0 +1,237 @@
+/* Longer scroll for the two big beats, so each finishes before the next one starts */
+.step[data-chat="dataset"] {
+  height: 100vh;
+}
+.step[data-chat="sort"] {
+  height: 120vh;
+}
+
+/* the note about the interface appears with the chat, and stays for as long as the chat does */
+.step[data-chat="respond"] {
+  height: 70vh;
+}
+
+/* Messages: a typing bubble before each incoming message */
+.dm-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 16px;
+  width: fit-content;
+}
+.dm-typing span {
+  width: 7px;
+  height: 7px;
+  background: var(--p);
+  animation: dm-dot 1s infinite ease-in-out;
+}
+.dm-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.dm-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes dm-dot {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  35% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+/* Forum: a new comment lights up as it arrives */
+.rc.visible {
+  animation: rc-arrive 1.3s ease-out 1;
+}
+@keyframes rc-arrive {
+  0% {
+    background-color: rgba(255, 243, 168, 0.9);
+  }
+  100% {
+    background-color: rgba(255, 243, 168, 0);
+  }
+}
+
+/* The status highlight is used on the checkout action. */
+@keyframes tag-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--p) 32%, transparent);
+  }
+}
+
+/* Highlight the checkout action without moving the button. */
+.payment-sheet .ps-pay-btn {
+  animation: tag-pulse 1.4s ease-in-out infinite;
+  cursor: pointer;
+}
+.payment-sheet .ps-pay-btn:disabled {
+  animation: none;
+  box-shadow: none;
+  cursor: default;
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .payment-sheet .ps-pay-btn { box-shadow: 0 0 0 3px var(--p); }
+  .dm-typing span,
+  .rc.visible,
+  .cloud-tag-flagged,
+  .cloud-tag-review,
+  .payment-sheet .ps-pay-btn {
+    animation: none !important;
+  }
+}
+
+/* Messages sits in a narrow window: give the bubbles the room */
+.dm-messages {
+  padding: 20px 16px;
+}
+.dm-msg {
+  max-width: 86%;
+}
+
+/* Windows don't scroll on their own: the page scroll drives them (see motion.js) */
+.email-body,
+.pub-screen-reddit,
+.mdf-stage,
+.search-stage,
+.as-detail,
+.cloud-stage {
+  overflow-y: hidden !important;
+}
+
+/* Store: the "downloads and revenue" rows light up on the highlight step (the sourced numbers are in the Notes) */
+.reddit-stage { position: relative; height: 100%; min-height: 0; }
+.pub-screen-reddit { min-height: 0; overflow-y: hidden !important; }
+.as-detail-info-grid.as-highlight .as-info-row:nth-child(2),
+.as-detail-info-grid.as-highlight .as-info-row:nth-child(3) {
+  background: var(--role-proliferation);
+  animation: as-flash 1.2s ease-in-out 2;
+}
+@keyframes as-flash {
+  50% {
+    background: #fff;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .as-detail-info-grid.as-highlight .as-info-row {
+    animation: none;
+  }
+}
+
+/* ═══ Dataset: explainer strip, CSAM scan, red flags ═══════ */
+.cdl-header {
+  align-items: center;
+}
+.cdl-header:not(:has(*)) { display: none; }
+.cdl-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cdl-steps li {
+  flex: 1 1 190px;
+  font: 400 11px/1.35 var(--db-font-mono);
+  color: var(--p);
+  border: 1px solid var(--p);
+  background: var(--paper);
+  padding: 6px 8px;
+  opacity: 0.35;
+  transition:
+    opacity 0.4s ease,
+    background 0.4s ease,
+    box-shadow 0.4s ease;
+}
+.cdl-steps li b {
+  display: inline-block;
+  background: var(--p);
+  color: #fff;
+  padding: 0 5px;
+  margin-right: 6px;
+}
+.cdl-steps li.on {
+  opacity: 1;
+}
+.cdl-steps li.now {
+  background: var(--role-creation);
+  box-shadow: var(--hard-sm);
+}
+.cdl-flagbox {
+  position: static;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  align-self: center;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto 0;
+  z-index: 7;
+  font: 700 11px var(--db-font-mono);
+  color: var(--notification-red);
+  border: 1px solid var(--notification-red);
+  background: #ffe3e3;
+  padding: 3px 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+.chat-dataset-layer:has(.flagged) .cdl-flagbox {
+  opacity: 1;
+}
+.cdl-flagbox i {
+  margin-right: 4px;
+}
+.cdl-scanbar {
+  position: absolute;
+  height: 3px;
+  background: var(--notification-red);
+  box-shadow: none;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+.chat-dataset-layer.scanning .cdl-scanbar {
+  opacity: 1;
+}
+.cdl-tile.flagged {
+  --c1: var(--notification-red);
+  --c2: #ffd6d6;
+  border-color: var(--notification-red);
+  z-index: 3;
+  overflow: visible;
+  animation: cdl-flag 1.8s ease-in-out infinite;
+}
+@keyframes cdl-flag {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--notification-red) 0%, transparent); }
+  50%      { box-shadow: 0 0 0 4px color-mix(in srgb, var(--notification-red) 75%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cdl-tile.flagged {
+    animation: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--notification-red) 75%, transparent);
+  }
+}
+.chat-model-badge.cursor-press {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+  background: var(--role-creation);
+  outline: 3px solid var(--p);
+  outline-offset: 2px;
+}
+.dm-avatar i {
+  font-size: 15px;
+}

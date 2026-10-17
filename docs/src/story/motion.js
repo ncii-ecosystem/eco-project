@@ -53,9 +53,6 @@
      One gesture moves both, so the reader never has to scroll inside a window. */
   const SYNC = [
     { chapter: 'cover',    win: 'cover',    sel: '.news-stage' },
-    { chapter: 'dm',       win: 'dm-email', sel: '.email-body' },
-    { chapter: 'reddit',   win: 'reddit',   sel: '.pub-screen-reddit' },
-    { chapter: 'search',   win: 'search',   sel: '.search-stage' },
     { chapter: 'appstore', win: 'appstore', sel: '.as-detail' },
   ];
   const glides = new WeakMap();
@@ -112,15 +109,15 @@
     arrowEl = document.createElementNS(SVGNS, 'svg');
     arrowEl.setAttribute('class', 'win-arrow');
     arrowEl.setAttribute('aria-hidden', 'true');
-    arrowEl.innerHTML = '<defs><marker id="wa-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--p)"/></marker></defs>' +
-      '<path class="wa-line" fill="none" stroke="var(--p)" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 9" marker-end="url(#wa-head)"/>';
+    arrowEl.innerHTML = '<defs><marker id="wa-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--p)"/></marker><mask id="wa-reveal" maskUnits="userSpaceOnUse" x="-10000" y="-10000" width="20000" height="20000"><path class="wa-reveal-path" fill="none" stroke="white" stroke-width="12"/></mask></defs>' +
+      '<path class="wa-line" fill="none" stroke="var(--p)" stroke-width="3" stroke-linecap="butt" stroke-dasharray="10 8" marker-end="url(#wa-head)"/>';
     monScreen.appendChild(arrowEl);
     return arrowEl;
   }
   Eco.arrow = {
     draw(tries) {
-      const from = document.getElementById('md-open');
-      const to = document.querySelector('#devplat .dp-base');
+      const from = document.querySelector('#md-open .md-model-main');
+      const to = document.querySelector('#devplat .dp-section .dp-h');
       if (!from || !to) return;
       // wait for both windows to finish opening/sliding, so the arrow lands where they actually end up
       const settled = (el) => { const w = el.closest('.mac-window'); const t = w ? getComputedStyle(w).transform : 'none'; return t === 'none' || t === 'matrix(1, 0, 0, 1, 0, 0)'; };
@@ -130,25 +127,34 @@
       const svg = ensureArrow();
       const mr = monScreen.getBoundingClientRect();
       const a = from.getBoundingClientRect(), b = to.getBoundingClientRect();
-      const x1 = a.right - mr.left - 6, y1 = a.top - mr.top + Math.min(a.height * 0.4, 150);
-      const x2 = b.left - mr.left - 4,  y2 = b.top - mr.top + Math.min(b.height / 2, 34);
+      const x1 = a.right - mr.left + 6, y1 = a.top - mr.top + a.height / 2;
+      const x2 = b.left - mr.left + 18, y2 = b.bottom - mr.top + 50;
       const dx = Math.max(40, (x2 - x1) * 0.5);
       const path = svg.querySelector('.wa-line');
+      const reveal = svg.querySelector('.wa-reveal-path');
       path.setAttribute('d', `M ${x1} ${y1} C ${x1 + dx} ${y1 - 30}, ${x2 - dx} ${y2 - 30}, ${x2} ${y2}`);
+      reveal.setAttribute('d', path.getAttribute('d'));
       svg.classList.add('show');
       svg.dataset.drawn = '1';
       if (Eco.replaying || reduced.matches) {
-        path.getAnimations().forEach(animation => animation.cancel());
+        reveal.getAnimations().forEach(animation => animation.cancel());
+        path.removeAttribute('mask');
         path.style.strokeDasharray = '10 8'; path.style.strokeDashoffset = '0';
+        path.style.markerEnd = 'url(#wa-head)';
         return;
       }
-      // draw the line from its start to its end, then leave it as a dashed trail
+      // Reveal the dashed stroke with a mask, preserving its dash pattern throughout.
       const len = path.getTotalLength();
-      path.style.strokeDasharray = `${len}`;
-      path.style.strokeDashoffset = `${len}`;
-      path.getAnimations().forEach((an) => an.cancel());
-      const an = path.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 900, easing: 'ease-out', fill: 'forwards' });
-      an.onfinish = () => { path.style.strokeDashoffset = '0'; path.style.strokeDasharray = '10 8'; };
+      path.setAttribute('mask', 'url(#wa-reveal)');
+      reveal.style.strokeDasharray = `${len}`;
+      reveal.style.strokeDashoffset = `${len}`;
+      path.style.markerEnd = 'none';
+      reveal.getAnimations().forEach((an) => an.cancel());
+      const an = reveal.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 900, easing: 'ease-out', fill: 'forwards' });
+      an.onfinish = () => {
+        path.removeAttribute('mask');
+        path.style.markerEnd = 'url(#wa-head)';
+      };
     },
     clear() { if (arrowEl) { arrowEl.classList.remove('show'); arrowEl.dataset.drawn = '0'; } },
     visible(on) { if (arrowEl && !on) arrowEl.classList.remove('show'); else if (arrowEl && on && arrowEl.dataset.drawn === '1') arrowEl.classList.add('show'); },

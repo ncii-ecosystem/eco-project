@@ -15,6 +15,10 @@ const config = {
   submissionApiUrl: String(process.env.SUBMISSION_API_URL || publicConfig.submissionApiUrl || '').trim().replace(/\/+$/, ''),
 };
 
+// Rebuild generated directories so removed source files cannot remain published.
+for (const directory of ['assets', 'src', 'api', ...pages]) {
+  await fs.rm(path.join(output, directory), {recursive: true, force: true});
+}
 await fs.mkdir(output, {recursive: true});
 for (const directory of ['assets', 'src/shared', 'src/sanity', ...pages.map(page => 'src/' + page)]) {
   await fs.cp(path.join(root, directory), path.join(output, directory), {

@@ -1,0 +1,195 @@
+/* ── Notification banners ─ */
+.intro-notification,
+#scene-notif {
+  padding: 9px 12px 8px 10px;
+  gap: 9px;
+}
+#scene-notif {
+  top: -200px;
+}
+#scene-notif {
+  left: 50%;
+  right: auto;
+  margin-left: calc(min(268px, 100vw - 36px) / -2);
+}
+#scene-notif.show {
+  top: 16px;
+}
+.intro-notif-app,
+.sn-app {
+  opacity: 1;
+}
+.intro-notif-cta,
+.sn-hint {
+  font-size: 11px;
+  margin-top: 6px;
+  padding-top: 6px;
+}
+.sn-hint {
+  position: static;
+}
+/* the opening notification drops in from the top centre, so it never covers the desktop icons */
+.intro-notification {
+  top: 16px;
+  right: auto;
+  left: 50%;
+  transform: translateY(-180%);
+}
+.intro-notification.show {
+  transform: none;
+}
+@keyframes notif-call {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0
+      color-mix(in srgb, var(--role-proliferation) 0%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 10px
+      color-mix(in srgb, var(--role-proliferation) 75%, transparent);
+  }
+}
+
+/* ── Notifications that read like real ones: app + time, a bold line, the message ─ */
+.intro-notification,
+#scene-notif {
+  width: min(268px, calc(100vw - 36px));
+  align-items: flex-start;
+}
+.intro-notification .notif-folder,
+#scene-notif .notif-folder {
+  width: 30px;
+  height: 30px;
+  font-size: 0.85rem;
+}
+.intro-notif-meta,
+.sn-meta {
+  flex: 1;
+  min-width: 0;
+}
+.intro-notif-head,
+.sn-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.intro-notif-app,
+.sn-app {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin: 0;
+}
+.intro-notif-time,
+.sn-time {
+  font: 400 10px var(--db-font-mono);
+  color: var(--p);
+  opacity: 0.7;
+  flex: none;
+}
+.intro-notif-body,
+.sn-body {
+  font: 400 11.5px/1.35 var(--font-sans);
+  color: var(--p);
+}
+.intro-notification {
+  margin-left: calc(min(268px, 100vw - 36px) / -2);
+}
+
+/* ── Notes as a plain sticky note (Michelle's storyboard): no sidebar, no date, no title; one size, one colour ── */
+#notes-app {
+  height: auto;
+  max-height: 76%;
+  top: 14%;
+  width: 340px;
+}
+#notes-app.open.centered {
+  height: auto;
+  max-height: 88%;
+  top: 6%;
+  width: 520px;
+}
+html:not(.notes-moved)
+  #notes-app:not(.pos-center):not(.pos-top):not(.centered) {
+  top: 50%;
+  translate: 0 -50%;
+}
+#notes-app .na-sidebar,
+#notes-app .na-ed-date,
+#notes-app .na-ed-title,
+#notes-app .na-cursor {
+  display: none !important;
+}
+#notes-app .na-panes {
+  min-height: 0;
+}
+#notes-app .na-editor {
+  padding: 26px 28px 24px;
+}
+@media (min-width: 701px) {
+  html:not(.notes-moved) #notes-app:not(.centered) {
+    top: 28px;
+    right: 28px;
+    left: auto;
+    translate: none;
+  }
+  html #notes-app.open.pos-center:not(.centered) {
+    top: 50%;
+    right: 50%;
+    left: auto;
+    translate: 50% -50%;
+  }
+}
+#notes-app .na-ed-body,
+#notes-app .na-ed-details {
+  font-family: var(--db-font-mono);
+  color: var(--ink-d);
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 400;
+}
+#notes-app .na-ed-details {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.55;
+  border-top: 1px solid var(--p);
+}
+html.notes-open {
+  --notes-reserve: 360px;
+}
+
+/* ═══ Storyboard pass ═══════════════════════════════════════════════════════
+   Notes are the only yellow; the graphics use cool tones so the two contrast. */
+:root {
+  --cool: color-mix(in srgb, var(--p) 18%, white);
+}
+.intro-notification,
+#scene-notif {
+  background: #fff;
+}
+.win-chip,
+.no-warning,
+.cloud-alert,
+.ps-method,
+.as-detail-badge,
+.cloud-tag-review,
+.sr-ad-tag,
+.dp-tag,
+.cdl-steps li.now {
+  background: var(--cool) !important;
+}
+.email-body {
+  border-left-color: var(--role-infra);
+}
+
+/* ── Opening: Notes position (centre of the desktop, then top right beside the headlines) ── */
+#notes-app.pos-center {
+  right: calc(50% - 170px);
+  top: 30%;
+}
+#notes-app.pos-top {
+  right: 104px;
+  top: 4%;
+}

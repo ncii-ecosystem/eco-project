@@ -25,6 +25,9 @@
   --db-text-md: 1rem;
   --db-text-lg: 1.25rem;
   --db-muted: 0.72;
+  --media-preview-filter: blur(16px) saturate(1.08);
+  --media-preview-scale: 1.18;
+  --media-preview-opacity: 0.92;
   --db-lh-tight: 1.25;
   --db-lh: 1.4;
   --db-lh-loose: 1.5;

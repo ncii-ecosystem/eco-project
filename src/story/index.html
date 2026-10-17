@@ -3,7 +3,7 @@
   <head>
     <link rel="stylesheet" href="/src/shared/router.css" />
     <script src="/src/shared/router.js"></script>
-    <link rel="stylesheet" href="/src/shared/tokens.css" />
+    <link rel="stylesheet" href="/src/shared/tokens.css?v=103" />
     <link rel="stylesheet" href="/src/shared/site-nav.css" />
     <script src="/src/shared/theme-boot.js"></script>
 
@@ -30,7 +30,7 @@
         justify-content: center;
         text-align: center;
         padding: 24px;
-        font-family: "PT Mono", monospace;
+        font-family: var(--db-font-mono);
         transition:
           opacity 0.5s ease,
           visibility 0.5s;
@@ -126,16 +126,33 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="/src/story/styles.css?v=50" />
-    <link rel="stylesheet" href="/src/story/theme.css?v=95" />
-    <link rel="stylesheet" href="/src/story/scenes-theme.css?v=52" />
+    <link rel="stylesheet" href="/src/shared/page-styles.css?v=104" />
+    <link rel="stylesheet" href="/src/story/styles.css?v=106" />
+    <link rel="stylesheet" href="/src/story/theme.css?v=104" />
+    <link rel="stylesheet" href="/src/story/theme/finale-and-dock.css?v=106" />
+    <link rel="stylesheet" href="/src/story/theme/windows.css?v=106" />
+    <link
+      rel="stylesheet"
+      href="/src/story/theme/notes-and-notifications.css?v=104"
+    />
+    <link rel="stylesheet" href="/src/story/theme/opening.css?v=104" />
+    <link rel="stylesheet" href="/src/story/theme/headline-formats.css?v=105" />
+    <link
+      rel="stylesheet"
+      href="/src/story/theme/narrative-controls.css?v=104"
+    />
+    <link rel="stylesheet" href="/src/story/css/scenes-base.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/feed.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/assistant-and-dataset.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/distribution.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/services.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/scene-states.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/models-and-developers.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/scene-overlays.css?v=1" />
+    <link rel="stylesheet" href="/src/story/desktop-gate.css?v=2" />
     <script src="/src/shared/nav.js" defer></script>
     <script src="/src/shared/theme.js" defer></script>
     <style>
-      html.db-theme-dark {
-        --db-bg: var(--db-chip-ink);
-        --db-ink: #ffffff;
-      }
       .site-topnav {
         z-index: 10001;
         transition:
@@ -209,6 +226,30 @@
       </div>
     </div>
 
+    <main
+      id="desktop-only-notice"
+      class="cw-overlay story-desktop-notice"
+      aria-labelledby="desktop-only-title"
+      tabindex="-1"
+    >
+      <div class="cw-box">
+        <h1 class="cw-title" id="desktop-only-title">
+          A Desktop-Only Experience
+        </h1>
+        <p class="cw-body">
+          This animated story is designed for a desktop or laptop. Visit on a
+          computer to explore it. In the meantime, you can browse the research,
+          explore the database, or find support below.
+        </p>
+        <nav class="cw-actions" aria-label="Explore the ecosystem">
+          <a class="cw-btn desktop-only-support" href="/survivor-support">Find Survivor Support Resources <span aria-hidden="true">↗</span></a>
+          <a class="cw-btn" href="/database">Explore the Database <span aria-hidden="true">↗</span></a>
+          <a class="cw-btn" href="/about">Read About the Research <span aria-hidden="true">↗</span></a>
+          <a class="cw-btn" href="/home">Back to Home <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
+    </main>
+
     <!-- ═══════════════════════════════════════════════
      CONTENT WARNING OVERLAY
      ═══════════════════════════════════════════════ -->
@@ -228,7 +269,7 @@
         </p>
         <div class="cw-actions">
           <button class="cw-btn cw-btn--ghost" id="cw-btn" type="button">
-            I Understand. Continue to Animated Story
+            I Understand. Continue to Animated Story <span aria-hidden="true">→</span>
           </button>
           <a
             class="cw-btn cw-btn--primary"
@@ -244,7 +285,6 @@
     <!-- ═══════════════════════════════════════════════
      PROGRESS BAR
      ═══════════════════════════════════════════════ -->
-    <!-- <div class="progress-bar"><span id="progress-bar-fill"></span></div> -->
 
     <!-- ═══════════════════════════════════════════════
      THE SCREEN (fixed): every window opens inside it
@@ -263,13 +303,10 @@
                 <span class="wtl wtl-r"></span><span class="wtl wtl-y"></span
                 ><span class="wtl wtl-g"></span>
               </div>
-              <div class="win-title">checkout</div>
-              <div class="win-url">undressaipro.ai/checkout?plan=monthly</div>
             </div>
             <div class="aux-body">
               <div class="pay-site-header">
                 <span class="pay-site-logo">UndressAI Pro</span>
-                <nav>Pricing &nbsp; Gallery &nbsp; FAQ</nav>
               </div>
               <div class="pay-site-hero">
                 <div class="redacted-block lg"></div>
@@ -294,8 +331,6 @@
                 <span class="wtl wtl-r"></span><span class="wtl wtl-y"></span
                 ><span class="wtl wtl-g"></span>
               </div>
-              <div class="win-title">public</div>
-              <div class="win-url">deepfake-site.example/latest</div>
             </div>
             <div class="aux-body pub-body">
               <div class="pub-bar">
@@ -352,34 +387,6 @@
 
             <!-- Desktop canvas -->
             <div class="dt-canvas">
-              <!-- Desktop icons (right column), paused for now.
-            <div class="dt-icons">
-              <div class="dt-icon dt-icon--creation">
-                <div class="dt-icon-img"><i class="fas fa-database"></i></div>
-                <div class="dt-icon-label">training_data/</div>
-              </div>
-              <div class="dt-icon dt-icon--creation">
-                <div class="dt-icon-img"><i class="fas fa-code"></i></div>
-                <div class="dt-icon-label">models/</div>
-              </div>
-              <div class="dt-icon dt-icon--distribution">
-                <div class="dt-icon-img"><i class="fas fa-users"></i></div>
-                <div class="dt-icon-label">communities/</div>
-              </div>
-              <div class="dt-icon dt-icon--discovery">
-                <div class="dt-icon-img"><i class="fas fa-shopping-cart"></i></div>
-                <div class="dt-icon-label">apps/</div>
-              </div>
-              <div class="dt-icon dt-icon--monetize">
-                <div class="dt-icon-img"><i class="fas fa-hand-holding-usd"></i></div>
-                <div class="dt-icon-label">payments/</div>
-              </div>
-              <div class="dt-icon dt-icon--infra">
-                <div class="dt-icon-img"><i class="fas fa-cloud"></i></div>
-                <div class="dt-icon-label">infrastructure/</div>
-              </div>
-            </div>
-            -->
               <!-- the five headlines: Instagram-style cards, revealed one at a time -->
               <div id="flood-layer" aria-hidden="true"></div>
               <div
@@ -408,7 +415,7 @@
                   <span class="intro-notif-app">NewsFeed</span
                   ><span class="intro-notif-time">now</span>
                 </div>
-                <div class="intro-notif-title">Trending now</div>
+
                 <div class="intro-notif-body">
                   Five headlines. Five different stories.
                 </div>
@@ -419,35 +426,14 @@
             </div>
 
             <!-- "Story starts here": the second opening notification -->
-            <!--
-          <div class="intro-notification" id="story-notif" role="button" tabindex="0" aria-label="Start the story">
-            <div class="intro-notif-icon"><span class="notif-folder notif-folder--creation"><i class="fas fa-pencil"></i></span></div>
-            <div class="intro-notif-meta">
-              <div class="intro-notif-head"><span class="intro-notif-app">Notes</span><span class="intro-notif-time">now</span></div>
-              <div class="intro-notif-title">Story starts here…</div>
-            </div>
-            <div class="intro-notif-cta">click to begin <span aria-hidden="true">↗</span></div>
           </div>
-          --></div>
 
           <!-- ── SCENE: NEWS / COVER ─────────────────────── -->
           <div class="scene" id="cover">
             <div class="scene-stage news-stage">
               <div class="news-chrome feed">
-                <div class="feed-top">
-                  <span class="feed-top-icons" aria-hidden="true"
-                    ><i class="far fa-heart"></i
-                    ><i class="far fa-paper-plane"></i
-                  ></span>
-                </div>
                 <div class="feed-row">
                   <div class="feed-main">
-                    <!-- hidden at Michelle's suggestion: stories row
-                  <div class="feed-stories" aria-hidden="true"><span class="fp-story"><span class="fp-ring"><span class="fp-av">B</span></span><small>Bloomberg</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">4</span></span><small>404 Media</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">W</span></span><small>WIRED</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">V</span></span><small>The Verge</small></span><span class="fp-story"><span class="fp-ring"><span class="fp-av">R</span></span><small>Reuters</small></span></div>
-                  -->
-                    <!-- hidden at Michelle's suggestion: trending chip
-              <div class="feed-trend" aria-hidden="true"><i class="fas fa-fire"></i> Trending · 5 newsrooms · 5 headlines · 3 days</div>
-              -->
                     <div class="feed-posts">
                       <article class="feed-post" data-tone="0">
                         <div class="post-comments" data-for="0">
@@ -481,18 +467,14 @@
                         <header class="fp-head">
                           <span class="fp-av">B</span>
                           <div class="fp-who">
-                            <b>Bloomberg</b><small>Jan 7 · 2026</small>
+                            <b>Bloomberg</b><span aria-hidden="true">·</span
+                            ><small>Jan 7, 2026</small>
                           </div>
                           <span class="fp-dots" aria-hidden="true">···</span>
                         </header>
                         <div class="fp-media">
                           <p class="fp-headline">
-                            <span
-                              class="nh"
-                              data-idx="0"
-                              data-role="creation"
-                              tabindex="0"
-                              role="button"
+                            <span class="nh" data-idx="0" data-role="creation"
                               >“Musk’s
                               <span class="tech" data-role="creation"
                                 ><b>Grok AI</b
@@ -509,21 +491,6 @@
                               >”</span
                             >
                           </p>
-                          <div class="nh-pop" aria-live="polite">
-                            <button
-                              type="button"
-                              class="np-x"
-                              aria-label="Close"
-                            >
-                              &times;
-                            </button>
-                            <b class="np-label">The AI interface</b>
-                            <p>
-                              A chatbot built into a social platform generated
-                              sexualized images at enormous scale, posting them
-                              straight into public comment threads.
-                            </p>
-                          </div>
                         </div>
                         <div class="fp-actions" aria-hidden="true">
                           <i class="far fa-heart"></i
@@ -531,7 +498,6 @@
                           ><i class="far fa-paper-plane"></i
                           ><i class="far fa-bookmark"></i>
                         </div>
-                        <p class="fp-cap"><b>Bloomberg</b></p>
                       </article>
                       <article class="feed-post" data-tone="1">
                         <div class="post-comments" data-for="1">
@@ -565,18 +531,14 @@
                         <header class="fp-head">
                           <span class="fp-av">4</span>
                           <div class="fp-who">
-                            <b>404 Media</b><small>Jan 7 · 2026</small>
+                            <b>404 Media</b><span aria-hidden="true">·</span
+                            ><small>Jan 7, 2026</small>
                           </div>
                           <span class="fp-dots" aria-hidden="true">···</span>
                         </header>
                         <div class="fp-media">
                           <p class="fp-headline">
-                            <span
-                              class="nh"
-                              data-idx="1"
-                              data-role="prolif"
-                              tabindex="0"
-                              role="button"
+                            <span class="nh" data-idx="1" data-role="prolif"
                               >“Inside the
                               <span class="tech" data-role="prolif"
                                 ><b>Telegram Channel</b
@@ -590,21 +552,6 @@
                               Over and Over Again”</span
                             >
                           </p>
-                          <div class="nh-pop" aria-live="polite">
-                            <button
-                              type="button"
-                              class="np-x"
-                              aria-label="Close"
-                            >
-                              &times;
-                            </button>
-                            <b class="np-label">The chat channel</b>
-                            <p>
-                              A private channel with thousands of members
-                              coordinated jailbreaks, sharing working prompts
-                              faster than any patch could ship.
-                            </p>
-                          </div>
                         </div>
                         <div class="fp-actions" aria-hidden="true">
                           <i class="far fa-heart"></i
@@ -612,7 +559,6 @@
                           ><i class="far fa-paper-plane"></i
                           ><i class="far fa-bookmark"></i>
                         </div>
-                        <p class="fp-cap"><b>404 Media</b></p>
                       </article>
                       <article class="feed-post" data-tone="2">
                         <div class="post-comments" data-for="2">
@@ -646,18 +592,14 @@
                         <header class="fp-head">
                           <span class="fp-av">W</span>
                           <div class="fp-who">
-                            <b>WIRED</b><small>Jan 8 · 2026</small>
+                            <b>WIRED</b><span aria-hidden="true">·</span
+                            ><small>Jan 8, 2026</small>
                           </div>
                           <span class="fp-dots" aria-hidden="true">···</span>
                         </header>
                         <div class="fp-media">
                           <p class="fp-headline">
-                            <span
-                              class="nh"
-                              data-idx="2"
-                              data-role="infra"
-                              tabindex="0"
-                              role="button"
+                            <span class="nh" data-idx="2" data-role="infra"
                               >“Why Are
                               <span class="tech" data-role="creation"
                                 ><b>Grok</b
@@ -681,20 +623,6 @@
                               >?”</span
                             >
                           </p>
-                          <div class="nh-pop" aria-live="polite">
-                            <button
-                              type="button"
-                              class="np-x"
-                              aria-label="Close"
-                            >
-                              &times;
-                            </button>
-                            <b class="np-label">The app stores</b>
-                            <p>
-                              The chatbot and its platform stayed downloadable
-                              for days after the harm was documented.
-                            </p>
-                          </div>
                         </div>
                         <div class="fp-actions" aria-hidden="true">
                           <i class="far fa-heart"></i
@@ -702,7 +630,6 @@
                           ><i class="far fa-paper-plane"></i
                           ><i class="far fa-bookmark"></i>
                         </div>
-                        <p class="fp-cap"><b>WIRED</b></p>
                       </article>
                       <article class="feed-post" data-tone="3">
                         <div class="post-comments" data-for="3">
@@ -736,18 +663,14 @@
                         <header class="fp-head">
                           <span class="fp-av">V</span>
                           <div class="fp-who">
-                            <b>The Verge</b><small>Jan 9 · 2026</small>
+                            <b>The Verge</b><span aria-hidden="true">·</span
+                            ><small>Jan 9, 2026</small>
                           </div>
                           <span class="fp-dots" aria-hidden="true">···</span>
                         </header>
                         <div class="fp-media">
                           <p class="fp-headline">
-                            <span
-                              class="nh"
-                              data-idx="3"
-                              data-role="money"
-                              tabindex="0"
-                              role="button"
+                            <span class="nh" data-idx="3" data-role="money"
                               >“No,
                               <span class="tech" data-role="creation"
                                 ><b>Grok</b
@@ -764,21 +687,6 @@
                               its deepfake image feature.”</span
                             >
                           </p>
-                          <div class="nh-pop" aria-live="polite">
-                            <button
-                              type="button"
-                              class="np-x"
-                              aria-label="Close"
-                            >
-                              &times;
-                            </button>
-                            <b class="np-label">The paywall</b>
-                            <p>
-                              Restricting the tool to paying users fixed
-                              nothing: free users still reached the same model
-                              through other doors.
-                            </p>
-                          </div>
                         </div>
                         <div class="fp-actions" aria-hidden="true">
                           <i class="far fa-heart"></i
@@ -786,7 +694,6 @@
                           ><i class="far fa-paper-plane"></i
                           ><i class="far fa-bookmark"></i>
                         </div>
-                        <p class="fp-cap"><b>The Verge</b></p>
                       </article>
                       <article class="feed-post" data-tone="4">
                         <div class="post-comments" data-for="4">
@@ -820,18 +727,14 @@
                         <header class="fp-head">
                           <span class="fp-av">R</span>
                           <div class="fp-who">
-                            <b>Reuters</b><small>Jan 9 · 2026</small>
+                            <b>Reuters</b><span aria-hidden="true">·</span
+                            ><small>Jan 9, 2026</small>
                           </div>
                           <span class="fp-dots" aria-hidden="true">···</span>
                         </header>
                         <div class="fp-media">
                           <p class="fp-headline">
-                            <span
-                              class="nh"
-                              data-idx="4"
-                              data-role="dist"
-                              tabindex="0"
-                              role="button"
+                            <span class="nh" data-idx="4" data-role="dist"
                               >“Musk’s
                               <span class="tech" data-role="creation"
                                 ><b>AI bot Grok</b
@@ -848,21 +751,6 @@
                               after backlash”</span
                             >
                           </p>
-                          <div class="nh-pop" aria-live="polite">
-                            <button
-                              type="button"
-                              class="np-x"
-                              aria-label="Close"
-                            >
-                              &times;
-                            </button>
-                            <b class="np-label">The partial fix</b>
-                            <p>
-                              After the backlash, some image generation was
-                              limited, but only in one place. The rest of the
-                              chain kept running.
-                            </p>
-                          </div>
                         </div>
                         <div class="fp-actions" aria-hidden="true">
                           <i class="far fa-heart"></i
@@ -870,13 +758,10 @@
                           ><i class="far fa-paper-plane"></i
                           ><i class="far fa-bookmark"></i>
                         </div>
-                        <p class="fp-cap"><b>Reuters</b></p>
                       </article>
                     </div>
                   </div>
-                  <!-- hidden at Michelle's suggestion: "Suggested for you" panel
-                <aside class="feed-side feed-suggest" aria-hidden="true"><div class="fs-title">Suggested for you</div><ul><li><span class="fp-av">B</span><b>Bloomberg</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">4</span><b>404 Media</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">W</span><b>WIRED</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">V</span><b>The Verge</b><span class="fs-follow">Follow</span></li><li><span class="fp-av">R</span><b>Reuters</b><span class="fs-follow">Follow</span></li></ul></aside>
-                --></div>
+                </div>
               </div>
             </div>
           </div>
@@ -918,16 +803,7 @@
 
               <!-- Dataset + model reveal — zooms over the chat on scroll -->
               <div class="chat-dataset-layer" id="chat-dataset-layer">
-                <div class="cdl-header">
-                  <div class="cdl-eyebrow">Training data</div>
-                  <div class="cdl-meta">
-                    DATASET100 · scraped image-text pairs
-                  </div>
-                  <div class="cdl-flagbox" id="cdl-flagbox" aria-live="polite">
-                    <i class="fas fa-flag"></i> CSAM detected:
-                    <b id="cdl-flagged">0</b>
-                  </div>
-                </div>
+                <div class="cdl-header"></div>
                 <ol class="cdl-steps" id="cdl-steps">
                   <li data-k="1">
                     <b>1</b> Images are scraped from the web into one huge
@@ -1041,6 +917,10 @@
                     style="--h: 50; --s: 90%; --l: 88%"
                   ></div>
                 </div>
+                <div class="cdl-flagbox" id="cdl-flagbox" aria-live="polite">
+                  <i class="fas fa-flag"></i> CSAM detected:
+                  <b id="cdl-flagged">0</b>
+                </div>
                 <div
                   class="cdl-scanbar"
                   id="cdl-scanbar"
@@ -1053,10 +933,32 @@
           <!-- ── SCENE: MODELS (open vs closed) ─────────── -->
           <div class="scene" id="models">
             <div class="scene-stage md-stage">
-              <div class="md-head">
-                <span class="cdl-eyebrow">Generative AI models</span>
-              </div>
               <div class="md-panels">
+                <section
+                  class="md-panel md-closed"
+                  id="md-closed"
+                  aria-label="Closed models"
+                >
+                  <header><span class="md-label">Closed models</span></header>
+                  <div class="md-arena">
+                    <div class="md-reqs" id="md-reqs" aria-hidden="true"></div>
+                    <div class="md-model md-model-main">
+                      <i class="fas fa-cube"></i><span>model</span
+                      ><i class="fas fa-lock md-lock"></i>
+                    </div>
+                    <div class="md-guard">
+                      <i class="fas fa-shield-halved"></i> Input safeguards
+                    </div>
+                    <div class="md-guard md-guard--output">
+                      <i class="fas fa-shield-halved"></i> Output safeguards
+                    </div>
+                    <i
+                      class="fas fa-user md-output-user"
+                      aria-label="User receives the output"
+                      role="img"
+                    ></i>
+                  </div>
+                </section>
                 <section
                   class="md-panel md-open"
                   id="md-open"
@@ -1073,38 +975,7 @@
                       aria-hidden="true"
                     ></div>
                   </div>
-                  <!-- Model statistics and explanatory points paused for now.
-                <div class="md-stat"><span class="md-num" id="md-count">1</span><span class="md-unit">copies in the world</span></div>
-                <ul class="md-points">
-                  <li>Anyone can download it.</li>
-                  <li>Anyone can fine-tune it for harm.</li>
-                  <li>Once released, it can never be recalled.</li>
-                </ul>
-                --></section>
-                <section
-                  class="md-panel md-closed"
-                  id="md-closed"
-                  aria-label="Closed models"
-                >
-                  <header><span class="md-label">Closed models</span></header>
-                  <div class="md-arena">
-                    <div class="md-reqs" id="md-reqs" aria-hidden="true"></div>
-                    <div class="md-model md-model-main">
-                      <i class="fas fa-cube"></i><span>model</span
-                      ><i class="fas fa-lock md-lock"></i>
-                    </div>
-                    <div class="md-guard">
-                      <i class="fas fa-shield-halved"></i> guardrails
-                    </div>
-                  </div>
-                  <!-- Model statistics and explanatory points paused for now.
-                <div class="md-stat"><span class="md-num">1</span><span class="md-unit">copy, held by the company</span></div>
-                <ul class="md-points">
-                  <li>Every request goes through the company’s API.</li>
-                  <li>Guardrails are enforced at the source.</li>
-                  <li>The company can patch it or cut off access.</li>
-                </ul>
-                --></section>
+                </section>
               </div>
             </div>
           </div>
@@ -1130,26 +1001,21 @@
                     <div class="dp-card dp-base">
                       <i class="fas fa-cube"></i>
                       <div>
-                        <b>open-base-1</b
-                        ><span>text-to-image · open weights</span>
+                        <b>open-base-1</b>
                       </div>
                       <em>fork</em>
                     </div>
                     <div class="dp-card dp-base">
                       <i class="fas fa-cube"></i>
                       <div>
-                        <b>open-base-2</b
-                        ><span>text-to-image · open weights</span>
+                        <b>open-base-2</b>
                       </div>
                       <em>fork</em>
                     </div>
                   </div>
                 </div>
                 <div class="dp-section dp-grow">
-                  <div class="dp-h">
-                    Fine-tuned variants
-                    <span class="dp-count"><b id="dp-count">35,000+</b></span>
-                  </div>
+                  <div class="dp-h">Fine-tuned variants</div>
                   <div class="dp-rows" id="dp-rows" aria-hidden="true"></div>
                 </div>
               </div>
@@ -1186,7 +1052,7 @@
                     </div>
                   </div>
                   <div class="dm-msg dm-out dm-step" data-dm-step="2">
-                    what is this<br />is this supposed to be me?
+                    what is this?<br />is this supposed to be me?
                   </div>
                   <div class="dm-msg dm-in dm-step" data-dm-step="3">
                     found it somewhere lol<br />you should be more careful with
@@ -1196,7 +1062,24 @@
                     it's already been sent to like 20 people
                   </div>
                 </div>
-                <div class="dm-input-bar"><span>Message</span></div>
+                <div class="dm-input-bar chat-footer">
+                  <div class="chat-input-wrap">
+                    <div
+                      class="chat-input-text"
+                      id="dm-input-text"
+                      aria-label="Message input"
+                    ></div>
+                    <button
+                      type="button"
+                      class="chat-send-btn"
+                      id="dm-send-btn"
+                      aria-label="Send message"
+                      disabled
+                    >
+                      <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1208,12 +1091,6 @@
                 <div class="email-app-header">
                   <div class="email-app-logo">
                     <i class="fas fa-envelope" aria-hidden="true"></i> mail
-                  </div>
-                  <div class="email-app-actions">
-                    <span
-                      ><i class="fas fa-arrow-left" aria-hidden="true"></i>
-                      Back</span
-                    ><span>Delete</span><span>Report</span>
                   </div>
                 </div>
                 <div class="email-subject">Subject: You should see this</div>
@@ -1237,20 +1114,17 @@
                     >
                   </div>
                   <p>
-                    I found it on a public forum. It looks AI-generated but a
-                    lot of people believe it's real. Several accounts have
-                    already re-shared it.
+                    It looks AI-generated, but a lot of people believe it's
+                    real. Several accounts have already re-shared it.
                   </p>
                   <p>
-                    I don't know who made it or how they got your photos.
-                    Someone told me it was made using one of those "undressing"
-                    apps — apparently they only need one social media photo to
-                    do this now.
+                    I don't know who made it. Someone said it was made using an
+                    “undressing” app with a photo from social media.
                   </p>
                   <p>
-                    I tried to report it but the forum doesn't have a reporting
-                    mechanism that works. I also couldn't find any contact
-                    information. I'm sorry this is happening to you.
+                    I tried reporting it, but couldn't find a working reporting
+                    option or contact information. I'm sorry this is happening
+                    to you.
                   </p>
                   <p
                     style="
@@ -1263,9 +1137,6 @@
                     — Sent from an encrypted mail service. This message cannot
                     be traced back to the sender.
                   </p>
-                  <div
-                    style="height: 1px; background: var(--p); margin: 16px 0"
-                  ></div>
                 </div>
               </div>
             </div>
@@ -1279,7 +1150,6 @@
                   <div class="reddit-header">
                     <span class="reddit-logo">forum</span>
                     <div class="reddit-search-bar">Search forum</div>
-                    <span class="reddit-login-btn">log in</span>
                   </div>
                   <div class="reddit-content">
                     <div class="reddit-post-meta">
@@ -1370,17 +1240,7 @@
                       <strong>Tens of thousands of members</strong> at removal
                     </div>
                     <div class="reddit-banned-divider"></div>
-                    <!-- Community migration destinations paused for now.
-                  <div class="reddit-migration-label">Community migrated to <i class="fas fa-arrow-right" aria-hidden="true"></i></div>
-                  <div class="reddit-migration">
-                    <span class="reddit-platform-chip">Imageboard A</span>
-                    <span class="reddit-platform-chip">Imageboard B</span>
-                    <span class="reddit-platform-chip">Forum C</span>
-                    <span class="reddit-platform-chip">Chat server</span>
-                    <span class="reddit-platform-chip">Video site</span>
-                    <span class="reddit-platform-chip">Messaging channel</span>
                   </div>
-                  --></div>
                 </div>
               </div>
             </div>
@@ -1393,7 +1253,6 @@
                 <div class="mdf-site-header">
                   <span class="mdf-logo">nsfwfakes</span>
                   <span class="mdf-tagline">The #1 Deepfake Community</span>
-                  <!-- <div class="mdf-nav"><span>Videos</span><span>Photos</span><span>Tutorials</span><span>Commission</span><span>Forum</span></div> -->
                 </div>
                 <div class="mdf-featured">
                   <div class="mdf-section-label">
@@ -1413,14 +1272,20 @@
                       <div class="redacted-block"></div>
                       <div class="mdf-card-meta">$20 · 24hr turnaround</div>
                     </div>
+                    <div class="mdf-card">
+                      <div class="redacted-block"></div>
+                      <div class="mdf-card-meta">$15 · Verified creator</div>
+                    </div>
+                    <div class="mdf-card">
+                      <div class="redacted-block"></div>
+                      <div class="mdf-card-meta">$25 · HD available</div>
+                    </div>
+                    <div class="mdf-card">
+                      <div class="redacted-block"></div>
+                      <div class="mdf-card-meta">$20 · 24hr turnaround</div>
+                    </div>
                   </div>
-                  <!-- Audience statistics paused for now.
-                <div class="mdf-stats-row">
-                  <span><i class="fas fa-eye"></i> millions of monthly visitors</span>
-                  <span><i class="fas fa-film"></i> millions of videos</span>
-                  <span><i class="fas fa-user"></i> thousands of registered creators</span>
                 </div>
-                --></div>
               </div>
               <div class="mdf-offline" id="mdf-offline">
                 <div class="mdf-offline-box">
@@ -1432,7 +1297,6 @@
                     This site is no longer available. A service provider
                     terminated hosting.
                   </div>
-                  <!-- <div class="mdf-offline-detail">Millions of monthly visitors &nbsp;·&nbsp; a large annual economy &nbsp;·&nbsp; Shut down by a hosting provider's terms of service decision.</div> -->
                 </div>
               </div>
             </div>
@@ -1470,7 +1334,7 @@
                     <div class="sr-social-context">
                       <span
                         ><i class="fas fa-camera" aria-hidden="true"></i>
-                        Loop</span
+                        Advertisement Platforms</span
                       ><i class="fas fa-ellipsis" aria-hidden="true"></i>
                     </div>
                     <span class="sr-ad-x"
@@ -1542,9 +1406,7 @@
                   <div class="as-detail-icon"><i class="fas fa-eye"></i></div>
                   <div class="as-detail-info">
                     <div class="as-detail-name">NudifyAI — Photo Editor</div>
-                    <div class="as-detail-developer">
-                      NudifyAI Technologies Ltd.
-                    </div>
+
                     <div class="as-detail-rating">
                       <span
                         class="as-detail-stars"
@@ -1623,7 +1485,6 @@
               <div class="payment-bg" id="payment-bg">
                 <div class="pay-site-header">
                   <span class="pay-site-logo">UndressAI Pro</span>
-                  <nav>Pricing &nbsp; Gallery &nbsp; FAQ</nav>
                 </div>
                 <div class="pay-site-hero">
                   <div class="redacted-block lg"></div>
@@ -1684,10 +1545,6 @@
                     ><i class="fas fa-cloud" aria-hidden="true"></i> cloud
                     console</span
                   >
-                  <!-- <span class="cloud-console-service">compute · storage · cdn</span> -->
-                  <span class="cloud-console-account"
-                    >account: ncii-app-prod · region-1</span
-                  >
                 </div>
                 <div class="cloud-console-body">
                   <div class="cloud-sidebar">
@@ -1696,17 +1553,8 @@
                     </div>
                     <div class="cloud-sidebar-item">Storage buckets</div>
                     <div class="cloud-sidebar-item">CDN</div>
-                    <div class="cloud-sidebar-item">Billing</div>
-                    <div class="cloud-sidebar-item">Access</div>
                   </div>
                   <div class="cloud-main">
-                    <div class="cloud-breadcrumb">
-                      console
-                      <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                      compute
-                      <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                      instances
-                    </div>
                     <div class="cloud-section-title">Instance Overview</div>
                     <div class="cloud-stats-grid">
                       <div class="cloud-stat-card">
@@ -1816,9 +1664,9 @@
         >
           <span class="step-label">Grok</span>
           <p class="step-key-text">
-            In Dec 2025, <b>Grok</b> produced thousands of images responding to
-            user prompts to <b>“put a bikini on her,”</b> and
-            <b>“take her clothes off”</b>
+            In December 2025, the AI chatbot Grok produced thousands of images
+            in response to user requests like ‘put a bikini on her’ and ‘take
+            her clothes off.’
           </p>
           <button class="step-expand-btn" aria-expanded="false">
             Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -1839,8 +1687,8 @@
         >
           <span class="step-label">Non-consent</span>
           <p class="step-key-text">
-            These images depicted primarily <b>women and girls</b> without their
-            consent, making it a form of <b>image-based sexual abuse</b>.
+            These images showed primarily women and girls who had not consented,
+            making it a form of image-based sexual abuse.
           </p>
         </div>
         <div
@@ -1851,8 +1699,8 @@
         >
           <span class="step-label">AIG-NCII</span>
           <p class="step-key-text">
-            We call this <b>AIG-NCII</b>: AI-generated non-consensual intimate
-            images.
+            We call this AI-generated non-consensual intimate images, or
+            AIG-NCII.
           </p>
           <button class="step-expand-btn" aria-expanded="false">
             Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -1872,7 +1720,9 @@
           style="height: 60vh"
         >
           <span class="step-label">A rapid scale</span>
-          <p class="step-key-text">AIG-NCII is increasing at a rapid scale…</p>
+          <p class="step-key-text">
+            This form of abuse is increasing at a rapid scale…
+          </p>
         </div>
         <div class="step step--n" data-intro="flood" style="height: 90vh"></div>
         <div
@@ -1882,7 +1732,9 @@
           style="height: 60vh"
         >
           <span class="step-label">Zoom in</span>
-          <p class="step-key-text">Let’s zoom into a couple of these…</p>
+          <p class="step-key-text">
+            Let’s zoom into a couple of these headlines.
+          </p>
         </div>
         <div
           class="step step--k"
@@ -1901,7 +1753,8 @@
         >
           <span class="step-label">Other technologies</span>
           <p class="step-key-text">
-            …But there are many other technologies in play…
+            …But look closely: other apps, websites, and services are involved
+            too.
           </p>
         </div>
         <div
@@ -1912,8 +1765,8 @@
         >
           <span class="step-label">The ecosystem</span>
           <p class="step-key-text">
-            Deepfake abuse is powered not by a single model but an entire
-            <b>ecosystem</b> of technologies…
+            An ecosystem of connected technologies helps people create and
+            spread this abuse, not just the AI model that makes the image.
           </p>
         </div>
         <div
@@ -1924,8 +1777,8 @@
         >
           <span class="step-label">The Supply Chain</span>
           <p class="step-key-text">
-            We tell the story of the <b>technological ecosystem</b> powering
-            deepfake abuse…
+            We’ll follow the tools and services involved, from creating an image
+            to sharing it.
           </p>
           <button class="step-expand-btn" aria-expanded="false">
             Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -1956,26 +1809,13 @@
         <div class="step step--n" data-intro="go" style="height: 50vh"></div>
         <div
           class="step step--k"
-          data-intro="t2"
-          data-pos="center"
-          style="height: 60vh"
-        >
-          <span class="step-label">Accessibility</span>
-          <p class="step-key-text">
-            This is primarily due to the <b>accessibility</b> of easy to use
-            tools to <b>create</b> AIG-NCII within minutes.
-          </p>
-        </div>
-        <div
-          class="step step--k"
           data-intro="t3"
           data-pos="center"
           style="height: 60vh"
         >
           <span class="step-label">Zero technical skills</span>
           <p class="step-key-text">
-            How does someone with zero technical skills use an image-generation
-            model?
+            How can someone create these images without knowing how AI works?
           </p>
         </div>
       </div>
@@ -1996,17 +1836,12 @@
         <div class="step step--n" data-chat="send">
           <p>No verification. No consent check. No content filter.</p>
         </div>
-        <!-- Thinking is now part of the automatic send sequence, not a navigation step.
-    <div class="step step--n" data-chat="think">
-      <p>In December 2025 — 6,700 images per hour, posted directly into public X comment threads.</p>
-    </div>
-    -->
+
         <div class="step step--k" data-chat="respond">
           <span class="step-label">Generative AI Interfaces</span>
           <p class="step-key-text">
-            It’s this simple.<br /><br /><b>Generative AI interfaces</b> such as
-            a chatbot make it easy for users to input a photo and get the model
-            output.
+            It’s that simple. A chatbot makes the process straightforward:
+            someone submits a photo and a request, and the AI returns an image.
           </p>
           <button class="step-expand-btn" aria-expanded="false">
             Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -2044,27 +1879,26 @@
         <div class="step step--k" data-aux="nudifier" style="height: 70vh">
           <span class="step-label">Many forms</span>
           <p class="step-key-text">
-            Generative AI interfaces can come in many forms, like a
-            <b>chatbot, mobile app, website…</b><br />Even dedicated “nudifier
-            applications”
+            People can access these tools through chatbots, mobile apps, and
+            websites. Some are designed specifically to make people appear
+            undressed, like “nudifier apps.”
           </p>
         </div>
         <div class="step step--k" data-aux="nudifier-off" style="height: 50vh">
           <span class="step-label">Back to the interface</span>
-          <p class="step-key-text">
-            But let’s go back to the <b>interface…</b>
-          </p>
+          <p class="step-key-text">But let’s return to the chatbot…</p>
         </div>
         <div class="step step--k" data-note="supply" style="height: 50vh">
           <span class="step-label">The AI supply chain</span>
           <p class="step-key-text">
-            The AI supply chain contains a few other technologies…
+            What makes the chatbot’s image generation possible?
           </p>
         </div>
         <div class="step step--k" data-chat="dataset">
           <span class="step-label">Training Datasets</span>
           <p class="step-key-text">
-            At the core of every model is the <b>training dataset.</b>
+            AI models learn from collections of examples called training
+            datasets.
           </p>
           <button class="step-expand-btn" aria-expanded="false">
             Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -2092,28 +1926,29 @@
         <div class="step step--k" data-note="billions" style="height: 50vh">
           <span class="step-label">Scraped datasets</span>
           <p class="step-key-text">
-            Modern image generation models are trained off of billion-sized
-            datasets scraped from the internet.
+            Modern image-generation models learn from billions of images
+            collected from the internet.
           </p>
         </div>
         <div class="step step--k" data-chat="scan" style="height: 80vh">
           <span class="step-label">What is in the datasets</span>
           <p class="step-key-text">
             Studies have found that these datasets contain child sexual abuse
-            material, non-consensual intimate images, and pornography
+            material, non-consensual intimate images, and pornography.
           </p>
         </div>
         <div class="step step--k" data-chat="return" style="height: 80vh">
           <span class="step-label">Models</span>
           <p class="step-key-text">
-            <b>Models</b> that train off of this content are capable of
-            generating similar images…
+            Models trained on this material can generate similar kinds of
+            images.
           </p>
         </div>
         <div class="step step--k" data-chat="model" style="height: 80vh">
           <span class="step-label">Open or closed</span>
           <p class="step-key-text">
-            <b>Generative AI models</b> can be <b>open</b> or <b>closed</b>
+            Companies can keep a model under their control or make it available
+            for others to download.
           </p>
         </div>
       </div>
@@ -2129,8 +1964,8 @@
         <div class="step step--k" data-note="safeguards" style="height: 60vh">
           <span class="step-label">Safeguards</span>
           <p class="step-key-text">
-            Sometimes they have <b>safeguards</b> that moderate outputs. But
-            sometimes they don’t (like with Grok)
+            Companies can use <b>safeguards</b> to check inputs and outputs for
+            harm. These checks can be missing or fail.
           </p>
         </div>
         <div class="step step--k" data-md="open" style="height: 80vh">
@@ -2350,12 +2185,7 @@
             site on the first page of results 99.69% of the time.
           </p>
         </div>
-        <div class="step step--n" data-search="more">
-          <p>
-            Google, Yahoo, and Bing. No safety labels. No content warnings.
-            Surfaced like any other search result.
-          </p>
-        </div>
+
         <div class="step step--k" data-search="annotate">
           <span class="step-label">Search engines</span>
           <p class="step-key-text">
@@ -2449,14 +2279,7 @@
           <span class="step-label">App stores</span>
           <p class="step-key-text"><b>App stores</b> host nudifier apps…</p>
         </div>
-        <!-- These steps targeted the removed Information block and had no visible effect.
-    <div class="step step--n" data-as="highlight">
-      <p>55 on Google Play. 47 on Apple. Combined: 705 million downloads. $117 million in revenue.</p>
-    </div>
-    <div class="step step--n" data-as="overlay">
-      <p>Apple and Google each collected their standard 30% cut. A major nudification app is the subject of a San Francisco lawsuit — and was still listed on both stores at the time of reporting.</p>
-    </div>
-    -->
+
         <div class="step step--k" data-as="annotate" data-done="search">
           <span class="step-label">A million-dollar economy</span>
           <p class="step-key-text">
@@ -2504,13 +2327,7 @@
             identical to any legitimate online purchase.
           </p>
         </div>
-        <div class="step step--n" data-pay="logos">
-          <p>
-            Visa. Mastercard. Amex. PayPal. Google Pay. Apple Pay. All present —
-            all processing payments for tools that generate non-consensual
-            imagery of real people.
-          </p>
-        </div>
+
         <div class="step step--n" data-pay="sheet">
           <p>
             47 state AGs wrote to each of these processors in 2025. Most have
@@ -2613,9 +2430,7 @@
             it.
           </p>
         </div>
-        <div class="step step--n" data-dm="msg1">
-          <p>It's forwarded. Then again.</p>
-        </div>
+
         <div class="step step--n" data-dm="msg2">
           <p>
             Three devices now hold an image of a real person who was never
@@ -2625,8 +2440,8 @@
         <div class="step step--k" data-dm="annotate-imessage">
           <span class="step-label">Distribution Channels</span>
           <p class="step-key-text">
-            <b>Private distribution channels</b> are very common…<br /><br />Such
-            as via direct messaging
+            These images can be shared privately through different distribution
+            channels…
           </p>
           <button class="step-expand-btn" aria-expanded="false">
             Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -2657,15 +2472,12 @@
             </p>
           </div>
         </div>
-        <div class="step step--n" data-dm="switchemail">
-          <p>
-            Email. SMS. Private messages. Platforms not designed to detect this,
-            and with no legal obligation to try.
-          </p>
-        </div>
-        <div class="step step--k" data-dm="annotate-email" data-done="appstore">
+
+        <div class="step step--k" data-dm="switchemail" data-done="appstore">
           <span class="step-label">Email</span>
-          <p class="step-key-text">And <b>email</b></p>
+          <p class="step-key-text">
+            …like direct messages, group chats, and email.
+          </p>
           <button class="step-expand-btn" aria-expanded="false">
             Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
           </button>
@@ -2691,8 +2503,8 @@
         <div class="step step--k" data-aux="pubsite" style="height: 80vh">
           <span class="step-label">Public distribution channels</span>
           <p class="step-key-text">
-            <b>Public distribution channels</b> like social media platforms or
-            dedicated “deepfake pornography” sites…
+            These images can also be posted publicly on social media or
+            dedicated “deepfake pornography” sites.
           </p>
         </div>
       </div>
@@ -2701,10 +2513,7 @@
       <div class="scroll-chapter" data-chapter="finale" data-scene="finale">
         <div class="step step--k" data-fin="assemble">
           <span class="step-label">All Open At Once</span>
-          <p class="step-key-text">
-            Every app you opened is still running. One image, many windows, each
-            run by a different company.
-          </p>
+          <p class="step-key-text">Every app you opened is still running.</p>
           <button class="step-expand-btn" aria-expanded="false">
             Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
           </button>
@@ -2716,6 +2525,13 @@
               underneath.
             </p>
           </div>
+        </div>
+        <div class="step step--k" data-fin="assemble" style="height: 70vh">
+          <span class="step-label">One system</span>
+          <p class="step-key-text">
+            Every window represents part of the same system. All provide the
+            tools to create, find, fund, and share these images.
+          </p>
         </div>
         <div class="step step--k" data-fin="close1">
           <span class="step-label">Close One</span>
@@ -2737,7 +2553,7 @@
         <div class="step step--k" data-fin="close2">
           <span class="step-label">Close Another</span>
           <p class="step-key-text">
-            Ban a forum and the community migrates. Shut down a site and mirrors
+            Ban a forum and the community migrates. Shut down a site and copies
             appear.
           </p>
           <button class="step-expand-btn" aria-expanded="false">
@@ -2781,10 +2597,14 @@
     <footer class="endcard">
       <div class="endcard-inner">
         <p>
-          Based on <em>"How to Stop Playing Whack-a-Mole: Mapping the Ecosystem
-          of Technologies Facilitating AI-Generated Non-Consensual Intimate
-          Images."</em> Michelle L. Ding, Harini Suresh, Suresh Venkatasubramanian.
-          ACM Conference on Equity and Access in Algorithms, Mechanisms, and
+          Based on
+          <em
+            >"How to Stop Playing Whack-a-Mole: Mapping the Ecosystem of
+            Technologies Facilitating AI-Generated Non-Consensual Intimate
+            Images."</em
+          >
+          Michelle L. Ding, Harini Suresh, Suresh Venkatasubramanian. ACM
+          Conference on Equity and Access in Algorithms, Mechanisms, and
           Optimization (EAAMO). 2026.
         </p>
         <p class="endcard-note">
@@ -2833,14 +2653,21 @@
           <div class="na-ed-body" id="na-ed-body"></div>
           <span class="na-cursor" id="na-cursor">|</span>
           <div class="na-ed-details" id="na-ed-details"></div>
-          <!-- More is temporarily disabled for all notes.
-      <button type="button" class="na-more-btn" id="na-more-btn" aria-expanded="false"><i class="fas fa-chevron-down" aria-hidden="true"></i><span>more</span></button>
-      -->
         </div>
       </div>
     </div>
 
     <!-- ── SCENE GATE NOTIFICATION ──────────────────────── -->
+    <p
+      id="story-navigation-tip"
+      class="story-navigation-tip"
+      role="status"
+      hidden
+    >
+      Use ← → or the bottom-right arrows to navigate, Space to go forward, or
+      click the dock to jump to a section.
+    </p>
+
     <!-- Dock -->
     <div class="dt-dock-wrap">
       <div class="dt-dock">
@@ -3027,19 +2854,21 @@
           <span class="sn-app" id="sn-app"></span
           ><span class="sn-time">now</span>
         </div>
-        <div class="sn-title" id="sn-title"></div>
+
         <div class="sn-body" id="sn-body"></div>
       </div>
-      <div class="sn-hint">
-        click to begin <span aria-hidden="true">↗</span>
-      </div>
+      <div class="sn-hint">click to begin <span aria-hidden="true">↗</span></div>
     </div>
 
+    <script src="/src/story/desktop-gate.js?v=6"></script>
     <script>
       /* Dismiss the loading screen once the page and its fonts are ready (never before 3.2s, never later than 10s) */
       (function () {
         var loader = document.getElementById("loader");
-        if (!loader) return;
+        if (!loader || window.StoryDevice.mobile) {
+          loader?.remove();
+          return;
+        }
         var started = performance.now(),
           finished = false;
         function finish() {
@@ -3073,15 +2902,12 @@
           document.fonts && document.fonts.ready
             ? document.fonts.ready
             : Promise.resolve();
-        Promise.all([pageReady, fontsReady]).then(finish, finish);
+        Promise.all([pageReady, fontsReady, window.storyReady]).then(
+          finish,
+          finish,
+        );
         setTimeout(finish, 10000);
       })();
     </script>
-    <script src="/src/story/navigation.js?v=1"></script>
-    <script src="/src/story/scenes.js?v=96"></script>
-    <script src="/src/story/main.js?v=124"></script>
-    <script src="/src/story/motion.js?v=61"></script>
-    <script src="/src/story/windows.js?v=4"></script>
-    <script src="/src/story/finale.js?v=18"></script>
   </body>
 </html>

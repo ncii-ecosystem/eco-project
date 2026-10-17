@@ -1,17 +1,4 @@
-/* ============================================================
-   policy.js — the last part of the story: using the ecosystem to read the law (desktop only)
-   It carries on from the map graph.js draws. Each scroll step adds one thing to it:
-     law-intro   the gap: almost every law names people, not technologies
-     law-fed     the federal TAKE IT DOWN Act lands on one box
-     law-states  the state laws land on three boxes
-     law-same    two laws, same technology, different wording
-     law-new     a new law (Minnesota) is added to the map
-     law-map     the U.S. state map
-     law-gap     back on the ecosystem: which boxes the laws reach
-     future-edge a link nobody has studied yet
-     future-ripple an intervention spreading through the map
-   Every step is a state, so skipping ahead or scrolling back just redraws the state.
-   ============================================================ */
+/* Law overlays and explanatory steps for the About explorer. */
 export function mountLawSection({ Eco = window.Eco, mon = document.getElementById('mon-screen'), motionScope } = {}) {
 
   const { setTimeout, clearTimeout, requestAnimationFrame } =
@@ -138,7 +125,14 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
       ic.textContent = law.icons.map((k) => ICON[k]).join(' ');
       el('circle', { cx: 9, cy: 9, r: 9, class: 'pol-badge' }, g);
       const nn = el('text', { x: 9, y: 13, 'text-anchor': 'middle', class: 'pol-badge-n' }, g); nn.textContent = String(law.n);
-      const open = () => showLaw(law);
+      g.setAttribute('aria-pressed', 'false');
+      const open = () => {
+        us.querySelectorAll('.pol-state.has').forEach(state => {
+          state.classList.toggle('active', state === g);
+          state.setAttribute('aria-pressed', String(state === g));
+        });
+        showLaw(law);
+      };
       Eco.onActivate(g, open);
     }
   });
@@ -199,6 +193,10 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
   }
 
   function apply(n) {
+    us.querySelectorAll('.pol-state.has').forEach(state => {
+      state.classList.remove('active');
+      state.setAttribute('aria-pressed', 'false');
+    });
     clearTimers();
     stage = n;
     if (n > 0) select(null);
@@ -300,7 +298,7 @@ export const stepsHtml = `    <div class="step step--k" data-fin="law-intro">
     </div>
     <div class="step step--k" data-fin="law-map">
       <span class="step-label">The U.S. State Landscape</span>
-      <p class="step-key-text">Highlighted states show laws that regulate technologies in the ecosystem. Icons identify the technologies, and colors indicate their role: <strong>Creation</strong> or <strong>Distribution</strong>.</p>
+      <p class="step-key-text">Highlighted states show laws that regulate technologies in the ecosystem. Icons identify the technologies, and colors indicate their role.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
       <div class="step-detail" aria-hidden="true">
         <p>Click a highlighted state to read about its law.</p>

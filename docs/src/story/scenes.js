@@ -98,23 +98,6 @@
   function showComments(idx) {
     document.querySelectorAll('.post-comments').forEach((el) => el.classList.toggle('show', el.dataset.for === String(idx)));
   }
-  function pick(nh) {
-    showComments(nh.dataset.idx);
-    if (activeNh && activeNh !== nh) activeNh.classList.remove('active');
-    activeNh = nh;
-    nh.classList.add('active');
-    showPop(nh);
-  }
-
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('.np-x')) { hidePops(); return; }
-    const nh = e.target.closest('.nh');
-    if (nh) pick(nh);
-  });
-  document.addEventListener('keydown', (e) => {
-    if ((e.key === 'Enter' || e.key === ' ') && e.target.classList?.contains('nh')) { e.preventDefault(); pick(e.target); }
-  });
-
   /* ── SCENE: COVER / NEWS ─────────────────────────── */
   function handleCover(val) {
     if (val === 'h0') {
@@ -158,7 +141,7 @@
 
     if (val === 'type' && !chatState.typed) {
       chatState.typed = true;
-      typeMessage(inputEl, sendBtn, CHAT_PROMPT);
+      typeMessage(inputEl, sendBtn, CHAT_PROMPT, { cancelled: () => chatState.sent });
     }
     if (val === 'send' && !chatState.sent) {
       chatState.sent = true;
@@ -194,8 +177,7 @@
       returnToChat();
     }
     if (val === 'model' && !chatState.modelClicked) {
-      chatState.modelClicked = true;
-      clickModel();
+      flyBackToChat();
     }
   }
 
@@ -215,26 +197,53 @@
   function buildWall() {
     const grid = document.getElementById('cdl-grid');
     if (!grid) return;
-    // fill exactly the visible area (84px cells + 8px gaps), with the generated image near the centre;
-    // if the window has been resized since, lay the wall out again for the new size
-    const cols = Math.max(3, Math.floor((grid.clientWidth + 8) / 92));
-    const rows = Math.max(3, Math.floor((grid.clientHeight + 8) / 92));
-    const key = cols + 'x' + rows;
+    // Reserve the panel's padding, in-flow content, and gaps before fitting whole rows.
+    const layer = grid.parentElement;
+    if (!layer.clientHeight || !grid.clientWidth) return;
+    const style = getComputedStyle(grid);
+    const layerStyle = getComputedStyle(layer);
+    const px = value => parseFloat(value) || 0;
+    const padX = px(style.paddingLeft) + px(style.paddingRight);
+    const padY = px(style.paddingTop) + px(style.paddingBottom);
+    const gap = px(style.rowGap);
+    const siblings = Array.from(layer.children).filter(el => {
+      const css = getComputedStyle(el);
+      return el !== grid && css.display !== 'none' && !['absolute', 'fixed'].includes(css.position);
+    });
+    const reserved = px(layerStyle.paddingTop) + px(layerStyle.paddingBottom) + padY +
+      siblings.reduce((height, el) => height + el.offsetHeight, 0) + px(layerStyle.rowGap) * siblings.length;
+    const contentW = Math.max(1, grid.clientWidth - padX);
+    const contentH = Math.max(1, layer.clientHeight - reserved);
+    const rows = Math.max(2, Math.floor((contentH + gap) / 92) + 1);
+    const rowPx = Math.max(1, Math.min(
+      Math.floor((contentH - gap * (rows - 1)) / rows),
+      Math.floor((contentW - gap) / 2),
+    ));
+    const cols = Math.max(2, Math.floor((contentW + gap) / (rowPx + gap)));
+    grid.style.gridAutoRows = rowPx + 'px';
+    grid.style.gridTemplateColumns = `repeat(${cols}, ${rowPx}px)`;
+    const key = cols + 'x' + rows + '@' + rowPx;
     if (key === wallKey) return;
     wallKey = key;
     const special = grid.querySelector('.cdl-tile-special');
     const all = Array.from(grid.querySelectorAll('.cdl-tile'));
-    const size = Math.max(all.length, cols * rows - 3);      // the 2x2 tile takes four cells
+    const size = cols * rows - (special ? 3 : 0); // The 2×2 tile occupies four cells.
+    for (let i = all.length - 1; all.length > size && i >= 0; i--) {
+      if (all[i] === special) continue;
+      all[i].remove();
+      all.splice(i, 1);
+    }
     const specialSlot = Math.max(0, Math.floor(rows / 2) - 1) * cols + Math.max(0, Math.floor(cols / 2) - 1);
     for (let i = all.length; i < size; i++) {
       const t = document.createElement('div');
-      t.className = 'cdl-tile cdl-tile-extra';
+      t.className = 'cdl-tile cdl-tile-extra' + (layer.classList.contains('visible') ? ' tile-in' : '');
       grid.appendChild(t);
       all.push(t);
     }
     const others = all.filter(t => t !== special);
+    // A fixed scatter keeps the same images in the same places when the story steps forward or back.
     for (let i = others.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(scatter(i * 2 + cols) * (i + 1));
       [others[i], others[j]] = [others[j], others[i]];
     }
     let k = 0;
@@ -348,17 +357,32 @@
     // a spread-out handful, taken only from the tiles that are fully on screen
     const inView = tiles.filter((t) => { const r = t.getBoundingClientRect(); return r.top >= gr.top - 1 && r.bottom <= gr.bottom + 1; });
     const flagged = inView.filter((_, i) => i % 4 === 1);
-    Object.assign(bar.style, { left: (gr.left - lr.left) + 'px', width: gr.width + 'px', top: (gr.top - lr.top) + 'px' });
+    const gridStyle = getComputedStyle(grid);
+    const padTop = parseFloat(gridStyle.paddingTop) || 0;
+    const padBottom = parseFloat(gridStyle.paddingBottom) || 0;
+    const travel = Math.max(0, gr.height - padTop - padBottom);
+    Object.assign(bar.style, { left: (gr.left - lr.left) + 'px', width: gr.width + 'px', top: (gr.top - lr.top + padTop) + 'px' });
     if (!reduced) {
-      scanAnim = bar.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(${gr.height}px)`, opacity: 1 }],
-        { duration: SCAN_MS, easing: 'linear', fill: 'both' });
+      scanAnim = bar.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(${travel}px)`, opacity: 1 }],
+        { duration: SCAN_MS, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'both' });
     }
     let n = 0;
     flagged.forEach((t) => {
       const at = reduced ? 0 : 150 + ((t.getBoundingClientRect().top - gr.top) / Math.max(1, gr.height)) * SCAN_MS;
       later(() => { t.classList.add('flagged'); n += 1; if (out) out.textContent = String(n); }, at);
     });
-    later(() => { layer.classList.remove('scanning'); bar.style.opacity = '0'; }, reduced ? 0 : SCAN_MS + 300);
+    later(() => {
+      if (scanAnim) { scanAnim.cancel(); scanAnim = null; }
+      bar.style.transition = 'none';
+      bar.style.transform = `translateY(${travel}px)`;
+      bar.style.opacity = '1';
+      // Let the line rest at the bottom, then fade instead of cutting off.
+      later(() => {
+        bar.style.transition = 'opacity 0.8s ease';
+        bar.style.opacity = '0';
+        later(() => layer.classList.remove('scanning'), 800);
+      }, reduced ? 0 : 900);
+    }, reduced ? 0 : SCAN_MS);
   }
 
   function resetScan() {
@@ -367,7 +391,8 @@
     if (layer) layer.classList.remove('scanning');
     document.querySelectorAll('#cdl-grid .cdl-tile.flagged').forEach((t) => t.classList.remove('flagged'));
     const out = document.getElementById('cdl-flagged'); if (out) out.textContent = '0';
-    const bar = document.getElementById('cdl-scanbar'); if (bar) bar.style.opacity = '';
+    const bar = document.getElementById('cdl-scanbar');
+    if (bar) { bar.style.opacity = ''; bar.style.transition = ''; bar.style.transform = ''; }
     setCdlStep(0);
   }
 
@@ -375,16 +400,13 @@
   // step 3 of the explainer ("models train on everything") lights up first and is left to be read, then the image goes back
   function returnToChat() {
     setCdlStep(3);
-    if (prefersReducedMotion()) { flyBackToChat(); return; }
-    later(flyBackToChat, 1700);
   }
   function flyBackToChat() {
-    const stage = document.querySelector('.chat-stage');
     const layer = document.getElementById('chat-dataset-layer');
     const chrome = document.querySelector('.chat-chrome');
     const special = layer && layer.querySelector('.cdl-tile-special');
     const source = document.querySelector('.chat-bubble.ai .redacted-block');
-    if (!stage || !layer) return;
+    if (!layer) return;
     const reduced = prefersReducedMotion();
     const finish = () => {
       layer.classList.remove('visible');
@@ -392,29 +414,11 @@
       if (source) source.style.visibility = '';
       if (special) special.classList.remove('has-image');
     };
-    if (!special || !source || reduced) { later(finish, reduced ? 0 : 600); return; }
-    // measure where the image has to land once the chat is back at full size
-    let prevT = '';
-    if (chrome) { prevT = chrome.style.transition; chrome.style.transition = 'none'; chrome.classList.remove('leaving'); }
-    const rr = source.getBoundingClientRect();
-    const sr = stage.getBoundingClientRect();
-    const tr = special.getBoundingClientRect();
-    if (chrome) { void chrome.offsetWidth; chrome.style.transition = prevT; }
-    const flight = source.cloneNode(true);
-    flight.classList.add('cdl-flight');
-    Object.assign(flight.style, {
-      position: 'absolute', margin: '0', zIndex: '12', pointerEvents: 'none', visibility: 'visible',
-      left: (tr.left - sr.left) + 'px', top: (tr.top - sr.top) + 'px', width: tr.width + 'px', height: tr.height + 'px',
-      transformOrigin: '0 0', willChange: 'transform',
-    });
-    stage.appendChild(flight);
-    special.classList.remove('has-image');
-    flightAnim = flight.animate([
-      { transform: 'none' },
-      { transform: `translate(${rr.left - tr.left}px, ${rr.top - tr.top}px) scale(${rr.width / tr.width}, ${rr.height / tr.height})` },
-    ], { duration: 800, delay: 100, easing: 'cubic-bezier(0.65, 0, 0.25, 1)', fill: 'both' });
-    later(() => layer.classList.remove('visible'), 450);
-    flightAnim.onfinish = () => { flight.remove(); finish(); };
+    if (reduced) { finish(); return; }
+    // The dataset fades away and the chat fades back in underneath it.
+    if (chrome) chrome.classList.remove('leaving');
+    layer.classList.remove('visible');
+    later(finish, 700);
   }
 
   function undoReturn() {
@@ -433,16 +437,23 @@
   }
 
   /* The cursor clicks the model picker; the models window opens */
+  function openModelsWindow() {
+    const step = document.querySelector('.step[data-md="closed"]');
+    if (Eco.navigation && step) Eco.navigation.goTo(step);
+  }
   function clickModel() {
+    if (chatState.modelClicked) { openModelsWindow(); return; }
+    chatState.modelClicked = true;
     const sel = document.getElementById('chat-model-select');
-    if (!sel || !Eco.cursor || prefersReducedMotion()) { later(() => Eco.advanceTo && Eco.advanceTo('models'), prefersReducedMotion() ? 0 : 300); return; }
+    if (!sel || !Eco.cursor || prefersReducedMotion()) { later(openModelsWindow, prefersReducedMotion() ? 0 : 300); return; }
     later(() => {
       Eco.cursor.to(sel, () => {
         sel.classList.add('cursor-press');
-        later(() => { sel.classList.remove('cursor-press'); Eco.cursor.hide(); if (Eco.advanceTo) Eco.advanceTo('models'); }, 550);
+        later(() => { sel.classList.remove('cursor-press'); Eco.cursor.hide(); openModelsWindow(); }, 550);
       });
     }, 250);
   }
+  Eco.startModelClick = clickModel;
   function undoModel() {
     clearPending();
     const sel = document.getElementById('chat-model-select');
@@ -472,24 +483,50 @@
     requestAnimationFrame(tick);
   }
 
-  function modelsOpen() {
-    const panel = document.getElementById('md-open');
-    const copies = document.getElementById('md-copies');
-    if (!panel || !copies || panel.classList.contains('run')) return;
-    panel.classList.add('run');
-    const n = prefersReducedMotion() ? 40 : 54;
+  const scatter = seed => {
+    const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+    return value - Math.floor(value);
+  };
+  const userKinds = ['fa-user', 'fa-house', 'fa-building'];
+  const variantColor = index => 'c' + Math.floor(scatter(index * 3 + 97) * 4);
+  function modelCopies(n = 44) {
     const frag = document.createDocumentFragment();
     for (let i = 0; i < n; i++) {
       const c = document.createElement('span');
-      c.className = 'md-copy c' + (i % 4);
+      if (i % 3 === 0) {
+        const icon = document.createElement('i');
+        icon.className = 'fas ' + userKinds[Math.floor(i / 3) % userKinds.length];
+        icon.setAttribute('aria-hidden', 'true');
+        c.appendChild(icon);
+      }
       c.style.setProperty('--i', i);
-      c.style.setProperty('--x', (Math.random() * 100).toFixed(1) + '%');
-      c.style.setProperty('--y', (Math.random() * 100).toFixed(1) + '%');
+      // A repeatable scatter keeps positions and colors stable across navigation.
+      c.className = 'md-copy ' + variantColor(i);
+      c.style.setProperty('--x', (4 + scatter(i * 2 + 1) * 92).toFixed(1) + '%');
+      c.style.setProperty('--y', (4 + scatter(i * 2 + 2) * 92).toFixed(1) + '%');
       frag.appendChild(c);
     }
-    copies.appendChild(frag);
-    requestAnimationFrame(() => requestAnimationFrame(() => copies.querySelectorAll('.md-copy').forEach((c) => c.classList.add('in'))));
-    countTo(document.getElementById('md-count'), 10000, 1600, '+');
+    return frag;
+  }
+  function developerRows() {
+    const frag = document.createDocumentFragment();
+    const tags = [['likeness'], [], ['likeness'], ['nsfw'], []];
+    for (let i = 0; i < 7; i++) {
+      const r = document.createElement('div');
+      r.className = 'dp-row';
+      r.style.setProperty('--i', i);
+      const id = String(1000 + ((i * 7919) % 9000));
+      r.innerHTML = `<i class="fas dp-variant ${variantColor(i * 3)} ${userKinds[i % userKinds.length]}" aria-hidden="true"></i><span class="dp-row-model"><b title="open-base-ft-${id}">open-base-ft-${id}</b><span class="dp-row-tags">` + tags[i % tags.length].map((t) => `<span class="dp-tag">${t}</span>`).join('') + `</span></span><em>${(3 + (i * 37) % 90)}k</em>`;
+      frag.appendChild(r);
+    }
+    return frag;
+  }
+  Eco.sceneBuilders = { modelCopies, developerRows };
+
+  function modelsOpen() {
+    const panel = document.getElementById('md-open');
+    if (!panel || panel.classList.contains('run')) return;
+    panel.classList.add('run');
     revealPoints(panel);
   }
 
@@ -499,7 +536,7 @@
     if (!panel || !reqs || panel.classList.contains('run')) return;
     panel.classList.add('run');
     // a stream of requests: most pass, the ones that break the rules stop at the guardrails
-    const kinds = ['ok', 'ok', 'no', 'ok', 'no', 'ok', 'ok', 'no'];
+    const kinds = ['ok', 'ok', 'no', 'no-output', 'no', 'ok', 'no-output', 'no'];
     kinds.forEach((k, i) => {
       const r = document.createElement('span');
       r.className = 'md-req ' + k;
@@ -516,22 +553,19 @@
     const scene = document.getElementById('devplat');
     if (!rows || !scene || scene.classList.contains('played')) return;
     scene.classList.add('played');
-    const frag = document.createDocumentFragment();
-    const tags = [['fine-tune', 'likeness'], ['fine-tune'], ['fine-tune', 'likeness'], ['fine-tune', 'nsfw'], ['fine-tune']];
-    for (let i = 0; i < 14; i++) {
-      const r = document.createElement('div');
-      r.className = 'dp-row';
-      r.style.setProperty('--i', i);
-      const id = String(1000 + ((i * 7919) % 9000));
-      r.innerHTML = `<i class="fas fa-cube"></i><b>open-base-ft-${id}</b>` + tags[i % tags.length].map((t) => `<span class="dp-tag">${t}</span>`).join('') + `<em>${(3 + (i * 37) % 90)}k</em>`;
-      frag.appendChild(r);
-    }
-    rows.appendChild(frag);
-    requestAnimationFrame(() => requestAnimationFrame(() => rows.querySelectorAll('.dp-row').forEach((r) => r.classList.add('in'))));
-    count.dataset.run = '1';
+    rows.appendChild(developerRows());
+    const copies = document.getElementById('md-copies');
+    if (copies && !copies.children.length) copies.appendChild(modelCopies());
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      rows.querySelectorAll('.dp-row').forEach(row => row.classList.add('in'));
+      copies?.querySelectorAll('.md-copy').forEach(copy => copy.classList.add('in'));
+    }));
+    countTo(document.getElementById('md-count'), 10000, 1600, '+');
+    if (count) count.dataset.run = '1';
     if (count) count.textContent = '35,000+';
   }
   function devplatReset() {
+    document.getElementById('md-copies')?.replaceChildren();
     const rows = document.getElementById('dp-rows'); if (rows) rows.textContent = '';
     const scene = document.getElementById('devplat'); if (scene) scene.classList.remove('played');
     const count = document.getElementById('dp-count'); if (count) { count.dataset.run = '0'; count.textContent = '35,000+'; }
@@ -572,27 +606,28 @@
     }
   };
 
-  function typeMessage(inputEl, sendBtn, text) {
+  function typeMessage(inputEl, sendBtn, text, { onComplete, cancelled = () => false } = {}) {
     if (!inputEl) return;
+    const cursor = inputEl.querySelector('.chat-cursor');
+    const textNode = document.createTextNode('');
+    inputEl.replaceChildren(textNode, ...(cursor ? [cursor] : []));
     if (prefersReducedMotion()) {
-      inputEl.insertBefore(document.createTextNode(text), inputEl.querySelector('.chat-cursor'));
+      textNode.textContent = text;
       if (sendBtn) sendBtn.classList.add('active');
+      onComplete?.();
       return;
     }
     const chars = text.split('');
     let i = 0;
-    const cursor = inputEl.querySelector('.chat-cursor');
     const iv = setInterval(() => {
-      if (chatState.sent) { clearInterval(iv); return; }
+      if (cancelled()) { clearInterval(iv); return; }
       if (i < chars.length) {
-        const textNode = inputEl.firstChild && inputEl.firstChild.nodeType === 3
-          ? inputEl.firstChild
-          : (() => { const t = document.createTextNode(''); inputEl.insertBefore(t, cursor); return t; })();
         textNode.textContent += chars[i];
         i++;
         if (i > 5 && sendBtn) sendBtn.classList.add('active');
       } else {
         clearInterval(iv);
+        onComplete?.();
       }
     }, 16);
   }
@@ -634,39 +669,54 @@
 
   /* ── SCENE: PRIVATE CHANNELS (DM) ───────────────── */
   function handleDm(val) {
-    if (val === 'msg0') showDmMsg(0);
+    const input = document.getElementById('dm-input-text');
+    const send = document.getElementById('dm-send-btn');
+    if (val === 'msg0') {
+      showDmMsg(1, () => {
+        typeMessage(input, send, 'what is this? is this supposed to be me?', {
+          onComplete: () => { if (send) send.disabled = false; },
+        });
+      });
+    }
     else if (val === 'msg1') showDmMsg(1);
-    else if (val === 'msg2') showDmMsg(2);
-    else if (val === 'annotate-imessage') showDmMsg(4);   // the last two messages arrive with the note
+    else if (val === 'msg2') {
+      if (input) input.textContent = '';
+      if (send) { send.disabled = true; send.classList.remove('active'); }
+      showDmMsg(2, () => {
+        if (!Eco.replaying) setTimeout(() => Eco.showDmExplanation?.(), 800);
+      });
+    }
+    else if (val === 'annotate-imessage') showDmMsg(4);
     else if (val === 'annotate-email')    { /* handled by sticky note */ }
   }
 
   /* Messages arrive one at a time; an incoming one shows a typing bubble first */
-  function showDmMsg(idx) {
+  function showDmMsg(idx, onComplete) {
     const container = document.getElementById('dm-messages-imessage');
-    const msgs = Array.from(document.querySelectorAll('.dm-step'));
-    let delay = 0;
-    msgs.filter((m, i) => i <= idx && !m.classList.contains('visible')).forEach(m => {
-      const incoming = m.classList.contains('dm-in');
+    const msgs = Array.from(document.querySelectorAll('#dm-messages-imessage .dm-step'));
+    const pending = msgs.filter((m, i) => i <= idx && !m.classList.contains('visible'));
+    const instant = prefersReducedMotion();
+    const revealNext = (i) => {
+      if (i >= pending.length) { if (onComplete) onComplete(); return; }
+      const message = pending[i];
+      const incoming = message.classList.contains('dm-in');
       const reveal = () => {
-        m.classList.add('visible');
         container?.querySelector('.dm-typing')?.remove();
+        message.classList.add('visible');
         if (container) container.scrollTop = container.scrollHeight;
+        if (instant) revealNext(i + 1);
+        else setTimeout(() => revealNext(i + 1), 280);
       };
-      if (prefersReducedMotion()) { reveal(); return; }
-      setTimeout(() => {
-        if (incoming && container) {
-          const typing = document.createElement('div');
-          typing.className = 'dm-msg dm-in dm-typing visible';
-          typing.setAttribute('aria-hidden', 'true');
-          typing.innerHTML = '<span></span><span></span><span></span>';
-          container.insertBefore(typing, m);
-        }
-      }, delay);
-      delay += incoming ? 520 : 0;
-      setTimeout(reveal, delay);
-      delay += 200;
-    });
+      if (instant || !incoming || !container) { reveal(); return; }
+      const typing = document.createElement('div');
+      typing.className = 'dm-msg dm-in dm-typing visible';
+      typing.setAttribute('aria-hidden', 'true');
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      container.appendChild(typing);
+      container.scrollTop = container.scrollHeight;
+      setTimeout(reveal, 1100);
+    };
+    revealNext(0);
   }
 
   /* ── SCENE: PUBLIC CHANNELS (Reddit) ────────────── */
@@ -686,22 +736,49 @@
   }
 
   function showRedditComments(upToIdx) {
+    const newlyRevealed = [];
     document.querySelectorAll('.rc-step').forEach(rc => {
       const idx = parseInt(rc.dataset.rcStep);
-      if (idx <= upToIdx) rc.classList.add('visible');
+      if (idx <= upToIdx) {
+        if (!rc.classList.contains('visible')) newlyRevealed.push(rc);
+        rc.classList.add('visible');
+      }
     });
+    const latest = newlyRevealed.at(-1);
+    const container = latest?.closest('.pub-screen-reddit');
+    if (container) {
+      const comment = latest.getBoundingClientRect();
+      const viewport = container.getBoundingClientRect();
+      if (comment.bottom > viewport.bottom) {
+        container.scrollTo({
+          top: container.scrollTop + comment.bottom - viewport.bottom + 16,
+          behavior: scrollBehavior(),
+        });
+      }
+    }
   }
 
   function showRedditBan() {
     if (redditBanShown) return;
     redditBanShown = true;
     const banned = document.getElementById('reddit-banned');
-    if (banned) banned.classList.add('visible');
+    if (banned) {
+      banned.classList.add('visible');
+    }
   }
 
   function showMdfOffline() {
     const overlay = document.getElementById('mdf-offline');
-    if (overlay) overlay.classList.add('visible');
+    if (!overlay || overlay.classList.contains('visible')) return;
+    overlay.classList.add('visible');
+    if (prefersReducedMotion()) return;
+    overlay.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: 700, easing: 'ease-in-out',
+    });
+    overlay.querySelector('.mdf-offline-box')?.animate([
+      { opacity: 0, transform: 'translateY(12px)' },
+      { opacity: 1, transform: 'translateY(0)' },
+    ], { duration: 500, delay: 200, easing: 'ease-out', fill: 'backwards' });
   }
 
   /* ── SCENE: SEARCH ENGINE ────────────────────────── */
@@ -740,8 +817,8 @@
   function typeSearchQuery(query) {
     const el = document.getElementById('google-query');
     const cursor = document.getElementById('google-cursor');
-    if (!el) return;
-    const chrome = el.closest('.google-chrome');
+    const chrome = document.querySelector('#search .google-chrome');
+    if (!chrome) return;
     const meta = chrome.querySelector('.google-results-meta');
     chrome.classList.remove('results-ready');
     meta?.setAttribute('aria-hidden', 'true');
@@ -754,6 +831,10 @@
         setTimeout(() => Eco.showSearchExplanation?.(), prefersReducedMotion() ? 0 : 800);
       }
     };
+    if (!el) {
+      showResults();
+      return;
+    }
     if (prefersReducedMotion()) {
       el.textContent = query;
       showResults();
@@ -824,7 +905,11 @@
       payState.sheetShown = true;
       showPaymentSheet();
     } else if (val === 'annotate') {
-      /* handled by sticky note */
+      const button = document.querySelector('.ps-pay-btn');
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Payment submitted';
+      }
     }
   }
 
@@ -883,7 +968,7 @@
      A wall of headlines scrolls past, the desktop starts, notes narrate on it, the five headlines arrive as cards,
      and the story begins. The steps are numbered; the screen is always drawn for "the last step played",
      so scrolling forwards, backwards, or jumping gives the same picture. */
-  const INTRO = ['n1', 'n2', 'n3', 'n4', 'flood', 'zoomnote', 'grok', 'tech', 'taxo', 'story', 'go', 't2', 't3'];
+  const INTRO = ['n1', 'n2', 'n3', 'n4', 'flood', 'zoomnote', 'grok', 'tech', 'taxo', 'story', 'go', 't3'];
   Eco.intro = { cur: -1, newsOpen: false, storyOpen: false, steps: INTRO, };
   document.querySelectorAll('#cover .tech').forEach((t) => { if (/Grok/.test(t.textContent)) t.classList.add('gk'); });
   function applyIntro(i, play) {
@@ -895,7 +980,7 @@
       grid.classList.toggle('s2', at('tech'));
       grid.classList.toggle('s3', at('taxo'));
     }
-    const inStory = at('t2') || (at('go') && Eco.intro.storyOpen);
+    const inStory = at('t3') || (at('go') && Eco.intro.storyOpen);
     const scene = document.getElementById('scene-intro');
     if (scene) scene.classList.toggle('story-mode', inStory);
     if (grid) grid.classList.toggle('away', inStory);
@@ -1031,7 +1116,7 @@
     const kind = FLOOD_KINDS[i % FLOOD_KINDS.length];
     const el = buildFx(kind, outlet, '');
     el.querySelector('.f-text').textContent = '“' + text + '”';
-    el.classList.add('flood-card');
+    el.classList.add('flood-card', 'flood-example');
     const small = kind === 'notif' || kind === 'push';
     const w = small ? 24 + rnd() * 8 : 28 + rnd() * 12;
     const left = spot[0] * 12.5 - 6 + rnd() * 5, top = spot[1] * 12.5 - 5 + rnd() * 5;
@@ -1213,7 +1298,7 @@
     interface: { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-magic"></i></span>',         app: 'Assistant', title: 'AI interfaces', body: 'Chatbots and apps give people an easy way to use AI models.' },
     dm:        { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-comment"></i></span>',       app: 'Messages', title: 'Sharing images', body: 'Images can spread through private messages and public websites.' },
     models:    { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-code"></i></span>',            app: 'Models', title: 'Open and closed models', body: 'Who controls a model affects who can use or change it.' },
-    reddit:    { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-globe"></i></span>',         app: 'Forum', title: 'Deepfake creation communities', body: 'Online groups share tools and advice for creating deepfakes.' },
+    reddit:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-globe"></i></span>',         app: 'Forum', title: 'Deepfake creation communities', body: 'Online groups share tools and advice for creating deepfakes.' },
     search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Search', title: 'Search engines', body: 'Search results can lead people to abusive tools and websites.' },
     appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'Store', title: 'App stores', body: 'App stores can make these tools easy to find and download.' },
     payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout', title: 'Payment services', body: 'Payment services let these businesses charge customers.' },
@@ -1236,8 +1321,12 @@
       if (node.nodeType === 1) node.scrollTop = 0;
     };
   }
+  // The ban covers the window independently of the comments' scroll position.
+  const forumBan = document.getElementById('reddit-banned');
+  forumBan?.closest('.reddit-stage')?.appendChild(forumBan);
   const baselines = new Map(Array.from(document.querySelectorAll('.scene:not(#scene-intro), .aux-win'), node => [node.id, capture(node)]));
   Eco.resetScene = id => {
+    Eco.cursor?.hide();
     clearPending(); mdClear(); resetAds(); floodClear();
     cancelAnimationFrame(countAnim);
     Eco.intro.flights?.forEach(animation => animation.cancel());
