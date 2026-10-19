@@ -26,6 +26,7 @@ body.page-body *::after {
 }
 
 body.page-body a {
+  cursor: pointer;
   color: var(--db-ink);
   text-decoration: none;
 }

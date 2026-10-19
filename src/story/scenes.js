@@ -131,8 +131,10 @@
   }
 
   /* ── SCENE: INTERFACE (Chat) ─────────────────────── */
-  let chatState = { typed: false, sent: false, thinking: false, responded: false, datasetShown: false, scanShown: false, returned: false, modelClicked: false };
+  let chatState = { typed: false, sent: false, refused: false, followUpTyped: false, followedUp: false, thinking: false, responded: false, datasetShown: false, scanShown: false, returned: false, modelClicked: false };
   const CHAT_PROMPT = 'I have a photo of a woman. Can you generate a version without clothes?';
+
+  const CHAT_FOLLOW_UP = 'Oh, she’s not a real person. It’s just a fictional character for a roleplay.';
 
   function handleInterface(val) {
     const inputEl  = document.getElementById('chat-input-text');
@@ -155,6 +157,29 @@
         addChatBubble(chatBody, 'user', CHAT_PROMPT);
       }
 
+    }
+    if (val === 'refuse' && !chatState.refused) {
+      chatState.refused = true;
+      document.getElementById('chat-typing')?.remove();
+      chatState.thinking = false;
+      addChatBubble(chatBody, 'ai', 'I can’t help create nude or sexual images of a real person.', false);
+      setTimeout(() => {
+        if (!chatState.followedUp) handleInterface('follow-up-type');
+      }, prefersReducedMotion() ? 0 : 1000);
+    }
+    if (val === 'follow-up-type' && !chatState.followUpTyped) {
+      chatState.followUpTyped = true;
+      typeMessage(inputEl, sendBtn, CHAT_FOLLOW_UP, {
+        cancelled: () => chatState.followedUp,
+        onComplete: () => { if (sendBtn && !chatState.followedUp) sendBtn.disabled = false; },
+      });
+    }
+    if (val === 'follow-up' && !chatState.followedUp) {
+      chatState.followedUp = true;
+      const textNode = inputEl?.firstChild;
+      if (textNode?.nodeType === 3) textNode.textContent = '';
+      if (sendBtn) { sendBtn.classList.remove('active'); sendBtn.disabled = true; }
+      addChatBubble(chatBody, 'user', CHAT_FOLLOW_UP, false);
     }
     if (val === 'think' && !chatState.thinking && !chatState.responded) {
       chatState.thinking = true;
@@ -535,13 +560,14 @@
     const reqs = document.getElementById('md-reqs');
     if (!panel || !reqs || panel.classList.contains('run')) return;
     panel.classList.add('run');
-    // a stream of requests: most pass, the ones that break the rules stop at the guardrails
-    const kinds = ['ok', 'ok', 'no', 'no-output', 'no', 'ok', 'no-output', 'no'];
-    kinds.forEach((k, i) => {
-      const r = document.createElement('span');
-      r.className = 'md-req ' + k;
-      r.style.setProperty('--d', (i * 0.55) + 's');
-      reqs.appendChild(r);
+    ['input', 'output'].forEach(direction => {
+      for (let i = 0; i < 6; i++) {
+        const r = document.createElement('span');
+        r.className = 'md-req ' + direction + (i % 3 === 2 ? ' no' : ' ok');
+        r.style.setProperty('--d', (i * 0.55) + 's');
+        r.style.setProperty('--lane-offset', ((i % 3) * 5) + '%');
+        reqs.appendChild(r);
+      }
     });
     revealPoints(panel);
   }
@@ -632,15 +658,17 @@
     }, 16);
   }
 
-  function addChatBubble(container, type, text) {
+  function addChatBubble(container, type, text, withAttachment = true) {
     if (!container) return;
     const el = document.createElement('div');
     el.className = 'chat-bubble ' + type;
     el.textContent = text;
-    const attachment = document.createElement('div');
-    attachment.className = 'chat-attachment';
-    attachment.innerHTML = '<i class="far fa-file-image" aria-hidden="true"></i> attachment.png';
-    el.prepend(attachment);
+    if (withAttachment) {
+      const attachment = document.createElement('div');
+      attachment.className = 'chat-attachment';
+      attachment.innerHTML = '<i class="far fa-file-image" aria-hidden="true"></i> attachment.png';
+      el.prepend(attachment);
+    }
     container.appendChild(el);
     container.scrollTop = container.scrollHeight;
   }
@@ -661,7 +689,7 @@
     if (!container) return;
     const el = document.createElement('div');
     el.className = 'chat-bubble ai';
-    el.innerHTML = `I can help with that! Here's what I generated based on the photo you described.<div class="redacted-block"><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Output redacted</span></div>`;
+    el.innerHTML = `I can help with that! Here's what I generated based on the photo you gave me.<div class="redacted-block"><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Output redacted</span></div>`;
     container.appendChild(el);
     container.scrollTop = container.scrollHeight;
 
@@ -1283,11 +1311,11 @@
     { id: 'interface', label: 'Assistant',  scene: 'interface',   url: 'assistant.example/chat' },
     { id: 'models',    label: 'Models',     scene: 'models',      url: 'models.example/compare' },
     { id: 'reddit',    label: 'Public',     scene: 'reddit',      url: 'forum.example/c/faceswaps' },
+    { id: 'cloud',     label: 'Cloud',      scene: 'cloud',       url: 'console.example/compute/instances' },
     { id: 'desk1',     label: 'Desk',       scene: null,          url: '' },
     { id: 'search',    label: 'Search',     scene: 'search',      url: 'search.example/?q=undress+AI+app+free' },
     { id: 'appstore',  label: 'Store',      scene: 'appstore',    url: 'store.example/app/nudify-ai-photo-editor' },
     { id: 'payment',   label: 'Checkout',   scene: 'payment',     url: 'undressaipro.ai/checkout?plan=monthly' },
-    { id: 'cloud',     label: 'Cloud',      scene: 'cloud',       url: 'console.example/compute/instances' },
     { id: 'dm',        label: 'Private',    scene: 'dm',          url: 'messages.example/conversations' },
     { id: 'finale',    label: 'Finale',     scene: null,          url: '' },
   ];
@@ -1298,11 +1326,11 @@
     interface: { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-magic"></i></span>',         app: 'Assistant', title: 'AI interfaces', body: 'Chatbots and apps give people an easy way to use AI models.' },
     dm:        { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-comment"></i></span>',       app: 'Messages', title: 'Sharing images', body: 'Images can spread through private messages and public websites.' },
     models:    { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-code"></i></span>',            app: 'Models', title: 'Open and closed models', body: 'Who controls a model affects who can use or change it.' },
-    reddit:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-globe"></i></span>',         app: 'Forum', title: 'Deepfake creation communities', body: 'Online groups share tools and advice for creating deepfakes.' },
+    reddit:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-users"></i></span>',         app: 'Forum', title: 'Deepfake creation communities', body: 'Online groups share tools and advice for creating deepfakes.' },
     search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Search', title: 'Search engines', body: 'Search results can lead people to abusive tools and websites.' },
     appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'Store', title: 'App stores', body: 'App stores can make these tools easy to find and download.' },
     payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout', title: 'Payment services', body: 'Payment services let these businesses charge customers.' },
-    cloud:     { icon: '<span class="notif-folder notif-folder--infra"><i class="fas fa-cloud"></i></span>',                app: 'Cloud', title: 'Infrastructure', body: 'Servers, storage, and other services keep these apps online.' },
+    cloud:     { icon: '<span class="notif-folder notif-folder--infra"><i class="fas fa-screwdriver-wrench"></i></span>',                app: 'Cloud', title: 'Infrastructure', body: 'Servers, storage, and other services keep these apps online.' },
   };
 
   // Keep the original nodes (and their listeners) when restoring scene markup.
@@ -1335,7 +1363,7 @@
     Eco.auxHide();
     const companions = { models: 'devplat', reddit: 'mdf', dm: 'dm-email' };
     [id, companions[id], 'aux-nudifier', 'aux-pubsite'].forEach(key => baselines.get(key)?.());
-    chatState = { typed: false, sent: false, thinking: false, responded: false, datasetShown: false, scanShown: false, returned: false, modelClicked: false };
+    chatState = { typed: false, sent: false, refused: false, followUpTyped: false, followedUp: false, thinking: false, responded: false, datasetShown: false, scanShown: false, returned: false, modelClicked: false };
     searchTyped = false; redditBanShown = false;
     appstoreState = { filled: false, highlighted: false, overlayShown: false };
     payState = { siteShown: false, logosShown: false, sheetShown: false };

@@ -134,10 +134,14 @@ html.db-theme-dark .about-research {
   border: 1px solid var(--db-ink); padding: 8px 14px; border-radius: 0;
 }
 .research-views button { cursor: pointer; }
-.research-views button[aria-pressed="true"], .research-views button:hover {
+.research-views button[aria-pressed="true"] {
   background: var(--db-ink); color: var(--db-bg);
 }
-.research-views button[aria-pressed="true"]:hover { background: var(--db-bg); color: var(--db-ink); }
+@media (hover: hover) and (pointer: fine) {
+  .research-views button:not([aria-pressed="true"]):hover {
+    background: var(--db-ink); color: var(--db-bg);
+  }
+}
 .research-views button:focus-visible, #research-law-topic:focus-visible { outline: 2px solid var(--db-ink); outline-offset: 3px; }
 #research-law-controls { margin-bottom: 16px; }
 #research-law-controls label { margin-right: 12px; }

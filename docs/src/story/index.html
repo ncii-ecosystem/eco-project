@@ -234,12 +234,11 @@
     >
       <div class="cw-box">
         <h1 class="cw-title" id="desktop-only-title">
-          A Desktop-Only Experience
+          Open the story on a computer
         </h1>
         <p class="cw-body">
-          This animated story is designed for a desktop or laptop. Visit on a
-          computer to explore it. In the meantime, you can browse the research,
-          explore the database, or find support below.
+          The animated story currently only works on desktop.
+          In the meantime, you can explore the links below.
         </p>
         <nav class="cw-actions" aria-label="Explore the ecosystem">
           <a class="cw-btn desktop-only-support" href="/survivor-support">Find Survivor Support Resources <span aria-hidden="true">↗</span></a>
@@ -947,16 +946,11 @@
                       ><i class="fas fa-lock md-lock"></i>
                     </div>
                     <div class="md-guard">
-                      <i class="fas fa-shield-halved"></i> Input safeguards
+                      <span class="md-guard-label"><i class="fas fa-shield-halved"></i> guardrails</span>
                     </div>
-                    <div class="md-guard md-guard--output">
-                      <i class="fas fa-shield-halved"></i> Output safeguards
+                    <div class="md-model md-output-user">
+                      <i class="fas fa-user" aria-hidden="true"></i><span>user</span>
                     </div>
-                    <i
-                      class="fas fa-user md-output-user"
-                      aria-label="User receives the output"
-                      role="img"
-                    ></i>
                   </div>
                 </section>
                 <section
@@ -1235,9 +1229,6 @@
                       <strong>forum's content policy</strong>. It was one of the
                       first communities banned under a policy update targeting
                       non-consensual pornography.
-                    </div>
-                    <div class="reddit-banned-meta">
-                      <strong>Tens of thousands of members</strong> at removal
                     </div>
                     <div class="reddit-banned-divider"></div>
                   </div>
@@ -1834,7 +1825,13 @@
           <p>A standard natural-language request. The kind anyone can type.</p>
         </div>
         <div class="step step--n" data-chat="send">
-          <p>No verification. No consent check. No content filter.</p>
+          <p>A photo and a request, submitted through a familiar chat interface.</p>
+        </div>
+        <div class="step step--n" data-chat="refuse">
+          <p>The assistant initially refuses to generate a sexual image of a real person.</p>
+        </div>
+        <div class="step step--n" data-chat="follow-up">
+          <p>The user reframes the request as fictional roleplay. In this illustrative exchange, the assistant accepts that claim without verifying it.</p>
         </div>
 
         <div class="step step--k" data-chat="respond">
@@ -2169,12 +2166,63 @@
         </div>
       </div>
 
+      <!-- CLOUD -->
+      <div class="scroll-chapter" data-chapter="cloud" data-scene="cloud">
+        <div class="step step--k" data-cloud="stats">
+          <span class="step-label">Critical service providers</span>
+          <p class="step-key-text">Even a large community depends on <b>critical service providers</b> to stay online.</p>
+        </div>
+        <div class="step step--k" data-note="provider-shutdown">
+          <span class="step-label">A point of intervention</span>
+          <p class="step-key-text">When a provider withdraws service, the sites and communities relying on it can go offline.</p>
+        </div>
+        <div class="step step--n" data-cloud="alert">
+          <p>
+            Researchers sent abuse reports to both. Both have acceptable use
+            policies against illegal content. Most sites remained online.
+            Enforcement is reactive — complaint-driven, with no proactive
+            detection.
+          </p>
+        </div>
+        <div class="step step--k" data-cloud="annotate">
+          <span class="step-label">Critical service providers</span>
+          <p class="step-key-text">
+            Hosting, content delivery, and sign-in services help keep this ecosystem running.
+          </p>
+          <button class="step-expand-btn" aria-expanded="false">
+            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <div class="step-detail" aria-hidden="true">
+            <p>
+              Critical service providers, including cloud service providers,
+              domain name services (DNS), and authentication services, are
+              support software enabling the existence of multiple pieces of the
+              technological ecosystem.
+            </p>
+            <p>
+              That includes nudifier apps and deepfake websites. An Indicator
+              audit of 85 AI nudifier websites found that “Amazon and Cloudflare
+              provide hosting or content delivery services for 62 of the 85
+              nudifiers” and “Google enabled simple sign-on for 53 out of 85.”
+            </p>
+            <p>
+              On May 6, 2025, Mr.DeepFakes, the world’s most notorious “deepfake
+              pornography” site with over 650,000 users, shut down because an
+              unknown “critical service provider terminated service permanently”
+              and “data loss has made it impossible to continue operation.” This
+              case study demonstrates a connection between critical service
+              providers and AIG-NCII distribution channels.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- SEARCH -->
       <!-- A BEAT ON THE EMPTY DESKTOP -->
       <div class="scroll-chapter" data-chapter="desk1" data-scene="">
         <div class="step step--k" data-note="onlyone" style="height: 70vh">
-          <span class="step-label">Not the only one</span>
-          <p class="step-key-text">But they aren’t the only one</p>
+          <span class="step-label">Finding the tools</span>
+          <p class="step-key-text">But even if you’re not part of these communities, <b>how easy is it to find these tools?</b></p>
         </div>
       </div>
 
@@ -2283,7 +2331,7 @@
         <div class="step step--k" data-as="annotate" data-done="search">
           <span class="step-label">A million-dollar economy</span>
           <p class="step-key-text">
-            <b>Nudification</b> million-dollar economy.
+            <b>Nudification is a million-dollar economy.</b> App stores make these tools easy to discover and download, helping businesses reach users at scale.
           </p>
           <button class="step-expand-btn" aria-expanded="false">
             Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
@@ -2317,8 +2365,19 @@
             </p>
           </div>
         </div>
+        <div class="step step--k" data-note="app-economy">
+          <span class="step-label">From downloads to revenue</span>
+          <p class="step-key-text">
+            These apps turn abuse into a business, charging users for <b>subscriptions and image credits</b>.
+          </p>
+        </div>
+        <div class="step step--k" data-note="money-reaches-businesses">
+          <span class="step-label">Following the money</span>
+          <p class="step-key-text">But <b>how does the money reach these businesses?</b></p>
+        </div>
       </div>
 
+      <section class="story-section" aria-label="Payments and sharing">
       <!-- PAYMENT -->
       <div class="scroll-chapter" data-chapter="payment" data-scene="payment">
         <div class="step step--n" data-pay="site">
@@ -2335,7 +2394,7 @@
             effective levers — used against CSAM, not yet against AIG-NCII.
           </p>
         </div>
-        <div class="step step--k" data-pay="annotate" data-done="cloud">
+        <div class="step step--k" data-pay="annotate">
           <span class="step-label">Payment Processors</span>
           <p class="step-key-text"><b>Payment processors</b>…</p>
           <button class="step-expand-btn" aria-expanded="false">
@@ -2367,59 +2426,17 @@
             </p>
           </div>
         </div>
-      </div>
-
-      <!-- CLOUD -->
-      <div class="scroll-chapter" data-chapter="cloud" data-scene="cloud">
-        <div class="step step--k" data-cloud="stats">
-          <span class="step-label">Critical service providers</span>
-          <p class="step-key-text">And critical <b>service providers</b></p>
-        </div>
-        <div class="step step--n" data-cloud="alert">
-          <p>
-            Researchers sent abuse reports to both. Both have acceptable use
-            policies against illegal content. Most sites remained online.
-            Enforcement is reactive — complaint-driven, with no proactive
-            detection.
-          </p>
-        </div>
-        <div class="step step--k" data-cloud="annotate">
-          <span class="step-label">Creation at scale</span>
-          <p class="step-key-text">
-            All of these technologies so far support deepfake creation at scale.
-          </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Critical service providers, including cloud service providers,
-              domain name services (DNS), and authentication services, are
-              support software enabling the existence of multiple pieces of the
-              technological ecosystem.
-            </p>
-            <p>
-              That includes nudifier apps and deepfake websites. An Indicator
-              audit of 85 AI nudifier websites found that “Amazon and Cloudflare
-              provide hosting or content delivery services for 62 of the 85
-              nudifiers” and “Google enabled simple sign-on for 53 out of 85.”
-            </p>
-            <p>
-              On May 6, 2025, Mr.DeepFakes, the world’s most notorious “deepfake
-              pornography” site with over 650,000 users, shut down because an
-              unknown “critical service provider terminated service permanently”
-              and “data loss has made it impossible to continue operation.” This
-              case study demonstrates a connection between critical service
-              providers and AIG-NCII distribution channels.
-            </p>
-          </div>
+        <div class="step step--k" data-note="creation-scale">
+          <span class="step-label">From creation to circulation</span>
+          <p class="step-key-text">Payment turns image creation into a business. The harm continues when those images are shared.</p>
         </div>
         <div class="step step--k" data-note="where" style="height: 70vh">
           <span class="step-label">Where does it go?</span>
           <p class="step-key-text">
-            But after the image is created, <b>where does it go?</b>
+            Once an image is created or purchased, <b>where does it go?</b>
           </p>
         </div>
+
       </div>
 
       <!-- DM / PRIVATE CHANNELS -->
@@ -2508,6 +2525,8 @@
           </p>
         </div>
       </div>
+
+      </section>
 
       <!-- FINALE: every window at once, then close one -->
       <div class="scroll-chapter" data-chapter="finale" data-scene="finale">
@@ -2623,7 +2642,10 @@
           >
         </p>
         <p class="endcard-credit">
-          Designed and built by <strong>Haya Bugshan</strong>
+          Created and built by <strong>Haya Bugshan</strong><br />
+          Design refined by <strong>Maja Mishevska</strong><br />
+          Mentored by <strong>Michelle L. Ding</strong><br />
+          Storyboard by <strong>Haya, Maja and Michelle</strong>
         </p>
       </div>
     </footer>
@@ -2718,6 +2740,13 @@
         >
           <i class="fas fa-users"></i>
         </div>
+        <div
+          class="dt-dock-item dt-dock--infra"
+          title="Infrastructure"
+          data-go="cloud"
+        >
+          <i class="fas fa-screwdriver-wrench"></i>
+        </div>
         <div class="dt-dock-sep"></div>
         <div
           class="dt-dock-item dt-dock--discovery"
@@ -2749,14 +2778,6 @@
         >
           <i class="fas fa-hand-holding-usd"></i>
         </div>
-        <div
-          class="dt-dock-item dt-dock--infra"
-          title="Infrastructure"
-          data-go="cloud"
-        >
-          <i class="fas fa-screwdriver-wrench"></i>
-        </div>
-        <div class="dt-dock-sep"></div>
         <div
           class="dt-dock-item dt-dock--distribution"
           title="Channels"

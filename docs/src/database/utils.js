@@ -14,8 +14,9 @@ window.DatabaseUtils = (function () {
   }
 
   function recordDate(r) {
-    var value = String(r.date || '');
-    return /^\d{4}/.test(value) ? Number(value.slice(0, 4)) : -Infinity;
+    var value = String(r.date || '').trim();
+    if (!/^\d{4}(?:-\d{2}(?:-\d{2})?)?$/.test(value)) return -Infinity;
+    return Number(value.replace(/-/g, '').padEnd(8, '0'));
   }
 
   function formatDisplayDate(r) {

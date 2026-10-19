@@ -70,6 +70,10 @@
       } else {
         var at = utils.recordDate(a);
         var bt = utils.recordDate(b);
+        if (at !== bt) {
+          if (at === -Infinity) return 1;
+          if (bt === -Infinity) return -1;
+        }
         cmp = at === bt ? 0 : at < bt ? -1 : 1;
         if (cmp === 0) {
           cmp = titleCollator.compare(String(a.title || ''), String(b.title || ''));

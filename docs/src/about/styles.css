@@ -67,6 +67,13 @@
 }
 
 .about-paper-links {
+  display: inline;
+  white-space: nowrap;
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-sm);
+}
+
+.about-paper-venue {
   display: flex;
   flex-wrap: wrap;
   gap: var(--db-space-2);
@@ -76,6 +83,7 @@
 }
 
 .about-paper-links a:hover,
+.about-paper-links a:focus-visible,
 .about-org-name:hover,
 .about-credits a:hover {
   text-decoration: underline;
@@ -102,7 +110,7 @@
 .about-abstract p,
 .about-closing p {
   margin: 0;
-  font-size: var(--db-text-md);
+  font-size: var(--db-text-sm);
   line-height: var(--db-lh-loose);
 }
 
@@ -300,6 +308,7 @@
     width: 100%;
     border-left: 0;
     border-top: 1px solid var(--db-ink);
+    border-bottom: 1px solid var(--db-ink);
   }
 
   .about-authors {
@@ -334,7 +343,6 @@
 
   .about-credits {
     padding-top: var(--db-space-2);
-    border-top: 1px solid var(--db-ink);
     width: 100%;
   }
 }

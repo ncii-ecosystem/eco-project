@@ -78,9 +78,11 @@
     if (Eco.replaying || navigation.active?.dataset.search !== 'results') return;
     navigation.goTo(document.querySelector('.step[data-search="annotate"]'));
   };
-  document.getElementById('chat-send-btn')?.addEventListener('click', () => {
-    const step = document.querySelector('[data-chat="send"]');
-    if (navigation.active?.dataset.chat === 'type') navigation.goTo(step);
+  document.getElementById('chat-send-btn')?.addEventListener('click', event => {
+    const target = { type: 'send', refuse: 'follow-up' }[navigation.active?.dataset.chat];
+    if (!target || event.currentTarget.disabled) return;
+    event.currentTarget.blur();
+    navigation.goTo(document.querySelector('.step[data-chat="' + target + '"]'));
   });
 
   /* ── Reader controls: sound + restart ────────── */
@@ -291,7 +293,7 @@
   Eco.advanceTo = () => {};
 
   /* Used by the finale: make sure every app has a window, in story order */
-  const FINALE_ORDER = ['cover', 'interface', 'models', 'devplat', 'reddit', 'mdf', 'search', 'appstore', 'payment', 'cloud', 'dm', 'dm-email'];
+  const FINALE_ORDER = ['cover', 'interface', 'models', 'devplat', 'reddit', 'mdf', 'cloud', 'search', 'appstore', 'payment', 'dm', 'dm-email'];
   Eco.windows = {
     all() {
       FINALE_ORDER.forEach((wid) => {
@@ -641,12 +643,13 @@
   /* One source of truth for the narrative. Scene prerequisites are restored
      without motion in the same frame, then only the selected step animates. */
   // Notifications are narrative states, so back/forward navigation restores them.
-  document.querySelectorAll('.scroll-chapter').forEach(chapter => {
+  const narrativeChapters = Array.from(document.querySelectorAll('.scroll-chapter'));
+  narrativeChapters.forEach((chapter, index) => {
+    const previousChapter = narrativeChapters[index - 1];
     const id = chapter.dataset.chapter === 'intro' ? 'cover' : chapter.dataset.chapter;
     if (!Eco.NOTIF_CONFIG[id]) return;
     const anchor = id === 'cover' ? chapter.querySelector('[data-intro="n4"]')
-      : chapter.previousElementSibling?.matches('.scroll-chapter')
-        ? chapter.previousElementSibling.querySelector('.step:last-child') : null;
+      : previousChapter?.querySelector('.step:last-child');
     if (!anchor) return;
     const step = document.createElement('div');
     step.className = 'step step--n';
@@ -820,7 +823,7 @@
     }
     // Revisiting an automatic response shows its completed state and waits for input.
     const restoreAutomaticStep = navigatingBackward &&
-      (element.dataset.search === 'results' || element.dataset.chat === 'send' || element.dataset.dm === 'msg2');
+      (element.dataset.search === 'results' || ['send', 'follow-up'].includes(element.dataset.chat) || element.dataset.dm === 'msg2');
     if (restoreAutomaticStep) Eco.replaying = true;
     try { applyStep(element); }
     finally { if (restoreAutomaticStep) Eco.replaying = false; }
@@ -867,13 +870,14 @@
       if (!Eco.replaying) openFeedFromCards();
     }
     Eco.handleStep(element.dataset, 'down');
-    if (element.dataset.chat === 'send' && !Eco.replaying) {
+    const chatReply = { send: 'refuse', 'follow-up': 'respond' }[element.dataset.chat];
+    if (chatReply && !Eco.replaying) {
       setTimeout(() => {
         if (navigation.active !== element) return;
         Eco.handleStep({ chat: 'think' }, 'down');
         setTimeout(() => {
           if (navigation.active === element) {
-            navigation.goTo(document.querySelector('.step[data-chat="respond"]'));
+            navigation.goTo(document.querySelector('.step[data-chat="' + chatReply + '"]'));
           }
         }, prefersReducedMotion() ? 0 : 900);
       }, prefersReducedMotion() ? 0 : 400);

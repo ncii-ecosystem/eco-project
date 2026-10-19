@@ -90,7 +90,7 @@ body.win-busy * {
   gap: var(--db-space-2);
   text-decoration: none;
   cursor: pointer;
-  font: 700 13px var(--db-font-mono);
+  font: 400 var(--db-text-sm)/var(--db-lh) var(--font-sans);
   color: var(--p);
   background: var(--role-proliferation);
   border: 1px solid var(--p);
@@ -119,7 +119,8 @@ body.win-busy * {
 
 .endcard-inner .endcard-credit {
   margin-top: 28px;
-  font: 400 13px var(--db-font-mono);
+  font: 400 var(--db-text-sm)/var(--db-lh-loose) var(--db-font-mono);
+  line-height: 1.9;
   color: #fff;
   opacity: 0.85;
   letter-spacing: 0.04em;

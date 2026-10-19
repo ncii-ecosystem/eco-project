@@ -623,8 +623,8 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
    ═══════════════════════════════════════════════════════════ */
 .endcard { position:relative; z-index:30; padding:60px 20px 80px; }
 .endcard-inner { max-width:680px; margin:0 auto; text-align:center; }
-.endcard-inner p { font-size:0.85rem; line-height:1.7; margin-bottom:12px; }
-.endcard-note { font-size:0.75rem !important; font-style:italic; }
+.endcard-inner p { font-size:var(--db-text-sm); line-height:var(--db-lh-loose); margin-bottom:var(--db-space-3); }
+.endcard-note { font-style:italic; }
 
 /* ═══════════════════════════════════════════════════════════
    NOTES APP (persistent floating window)
