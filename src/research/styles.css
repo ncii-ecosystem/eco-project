@@ -139,6 +139,13 @@
   text-underline-offset: 0.15em;
 }
 
+.research-copy .about-madeby {
+  margin: var(--db-space-3) 0 0;
+  font-family: var(--db-font-mono);
+  font-size: 0.85em;
+  opacity: var(--db-muted);
+}
+
 .about-soon {
   opacity: var(--db-muted);
 }
