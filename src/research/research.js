@@ -94,10 +94,12 @@ try {
         ) -
           1) /
         svgScale;
+      // never wider than the gap before the label, so the squares do not cover the text on small screens
+      const marker = Math.min(markerSize, 41);
       legendGroup.querySelectorAll(".eg-swatch").forEach((swatch, index) => {
-        swatch.setAttribute("width", markerSize);
-        swatch.setAttribute("height", markerSize);
-        swatch.setAttribute("y", 92 + index * 39 - markerSize / 2);
+        swatch.setAttribute("width", marker);
+        swatch.setAttribute("height", marker);
+        swatch.setAttribute("y", 92 + index * 39 - marker / 2);
       });
     }
   }

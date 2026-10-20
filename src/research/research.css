@@ -344,3 +344,34 @@ html.db-theme-dark .about-research {
 .pol-list li[data-st].active .pol-n, .pol-role-item.on .sw { border-width: 2px; }
 .pol-state.role-dim, .pol-list li.role-dim, .pol-fed-node.role-dim { opacity: 0.3; }
 .pol-state, .pol-list li, .pol-fed-node { transition: opacity 0.2s ease; }
+
+/* Narrow screens (phones, small tablets): the figure scales to the screen instead of scrolling sideways. */
+@media (max-width: 999px) {
+  #research-visual { min-width: 0; padding: 12px; }
+  .about-research .pol-us-wrap { width: 100%; }
+  .research-desc { font-size: var(--db-text-sm); }
+}
+@media (max-width: 560px) {
+  .about-research .pol-legend .pol-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Phones and small tablets: the order is intro, text, note card, the two view buttons, then the figure. */
+@media (max-width: 999px) {
+  .about-layout .about-research,
+  .about-layout .research-layout { display: contents; }
+  .about-layout .research-copy,
+  .about-layout .research-details,
+  .about-layout .research-header,
+  .about-layout .research-visual-scroll {
+    width: min(calc(100% - 2 * var(--db-space-3)), var(--about-column));
+    max-width: none;
+    margin: 0 auto var(--db-space-3);
+  }
+  .about-layout .about-text { order: 1; }
+  .about-layout .research-copy { order: 2; }
+  .about-layout .research-details { order: 3; display: flex; flex-direction: column; height: min(18rem, 40dvh); min-height: 10rem; }
+  .about-layout .research-details .research-note-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  .about-layout .research-header { order: 4; }
+  .about-layout .research-visual-scroll { order: 5; }
+  .about-layout #research-error { order: 6; margin: 0 var(--db-space-3) var(--db-space-3); }
+}
