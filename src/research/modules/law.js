@@ -15,19 +15,29 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
   /* ── the laws (the paper's Table 3 and Figure 2) ───────────── */
   const LAWS = [
     { n: 1, st: 'CA', name: 'California', bill: 'SB981', year: 2024, role: 'dist', icons: ['comment'],
+      url: 'https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240SB981',
       text: 'Requires “social media platforms” to provide a mechanism that is reasonably accessible to a reporting user.' },
     { n: 2, st: 'NY', name: 'New York', bill: 'A8808', year: 2024, role: 'dist', icons: ['comment'],
+      url: 'https://www.nysenate.gov/legislation/bills/2023/A8808',
       text: 'Enables individuals to maintain an action or special proceeding for a court order to require “websites” to permanently remove non-consensually distributed intimate images.' },
     { n: 3, st: 'TN', name: 'Tennessee', bill: 'H0769', year: 2025, role: 'creation', icons: ['code', 'wand'],
+      url: 'https://wapp.capitol.tn.gov/apps/BillInfo/Default.aspx?BillNumber=HB0769&GA=114',
       text: 'Makes it an offense for a person to knowingly “possess, distribute, or produce technology, software, or digital tools” designed for the purpose of creating material that includes a minor engaged in sexual activity or simulated sexual activity.' },
     { n: 4, st: 'AR', name: 'Arkansas', bill: 'HB1529', year: 2025, role: 'creation', icons: ['code', 'wand'],
+      url: 'https://arkleg.state.ar.us/Bills/Detail?id=HB1529&ddBienniumSession=2025%2F2025R',
       text: 'Enables the Attorney General to “institute a civil action on behalf of the state against a provider or developer of image generation technology” that was used to create deepfake visual material.' },
     { n: 5, st: 'TX', name: 'Texas', bill: 'SB441', year: 2025, role: 'creation', icons: ['code', 'wand'],
+      url: 'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=SB441',
       text: 'Makes it an offense for an individual to non-consensually create intimate deepfakes. Does not apply to the “provider or developer of a publicly accessible artificial intelligence application or software” that was used in the creation of the deepfake media if they “included a prohibition against the creation of deep fake media … in terms and conditions or user policies” and “took affirmative steps to prevent the creation of deep fake media.”' },
     { n: 6, st: 'MN', name: 'Minnesota', bill: 'HF1606', year: 2026, role: 'creation', icons: ['wand'],
+      url: 'https://www.revisor.mn.gov/bills/bill.php?b=House&f=HF1606&ssn=0&y=2026',
       text: 'Titled “Prohibition on Nudification Technology”. A person who owns or controls a website, application, software, program, or other service must not allow a user to access, download, or use it to nudify an image or video, or nudify an image or video on behalf of a user.' },
   ];
   const lawBySt = Object.fromEntries(LAWS.map((l) => [l.st, l]));
+  /* the one federal law, listed first in the legend (Distribution Channels) */
+  const FED = { name: 'Federal', bill: 'TAKE IT DOWN Act', year: 2025, role: 'dist', icons: ['comment'],
+    url: 'https://www.govinfo.gov/content/pkg/PLAW-119publ12/html/PLAW-119publ12.htm', linkLabel: 'Read the law',
+    text: 'Requires public platforms to remove reported non-consensually posted “intimate visual depictions” within 48 hours. Enforced by the Federal Trade Commission.' };
 
   /* ── tags on the boxes ────────────────────────────────────── */
   const TAG_W = 150, TAG_H = 42, TAG_GAP = 12, TAG_Y = 232;
@@ -108,12 +118,91 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
   map.innerHTML = `
     <div class="pol-legend">
     <h3>Landscape of U.S. State Laws Regulating the AIG-NCII Ecosystem</h3>
-    <ol class="pol-list">${LAWS.map((l) => `<li class="r-${l.role}"><span class="pol-n">${l.n}</span>${l.name} · ${l.bill} (${l.year})</li>`).join('')}</ol>
+    <ol class="pol-list">${LAWS.map((l) => `<li class="r-${l.role}" data-st="${l.st}" tabindex="0" role="button" aria-pressed="false" aria-label="${l.name} ${l.bill}, ${l.year}: read what it says"><span class="pol-n">${l.n}</span>${l.name} · ${l.bill} (${l.year})</li>`).join('')}</ol>
     </div>
     <div class="pol-us-wrap"><svg class="pol-us" viewBox="${-outlineInset} ${-outlineInset} ${12 * (T + TG) - TG + outlineInset * 2} ${8 * (T + TG) - TG + outlineInset * 2}" role="group"></svg></div>
-    <div class="pol-role"><span>Role of technology in the ecosystem:</span><span class="pol-role-item"><i class="sw r-creation"></i>Creation</span><span class="pol-role-item"><i class="sw r-dist"></i>Distribution</span></div>`;
+    <div class="pol-role"><span>Role of technology in the ecosystem:</span><span class="pol-role-item" data-role="creation" tabindex="0" role="button" aria-pressed="false"><i class="sw r-creation"></i>Creation</span><span class="pol-role-item" data-role="dist" tabindex="0" role="button" aria-pressed="false"><i class="sw r-dist"></i>Distribution</span></div>`;
   mon.appendChild(map);
   const us = map.querySelector('.pol-us');
+  /* the federal law: a circle with a U.S. flag in the bottom-right corner of the map, with a two-line caption above it */
+  const fedNode = el('g', { class: 'pol-fed-node', tabindex: '0', role: 'button', 'aria-pressed': 'false',
+    'aria-label': `${FED.name} law, ${FED.bill}, ${FED.year}: read what it says`,
+    transform: `translate(${12 * (T + TG) - TG - 62} ${8 * (T + TG) - TG - 30})` }, us);
+  el('circle', { r: 30, class: 'pol-fed-ring' }, fedNode);
+  const fedClip = el('clipPath', { id: 'pol-fed-clip' }, fedNode);
+  el('circle', { r: 25 }, fedClip);
+  const flag = el('g', { 'clip-path': 'url(#pol-fed-clip)' }, fedNode);
+  const stripe = 50 / 7;
+  for (let i = 0; i < 7; i++) el('rect', { x: -25, y: -25 + i * stripe, width: 50, height: stripe + 0.4, class: i % 2 === 0 ? 'pol-flag-red' : 'pol-flag-white' }, flag);
+  el('rect', { x: -25, y: -25, width: 23, height: 4 * stripe, class: 'pol-flag-blue' }, flag);
+  for (let row = 0; row < 3; row++) for (let col = 0; col < 3; col++) el('circle', { cx: -20 + col * 7, cy: -20 + row * 7.5, r: 1.3, class: 'pol-flag-star' }, flag);
+  el('circle', { r: 25, fill: 'none', class: 'pol-fed-edge' }, fedNode);
+  const fedCap = el('text', { class: 'pol-fed-cap' }, fedNode);
+  el('tspan', { x: 0, y: -52 }, fedCap).textContent = 'TAKE IT DOWN';
+  el('tspan', { x: 0, y: -37 }, fedCap).textContent = 'Act';
+  const clearActive = () => {
+    us.querySelectorAll('.pol-state.has').forEach((st) => { st.classList.remove('active'); st.setAttribute('aria-pressed', 'false'); });
+    fedNode.classList.remove('active'); fedNode.setAttribute('aria-pressed', 'false');
+    markListItem(null);
+  };
+  const openFed = () => {
+    clearActive();
+    fedNode.classList.add('active'); fedNode.setAttribute('aria-pressed', 'true');
+    setRole(null);
+    showLaw(FED);
+  };
+  Eco.onActivate(fedNode, openFed);
+
+  /* the legend is clickable: a numbered law opens like its state does; a role lights up the laws with that role */
+  const listItems = Array.from(map.querySelectorAll('.pol-list li[data-st]'));
+  const roleItems = Array.from(map.querySelectorAll('.pol-role-item'));
+  let activeRole = null;
+  function markListItem(code) {
+    listItems.forEach((li) => {
+      const on = li.dataset.st === code;
+      li.classList.toggle('active', on);
+      li.setAttribute('aria-pressed', String(on));
+    });
+  }
+  function setRole(role) {
+    activeRole = role;
+    map.classList.toggle('has-role', !!role);
+    us.querySelectorAll('.pol-state.has').forEach((st) => st.classList.toggle('role-dim', !!role && !st.classList.contains('r-' + role)));
+    fedNode.classList.toggle('role-dim', !!role && FED.role !== role);
+    listItems.forEach((li) => li.classList.toggle('role-dim', !!role && lawBySt[li.dataset.st].role !== role));
+    roleItems.forEach((item) => {
+      const on = item.dataset.role === role;
+      item.classList.toggle('on', on);
+      item.setAttribute('aria-pressed', String(on));
+    });
+  }
+  const ROLE_LAW = {
+    creation: { title: 'Creation', text: 'Laws that regulate the creation of AIG-NCII: training datasets, generative AI models and generative AI interfaces.' },
+    dist: { title: 'Distribution', text: 'Laws that regulate distribution channels: the private channels and public platforms these images are shared across.' },
+  };
+  function showRoleLaws(role) {
+    if (!Eco.showNote) return;
+    const info = ROLE_LAW[role];
+    const step = document.createElement('div');
+    step.className = 'step step--k';
+    step.dataset.nkey = 'law-role-' + role;
+    const label = document.createElement('span'); label.className = 'step-label'; label.textContent = info.title;
+    const key = document.createElement('p'); key.className = 'step-key-text'; key.textContent = info.text;
+    const det = document.createElement('div'); det.className = 'step-detail';
+    const all = (role === FED.role ? [FED] : []).concat(LAWS.filter((l) => l.role === role));
+    all.forEach((l) => { const p = document.createElement('p'); p.textContent = `${l.name} · ${l.bill} (${l.year})`; det.appendChild(p); });
+    step.append(label, key, det);
+    Eco.showNote(step);
+  }
+  listItems.forEach((li) => Eco.onActivate(li, () => openers[li.dataset.st] && openers[li.dataset.st]()));
+  roleItems.forEach((item) => Eco.onActivate(item, () => {
+    const role = item.dataset.role;
+    if (activeRole === role) { setRole(null); if (Eco.resetNote) Eco.resetNote(); return; }
+    clearActive();
+    setRole(role);
+    showRoleLaws(role);
+  }));
+  const openers = {};
   Object.entries(GRID).forEach(([code, [c, r]]) => {
     const law = lawBySt[code];
     const g = el('g', { class: 'pol-state' + (law ? ' has r-' + law.role : ''), transform: `translate(${c * (T + TG)} ${r * (T + TG)})` }, us);
@@ -127,12 +216,13 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
       const nn = el('text', { x: 9, y: 13, 'text-anchor': 'middle', class: 'pol-badge-n' }, g); nn.textContent = String(law.n);
       g.setAttribute('aria-pressed', 'false');
       const open = () => {
-        us.querySelectorAll('.pol-state.has').forEach(state => {
-          state.classList.toggle('active', state === g);
-          state.setAttribute('aria-pressed', String(state === g));
-        });
+        clearActive();
+        setRole(null);
+        g.classList.add('active'); g.setAttribute('aria-pressed', 'true');
+        markListItem(code);
         showLaw(law);
       };
+      openers[code] = open;
       Eco.onActivate(g, open);
     }
   });
@@ -147,6 +237,13 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
     const label = document.createElement('span'); label.className = 'step-label'; label.textContent = `${law.name} · ${law.bill} (${law.year})`;
     const key = document.createElement('p'); key.className = 'step-key-text'; key.textContent = law.text;
     const det = document.createElement('div'); det.className = 'step-detail';
+    if (law.url) {
+      const p = document.createElement('p');
+      const a = document.createElement('a');
+      a.href = law.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.textContent = (law.linkLabel || 'Read the bill') + ' ↗';
+      p.appendChild(a); det.appendChild(p);
+    }
     step.append(label, key, det);
     Eco.showNote(step);
   }
@@ -229,7 +326,7 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
     STEPS,
     step(name) { const i = STEPS.indexOf(name); if (i >= 0) apply(i + 1); },
     undo(name) { const i = STEPS.indexOf(name); if (i >= 0) apply(i); },
-    reset() { apply(0); },
+    reset() { apply(0); clearActive(); setRole(null); },
   };
   return Eco.policy;
 }
@@ -301,7 +398,7 @@ export const stepsHtml = `    <div class="step step--k" data-fin="law-intro">
       <p class="step-key-text">Highlighted states show laws that regulate technologies in the ecosystem. Icons identify the technologies, and colors indicate their role.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
       <div class="step-detail" aria-hidden="true">
-        <p>Click a highlighted state to read about its law.</p>
+        <p>Click a highlighted state to read about its law, or the flag circle for the federal law.</p>
 
       </div>
     </div>

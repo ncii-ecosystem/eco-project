@@ -1,0 +1,272 @@
+.about-layout {
+  --about-column: 56rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+
+.about-text {
+  width: min(calc(100% - 2 * var(--db-space-3)), var(--about-column));
+  margin: var(--db-space-4) auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--db-ink);
+}
+
+.about-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--db-space-3);
+  padding: var(--db-space-3);
+}
+
+.about-summary {
+  margin: 0;
+  font-size: var(--db-text-lg);
+  line-height: var(--db-lh);
+}
+
+.about-folds {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-fold-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--db-space-3);
+  width: 100%;
+  padding: var(--db-space-3);
+  border: 0;
+  border-top: 1px solid var(--db-ink);
+  background: transparent;
+  color: var(--db-ink);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-md);
+}
+
+.about-fold-btn span:last-child {
+  font-size: var(--db-text-lg);
+  line-height: 1;
+}
+
+.about-fold-btn:hover,
+.about-fold-btn:focus-visible {
+  font-weight: 700;
+}
+
+/* The abstract and the citation open in a centered box over a darkened page. */
+.about-dialog {
+  width: min(48rem, calc(100vw - 2rem));
+  max-height: min(85dvh, 52rem);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--db-ink);
+  background: var(--db-bg);
+  color: var(--db-ink);
+  overflow: hidden;
+}
+
+.about-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-dialog::backdrop {
+  background: rgba(10, 6, 30, 0.84);
+}
+
+.about-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--db-space-3);
+  padding: var(--db-space-3);
+  border-bottom: 1px solid var(--db-ink);
+}
+
+.about-dialog-head h2 {
+  margin: 0;
+  font: 400 var(--db-text-lg) / 1.4 var(--db-font-mono);
+}
+
+.about-dialog-close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--db-ink);
+  font-size: 1.75rem;
+  line-height: 1;
+  padding: 0 var(--db-space-1);
+  cursor: pointer;
+}
+
+.about-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--db-space-4);
+  padding: var(--db-space-3);
+  overflow-y: auto;
+}
+
+.about-dialog .about-citation-text {
+  font-size: var(--db-text-md);
+}
+
+.about-citation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--db-space-1);
+}
+
+.about-citation-text {
+  margin: 0;
+  font-size: var(--db-text-xs);
+  line-height: var(--db-lh-loose);
+  overflow-wrap: anywhere;
+}
+
+.about-citation-text a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.about-soon {
+  opacity: var(--db-muted);
+}
+
+.about-paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--db-space-1) var(--db-space-3);
+  margin: 0;
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-xs);
+}
+
+.about-paper-links a:hover,
+.about-paper-links a:focus-visible,
+.about-citation-text a:hover,
+.about-citation-text a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  font-weight: 700;
+}
+
+.about-paper-title {
+  margin: 0;
+  max-width: 100%;
+  font-weight: normal;
+  overflow-wrap: anywhere;
+}
+
+.about-abstract,
+.about-closing,
+.about-roles,
+.about-role-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--db-space-4);
+}
+
+.about-abstract p,
+.about-closing p {
+  margin: 0;
+  font-size: var(--db-text-md);
+  line-height: var(--db-lh-loose);
+}
+
+.about-role-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+  gap: var(--db-space-3);
+}
+
+.about-role-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--db-space-2);
+  align-items: baseline;
+  font-size: var(--db-text-lg);
+  line-height: var(--db-lh);
+  min-width: 0;
+}
+
+.about-role-num {
+  font-family: var(--db-font-mono);
+}
+
+.about-role-content {
+  min-width: 0;
+}
+
+.about-role-content .text-highlight {
+  font-family: var(--db-font-mono);
+  font-size: var(--db-text-lg);
+  line-height: var(--db-lh);
+  overflow-wrap: anywhere;
+}
+
+.about-tech {
+  white-space: nowrap;
+}
+
+.about-role-detail {
+  display: block;
+  margin: var(--db-space-1) 0 0;
+  font-size: var(--db-text-md);
+  line-height: var(--db-lh);
+  opacity: var(--db-muted);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .about-layout {
+    padding-bottom: 0;
+  }
+
+  .about-role-list {
+    gap: var(--db-space-3);
+  }
+}
+
+@media (min-width: 1000px) {
+  /* Left: the intro, the view buttons and the description. Right: the figure with its note, centered in the rest of the window. */
+  .about-layout {
+    display: grid;
+    grid-template-columns: min(30rem, 34vw) minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      "text fig"
+      "head fig"
+      "copy fig";
+    gap: var(--db-space-3) var(--db-space-4);
+    align-items: start;
+    height: calc(100dvh - var(--site-nav-h, 2.5rem));
+    padding: var(--db-space-4) var(--db-space-3);
+  }
+
+  .about-layout .about-research { display: contents; }
+
+  .about-text {
+    grid-area: text;
+    width: auto;
+    margin: 0;
+  }
+
+  .research-header { grid-area: head; }
+  .research-copy { grid-area: copy; }
+  .research-layout { grid-area: fig; }
+  #research-error { grid-column: 1 / -1; }
+}
+

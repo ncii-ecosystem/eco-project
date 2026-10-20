@@ -31,7 +31,12 @@
 .eg-shadow { fill: var(--p); }
 .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: var(--research-outline); vector-effect: non-scaling-stroke; transition: stroke-width 0.15s ease; }
 .eco-graph.live .eg-node:hover .eg-box, .eg-node:focus-visible .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 3; }
-.eg-node.active .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 3.5; }
+.eg-node { transform-box: fill-box; transform-origin: center; }
+/* the box that was clicked: a little larger, a heavier outline and bolder text */
+.eg-node.in.active { transform: scale(1.03); }
+.eg-node.active .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 5; }
+.eg-node.active .eg-h, .eg-node.active .eg-m { font-weight: 700; }
+/* boxes it connects to stay clear; the rest step back */
 .eg-node.linked .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 2; }
 .eco-graph.has-selection .eg-node:not(.active):not(.linked) { opacity: 0.4; }
 .eg-icon { font: 900 32px 'Font Awesome 5 Free'; fill: var(--p); }
@@ -127,7 +132,20 @@ html.db-theme-dark .about-research {
 }
 .about-research h2 { font: 400 var(--db-text-lg)/1.4 var(--db-font-mono); }
 .research-header { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-.research-header h2 { margin: 0; }
+.research-views button { padding: 14px 20px; font-size: var(--db-text-md); }
+.research-header, .research-copy { max-width: 56rem; margin-inline: auto; }
+.research-copy { margin-top: 20px; padding: var(--db-space-3); border: 1px solid var(--db-ink); font-size: var(--db-text-md); line-height: var(--db-lh-loose); }
+.research-copy p { margin: 0 0 var(--db-space-3); }
+.research-copy p:last-child { margin-bottom: 0; }
+.research-copy a { text-decoration: underline; text-underline-offset: 0.15em; }
+.research-desc { margin: 0 12px 12px; padding: var(--db-space-3); border: 1px dashed var(--db-ink); font-size: var(--db-text-md); line-height: var(--db-lh-loose); }
+.research-desc p { margin: 0 0 var(--db-space-3); }
+.research-desc p:last-child { margin-bottom: 0; }
+.research-desc a { text-decoration: underline; text-underline-offset: 0.15em; }
+.about-research[data-view="system"] .research-copy[data-for="law"],
+.about-research[data-view="law"] .research-copy[data-for="system"],
+.about-research[data-view="system"] .research-desc[data-for="law"],
+.about-research[data-view="law"] .research-desc[data-for="system"] { display: none; }
 .research-views { display: flex; flex-wrap: wrap; gap: 8px; }
 .research-views button, #research-law-topic {
   font: inherit; color: var(--db-ink); background: transparent;
@@ -145,7 +163,7 @@ html.db-theme-dark .about-research {
 .research-views button:focus-visible, #research-law-topic:focus-visible { outline: 2px solid var(--db-ink); outline-offset: 3px; }
 #research-law-controls { margin-bottom: 16px; }
 #research-law-controls label { margin-right: 12px; }
-.research-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 24px 14px; padding-right: 10px; align-items: start; }
+.research-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 17rem); gap: 24px 14px; padding-right: 10px; align-items: start; }
 .research-visual-scroll { overflow-x: auto; border: 1px solid var(--db-ink); }
 #research-visual {
   position: relative; min-width: 620px; padding: var(--research-padding);
@@ -157,7 +175,6 @@ html.db-theme-dark .about-research {
 .about-research .eco-graph { position: relative; inset: auto; padding: 0; }
 .about-research .eg-svg { height: auto; }
 .about-research .eg-shadow { display: none; }
-.about-research[data-view="system"] #research-detail-title { display: none; }
 .about-research .pol-layer { position: relative; inset: auto; padding: 12px; }
 .about-research .pol-layer:not(:has(.pol-card.on)) { display: none; }
 .about-research .pol-band { width: 100%; }
@@ -184,8 +201,9 @@ html.db-theme-dark .about-research {
 }
 .about-research .pol-role {
   grid-column: 1; grid-row: 3;
-  display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-end;
+  display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start;
   gap: 12px; font: 400 12px/1.4 var(--db-font-mono);
+  margin-top: 14px;
 }
 .pol-role-item { display: inline-flex; align-items: center; gap: 6px; }
 .about-research .pol-role .sw {
@@ -201,7 +219,7 @@ html.db-theme-dark .about-research {
 .research-details {
   color: #241a5c;
   border: 1px solid var(--p); background: var(--role-proliferation);
-  box-shadow: var(--hard-lg); border-radius: 0;
+  box-shadow: none; border-radius: 0;
   font: 400 var(--db-text-md)/var(--db-lh-loose) var(--db-font-mono);
 }
 .research-note-titlebar {
@@ -213,9 +231,13 @@ html.db-theme-dark .about-research {
 .research-note-titlebar span:nth-child(2) { background: var(--role-proliferation); }
 .research-note-titlebar span:nth-child(3) { background: var(--role-monetization); }
 .research-note-content { padding: 26px 28px 24px; }
-.research-details h3 { margin: 0 0 12px; font: 400 var(--db-text-md)/var(--db-lh) var(--db-font-mono); }
+.research-details h3 { margin: 0 0 12px; font: 700 var(--db-text-md)/var(--db-lh) var(--db-font-mono); }
+.research-details h4 { margin: 20px 0 8px; font: 700 var(--db-text-md)/var(--db-lh) var(--db-font-mono); }
+.research-details h4.step-key-text { margin-top: 0; }
 .research-details p { font-size: var(--db-text-md); font-weight: 400; line-height: var(--db-lh-loose); }
 #research-detail-body > :first-child { margin-top: 0; }
+#research-detail-body a { text-decoration: underline; text-underline-offset: 0.15em; }
+#research-detail-body a:hover, #research-detail-body a:focus-visible { font-weight: 700; }
 .research-details .step-key-text { margin-top: 0; }
 @media (max-width: 900px) {
   .research-layout { grid-template-columns: minmax(0, 1fr); }
@@ -233,3 +255,92 @@ html.db-theme-dark .about-research {
     transition: none !important;
   }
 }
+
+/* The right-hand column is narrower than the full page, so stack the notes under the figure there. */
+.about-research { container-type: inline-size; }
+@container (max-width: 880px) {
+  .research-layout { grid-template-columns: minmax(0, 1fr); padding-right: 0; }
+}
+@media (min-width: 1000px) {
+  .about-layout .about-research { padding: 0; }
+  .about-layout .research-header,
+  .about-layout .research-copy { max-width: none; margin-inline: 0; }
+}
+
+/* Wide screens: intro and view buttons on the left; the figure and its note as a centered pair on the right, the description under them. */
+@media (min-width: 1000px) {
+  .about-layout .research-header,
+  .about-layout .research-copy { max-width: none; margin-inline: 0; margin-bottom: 0; }
+  .about-layout .research-views { display: grid; grid-template-columns: 1fr 1fr; gap: var(--db-space-2); width: 100%; }
+  .about-layout .research-views button { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 18px 12px; font-size: var(--db-text-md); }
+  /* The shared text sits in its own box on the left; each view's caption and Description sit in a dashed box along the bottom of the figure window. */
+  .about-layout .research-copy {
+    margin-top: 0;
+    font-size: var(--shared-fs, 0.9375rem);
+    padding: var(--db-space-3);
+    align-self: stretch;
+    overflow-y: auto;
+  }
+  .about-layout .research-desc {
+    flex: 0 0 auto;
+    margin: 0 10px 10px;
+    padding: 8px 12px;
+    font-size: var(--db-text-xs);
+    line-height: 1.4;
+    height: var(--desc-h, auto);
+    overflow-y: auto;
+  }
+  .about-layout .research-desc p { margin-bottom: 4px; }
+  .about-layout .research-desc p:last-child { margin-bottom: 0; }
+  .about-layout .research-layout {
+    grid-template-columns: minmax(0, var(--figure-w, 1fr)) minmax(220px, 17rem);
+    justify-content: center;
+    align-self: stretch;
+    align-items: stretch;
+    padding-right: 0;
+  }
+  .about-layout .research-visual-scroll { width: 100%; display: flex; flex-direction: column; }
+  /* The figure box fills the space above the description in both views, with the chart or map centered in it */
+  .about-layout #research-visual { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
+  /* Both views fill the figure box the same way: no minimum width, and the law map is not narrower than the chart */
+  .about-layout #research-visual { min-width: 0; padding: 12px; }
+  .about-layout .pol-us-wrap { width: 100%; max-width: none; }
+  /* The chart or map keeps its proportions and sits centered in the (wider) figure box */
+  .about-layout .eco-graph,
+  .about-layout .pol-map { width: 100%; max-width: var(--content-w, 100%); margin-inline: auto; }
+  /* A little more room around the two view buttons */
+  .about-layout .research-header { margin-block: var(--db-space-3); }
+  .about-layout .research-details { position: relative; min-height: 12rem; }
+  .about-layout .research-note-content { position: absolute; inset: 38px 0 0 0; overflow-y: auto; }
+}
+
+/* The federal law: a circle with a U.S. flag on the map, with a small caption; it opens like a state does. */
+.pol-fed-node { cursor: pointer; outline: none; }
+.pol-fed-ring { fill: var(--role-distribution); stroke: var(--research-box-ink, var(--p)); stroke-width: 2; transition: stroke-width 0.15s ease; }
+.pol-flag-red { fill: var(--role-creation); }
+.pol-flag-white { fill: var(--paper, #fff); }
+.pol-flag-blue { fill: var(--role-infra); }
+.pol-flag-star { fill: var(--paper, #fff); }
+.pol-fed-edge { stroke: var(--research-box-ink, var(--p)); stroke-width: 1; }
+.pol-fed-cap { font: 700 13px var(--db-font-mono); fill: var(--p); text-anchor: middle; }
+.pol-fed-node:hover .pol-fed-ring, .pol-fed-node:focus-visible .pol-fed-ring { stroke-width: 4; }
+.pol-fed-node.active .pol-fed-ring { stroke-width: 5; }
+.pol-fed-node:hover .pol-fed-cap, .pol-fed-node:focus-visible .pol-fed-cap, .pol-fed-node.active .pol-fed-cap { text-decoration: underline; }
+
+/* The legends are clickable. System chart: a role lights up its boxes and dims the others. */
+.eg-legend-item { cursor: pointer; outline: none; }
+.eg-legend-hit { fill: transparent; }
+.eg-legend-item:hover .eg-legend-label, .eg-legend-item:focus-visible .eg-legend-label, .eg-legend-item.on .eg-legend-label { font-weight: 700; }
+.eg-legend-item .eg-swatch { stroke: var(--research-box-ink, var(--p)); stroke-width: 1; transition: stroke-width 0.15s ease; }
+.eg-legend-item:hover .eg-swatch, .eg-legend-item:focus-visible .eg-swatch { stroke-width: 3; }
+.eg-legend-item.on .eg-swatch { stroke-width: 4; }
+.eco-graph.has-role .eg-node:not(.role-on) { opacity: 0.3; }
+.eco-graph.has-role .eg-node.role-on .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 3.5; }
+.eco-graph.has-role .eg-edge { opacity: 0.15; }
+/* Law map: a numbered law opens like its state; a role lights up its laws. */
+.pol-list li[data-st], .pol-role-item { cursor: pointer; }
+.pol-list li[data-st]:hover, .pol-list li[data-st]:focus-visible, .pol-list li[data-st].active,
+.pol-role-item:hover, .pol-role-item:focus-visible, .pol-role-item.on { font-weight: 700; outline: none; }
+.pol-list li[data-st].active .pol-n, .pol-role-item.on .sw { border-width: 2px; }
+.pol-state.role-dim, .pol-list li.role-dim, .pol-fed-node.role-dim { opacity: 0.3; }
+.pol-state, .pol-list li, .pol-fed-node { transition: opacity 0.2s ease; }

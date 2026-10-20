@@ -5,7 +5,7 @@ import {MEDIUMS, LIMITS} from '../src/shared/submit-constants.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = path.join(root, 'docs');
-const pages = ['home', 'story', 'database', 'about', 'survivor-support'];
+const pages = ['home', 'story', 'database', 'research', 'survivor-support'];
 const publicConfig = JSON.parse(await fs.readFile(path.join(root, 'src/sanity/public-config.json'), 'utf8'));
 const config = {
   projectId: process.env.SANITY_PROJECT_ID || publicConfig.projectId,
@@ -16,7 +16,7 @@ const config = {
 };
 
 // Rebuild generated directories so removed source files cannot remain published.
-for (const directory of ['assets', 'src', 'api', ...pages]) {
+for (const directory of ['assets', 'src', 'api', 'about', ...pages]) {
   await fs.rm(path.join(output, directory), {recursive: true, force: true});
 }
 await fs.mkdir(output, {recursive: true});
@@ -35,6 +35,14 @@ for (const page of pages) {
   await fs.mkdir(path.join(output, page), {recursive: true});
   await fs.writeFile(path.join(output, page, 'index.html'), shell);
 }
+
+// The About page is now Research; keep old /about links working on the static host.
+await fs.mkdir(path.join(output, 'about'), {recursive: true});
+await fs.writeFile(path.join(output, 'about/index.html'),
+  '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" />' +
+  '<meta http-equiv="refresh" content="0; url=/research" />' +
+  '<link rel="canonical" href="/research" /><title>Research</title></head>' +
+  '<body><p><a href="/research">Go to the Research page</a></p></body></html>\n');
 
 await fs.mkdir(path.join(output, 'api'), {recursive: true});
 await fs.writeFile(path.join(output, 'api/config.js'),
