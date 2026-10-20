@@ -17,9 +17,19 @@ npm run studio
 
 Open [http://localhost:3333](http://localhost:3333)
 
+## Submission backend (Cloudflare Worker)
+
+After changing the submission Worker, deploy it from the project root:
+
+```bash
+npx wrangler deploy
+```
+
+Pushing to GitHub updates the website but doesn't deploy the Worker!
+
 ## Project structure
 
 - `src/`: editable pages, shared frontend code, and the local server.
-- `assets/`: original images used by the site.
+- `assets/`: images used by the site.
 - `studio/`: Sanity Studio; `workers/`: the submission backend.
 - `docs/`: generated GitHub Pages site. After editing `src/` or `assets/`, run `npm run build:pages` to refresh `docs/` and clear out old files.

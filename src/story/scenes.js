@@ -1322,15 +1322,15 @@
 
   /* ── Notification content per chapter ───────────── */
   Eco.NOTIF_CONFIG = {
-    cover:     { icon: '<span class="notif-folder notif-folder--neutral"><i class="fas fa-camera-retro"></i></span>',          app: 'NewsFeed', title: 'Trending now', body: 'Five headlines. Five different stories.' },
-    interface: { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-magic"></i></span>',         app: 'Assistant', title: 'AI interfaces', body: 'Chatbots and apps give people an easy way to use AI models.' },
-    dm:        { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-comment"></i></span>',       app: 'Messages', title: 'Sharing images', body: 'Images can spread through private messages and public websites.' },
-    models:    { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-code"></i></span>',            app: 'Models', title: 'Open and closed models', body: 'Who controls a model affects who can use or change it.' },
-    reddit:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-users"></i></span>',         app: 'Forum', title: 'Deepfake creation communities', body: 'Online groups share tools and advice for creating deepfakes.' },
-    search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Search', title: 'Search engines', body: 'Search results can lead people to abusive tools and websites.' },
-    appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'Store', title: 'App stores', body: 'App stores can make these tools easy to find and download.' },
-    payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout', title: 'Payment services', body: 'Payment services let these businesses charge customers.' },
-    cloud:     { icon: '<span class="notif-folder notif-folder--infra"><i class="fas fa-screwdriver-wrench"></i></span>',                app: 'Cloud', title: 'Infrastructure', body: 'Servers, storage, and other services keep these apps online.' },
+    cover:     { icon: '<span class="notif-folder notif-folder--neutral"><i class="fas fa-camera-retro"></i></span>',          app: 'NewsFeed', title: 'Trending now' },
+    interface: { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-magic"></i></span>',         app: 'Assistant', title: 'AI interfaces' },
+    dm:        { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-comment"></i></span>',       app: 'Messages', title: 'Sharing images' },
+    models:    { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-code"></i></span>',            app: 'Models', title: 'Open and closed models' },
+    reddit:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-users"></i></span>',         app: 'Forum', title: 'Deepfake creation communities' },
+    search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Search', title: 'Search engines' },
+    appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'Store', title: 'App stores' },
+    payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout', title: 'Payment services' },
+    cloud:     { icon: '<span class="notif-folder notif-folder--infra"><i class="fas fa-screwdriver-wrench"></i></span>',                app: 'Cloud', title: 'Infrastructure' },
   };
 
   // Keep the original nodes (and their listeners) when restoring scene markup.

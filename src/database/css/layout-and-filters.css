@@ -549,10 +549,6 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
   min-width: 0;
 }
 
-.db-actions-credit {
-  opacity: var(--db-muted);
-}
-
 .db-submit,
 .db-export {
   appearance: none;

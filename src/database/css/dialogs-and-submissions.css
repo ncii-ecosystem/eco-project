@@ -125,6 +125,10 @@
   overflow-x: auto;
 }
 
+.db-docs-table-wrap + p {
+  margin-top: var(--db-space-3);
+}
+
 .db-docs-table {
   width: 100%;
   border-collapse: collapse;
@@ -147,6 +151,7 @@
 }
 
 .db-docs-table thead th {
+  white-space: nowrap;
   background: var(--db-ink);
   color: var(--db-bg);
 }

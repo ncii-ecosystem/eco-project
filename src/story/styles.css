@@ -186,7 +186,6 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
 .notif-folder--infra       { background:var(--role-infra); color:var(--role-infra-ink); }
 .notif-folder--monetize    { background:var(--role-monetization); color:var(--role-monetization-ink); }
 .intro-notif-app { margin-bottom: 2px; }
-.intro-notif-body { font-size: 11px; line-height: 1.4; }
 .intro-notif-time { font-size: 10px; flex-shrink: 0; }
 
 .mon-screen { flex: 1; overflow: hidden; position: relative; }
@@ -299,56 +298,6 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
   font-size: 20px; line-height: 1.5;
   color: #2a0a18; font-weight: 600;
 }
-.step-expand-btn {
-  display: block;
-  margin-top: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 600;
-  font-family: var(--font-sans);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(90,20,55,0.55);
-  padding: 0;
-  text-align: left;
-  pointer-events: all;
-  transition: color 0.15s;
-}
-.step-expand-btn:hover { color: rgba(90,20,55,0.9); }
-.step-detail {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.25s ease;
-  margin-top: 0;
-}
-.step-detail.is-open {
-  max-height: 800px;
-  opacity: 1;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(110,60,90,0.2);
-}
-.step-detail p {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 1.6;
-  color: rgba(40,10,30,0.82);
-  margin-bottom: 9px;
-}
-.step-detail blockquote {
-  margin: 10px 0 6px;
-  padding: 7px 12px;
-  border-left: 2px solid rgba(110,60,90,0.35);
-  font-family: var(--db-font-mono);
-  font-size: 13px;
-  font-style: italic;
-  line-height: 1.55;
-  color: rgba(60,15,40,0.78);
-}
-
 /* ─── REDACTED ELEMENTS ────────────────────────── */
 .redacted-block {
   display: flex; align-items: center; justify-content: center;
@@ -733,10 +682,6 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
 .sn-app {
   margin-bottom: 2px;
 }
-.sn-body {
-  font-size: 11.5px;
-  line-height: 1.4;
-}
 .sn-time {
   font-size: 10px;
   flex-shrink: 0;
@@ -755,8 +700,7 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
    ═══════════════════════════════════════════════════════════ */
 
 .na-sb-item:focus-visible,
-.na-more-btn:focus-visible,
-.step-expand-btn:focus-visible {
+.na-more-btn:focus-visible {
   outline: 2px solid var(--capri, #1bb5fd); outline-offset: 2px;
 }
 

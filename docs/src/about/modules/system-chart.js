@@ -288,10 +288,6 @@ export const stepsHtml = `    <div class="step step--n" data-fin="clear"></div>
     <div class="step step--k" data-fin="graph">
       <span class="step-label">One System</span>
       <p class="step-key-text">Behind all those windows is one connected system. Click any box to read what it does.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>Redrawn from the paper’s map of the technologies that facilitate AI-generated non-consensual intimate images. Each box is a layer of technology, and the links show how they depend on one another.</p>
-      </div>
     </div>
 `;
 export const dockHtml = `<div class="dt-dock-item dt-dock--neutral" title="Map" data-go="finale" data-step="[data-fin=&quot;graph&quot;]"><i class="fas fa-diagram-project"></i></div>`;

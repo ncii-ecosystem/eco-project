@@ -110,7 +110,7 @@
         story: "Story",
         home: "Home",
         database: "Database",
-        about: "About",
+        about: "Research",
         "survivor-support": "Survivor Support",
       };
       document.title = routeTitles[pageName(url)];

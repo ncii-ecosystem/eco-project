@@ -1,4 +1,4 @@
-export const MEDIUMS = ['Research', 'News Article', 'Report', 'Artifact', 'Law & Policy', 'Misc'];
+export const MEDIUMS = ['Research', 'News Article', 'Report', 'Artifact', 'Law & Policy'];
 
 export const LIMITS = {
   TITLE: 500,

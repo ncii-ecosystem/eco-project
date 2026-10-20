@@ -21,7 +21,6 @@ window.SanityClient = (function () {
       report: 'Report',
       spreadsheet: 'Artifact',
       artifact: 'Artifact',
-      misc: 'Misc',
       'law & policy': 'Law & Policy',
       'law and policy': 'Law & Policy'
     };

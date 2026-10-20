@@ -707,7 +707,7 @@
     });
     sceneNotification.setAttribute('aria-label', 'Begin ' + config.app);
     document.getElementById('sn-icon').innerHTML = config.icon;
-    ['app', 'title', 'body'].forEach(key => {
+    ['app', 'title'].forEach(key => {
       const node = document.getElementById('sn-' + key);
       if (node) node.textContent = config[key];
     });
@@ -914,18 +914,6 @@
     dismissNavigationTip();
     if (event.key !== 'ArrowLeft' && forwardFromNotification()) return;
     navigation.move(event.key === 'ArrowLeft' ? -1 : 1);
-  });
-
-  /* ── Step-expand buttons ─────────────────────────── */
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.step-expand-btn');
-    if (!btn) return;
-    const detail = btn.closest('.step--k')?.querySelector('.step-detail');
-    if (!detail) return;
-    const open = detail.classList.toggle('is-open');
-    btn.setAttribute('aria-expanded', open);
-    detail.setAttribute('aria-hidden', String(!open));
-    btn.innerHTML = open ? 'Read less <i class="fas fa-chevron-up" aria-hidden="true"></i>' : 'Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>';
   });
 
   /* ── Initial scene ───────────────────────────────── */

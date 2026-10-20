@@ -238,107 +238,38 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
 export const stepsHtml = `    <div class="step step--k" data-fin="law-intro">
       <span class="step-label">Laws and the Ecosystem</span>
       <p class="step-key-text">AIG-NCII is a crisis of non-consent at scale, and regulators are scrambling.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>AIG-NCII is a crisis of non-consent at scale that regulators are scrambling to control.</p>
-        <p>Regulation that only criminalizes individuals for the creation, dissemination, or solicitation of AIG-NCII without targeting the technological ecosystem supporting it is simply not enough to prevent image-based sexual abuse at scale.</p>
-        <p>In the U.S., there is a patchwork of federal and state laws that cover AIG-NCII to some degree. Nearly all 50 U.S. states have some form of law addressing AIG-NCII. However, these laws use inconsistent terminology, definitions, and include varying levels of protections for victim-survivors.</p>
-        <p>The paper maps the U.S. federal law (the TAKE IT DOWN Act) and 63 state laws across 44 states. Out of the 63 state laws, a vast majority target individuals who have created, solicited, or disseminated AIG-NCII. Only 5 out of 63 state laws (7.9%) explicitly target technology actors.</p>
-
-      </div>
     </div>
     <div class="step step--k" data-fin="law-fed">
       <span class="step-label">Federal: the TAKE IT DOWN Act</span>
       <p class="step-key-text">The only U.S. federal law so far is the <b>TAKE IT DOWN Act</b>.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>The only U.S. federal law to date targeting AIG-NCII is the TAKE IT DOWN Act.</p>
-        <p>Signed into law in May 2025 (and in effect in May 2026), the Act requires public platforms to remove reported non-consensually posted “intimate visual depictions” within 48 hours, to be enforced by the Federal Trade Commission.</p>
-        <p>Viewing the Act against the ecosystem, current federal protections only target a very small piece of it, namely the Distribution Channels.</p>
-
-      </div>
     </div>
     <div class="step step--k" data-fin="law-states">
       <span class="step-label">State Laws: Different Technologies</span>
       <p class="step-key-text">California and New York regulate <b>Distribution Channels</b>. Tennessee, Arkansas and Texas regulate <b>Models</b> and <b>Interfaces</b>.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>California and New York regulate the same piece of the ecosystem, Distribution Channels, while Tennessee, Arkansas and Texas attempt to regulate the technologies involved in the creation of AIG-NCII: Generative AI Models and Generative AI Interfaces.</p>
-        <p>California SB981 (2024) requires “social media platforms” to provide a mechanism that is reasonably accessible to a reporting user.</p>
-        <p>New York A8808 (2024) enables individuals to maintain an action or special proceeding for a court order to require “websites” to permanently remove non-consensually distributed intimate images.</p>
-        <p>Tennessee H0769 (2025) makes it an offense for a person to knowingly “possess, distribute, or produce technology, software, or digital tools” designed for the purpose of creating material that includes a minor engaged in sexual activity or simulated sexual activity.</p>
-        <p>Arkansas HB1529 (2025) enables the Attorney General to “institute a civil action on behalf of the state against a provider or developer of image generation technology” that was used to create deepfake visual material.</p>
-        <p>Texas SB441 (2025) makes it an offense for an individual to non-consensually create intimate deepfakes. It does not apply to the “provider or developer of a publicly accessible artificial intelligence application or software” used in the creation of the deepfake media if they “included a prohibition against the creation of deep fake media … in terms and conditions or user policies” and “took affirmative steps to prevent the creation of deep fake media.”</p>
-
-      </div>
     </div>
     <div class="step step--k" data-fin="law-same">
       <span class="step-label">Same Technology, Different Wording</span>
       <p class="step-key-text">Tennessee’s language is about how technologies are <b>designed</b>. Arkansas’ is about how they have been <b>used</b>.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>Tennessee’s language focuses on how technologies are designed while Arkansas’ language focuses on how they have been used.</p>
-        <p>Both laws reasonably target the creation pipeline via Generative AI Models and Generative AI Interfaces.</p>
-        <p>In practice, a Generative AI Interface that is clearly designed for the purpose of nudification (but never used) may not be subject to civil action in Arkansas but could be within scope in Tennessee.</p>
-        <p>So although some jurisdictions target the same technology, their language is inconsistent, which may or may not have been done intentionally. The ecosystem map helps to see this, and directs a closer reading of the legal text of the two states.</p>
-
-      </div>
     </div>
     <div class="step step--k" data-fin="law-new">
       <span class="step-label">A New Law, Added to the Map</span>
       <p class="step-key-text">On May 7, 2026, Minnesota passed <b>HF 1606</b>: “Prohibition on Nudification Technology”.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>On May 7, 2026, Minnesota passed a new state law (bill HF 1606) titled “Prohibition on Nudification Technology”.</p>
-        <p>“A person who owns or controls a website, application, software, program, or other service must not: (1) allow a user to access, download, or use the website, application, software, program, or other service to nudify an image or video; or (2) nudify an image or video on behalf of a user.”</p>
-        <p>Annotating the bill text with the technologies it targets, the law targets primarily Generative AI Interfaces, particularly nudifier applications. However, it differs from the other states that target creation technologies (Tennessee and Arkansas) because Generative AI Models are not covered.</p>
-        <p>The ecosystem is robust over time: new laws can be annotated and added as they are passed.</p>
-
-      </div>
     </div>
     <div class="step step--k" data-fin="law-map">
       <span class="step-label">The U.S. State Landscape</span>
       <p class="step-key-text">Highlighted states show laws that regulate technologies in the ecosystem. Icons identify the technologies, and colors indicate their role.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>Click a highlighted state to read about its law.</p>
-
-      </div>
     </div>
     <div class="step step--k" data-fin="law-gap">
       <span class="step-label">What the Laws Reach</span>
       <p class="step-key-text">Mapping laws onto the ecosystem lets us compare them clearly.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>Mapping policies against the ecosystem allows stakeholders to clearly characterize and compare different state laws.</p>
-        <p>As a result, industry players can improve product compliance; advocacy organizations can develop localized victim-survivor resources; lawyers have a larger toolkit for litigation; and state and local policymakers can situate their laws within a larger landscape.</p>
-        <p>The goal is not to offer recommendations on how best to regulate this ecosystem, which should be done with the participation of local policymakers and civil society groups, but to show how the ecosystem can help make sense of the existing legal landscape and reveal gaps and opportunities.</p>
-        <p>The same method can be applied to other jurisdictions. Regulators from the European Commission, United Kingdom, France, Ireland, India, Malaysia, Indonesia, Brazil, Australia, Canada, and many others have initiated investigations in response to Grok.</p>
-
-      </div>
     </div>
     <div class="step step--k" data-fin="future-edge">
       <span class="step-label">Next: The Links Between Boxes</span>
       <p class="step-key-text">The links between technologies matter, but have not been studied yet.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>The ecosystem reveals edges, the relationships between technologies, that are important to understand but have not yet been studied.</p>
-        <p>For example, there has yet to be a study on the relationship between Generative AI Models and Generative AI Interfaces (specifically AI nudifier applications). Current AI nudifier apps or “undressing” sites state that they use generative AI technology, but do not specify the underlying model being used, reflecting a gap in tech accountability upstream.</p>
-        <p>Further research along this edge would assist existing interventions (e.g., lawsuits against the creators of these technologies) and shed light on future directions for AI governance (e.g., designing AI safety techniques to mitigate downstream harm).</p>
-
-      </div>
     </div>
     <div class="step step--k" data-fin="future-ripple">
       <span class="step-label">Next: Ripple Effects</span>
       <p class="step-key-text">It is all connected, so one fix can <b>ripple</b> through the rest.</p>
-      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
-      <div class="step-detail" aria-hidden="true">
-        <p>All the different technologies are connected in a complex web, so one intervention can ripple through the others.</p>
-        <p>In April 2025, developer platform Civitai, which hosts NSFW models and datasets, updated its Terms of Service to explicitly prohibit content that uses, reproduces, or is based on the likeness of real people. 404 Media called the new policy a major blow to the nonconsensual AI porn ecosystem.</p>
-        <p>On the map, the policy induces a ripple effect for Training Datasets and Generative AI Models. Researchers could study how it affects other technologies in the ecosystem, such as the amount of NSFW Generative AI Models or, further downstream, the number of Generative AI Interfaces available on App Stores.</p>
-        <p>The recommendation: a relational approach to researching AIG-NCII, looking at the relationships between technologies and the ripple effects that interventions may have.</p>
-
-      </div>
     </div>
 `;
 export const dockHtml = `<div class="dt-dock-item dt-dock--neutral" title="Law" data-go="finale" data-step="[data-fin=&quot;law-intro&quot;]"><i class="fas fa-scale-balanced"></i></div>

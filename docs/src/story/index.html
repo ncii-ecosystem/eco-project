@@ -35,6 +35,12 @@
           opacity 0.5s ease,
           visibility 0.5s;
       }
+      html.site-content #loader {
+        inset: 0;
+      }
+      body:has(#loader:not(.done)) {
+        background: var(--db-chip-ink);
+      }
       #loader.done {
         opacity: 0;
         visibility: hidden;
@@ -56,7 +62,7 @@
         height: 14px;
         border: 1px solid #fff;
         background: transparent;
-        animation: ld-fill 3.2s steps(1, end) infinite;
+        animation: ld-fill 3s steps(1, end) infinite;
       }
       .ld-squares i:nth-child(1) {
         animation-delay: 0s;
@@ -127,15 +133,15 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="/src/shared/page-styles.css?v=104" />
-    <link rel="stylesheet" href="/src/story/styles.css?v=106" />
+    <link rel="stylesheet" href="/src/story/styles.css?v=108" />
     <link rel="stylesheet" href="/src/story/theme.css?v=104" />
     <link rel="stylesheet" href="/src/story/theme/finale-and-dock.css?v=106" />
     <link rel="stylesheet" href="/src/story/theme/windows.css?v=106" />
     <link
       rel="stylesheet"
-      href="/src/story/theme/notes-and-notifications.css?v=104"
+      href="/src/story/theme/notes-and-notifications.css?v=105"
     />
-    <link rel="stylesheet" href="/src/story/theme/opening.css?v=104" />
+    <link rel="stylesheet" href="/src/story/theme/opening.css?v=105" />
     <link rel="stylesheet" href="/src/story/theme/headline-formats.css?v=105" />
     <link
       rel="stylesheet"
@@ -198,7 +204,7 @@
             <li><a href="/story" aria-current="page">Story</a></li>
             <li><a href="/database">Database</a></li>
             <li><a href="/survivor-support">Survivor Support</a></li>
-            <li><a href="/about">About</a></li>
+            <li><a href="/about">Research</a></li>
           </ul>
         </nav>
         <button
@@ -402,7 +408,7 @@
               id="intro-notif"
               role="button"
               tabindex="0"
-              aria-label="Open the feed: five headlines, five different stories"
+              aria-label="Open the feed"
             >
               <div class="intro-notif-icon">
                 <span class="notif-folder notif-folder--neutral"
@@ -413,10 +419,6 @@
                 <div class="intro-notif-head">
                   <span class="intro-notif-app">NewsFeed</span
                   ><span class="intro-notif-time">now</span>
-                </div>
-
-                <div class="intro-notif-body">
-                  Five headlines. Five different stories.
                 </div>
               </div>
               <div class="intro-notif-cta">
@@ -1659,16 +1661,6 @@
             in response to user requests like ‘put a bikini on her’ and ‘take
             her clothes off.’
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Grok is an AI chatbot built into the social media platform X. It
-              posted these images directly into public comment threads, so they
-              were created and shared in the same place.
-            </p>
-          </div>
         </div>
         <div
           class="step step--k"
@@ -1693,16 +1685,6 @@
             We call this AI-generated non-consensual intimate images, or
             AIG-NCII.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              AIG-NCII stands for AI-generated non-consensual intimate images:
-              sexually explicit images of a real person, made with generative
-              AI, without their consent.
-            </p>
-          </div>
         </div>
         <div
           class="step step--k"
@@ -1771,31 +1753,6 @@
             We’ll follow the tools and services involved, from creating an image
             to sharing it.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              AIG-NCII is powered not just by a single model, app, or website,
-              but by a vast, interconnected, and ever-evolving technological
-              ecosystem.
-            </p>
-            <p>
-              The ecosystem has 11 categories of technologies that play one of
-              five roles: creation, distribution, proliferation and discovery,
-              monetization, and infrastructure.
-            </p>
-            <p>
-              Each headline named a different part of it. Bloomberg: a
-              generative AI interface (Grok) and a public distribution channel
-              (X). 404 Media: a deepfake creation community (a Telegram
-              channel).
-            </p>
-            <p>
-              This investigation follows the chain part by part. Each window
-              that opens is a different layer of the system.
-            </p>
-          </div>
         </div>
         <div class="step step--n" data-intro="go" style="height: 50vh"></div>
         <div
@@ -1840,38 +1797,6 @@
             It’s that simple. A chatbot makes the process straightforward:
             someone submits a photo and a request, and the AI returns an image.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Generative AI interfaces increase the accessibility of AIG-NCII by
-              providing an easy-to-use interface for users to access generative
-              AI model capabilities.
-            </p>
-            <p>
-              In the 2010s face-swap era, there were already “undressing” apps
-              like DeepNude that had over 95k active users. In the 2020s, AI
-              nudifier applications became a rapidly growing multi-million
-              dollar economy dedicated to the creation and monetization of
-              AIG-NCII, predominantly of young women.
-            </p>
-            <p>
-              AI nudifier applications significantly lower the barrier to entry
-              because any non-technical user can upload a photo of another
-              person (like a yearbook photo or social media post) and create an
-              “undressed” version of that person within minutes without their
-              consent. The apps offer features including undressing and
-              positioning the subject in various sexual positions.
-            </p>
-            <p>
-              General purpose model interfaces have also been used to produce
-              AIG-NCII. WIRED found that ChatGPT and Gemini have been used to
-              “strip women in photos down to bikinis”. Most notably, Grok has
-              been used to generate thousands of images of women and girls
-              directly into the comment section of X.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-aux="nudifier" style="height: 70vh">
           <span class="step-label">Many forms</span>
@@ -1897,28 +1822,6 @@
             AI models learn from collections of examples called training
             datasets.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Training datasets refer to text, image, video, audio, and/or
-              multi-modal datasets used to train generative AI models.
-            </p>
-            <p>
-              In the early 2010s, face-swap models were trained using
-              open-source face datasets and other curated NSFW datasets
-              comprised primarily of women. An early study of the 2019 DeepNude
-              undressing app found that it was unable to generate images of men
-              because it was trained only on images of women.
-            </p>
-            <p>
-              Researchers have found that “general-purpose” image datasets like
-              LAION-5B, ImageNet, and LAION-400M also contain pornography,
-              non-consensual intimate images, and/or known CSAM, enabling models
-              that train upon them to generate AIG-NCII.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-note="billions" style="height: 50vh">
           <span class="step-label">Scraped datasets</span>
@@ -1970,37 +1873,6 @@
           <p class="step-key-text">
             <b>Open models</b> are publicly downloadable …
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Generative AI models refer to a spectrum of models that use deep
-              learning techniques to take in an input and produce a modified
-              output.
-            </p>
-            <p>
-              In the 2010s, smaller, independent, open-source models like
-              DeepFaceLab primarily used generative adversarial networks to
-              automate the face-swapping process. DeepFaceLab had direct ties to
-              Mr.DeepFakes, a prolific “deepfake pornography” community and
-              hosting site. Early models required a high level of technical
-              expertise and were inconsistent in quality and realism.
-            </p>
-            <p>
-              With the 2020s came larger and more powerful generative AI models
-              that produced realistic outputs. Open-weight models like Stable
-              Diffusion and Flux have been fine-tuned to produce tens of
-              thousands of fine-tuned variants designed to produce AIG-NCII,
-              predominantly of women. This trend is now being replicated with
-              open-weight video-generation models.
-            </p>
-            <p>
-              Additionally, proprietary closed models like xAI’s Aurora,
-              Google’s Gemini models, and OpenAI’s GPT models can be used via
-              chatbot interface or API access to generate AIG-NCII.
-            </p>
-          </div>
         </div>
         <div class="step step--n" data-md="move">
           <p>Where do open-weight models live? On developer platforms.</p>
@@ -2011,36 +1883,6 @@
             They are hosted on <b>developer platforms</b> and other developers
             can create <b>fine-tuned variants</b>
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Developer platforms are platforms for developers to create, store,
-              manage, and share code, including models and datasets.
-            </p>
-            <p>
-              Developer platforms are central to the development of open-source
-              models and datasets that are used in the creation of deepfakes.
-              Activists and researchers have documented GitHub’s role in hosting
-              early face-swap models like DeepFaceLab, DeepNude, and Unstable
-              Diffusion that were used to produce AIG-NCII.
-            </p>
-            <p>
-              AI-specific developer platforms like Hugging Face and Civitai are
-              used to host open-weight models, such as pre-trained base models
-              Stable Diffusion and Flux, as well as almost 35,000 fine-tuned
-              “deepfake” variants, a majority of them sexual and signaling
-              intent to produce non-consensual intimate images.
-            </p>
-            <p>
-              An audit of Civitai also found that it was predominantly used to
-              host “not-safe-for-work” (NSFW) models and datasets. After Civitai
-              passed a new policy banning models depicting the likeness of real
-              people in April 2025, 404 Media found that users downloaded over
-              5000 models and reuploaded them onto Hugging Face.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-note="hard" style="height: 60vh">
           <span class="step-label">A technical process</span>
@@ -2095,34 +1937,6 @@
             <b>Deepfake creation communities</b> are highly migratory. When a
             forum gets banned, they move to others…
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Deepfake creation communities are online communities that provide
-              general and technical assistance to members trying to create
-              deepfakes.
-            </p>
-            <p>
-              They are a “key driving force behind the increasing accessibility
-              of deepfakes and deepfake creation software” and serve as an
-              “entry point” for new users to learn from experienced users.
-              Historically, deepfake creation communities have been large
-              (reaching 100,000 members) and highly mobile, existing across
-              platforms like Reddit, MrDeepFakes, 4chan, 8chan, Voat, Telegram,
-              and Discord.
-            </p>
-            <p>
-              In 2017, journalists uncovered “r/deepfakes” on Reddit, one of the
-              earliest deepfake creation communities, with over 90,000
-              subscribers that focused on face swapping celebrity faces with
-              porn performers. In February 2018, under public pressure, Reddit
-              banned “r/deepfakes” and updated its site-wide rules “against
-              involuntary pornography and sexual or suggestive content involving
-              minors”.
-            </p>
-          </div>
         </div>
         <div class="step step--n" data-rc="mdf">
           <p>
@@ -2136,33 +1950,6 @@
             <b>Deepfake creation communities</b> are one of the technologies
             that hyper-accelerate deepfake abuse…
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              After the “r/deepfakes” ban, many members migrated to
-              MrDeepFakes.com, the self-proclaimed “largest deepfake community”.
-            </p>
-            <p>
-              It serves as both a deepfake video distribution and consumption
-              site and a forum for deepfake content creators. MDF was also
-              linked directly by the popular face-swap model DeepFaceLab on
-              GitHub as a place to obtain technical support. Researchers
-              studying MDF found subforums on technical assistance for both
-              models and datasets.
-            </p>
-            <p>
-              Telegram group chats have also served as “deepfake creation
-              communities” for users who use Grok AI to generate AIG-NCII.
-            </p>
-            <p>
-              On May 6, 2025, Mr.DeepFakes, the world’s most notorious “deepfake
-              pornography” site with over 650,000 users, shut down because an
-              unknown “critical service provider terminated service permanently”
-              and “data loss has made it impossible to continue operation.”
-            </p>
-          </div>
         </div>
       </div>
 
@@ -2189,31 +1976,6 @@
           <p class="step-key-text">
             Hosting, content delivery, and sign-in services help keep this ecosystem running.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Critical service providers, including cloud service providers,
-              domain name services (DNS), and authentication services, are
-              support software enabling the existence of multiple pieces of the
-              technological ecosystem.
-            </p>
-            <p>
-              That includes nudifier apps and deepfake websites. An Indicator
-              audit of 85 AI nudifier websites found that “Amazon and Cloudflare
-              provide hosting or content delivery services for 62 of the 85
-              nudifiers” and “Google enabled simple sign-on for 53 out of 85.”
-            </p>
-            <p>
-              On May 6, 2025, Mr.DeepFakes, the world’s most notorious “deepfake
-              pornography” site with over 650,000 users, shut down because an
-              unknown “critical service provider terminated service permanently”
-              and “data loss has made it impossible to continue operation.” This
-              case study demonstrates a connection between critical service
-              providers and AIG-NCII distribution channels.
-            </p>
-          </div>
         </div>
       </div>
 
@@ -2239,36 +2001,6 @@
           <p class="step-key-text">
             Search engines help people find nudifier apps and deepfake websites.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Search engines enable the wide-spread discovery of AI nudifier
-              apps, AIG-NCII, and distribution sites.
-            </p>
-            <p>
-              Independent researcher Genevieve Oh conducted 6000 google searches
-              of 100 public figures (elected officials, broadcasters, TV hosts,
-              singers, and chess players) and found that 99.69% of the searches
-              for “NAME+DEEPFAKE” resulted in a “deepfake pornography” website
-              result on the first page. Another audit found that queries for
-              “deepnude,” “nudify,” and “undress app” on Google, Yahoo, and Bing
-              all yielded at least one result leading the user to AI nudifier
-              applications within the first 20 results.
-            </p>
-            <p>
-              In 2025, 47 state attorneys general wrote an open letter to
-              Google, Yahoo, and Microsoft urging them to block AIG-NCII content
-              and creation tools from search engines. According to the letter,
-              queries like “how to make deepfake pornography,” “undress apps,”
-              “nudify apps,” or “deepfake porn” do not produce any warning
-              labels. Instead, search engines “quickly present users with direct
-              links to deepfake NCII, to listicles rating the top apps for
-              creating deepfake NCII, and to apps that enable the creation of
-              naked and/or sexual images and videos of any person in any photo”.
-            </p>
-          </div>
         </div>
 
         <div class="step step--n" data-search="ads">
@@ -2286,31 +2018,6 @@
           <p class="step-key-text">
             People also discover these apps through paid advertisements.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Advertisement platforms enable organizations and individuals to
-              place ads (specifically for AI nudifier apps) that drive massive
-              traffic to these tools.
-            </p>
-            <p>
-              AI nudifier apps gain users by posting advertisements on large
-              social media platforms. Investigative journalists at 404 Media and
-              the Indicator have documented thousands of advertisements that AI
-              nudifiers post on Instagram.
-            </p>
-            <p>
-              A technical report from Graphika tracking 34 AI nudifier apps
-              demonstrates how these apps “operate as a fully-fledged online
-              industry” and rely on advertising on mainstream social media
-              platforms and deploying customer referral schemes such as referral
-              links on platforms like Reddit and X, allowing them to accumulate
-              over 24 million unique visitors in September, 2023. Graphika found
-              a 2000% increase in referral links in one year during 2023.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-search="instagram">
           <span class="step-label">Ads on social media</span>
@@ -2333,37 +2040,6 @@
           <p class="step-key-text">
             <b>Nudification is a million-dollar economy.</b> App stores make these tools easy to discover and download, helping businesses reach users at scale.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              App stores are digital marketplaces for producers to upload and
-              advertise apps for consumers to discover and download apps.
-            </p>
-            <p>
-              The National Center on Sexual Exploitation has previously called
-              out Apple and Google for their stores’ role promoting and
-              facilitating sexual exploitation of children by allowing the
-              discovery of inappropriate and potentially dangerous apps.
-              Similarly, app stores enable the large-scale discovery and
-              downloading of AI nudifier apps. According to Bellingcat,
-              DeepSwap, an app that was featured on the top of Mr.DeepFakes, was
-              available on Google Play and Apple stores.
-            </p>
-            <p>
-              With the most recent case of Grok, advocates have also critiqued
-              app stores for continuing to host Grok and X. A 2026 report by the
-              Tech Transparency Project found 55 apps in the Google Play Store
-              that can “digitally remove the clothes from women and render them
-              completely or partially naked or clad in a bikini or other minimal
-              clothing” and 47 such apps in the Apple store. TTP found that
-              these apps were “downloaded more than 705 million times worldwide
-              and generated $117 million in revenue” (a portion of which goes to
-              Google and Apple). Both companies removed dozens of nudifier apps
-              from their stores after press coverage.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-note="app-economy">
           <span class="step-label">From downloads to revenue</span>
@@ -2397,34 +2073,6 @@
         <div class="step step--k" data-pay="annotate">
           <span class="step-label">Payment Processors</span>
           <p class="step-key-text"><b>Payment processors</b>…</p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Payment processors (including credit cards and cryptocurrencies)
-              enable the monetization of non-consensual creation and
-              distribution of AI-generated intimate images.
-            </p>
-            <p>
-              The Indicator estimates the current AI nudifier economy of
-              undressing apps to be over $36 million dollars. According to
-              researchers, Mr.DeepFakes was used as an “actively growing
-              deepfake market (primarily for people seeking to commission NSFW
-              deepfake media)”.
-            </p>
-            <p>
-              In 2025, 47 state attorneys general wrote a letter to Visa,
-              Mastercard, American Express, PayPal, Google Pay, and Apple Pay
-              stating “sellers of deepfake NCII tools and content have made
-              their services available in exchange for fees paid via payment
-              platforms…even including the logos of those companies on their
-              webpages” and call for these companies to “deny sellers the
-              ability to use their services when they are on notice of these
-              connections but should be actively working to identify and remove
-              any such sellers from their network”.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-note="creation-scale">
           <span class="step-label">From creation to circulation</span>
@@ -2460,34 +2108,6 @@
             These images can be shared privately through different distribution
             channels…
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              Distribution channels include both private channels and public
-              platforms that AI-generated intimate images may be
-              non-consensually distributed across.
-            </p>
-            <p>
-              A 2024 survey by the Center for Democracy &amp; Technology of K-12
-              school students and teachers found that AI-generated NCII was most
-              commonly shared through public channels (e.g., posting on social
-              media platforms or adult sites) and private channels (e.g., direct
-              message, text message, email). These trends also align with
-              traditional modes of non-consensual distribution of intimate
-              images.
-            </p>
-            <p>
-              Under the public platform category, there are also “deepfake
-              pornography sites” such as Mr.Deepfakes that are dedicated to the
-              distribution of AIG-NCII. In 2024, the American Sunlight Project
-              discovered tens of thousands of AIG-NCII depicting 26 senators and
-              members of congress, 25 of them women, across eleven “deepfake
-              pornography” websites. Activists and researchers have called out
-              hundreds of similar websites.
-            </p>
-          </div>
         </div>
 
         <div class="step step--k" data-dm="switchemail" data-done="appstore">
@@ -2495,27 +2115,6 @@
           <p class="step-key-text">
             …like direct messages, group chats, and email.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              AIG-NCII disproportionately depicts women and girls, making it a
-              form of technology-facilitated gender-based violence.
-            </p>
-            <p>
-              It results in significant psychological, physical, financial, and
-              reputational harm to victim-survivors, as well as a gendered
-              chilling effect where victim-survivors retreat from online spaces
-              due to fear of harassment.
-            </p>
-            <p>
-              Generative AI significantly increases the accessibility of
-              image-based sexual abuse and perpetuates a culture of non-consent
-              at scale. A single image of a person can be “nudified” in a matter
-              of minutes.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-aux="pubsite" style="height: 80vh">
           <span class="step-label">Public distribution channels</span>
@@ -2533,17 +2132,6 @@
         <div class="step step--k" data-fin="assemble">
           <span class="step-label">All Open At Once</span>
           <p class="step-key-text">Every app you opened is still running.</p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              None of them is the whole problem. Together they are the whole
-              supply chain: the model, the message, the forum, the search
-              result, the store listing, the checkout and the servers
-              underneath.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-fin="assemble" style="height: 70vh">
           <span class="step-label">One system</span>
@@ -2557,17 +2145,6 @@
           <p class="step-key-text">
             Take one down, and another opens in its place.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              After Civitai banned more than 5,000 nudifier models, they were
-              re-uploaded to Hugging Face within days (Maiberg, 2025). When
-              r/deepfakes was banned from Reddit, the community moved to other
-              platforms.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-fin="close2">
           <span class="step-label">Close Another</span>
@@ -2575,16 +2152,6 @@
             Ban a forum and the community migrates. Shut down a site and copies
             appear.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              MrDeepFakes went offline in May 2025 when a critical service
-              provider ended its service. That shows leverage exists, but only
-              where the whole chain is pulled on at once.
-            </p>
-          </div>
         </div>
         <div class="step step--k" data-fin="flood">
           <span class="step-label">Whack-a-Mole</span>
@@ -2592,20 +2159,6 @@
             One fix is not enough. Structural problems need structural
             solutions.
           </p>
-          <button class="step-expand-btn" aria-expanded="false">
-            Read more <i class="fas fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="step-detail" aria-hidden="true">
-            <p>
-              The ecosystem is resilient to single-point fixes. Structural
-              problems need structural solutions.
-            </p>
-            <p>
-              Based on “How to Stop Playing Whack-a-Mole: Mapping the Ecosystem
-              of Technologies Facilitating AI-Generated Non-Consensual Intimate
-              Images”.
-            </p>
-          </div>
         </div>
         <div class="step step--n" data-fin="end"></div>
       </div>
@@ -2632,19 +2185,24 @@
           content is hypothetical unless otherwise cited.
         </p>
         <p class="endcard-next">
-          <a class="endcard-soon" href="/database"
-            >Explore the database <span aria-hidden="true">↗</span></a
+          <a class="endcard-soon" href="https://arxiv.org/abs/2602.04759" target="_blank" rel="noopener noreferrer"
+            >Read the paper <span aria-hidden="true">↗</span></a
           >
         </p>
         <p class="endcard-next">
-          <a class="endcard-soon" href="/survivor-support"
+          <a class="endcard-soon" href="/database/" target="_top"
+            >Explore the evidence database <span aria-hidden="true">↗</span></a
+          >
+        </p>
+        <p class="endcard-next">
+          <a class="endcard-soon" href="/survivor-support/" target="_top"
             >Get support <span aria-hidden="true">↗</span></a
           >
         </p>
         <p class="endcard-credit">
           Created and built by <strong>Haya Bugshan</strong><br />
           Design refined by <strong>Maja Mishevska</strong><br />
-          Mentored by <strong>Michelle L. Ding</strong><br />
+          Advised by <strong>Michelle L. Ding</strong><br />
           Storyboard by <strong>Haya, Maja and Michelle</strong>
         </p>
       </div>
@@ -2686,8 +2244,7 @@
       role="status"
       hidden
     >
-      Use ← → or the bottom-right arrows to navigate, Space to go forward, or
-      click the dock to jump to a section.
+      Use arrows to navigate, or Space to go forward.
     </p>
 
     <!-- Dock -->
@@ -2875,59 +2432,24 @@
           <span class="sn-app" id="sn-app"></span
           ><span class="sn-time">now</span>
         </div>
-
-        <div class="sn-body" id="sn-body"></div>
       </div>
       <div class="sn-hint">click to begin <span aria-hidden="true">↗</span></div>
     </div>
 
-    <script src="/src/story/desktop-gate.js?v=6"></script>
+    <script src="/src/story/desktop-gate.js?v=8"></script>
     <script>
-      /* Dismiss the loading screen once the page and its fonts are ready (never before 3.2s, never later than 10s) */
       (function () {
         var loader = document.getElementById("loader");
         if (!loader || window.StoryDevice.mobile) {
           loader?.remove();
           return;
         }
-        var started = performance.now(),
-          finished = false;
-        function finish() {
-          if (finished) return;
-          finished = true;
-          var seen = false;
-          try {
-            seen = sessionStorage.getItem("eco-seen") === "1";
-            sessionStorage.setItem("eco-seen", "1");
-          } catch (e) {
-            /* ignore */
-          }
-          var minShow = seen
-            ? 900
-            : window.matchMedia("(prefers-reduced-motion: reduce)").matches
-              ? 1500
-              : 3200;
-          var wait = Math.max(0, minShow - (performance.now() - started));
+        setTimeout(function () {
+          loader.classList.add("done");
           setTimeout(function () {
-            loader.classList.add("done");
-            setTimeout(function () {
-              loader.remove();
-            }, 700);
-          }, wait);
-        }
-        var pageReady = new Promise(function (resolve) {
-          if (document.readyState === "complete") resolve();
-          else window.addEventListener("load", resolve);
-        });
-        var fontsReady =
-          document.fonts && document.fonts.ready
-            ? document.fonts.ready
-            : Promise.resolve();
-        Promise.all([pageReady, fontsReady, window.storyReady]).then(
-          finish,
-          finish,
-        );
-        setTimeout(finish, 10000);
+            loader.remove();
+          }, 700);
+        }, 3000);
       })();
     </script>
   </body>
