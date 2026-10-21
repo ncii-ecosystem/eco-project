@@ -449,12 +449,6 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
 .mdf-cards { display: grid; gap: var(--db-space-3); }
 .mdf-card { overflow: hidden; }
 .mdf-card-meta { padding: var(--db-space-3); font-size: var(--db-text-xs); line-height: var(--db-lh); overflow-wrap: anywhere; }
-.mdf-offline { position: absolute; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.6s; pointer-events: none; }
-.mdf-offline.visible { opacity: 1; pointer-events: all; }
-.mdf-offline-box { text-align: center; max-width: 500px; }
-.mdf-offline-icon { margin-bottom: 14px; }
-.mdf-offline-title { font-size: 26px; font-weight: 900; margin-bottom: 6px; font-family: var(--db-font-mono); }
-.mdf-offline-msg { font-size: 15px; margin-bottom: 14px; line-height: 1.55; }
 
 /* ═══════════════════════════════════════════════════════════
    SCENE: SEARCH ENGINE

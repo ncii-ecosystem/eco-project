@@ -185,7 +185,8 @@
 }
 /* the ban notice */
 .reddit-banned {
-  background: #efeafd;
+  background: color-mix(in srgb, var(--p) 12%, var(--paper));
+  transition: none;
 }
 .reddit-banned-box {
   border-radius: 0;
@@ -306,23 +307,25 @@
   padding-bottom: 0;
 }
 .mdf-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.mdf-offline-box { padding: 24px 28px; }
-.mdf-offline {
-  background: color-mix(in srgb, var(--p) 92%, transparent);
-}
-.mdf-offline-box {
+
+.reddit-reloading {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  display: grid;
+  place-items: center;
   background: var(--paper);
-  border: 1px solid var(--d);
-  border-radius: 0;
-  box-shadow: var(--hard);
-}
-.mdf-offline-icon {
   color: var(--p);
-  font-size: 40px;
+  font: 14px var(--db-font-mono);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s;
 }
-.mdf-offline-title {
-  color: var(--p);
-}
-.mdf-offline-msg {
-  color: var(--p);
+.reddit-reloading.visible { opacity: 1; visibility: visible; }
+.reddit-reloading.visible i { animation: reddit-reload-spin 0.8s linear infinite; }
+@keyframes reddit-reload-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .reddit-reloading { transition: none; }
+  .reddit-reloading.visible i { animation: none; }
 }

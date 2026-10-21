@@ -63,8 +63,8 @@ export function mountSystemChart({ Eco = window.Eco, mon = document.getElementBy
     ];
     if (n.lines.length) rows.push({ height: n.tall ? 24 : 10 });
     n.lines.forEach(line => {
-      if (line[0] === 'gap') rows.push({ height: n.tall ? 20 : 12 });
-      else rows.push({ text: line.slice(1).join(' '), className: line[0] === 'm' ? 'eg-m' : 'eg-h', size: 18, height: 28 });
+      if (line[0] === 'gap') rows.push({ height: n.tall ? 12 : 8 });
+      else rows.push({ text: line.slice(1).join(' '), className: line[0] === 'm' ? 'eg-m' : 'eg-h', size: 20, height: 26 });
     });
     return rows;
   }
@@ -311,7 +311,14 @@ export function mountSystemChart({ Eco = window.Eco, mon = document.getElementBy
     const det = document.createElement('div'); det.className = 'step-detail';
     const p = document.createElement('p'); p.textContent = d.text; det.appendChild(p);
     const h = document.createElement('h4'); h.textContent = d.tech.length > 1 ? 'Technologies in this role' : 'Technology in this role'; det.appendChild(h);
-    d.tech.forEach((name) => { const li = document.createElement('p'); li.textContent = name; det.appendChild(li); });
+    const technologies = document.createElement('ul');
+    technologies.className = 'research-role-technologies';
+    d.tech.forEach((name) => {
+      const item = document.createElement('li');
+      item.textContent = name;
+      technologies.appendChild(item);
+    });
+    det.appendChild(technologies);
     step.append(label, k, det);
     Eco.showNote(step);
   }
@@ -322,7 +329,6 @@ export function mountSystemChart({ Eco = window.Eco, mon = document.getElementBy
     showRole(role);
   }
   legendItems.forEach((item) => Eco.onActivate(item, () => pickRole(item.dataset.role)));
-  svg.addEventListener('click', (e) => { if (!e.target.closest('.eg-node')) select(null); });
 
   /* ── how much of it is showing (0 → 1), set by finale.js ── */
   const order = ['dev-platforms', 'search-engines', 'app-stores', 'ad-platforms', 'training-data', 'ai-models', 'ai-interfaces',

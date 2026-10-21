@@ -133,9 +133,9 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="/src/shared/page-styles.css?v=104" />
-    <link rel="stylesheet" href="/src/story/styles.css?v=112" />
+    <link rel="stylesheet" href="/src/story/styles.css?v=113" />
     <link rel="stylesheet" href="/src/story/theme.css?v=106" />
-    <link rel="stylesheet" href="/src/story/theme/finale-and-dock.css?v=106" />
+    <link rel="stylesheet" href="/src/story/theme/finale-and-dock.css?v=110" />
     <link rel="stylesheet" href="/src/story/theme/windows.css?v=106" />
     <link
       rel="stylesheet"
@@ -150,11 +150,11 @@
     <link rel="stylesheet" href="/src/story/css/scenes-base.css?v=4" />
     <link rel="stylesheet" href="/src/story/css/feed.css?v=1" />
     <link rel="stylesheet" href="/src/story/css/assistant-and-dataset.css?v=5" />
-    <link rel="stylesheet" href="/src/story/css/distribution.css?v=3" />
-    <link rel="stylesheet" href="/src/story/css/services.css?v=4" />
-    <link rel="stylesheet" href="/src/story/css/scene-states.css?v=3" />
+    <link rel="stylesheet" href="/src/story/css/distribution.css?v=8" />
+    <link rel="stylesheet" href="/src/story/css/services.css?v=6" />
+    <link rel="stylesheet" href="/src/story/css/scene-states.css?v=4" />
     <link rel="stylesheet" href="/src/story/css/models-and-developers.css?v=1" />
-    <link rel="stylesheet" href="/src/story/css/scene-overlays.css?v=3" />
+    <link rel="stylesheet" href="/src/story/css/scene-overlays.css?v=4" />
     <link rel="stylesheet" href="/src/story/desktop-gate.css?v=2" />
     <script src="/src/shared/nav.js" defer></script>
     <script src="/src/shared/theme.js" defer></script>
@@ -1100,6 +1100,9 @@
           <!-- ── SCENE: PUBLIC CHANNELS ─────────────────── -->
           <div class="scene" id="reddit">
             <div class="scene-stage reddit-stage">
+              <div class="reddit-reloading" id="reddit-reloading" role="status">
+                <span><i class="fas fa-rotate-right" aria-hidden="true"></i> Loading forum.faceswaps…</span>
+              </div>
               <div class="pub-screen pub-screen-reddit active" id="pub-reddit">
                 <div class="reddit-chrome">
                   <div class="reddit-header">
@@ -1177,7 +1180,7 @@
                     <div class="reddit-banned-snoo">
                       <i class="fas fa-ban"></i>
                     </div>
-                    <div class="reddit-banned-snoo-sub">forum.example</div>
+                    <div class="reddit-banned-snoo-sub">forum.faceswaps</div>
                     <div class="reddit-banned-divider"></div>
                     <div class="reddit-banned-rule">
                       SERVICE PROVIDER · HOSTING TERMINATED
@@ -1186,8 +1189,7 @@
                       c/faceswaps is offline
                     </div>
                     <div class="reddit-banned-sub">
-                      This community is no longer available because a
-                      <strong>service provider terminated hosting</strong>.
+                      This community is no longer available.
                     </div>
                     <div class="reddit-banned-divider"></div>
                   </div>
@@ -1233,18 +1235,6 @@
                       <div class="redacted-block"><span class="mdf-card-price">$90</span></div>
                       <div class="mdf-card-meta">24hr turnaround</div>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <div class="mdf-offline" id="mdf-offline">
-                <div class="mdf-offline-box">
-                  <div class="mdf-offline-icon">
-                    <i class="fas fa-triangle-exclamation"></i>
-                  </div>
-                  <div class="mdf-offline-title">nsfwfakes.example Removed</div>
-                  <div class="mdf-offline-msg">
-                    This community was removed for violating the platform’s
-                    policy against non-consensual intimate media.
                   </div>
                 </div>
               </div>
@@ -1553,11 +1543,11 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>undressbot.io</td>
+                          <td>forum.faceswaps</td>
                           <td>compute + storage</td>
                           <td>310M req</td>
                           <td>
-                            <span class="cloud-tag cloud-tag-flagged"
+                            <span class="cloud-tag cloud-tag-flagged" id="cloud-forum-status"
                               >Abuse Report Filed</span
                             >
                           </td>
@@ -1656,7 +1646,6 @@
           <p class="step-key-text">It starts with one photo. Let's follow it through the system that turned it into abuse.</p>
         </div><div class="step step--k" data-note="interface"><span class="step-label">Generative AI interfaces</span><p class="step-key-text">A chatbot lets anyone upload a photo and get an altered image back.</p></div><div class="step step--k" data-note="surface"><span class="step-label">The interface</span><p class="step-key-text">But the interface is only the surface.</p></div>
 
-
         <div class="step step--k" data-note="supply" style="height: 50vh">
           <span class="step-label">The AI supply chain</span>
           <p class="step-key-text">Behind every interface is a supply chain: the datasets and models that make it work.</p>
@@ -1738,14 +1727,6 @@
             elsewhere.
           </p>
         </div>
-        <div class="step step--n" data-rc="ban">
-          <p>
-            In this illustrative example, the first community goes offline
-            after a service provider terminates hosting.
-          </p>
-        </div>
-
-
 
       </div>
 
@@ -1755,26 +1736,17 @@
           <span class="step-label">Critical service providers</span>
           <p class="step-key-text">Hosting, content delivery, and sign-in services help keep this ecosystem running.</p>
         </div>
-        <div class="step step--k" data-note="provider-shutdown">
+        <div class="step step--k" data-note="provider-shutdown" data-cloud="terminate">
           <span class="step-label">A point of intervention</span>
           <p class="step-key-text">When a provider withdraws service, the sites and communities relying on it can go offline.</p>
         </div>
-        <div class="step step--n" data-cloud="alert">
-          <p>
-            Researchers sent abuse reports to both. Both have acceptable use
-            policies against illegal content. Most sites remained online.
-            Enforcement is reactive — complaint-driven, with no proactive
-            detection.
-          </p>
-        </div>
 
-      <div class="step step--k" data-rc="mdf">
+        <div class="step step--n" data-rc="ban"></div>
+        <div class="step step--k" data-rc="mdf">
           <span class="step-label">Deepfake Creation Communities</span>
           <p class="step-key-text">However, deepfake creation communities are highly migratory. When one site goes offline, they move to others…</p>
-        </div><div class="step step--n" data-rc="annotate-mdf">
-
-
-        </div></div>
+        </div>
+      </div>
 
       <!-- SEARCH -->
       <!-- A BEAT ON THE EMPTY DESKTOP -->
@@ -1817,9 +1789,6 @@
           <span class="step-label">App stores</span>
           <p class="step-key-text">App stores are hosting nudifier apps and profiting from their revenue</p>
         </div>
-
-
-
 
       </div>
 
@@ -1877,7 +1846,6 @@
 
         <div class="step step--n" data-dm="switchemail" data-done="appstore">
 
-
         </div>
         <div class="step step--k" data-aux="pubsite" style="height: 80vh">
           <span class="step-label">Public distribution channels</span>
@@ -1891,21 +1859,18 @@
       <div class="scroll-chapter" data-chapter="finale" data-scene="finale">
         <div class="step step--k" data-fin="assemble">
           <span class="step-label">All Open At Once</span>
-          <p class="step-key-text">Everything open is still running.</p>
+          <p class="step-key-text">Every window open is still running.</p>
         </div>
 
         <div class="step step--k" data-fin="close1">
           <span class="step-label">Close One</span>
-          <p class="step-key-text">Take one down and another opens in its place.</p>
+          <p class="step-key-text">Each represents a piece of a powerful tech ecosystem that helps create, find, fund, and share these images.</p>
         </div>
         <div class="step step--k" data-fin="close2">
           <span class="step-label">Close Another</span>
-          <p class="step-key-text">One fix is not enough.</p>
+          <p class="step-key-text">Ban a forum and the community migrates. Shut down a site and copies appear. It's a game of whack-a-mole.</p>
         </div>
-        <div class="step step--k" data-fin="flood">
-          <span class="step-label">Whack-a-Mole</span>
-          <p class="step-key-text">Structural problems need structural solutions.</p>
-        </div>
+        <div class="step step--n" data-fin="flood"></div>
         <div class="step step--n" data-fin="end"></div>
       </div>
     </div>
@@ -2179,7 +2144,7 @@
       <div class="sn-hint">click to begin <span aria-hidden="true">↗</span></div>
     </div>
 
-    <script src="/src/story/desktop-gate.js?v=27"></script>
+    <script src="/src/story/desktop-gate.js?v=45"></script>
     <script>
       (function () {
         var loader = document.getElementById("loader");

@@ -29,14 +29,10 @@
 .eg-node.in { opacity: 1; transform: none; }
 .eg-shadow { fill: var(--p); }
 .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: var(--research-outline); vector-effect: non-scaling-stroke; transition: stroke-width 0.15s ease; }
-.eco-graph.live .eg-node:hover .eg-box, .eg-node:focus-visible .eg-box, .eg-node.active .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 3; }
+.eco-graph.live .eg-node:hover .eg-box, .eg-node:focus-visible .eg-box, .eg-node.active .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 2; }
 .eg-node { transform-box: fill-box; transform-origin: center; }
-/* the box that was clicked: a heavier outline and bolder text, same size so it stays lined up */
-.eg-node.in.active { transform: none; }
-.eg-node.active .eg-h, .eg-node.active .eg-m { font-weight: 700; }
 /* boxes it connects to stay clear; the rest step back */
 .eg-node.linked .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 2; }
-.eco-graph.has-selection .eg-node:not(.active):not(.linked) { opacity: 0.4; }
 .eg-icon { font: 900 32px 'Font Awesome 5 Free'; fill: var(--p); }
 .eg-title { font-family: var(--font-sans); font-weight: 700; fill: var(--p); }
 .eg-h { font: 400 21px var(--font-sans); fill: var(--p); }
@@ -308,10 +304,10 @@ body.page-body .research-desc a { text-decoration: underline; text-underline-off
   .about-layout #research-visual { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; }
   /* Both views fill the figure box the same way: no minimum width, and the law map is not narrower than the chart */
   .about-layout #research-visual { min-width: 0; padding: 12px; }
-  .about-layout .pol-us-wrap { width: 100%; max-width: none; }
+  .about-layout .pol-us-wrap { width: 100%; max-width: var(--content-w, 100%); }
   /* The chart or map keeps its proportions and sits centered in the (wider) figure box */
-  .about-layout .eco-graph,
-  .about-layout .pol-map { width: 100%; max-width: var(--content-w, 100%); margin-inline: auto; align-self: center; }
+  .about-layout .eco-graph { width: 100%; max-width: var(--content-w, 100%); margin-inline: auto; align-self: center; }
+  .about-layout .pol-map { width: 100%; max-width: 100%; margin-inline: 0; align-self: stretch; }
   .about-layout .research-header { margin-block: 0; }
   .about-layout .research-details { position: relative; min-height: 12rem; }
   .about-layout .research-note-content { position: absolute; inset: 38px 0 0 0; overflow-y: auto; }
@@ -342,6 +338,11 @@ body.page-body .research-desc a { text-decoration: underline; text-underline-off
 .pol-list li[data-st], .pol-role-item { cursor: pointer; }
 .pol-list li[data-st]:hover, .pol-list li[data-st]:focus-visible, .pol-list li[data-st].active,
 .pol-role-item:hover, .pol-role-item:focus-visible, .pol-role-item.on { font-weight: 700; outline: none; }
+.pol-list li[data-st]:is(:hover, :focus-visible, .active) .pol-n,
+.pol-role-item:is(:hover, :focus-visible, .on) .sw {
+  outline: 2px solid var(--research-box-ink, var(--p));
+  outline-offset: -2px;
+}
 .pol-state.role-dim, .pol-list li.role-dim, .pol-fed-node.role-dim { opacity: 0.3; }
 .pol-state, .pol-list li, .pol-fed-node { transition: opacity 0.2s ease; }
 
@@ -460,7 +461,9 @@ body.page-body .research-copy a {
   overflow: visible;
   z-index: 301;
 }
+.research-system-legend { pointer-events: none; }
 .research-system-legend .eg-legend { opacity: 1; }
+.research-system-legend .eg-legend-item { pointer-events: all; }
 .about-research[data-view="law"] .research-system-legend { display: none; }
 
 @media (max-width: 999px) {
@@ -494,20 +497,22 @@ body.page-body .research-copy a {
   .about-research .pol-role { font-size: 11px; }
 }
 
-/* The legend overlay no longer blocks the boxes under it: only its own rows take clicks. */
-.research-system-legend { pointer-events: none; }
-.research-system-legend .eg-legend-item { pointer-events: all; }
-
 /* Selected box: normal color with a thick outline. Boxes it connects to: kept light (lower opacity, no darker tint). Everything else: fainter. */
-.eco-graph .eg-node.active .eg-box,
-.eco-graph.live .eg-node.active:hover .eg-box { stroke-width: 5; }
 .eco-graph.has-selection .eg-node.active { filter: brightness(1.08) saturate(1.1) drop-shadow(0 2px 4px rgba(0,0,0,0.25)); }
 .eco-graph.has-selection .eg-node.linked { opacity: 0.78; }
 .eco-graph.has-selection .eg-node.linked .eg-box { stroke-width: 2px; }
 .eco-graph.has-selection .eg-node:not(.active):not(.linked) .eg-box { stroke-dasharray: 6 4; }
 .eco-graph.has-selection .eg-node:not(.active):not(.linked) { opacity: 0.5; }
 
-/* Hint that the system chart's legend can be clicked (the law map's legend is not part of this). */
-.research-system-legend .eg-legend-hint { font: 700 11px var(--db-font-mono); fill: var(--db-ink); opacity: var(--db-muted, 0.7); pointer-events: none; }
-.research-system-legend .eg-legend-label { text-decoration: underline dotted; text-underline-offset: 3px; }
-.research-system-legend .eg-legend-item:hover .eg-legend-label { text-decoration-style: solid; }
+#research-visual {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.research-role-technologies {
+  margin: 0 0 var(--db-space-3);
+  padding-left: 1.2em;
+  list-style-type: "- ";
+  font-size: var(--db-text-sm);
+  line-height: var(--db-lh-loose);
+}

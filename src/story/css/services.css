@@ -368,3 +368,15 @@
 .pay-site-hero > .redacted-block.lg {
   height: 180px;
 }
+
+#cloud-forum-status {
+  box-sizing: border-box;
+  width: calc(18ch + 18px);
+  white-space: nowrap;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+.cloud-tag-terminated {
+  background: var(--notification-red);
+  color: var(--paper);
+  border-color: var(--notification-red);
+}

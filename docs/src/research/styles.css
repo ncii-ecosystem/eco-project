@@ -62,7 +62,7 @@
 .research-link-arrow {
   font-family: var(--font-sans);
   font-size: inherit;
-  font-weight: 400;
+  font-weight: inherit;
   line-height: inherit;
 }
 

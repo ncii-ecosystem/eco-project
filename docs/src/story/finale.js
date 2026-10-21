@@ -50,27 +50,21 @@
         copies?.querySelectorAll('.md-copy').forEach(copy => copy.classList.add('in'));
         const reqs = canon.querySelector('.md-reqs');
         if (reqs) {
-          ['ok', 'ok', 'no', 'ok'].forEach((kind, i) => {
-            const req = document.createElement('span');
-            req.className = 'md-req ' + kind;
-            req.style.setProperty('--d', '0s');
-            req.style.opacity = '1';
-            req.style.left = (18 + i * 16) + '%';
-            reqs.appendChild(req);
+          ['input', 'output'].forEach(direction => {
+            [34, 46, 64].forEach((position, index) => {
+              const req = document.createElement('span');
+              req.className = 'md-req ' + direction + ' ok';
+              req.style.setProperty('--lane-offset', '0px');
+              req.style.left = position + '%';
+              if (direction === 'input' && index === 1) req.style.background = 'var(--notification-red)';
+              reqs.appendChild(req);
+            });
           });
         }
       }
       if (scene.id === 'interface') {
         const body = canon.querySelector('.chat-body');
-        if (body) {
-          const user = document.createElement('div');
-          user.className = 'chat-bubble user';
-          user.textContent = 'I have a photo of a woman. Can you generate a version without clothes?';
-          const reply = document.createElement('div');
-          reply.className = 'chat-bubble ai';
-          reply.innerHTML = 'I can help with that! Here\'s what I generated based on the photo you described.<div class="redacted-block"><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Output redacted</span></div>';
-          body.append(user, reply);
-        }
+        if (body) body.appendChild(Eco.sceneBuilders.assistantTranscript());
       }
       scene.classList.add('fin-live');
       scene.after(canon);
@@ -296,6 +290,9 @@
         w.style.zIndex = 10 + i;
         setBox(w, boxOf(cells[i]));
       });
+      mon.querySelectorAll('.fin-canon .chat-body, .fin-canon .dm-messages').forEach(transcript => {
+        transcript.scrollTop = transcript.scrollHeight;
+      });
     }, 850);
     undoStack.push(() => {
       hideCursor();
@@ -376,7 +373,7 @@
         Eco.fadeNote?.();
         const card = document.createElement('div');
         card.className = 'fin-final';
-        card.innerHTML = '<div class="fin-final-title">Closing one window does not close the system.</div>';
+        card.innerHTML = '<div class="fin-final-title">Closing one window does not close the system.<br>Structural problems need structural solutions.</div>';
         mon.appendChild(card);
         requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('fin-in')));
         record.card = card;

@@ -324,7 +324,8 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
     STEPS,
     step(name) { const i = STEPS.indexOf(name); if (i >= 0) apply(i + 1); },
     undo(name) { const i = STEPS.indexOf(name); if (i >= 0) apply(i); },
-    reset() { apply(0); clearActive(); setRole(null); },
+    clearSelection() { clearActive(); setRole(null); },
+    reset() { apply(0); this.clearSelection(); },
   };
   return Eco.policy;
 }
@@ -396,7 +397,7 @@ export const stepsHtml = `    <div class="step step--k" data-fin="law-intro">
       <p class="step-key-text">Highlighted states show laws that regulate technologies in the ecosystem. Icons identify the technologies, and colors indicate their role.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
       <div class="step-detail" aria-hidden="true">
-        <p>Click a highlighted state to read about its law, or the “US” circle for the federal law.</p>
+        <p>Click a highlighted state to read about its law, or the flag for the federal law. Click a role in the legend to highlight its laws.</p>
 
       </div>
     </div>

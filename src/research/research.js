@@ -1,4 +1,4 @@
-import { mountSystemChart } from "./modules/system-chart.js?v=10";
+import { mountSystemChart } from "./modules/system-chart.js?v=13";
 import { mountLawSection, stepsHtml } from "./modules/law.js?v=17";
 
 const host = document.getElementById("research-visual");
@@ -67,15 +67,9 @@ try {
     label.setAttribute("y", rowY + 8);
     label.setAttribute("dominant-baseline", "central");
     const hit = item.querySelector(".eg-legend-hit");
-    Object.entries({ x: 0, y: rowY, width: 240, height: 24 })
+    Object.entries({ x: 0, y: rowY, width: label.getComputedTextLength() + 28, height: 24 })
       .forEach(([name, value]) => hit.setAttribute(name, value));
   });
-  const legendHint = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  legendHint.setAttribute("class", "eg-legend-hint");
-  legendHint.setAttribute("x", 0);
-  legendHint.setAttribute("y", 5 * 24 + 18);
-  legendHint.textContent = "Click a role to highlight it";
-  legendGroup.appendChild(legendHint);
   const originalNodeText = new Map(
     [...graph.ext.svg.querySelectorAll(".eg-title, .eg-icon")].map((text) =>
       [text, { content: text.innerHTML, y: text.getAttribute("y"), style: text.getAttribute("style") }],
@@ -152,7 +146,7 @@ try {
     title.textContent = "The technology ecosystem";
     const paragraph = document.createElement("p");
     paragraph.textContent =
-      "Select a box to learn how that technology helps create, spread, or support image-based abuse. The connecting arrows show how it relates to other parts of the ecosystem.";
+      "Select a box to learn how that technology helps create, spread, or support image-based abuse. The connecting arrows show how it relates to other parts of the ecosystem. Click a role in the legend to highlight its technologies.";
     body.replaceChildren(paragraph);
   }
   // Restore the current view’s default note when its selection is cleared.
@@ -160,6 +154,17 @@ try {
     if (host.closest(".about-research").dataset.view === "law") Eco.showNote(topics.find((step) => step.dataset.fin === "law-map"));
     else showSystemDefault();
   };
+  host.addEventListener("click", (event) => {
+    if (host.closest(".about-research").dataset.view === "law") {
+      if (event.target.closest(".pol-state.has, .pol-fed-node, .pol-list li[data-st], .pol-role-item")) return;
+      policy.clearSelection();
+    } else {
+      if (event.target.closest(".eg-node, .eg-legend-item")) return;
+      graph.clearRole();
+      graph.select(null);
+    }
+    Eco.resetNote();
+  });
   function setView(view) {
     document.querySelector(".research-diagram-title").textContent = view === "law"
       ? "Landscape of U.S. State Laws Regulating the AIG-NCII Ecosystem"

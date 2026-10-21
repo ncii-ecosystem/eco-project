@@ -51,11 +51,11 @@
     chat:   { type: 1300, send: 400, think: 900, respond: 700, dataset: 0, scan: 0, return: 0 },
     md:     { open: 2400, closed: 2400, move: 2200 },
     dm:     { msg0: 800, msg1: 800, msg2: 500, 'annotate-imessage': 1800, switchemail: 600, 'annotate-email': 500 },
-    rc:     { 0: 500, 1: 500, 2: 500, 3: 500, 4: 500, ban: 600, mdf: 600, 'annotate-mdf': 700 },
+    rc:     { 0: 500, 1: 500, 2: 500, 3: 500, 4: 500, ban: 2100, mdf: 600 },
     search: { results: 1200, ads: 2200 },
     as:     { fill: 700, highlight: 600, overlay: 500 },
     pay:    { site: 600, logos: 600, sheet: 800 },
-    cloud:  { stats: 1000, alert: 600 },
+    cloud:  { stats: 1000, terminate: 1100 },
     fin:    { assemble: 1500, close1: 2200, close2: 2600, flood: 4000 },
   };
   function animMs(el) {                                              // how long the step's own animation runs
@@ -669,7 +669,7 @@
     let note = null;
     chapterSteps.forEach(step => {
       if (step.classList.contains('step--k')) note = step;
-      if (step.dataset.intro === 'flood') note = null;
+      if (step.dataset.intro === 'flood' || step.dataset.fin === 'flood') note = null;
       noteForStep.set(step, note);
     });
   });
@@ -768,7 +768,10 @@
     const headlineNotes = ['flood', 'grok', 'tech', 'taxo'];
     const retainHeadlines = headlineNotes.includes(lastRenderedStep?.dataset.intro) &&
       ['grok', 'tech', 'taxo'].includes(element.dataset.intro);
-    const retainScene = retainHeadlines || retainModels || retainSearch;
+    const retainCloud = activeChapter === 'cloud' &&
+      element.closest('.scroll-chapter')?.dataset.chapter === 'cloud' &&
+      lastRenderedStep && index === steps.indexOf(lastRenderedStep) + 1;
+    const retainScene = retainHeadlines || retainModels || retainSearch || retainCloud;
     lastRenderedStep = element;
     naEdBody?.querySelectorAll('.nw').forEach(word => word.classList.add('on'));
     if (element.dataset.fin !== 'end' && document.documentElement.classList.contains('in-outro')) {
@@ -887,7 +890,21 @@
       }, prefersReducedMotion() ? 0 : 400);
     }
     if (['switchemail', 'annotate-email'].includes(element.dataset.dm)) openCompanion('dm');
-    if (['mdf', 'annotate-mdf'].includes(element.dataset.rc)) openCompanion('reddit');
+    if (element.dataset.rc === 'ban') {
+      const forum = spawnedWindows.get('reddit');
+      if (forum) {
+        spawnedWindows.forEach((win) => {
+          win.classList.toggle('active', win === forum);
+          win.classList.toggle('dimmed', win !== forum);
+        });
+        if (!prefersReducedMotion()) {
+          forum.animate([{ opacity: 0, transform: 'scale(0.94) translateY(10px)' }, { opacity: 1, transform: 'none' }], {
+            duration: 480, easing: 'cubic-bezier(0.2, 0.85, 0.2, 1)'
+          });
+        }
+      }
+    }
+    if (element.dataset.rc === 'mdf') openCompanion('reddit');
     if (element.dataset.md === 'move') openCompanion('models');
     if (element.dataset.fin === 'end') Eco.graph?.setProgress(1);
   }

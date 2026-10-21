@@ -158,8 +158,7 @@
 }
 
 /* the ban card and the offline card cover the page they sit on: they follow the window's scroll instead of scrolling away and leaving a gap */
-.reddit-banned,
-.mdf-offline {
+.reddit-banned {
   top: var(--sy, 0px);
   bottom: auto;
   height: 100%;
