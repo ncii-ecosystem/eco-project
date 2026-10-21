@@ -1,5 +1,5 @@
 import { mountSystemChart } from "./modules/system-chart.js?v=10";
-import { mountLawSection, stepsHtml } from "./modules/law.js?v=15";
+import { mountLawSection, stepsHtml } from "./modules/law.js?v=17";
 
 const host = document.getElementById("research-visual");
 const title = document.getElementById("research-detail-title");

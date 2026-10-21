@@ -15,13 +15,13 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
   /* ── the laws (the paper's Table 3 and Figure 2) ───────────── */
   const LAWS = [
     { n: 1, st: 'CA', name: 'California', bill: 'SB981', year: 2024, role: 'dist', icons: ['comment'],
-      url: 'https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240SB981',
+      url: 'https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202320240SB981',
       text: 'Requires “social media platforms” to provide a mechanism that is reasonably accessible to a reporting user.' },
     { n: 2, st: 'NY', name: 'New York', bill: 'A8808', year: 2024, role: 'dist', icons: ['comment'],
-      url: 'https://www.nysenate.gov/legislation/bills/2023/A8808',
+      url: 'https://assembly.state.ny.us/leg/?bn=A08808&term=2023',
       text: 'Enables individuals to maintain an action or special proceeding for a court order to require “websites” to permanently remove non-consensually distributed intimate images.' },
     { n: 3, st: 'TN', name: 'Tennessee', bill: 'H0769', year: 2025, role: 'creation', icons: ['code', 'wand'],
-      url: 'https://wapp.capitol.tn.gov/apps/BillInfo/Default.aspx?BillNumber=HB0769&GA=114',
+      url: 'https://wapp.capitol.tn.gov/apps/BillInfo/Default?BillNumber=HB0769&ga=114',
       text: 'Makes it an offense for a person to knowingly “possess, distribute, or produce technology, software, or digital tools” designed for the purpose of creating material that includes a minor engaged in sexual activity or simulated sexual activity.' },
     { n: 4, st: 'AR', name: 'Arkansas', bill: 'HB1529', year: 2025, role: 'creation', icons: ['code', 'wand'],
       url: 'https://arkleg.state.ar.us/Bills/Detail?id=HB1529&ddBienniumSession=2025%2F2025R',
@@ -30,7 +30,7 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
       url: 'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=SB441',
       text: 'Makes it an offense for an individual to non-consensually create intimate deepfakes. Does not apply to the “provider or developer of a publicly accessible artificial intelligence application or software” that was used in the creation of the deepfake media if they “included a prohibition against the creation of deep fake media … in terms and conditions or user policies” and “took affirmative steps to prevent the creation of deep fake media.”' },
     { n: 6, st: 'MN', name: 'Minnesota', bill: 'HF1606', year: 2026, role: 'creation', icons: ['wand'],
-      url: 'https://www.revisor.mn.gov/bills/bill.php?b=House&f=HF1606&ssn=0&y=2026',
+      url: 'https://www.revisor.mn.gov/bills/94/2025/0/HF/1606/versions/2/',
       text: 'Titled “Prohibition on Nudification Technology”. A person who owns or controls a website, application, software, program, or other service must not allow a user to access, download, or use it to nudify an image or video, or nudify an image or video on behalf of a user.' },
   ];
   const lawBySt = Object.fromEntries(LAWS.map((l) => [l.st, l]));
@@ -234,7 +234,7 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
       const p = document.createElement('p');
       const a = document.createElement('a');
       a.href = law.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-      a.textContent = law.linkLabel || 'Read the bill';
+      a.textContent = law.linkLabel || 'Read the law';
       const arrow = document.createElement('span');
       arrow.className = 'research-link-arrow';
       arrow.setAttribute('aria-hidden', 'true');

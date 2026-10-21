@@ -502,7 +502,7 @@ body.page-body .research-copy a {
 .eco-graph .eg-node.active .eg-box,
 .eco-graph.live .eg-node.active:hover .eg-box { stroke-width: 5; }
 .eco-graph.has-selection .eg-node.active { filter: brightness(1.08) saturate(1.1) drop-shadow(0 2px 4px rgba(0,0,0,0.25)); }
-.eco-graph.has-selection .eg-node.linked { opacity: 0.85; }
+.eco-graph.has-selection .eg-node.linked { opacity: 0.78; }
 .eco-graph.has-selection .eg-node.linked .eg-box { stroke-width: 2px; }
 .eco-graph.has-selection .eg-node:not(.active):not(.linked) .eg-box { stroke-dasharray: 6 4; }
 .eco-graph.has-selection .eg-node:not(.active):not(.linked) { opacity: 0.5; }
