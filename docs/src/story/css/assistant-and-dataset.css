@@ -172,11 +172,6 @@
   padding: 14px 16px 14px;
   gap: 12px;
 }
-.cdl-header {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
 
 .cdl-grid {
   gap: 8px;
@@ -243,13 +238,6 @@
   border: 2px solid var(--p);
   box-shadow: none;
   z-index: 2;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--p) 16%, transparent) 0 6px,
-      transparent 6px 12px
-    ),
-    #f2efff;
   filter: none;
 }
 .cdl-tile.cdl-tile-special::after {
@@ -259,7 +247,7 @@
   height: auto;
   padding: 2px 4px;
   font-size: 8px;
-  background: var(--role-creation);
+  background: #fff;
   color: var(--p);
   border-top: 1px solid var(--p);
   font-family: var(--db-font-mono);

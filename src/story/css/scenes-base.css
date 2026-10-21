@@ -2,6 +2,7 @@
 
 :root {
   --ink-d: #241a5c;
+  --recurring-image-background: url("/assets/story/recurring-image.png");
 }
 
 /* Shared building blocks ---------------------------------- */

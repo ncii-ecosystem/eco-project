@@ -16,8 +16,8 @@
   } else {
     const sources = [
       "/src/story/navigation.js?v=1",
-      "/src/story/scenes.js?v=103",
-      "/src/story/main.js?v=129",
+      "/src/story/scenes.js?v=118",
+      "/src/story/main.js?v=138",
       "/src/story/motion.js?v=62",
       "/src/story/windows.js?v=4",
       "/src/story/finale.js?v=21",

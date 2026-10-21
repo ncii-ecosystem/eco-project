@@ -59,6 +59,7 @@
 }
 
 #db-info-title {
+  text-transform: uppercase;
   display: flex;
   align-items: center;
   gap: var(--db-space-2);

@@ -242,11 +242,6 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
 .dt-dock--discovery  { background: var(--role-proliferation); color: var(--role-proliferation-ink); }
 .dt-dock--infra      { background: var(--role-infra); color: var(--role-infra-ink); }
 .dt-dock--monetize   { background: var(--role-monetization); color: var(--role-monetization-ink); }
-.dt-dock-sep {
-  width: 1px; height: 28px;
-  margin: 0 4px;
-  align-self: center;
-}
 
 /* ═══════════════════════════════════════════════════════════
    SCENE STAGE — fills monitor screen (overrides original sticky)
@@ -520,7 +515,6 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
 .payment-stage { display: flex; align-items: center; justify-content: center; }
 .payment-bg { position: absolute; inset: 0; display: flex; flex-direction: column; transition: filter 0.5s; }
 .payment-bg.blurred { filter: blur(5px); }
-.pay-site-header { padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; }
 .pay-site-logo { font-family: var(--db-font-mono); font-size: 20px; }
 .pay-site-hero { flex: 1; display: flex; align-items: center; justify-content: center; gap: 60px; padding: 40px; }
 .pay-site-cta h2 { font-size: 24px; margin-bottom: 8px; }

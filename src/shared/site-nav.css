@@ -15,7 +15,7 @@
   font-family: var(--db-font-mono);
   font-size: var(--db-text-md);
   line-height: 1;
-  text-transform: lowercase;
+  text-transform: uppercase;
 }
 
 .site-logo {
@@ -23,7 +23,7 @@
   z-index: 2;
   display: inline-flex;
   align-items: center;
-  gap: var(--db-space-3);
+  gap: var(--db-space-2);
   height: var(--site-nav-h);
   min-width: 0;
   color: inherit;
@@ -47,7 +47,7 @@
 
 .site-logo-img {
   display: block;
-  height: calc(var(--site-nav-h) - var(--db-space-3));
+  height: calc(var(--site-nav-h) - var(--db-space-3) - 4px);
   width: auto;
 }
 

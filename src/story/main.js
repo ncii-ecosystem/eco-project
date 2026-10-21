@@ -48,7 +48,7 @@
   // how long each step's animation takes (ms); steps with a note also wait for the note to type out
   const ANIMATION_MS = {
     news:   { h0: 1500, h1: 1500, h2: 1500, h3: 1500, h4: 1500 },   // the marker sweep, the pop-up and the comments
-    chat:   { type: 1300, send: 400, think: 900, respond: 700, dataset: 0, scan: 0, return: 0, model: 2000 },
+    chat:   { type: 1300, send: 400, think: 900, respond: 700, dataset: 0, scan: 0, return: 0 },
     md:     { open: 2400, closed: 2400, move: 2200 },
     dm:     { msg0: 800, msg1: 800, msg2: 500, 'annotate-imessage': 1800, switchemail: 600, 'annotate-email': 500 },
     rc:     { 0: 500, 1: 500, 2: 500, 3: 500, 4: 500, ban: 600, mdf: 600, 'annotate-mdf': 700 },
@@ -255,7 +255,7 @@
   };
   function openCompanion(parentId) {
     const companionId = WIN_COMPANIONS[parentId];
-    if (!companionId || activeChapter !== parentId) return;
+    if (!companionId || (activeChapter !== parentId && !(parentId === 'reddit' && activeChapter === 'cloud'))) return;
     let win = spawnedWindows.get(companionId);
     if (!win) {
       const meta = COMP_META[companionId];
@@ -669,6 +669,7 @@
     let note = null;
     chapterSteps.forEach(step => {
       if (step.classList.contains('step--k')) note = step;
+      if (['flood', 'zoomnote'].includes(step.dataset.intro)) note = null;
       noteForStep.set(step, note);
     });
   });
@@ -680,9 +681,8 @@
   const sceneNotification = document.getElementById('scene-notif');
   sceneNotification?.setAttribute('role', 'button');
   sceneNotification?.setAttribute('aria-label', 'Dismiss notification');
-  function forwardFromNotification() {
-    if (navigation.active?.dataset.notification === 'models') {
-      sceneNotification?.classList.remove('show', 'pulsing');
+  function forwardFromModel() {
+    if (navigation.active?.dataset.chat === 'return') {
       Eco.startModelClick?.();
       return true;
     }
@@ -690,7 +690,6 @@
   }
   onActivate(sceneNotification, () => {
     sceneNotification.classList.remove('show', 'pulsing');
-    if (forwardFromNotification()) return;
     navigation.move(1);
   });
   function showChapterNotification(id) {
@@ -766,9 +765,9 @@
         closingWindows.add(win);
       }
     });
-    const headlineNotes = ['zoomnote', 'grok', 'tech', 'taxo', 'story'];
+    const headlineNotes = ['zoomnote', 'grok', 'tech', 'taxo'];
     const retainHeadlines = headlineNotes.includes(lastRenderedStep?.dataset.intro) &&
-      ['grok', 'tech', 'taxo', 'story'].includes(element.dataset.intro);
+      ['grok', 'tech', 'taxo'].includes(element.dataset.intro);
     const retainScene = retainHeadlines || retainModels || retainSearch;
     lastRenderedStep = element;
     naEdBody?.querySelectorAll('.nw').forEach(word => word.classList.add('on'));
@@ -829,7 +828,12 @@
     finally { if (restoreAutomaticStep) Eco.replaying = false; }
     if (restoreAutomaticStep) settleRestoredAnimations();
     const note = noteForStep.get(element);
-    if (note && !Eco.intro.floodRunning) updateNotesApp(note, Math.min(animMs(element), 2400));
+    if (note && !Eco.intro.floodRunning) {
+      const modelNote = note.dataset.chat === 'return' ||
+        ['intro', 'closed', 'open', 'move'].includes(note.dataset.md) ||
+        ['safeguards', 'hard'].includes(note.dataset.note);
+      updateNotesApp(note, modelNote ? 0 : Math.min(animMs(element), 2400));
+    }
     if (element.dataset.fin === 'flood' && Eco.finale?.covered) Eco.fadeNote();
     if (!chapterChanged && (element.dataset.note || element.dataset.notification)) {
       settleRestoredAnimations();
@@ -884,7 +888,7 @@
     }
     if (['switchemail', 'annotate-email'].includes(element.dataset.dm)) openCompanion('dm');
     if (['mdf', 'annotate-mdf'].includes(element.dataset.rc)) openCompanion('reddit');
-    if (['move', 'annotate-dev'].includes(element.dataset.md)) openCompanion('models');
+    if (element.dataset.md === 'move') openCompanion('models');
     if (element.dataset.fin === 'end') Eco.graph?.setProgress(1);
   }
 
@@ -894,7 +898,7 @@
   });
   next.addEventListener('click', () => {
     dismissNavigationTip();
-    if (forwardFromNotification()) return;
+    if (forwardFromModel()) return;
     navigation.move(1);
   });
   document.querySelector('.ps-pay-btn')?.addEventListener('click', event => {
@@ -912,7 +916,7 @@
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && !isSpace) return;
     event.preventDefault();
     dismissNavigationTip();
-    if (event.key !== 'ArrowLeft' && forwardFromNotification()) return;
+    if (event.key !== 'ArrowLeft' && forwardFromModel()) return;
     navigation.move(event.key === 'ArrowLeft' ? -1 : 1);
   });
 

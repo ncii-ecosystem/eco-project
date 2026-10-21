@@ -61,7 +61,7 @@
 }
 
 .ss-resource--removal {
-  --db-bg: var(--role-infra);
+  --db-bg: var(--role-monetization);
 }
 
 .ss-resource--reporting {
@@ -69,7 +69,7 @@
 }
 
 .ss-resource--support {
-  --db-bg: var(--role-monetization);
+  --db-bg: var(--role-infra);
 }
 
 .ss-resource--legal {

@@ -162,12 +162,6 @@
   visibility: visible;
   transform: none;
 }
-#aux-nudifier {
-  left: calc((100% - var(--notes-reserve, 0px)) * 0.18);
-  top: 16%;
-  width: calc((100% - var(--notes-reserve, 0px)) * 0.74);
-  height: 66%;
-}
 .aux-body {
   flex: 1;
   min-height: 0;

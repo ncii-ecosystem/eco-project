@@ -94,10 +94,6 @@ h3 {
 .dt-dock--neutral {
   background: color-mix(in srgb, var(--p) 18%, white);
 }
-.dt-dock-sep {
-  background: var(--p);
-  opacity: 0.35;
-}
 
 /* ── Windows: hard-edged, hairline chrome ──────────────── */
 .mac-window {
@@ -427,4 +423,14 @@ h3 {
 .quick-exit:focus-visible {
   outline: 2px solid var(--p);
   outline-offset: 3px;
+}
+
+.dt-dock-sep {
+  width: 1px;
+  height: 28px;
+  flex-shrink: 0;
+  margin: 0 4px;
+  align-self: center;
+  background: var(--p);
+  opacity: 0.35;
 }

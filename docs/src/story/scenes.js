@@ -1,6 +1,6 @@
 /* ============================================================
    The Ecosystem Behind the Image — scenes.js
-   Scene animations, the research panel and shared utilities,
+   Scene animations and shared utilities,
    used by main.js.
    ============================================================ */
 (function () {
@@ -201,9 +201,6 @@
       chatState.returned = true;
       returnToChat();
     }
-    if (val === 'model' && !chatState.modelClicked) {
-      flyBackToChat();
-    }
   }
 
   Eco.sendMessage = () => handleInterface('send');
@@ -299,7 +296,6 @@
 
     layer.classList.add('visible');
     if (chrome) chrome.classList.add('leaving');
-    setCdlStep(1);
 
     const sr = stage.getBoundingClientRect();
     const tr = special ? special.getBoundingClientRect() : null;
@@ -359,12 +355,6 @@
     if (source) source.style.visibility = '';
   }
 
-  /* the three-line explainer under the dataset heading lights up one line at a time */
-  function setCdlStep(n) {
-    document.querySelectorAll('#cdl-steps li').forEach((li) => li.classList.toggle('on', Number(li.dataset.k) <= n && n > 0));
-    document.querySelectorAll('#cdl-steps li').forEach((li) => li.classList.toggle('now', Number(li.dataset.k) === n));
-  }
-
   /* The scan: a bar sweeps the wall and the tiles it passes over turn red (CSAM detected) */
   const SCAN_MS = 1500;
   let scanAnim = null;
@@ -375,7 +365,6 @@
     const out = document.getElementById('cdl-flagged');
     if (!layer || !grid || !bar) return;
     const reduced = prefersReducedMotion();
-    setCdlStep(2);
     layer.classList.add('scanning');
     const tiles = Array.from(grid.querySelectorAll('.cdl-tile:not(.cdl-tile-special)'));
     const gr = grid.getBoundingClientRect(), lr = layer.getBoundingClientRect();
@@ -418,32 +407,65 @@
     const out = document.getElementById('cdl-flagged'); if (out) out.textContent = '0';
     const bar = document.getElementById('cdl-scanbar');
     if (bar) { bar.style.opacity = ''; bar.style.transition = ''; bar.style.transform = ''; }
-    setCdlStep(0);
   }
 
   /* The image zooms back out of the dataset into the chat bubble it came from */
-  // step 3 of the explainer ("models train on everything") lights up first and is left to be read, then the image goes back
   function returnToChat() {
-    setCdlStep(3);
+    if (prefersReducedMotion()) flyBackToChat();
+    else later(flyBackToChat, 1500);
   }
   function flyBackToChat() {
+    const stage = document.querySelector('.chat-stage');
     const layer = document.getElementById('chat-dataset-layer');
     const chrome = document.querySelector('.chat-chrome');
-    const special = layer && layer.querySelector('.cdl-tile-special');
+    const special = layer?.querySelector('.cdl-tile-special');
     const source = document.querySelector('.chat-bubble.ai .redacted-block');
     if (!layer) return;
-    const reduced = prefersReducedMotion();
     const finish = () => {
       layer.classList.remove('visible');
-      if (chrome) chrome.classList.remove('leaving');
+      chrome?.classList.remove('leaving');
       if (source) source.style.visibility = '';
-      if (special) special.classList.remove('has-image');
+      if (special) {
+        special.style.visibility = '';
+        special.classList.remove('has-image');
+      }
     };
-    if (reduced) { finish(); return; }
-    // The dataset fades away and the chat fades back in underneath it.
-    if (chrome) chrome.classList.remove('leaving');
+    if (prefersReducedMotion() || !stage || !chrome || !special || !source) {
+      finish();
+      return;
+    }
+    const sr = stage.getBoundingClientRect();
+    const from = special.getBoundingClientRect();
+    const transition = chrome.style.transition;
+    chrome.style.transition = 'none';
+    chrome.classList.remove('leaving');
+    const to = source.getBoundingClientRect();
+    chrome.classList.add('leaving');
+    void chrome.offsetWidth;
+    chrome.style.transition = transition;
+    const flight = source.cloneNode(true);
+    flight.classList.add('cdl-flight');
+    Object.assign(flight.style, {
+      position: 'absolute', margin: '0', zIndex: '12', pointerEvents: 'none',
+      visibility: 'visible', left: (from.left - sr.left) + 'px',
+      top: (from.top - sr.top) + 'px', width: to.width + 'px',
+      height: to.height + 'px', transformOrigin: '0 0', willChange: 'transform',
+    });
+    stage.appendChild(flight);
+    special.style.visibility = 'hidden';
+    source.style.visibility = 'hidden';
+    chrome.classList.remove('leaving');
     layer.classList.remove('visible');
-    later(finish, 700);
+    flightAnim = flight.animate([
+      { transform: `scale(${from.width / to.width}, ${from.height / to.height})` },
+      { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(1)` },
+    ], { duration: 1200, easing: 'cubic-bezier(0.65, 0, 0.25, 1)', fill: 'both' });
+    flightAnim.onfinish = () => { finish(); flight.remove(); flightAnim = null; };
+    flightAnim.oncancel = () => {
+      flight.remove();
+      source.style.visibility = '';
+      special.style.visibility = '';
+    };
   }
 
   function undoReturn() {
@@ -458,19 +480,24 @@
     if (chrome) chrome.classList.add('leaving');
     if (source) source.style.visibility = 'hidden';
     if (special) special.classList.add('has-image');
-    setCdlStep(chatState.scanShown ? 2 : 1);
   }
 
   /* The cursor clicks the model picker; the models window opens */
   function openModelsWindow() {
-    const step = document.querySelector('.step[data-md="closed"]');
+    const step = document.querySelector('.step[data-md="intro"]');
     if (Eco.navigation && step) Eco.navigation.goTo(step);
   }
   function clickModel() {
+    const returning = document.querySelector('.cdl-flight') ||
+      document.getElementById('chat-dataset-layer')?.classList.contains('visible');
+    if (chatState.returned && returning) { later(clickModel, 100); return; }
     if (chatState.modelClicked) { openModelsWindow(); return; }
     chatState.modelClicked = true;
     const sel = document.getElementById('chat-model-select');
-    if (!sel || !Eco.cursor || prefersReducedMotion()) { later(openModelsWindow, prefersReducedMotion() ? 0 : 300); return; }
+    if (!sel || !Eco.cursor || prefersReducedMotion()) {
+      later(openModelsWindow, prefersReducedMotion() ? 0 : 300);
+      return;
+    }
     later(() => {
       Eco.cursor.to(sel, () => {
         sel.classList.add('cursor-press');
@@ -479,12 +506,6 @@
     }, 250);
   }
   Eco.startModelClick = clickModel;
-  function undoModel() {
-    clearPending();
-    const sel = document.getElementById('chat-model-select');
-    if (sel) sel.classList.remove('cursor-press');
-    if (Eco.cursor) Eco.cursor.hide();
-  }
 
   /* ── SCENE: MODELS — open weights vs. closed ──────────────────────────── */
   let mdTimers = [];
@@ -623,9 +644,8 @@
       else { const r = document.getElementById('md-reqs'); if (r) r.textContent = ''; }
     }
     if (ds.chat === undefined) return;
-    if (ds.chat === 'model' && chatState.modelClicked) { chatState.modelClicked = false; undoModel(); }
-    else if (ds.chat === 'return' && chatState.returned) { chatState.returned = false; undoReturn(); }
-    else if (ds.chat === 'scan' && chatState.scanShown) { chatState.scanShown = false; resetScan(); setCdlStep(1); }
+    if (ds.chat === 'return' && chatState.returned) { chatState.returned = false; undoReturn(); }
+    else if (ds.chat === 'scan' && chatState.scanShown) { chatState.scanShown = false; resetScan(); }
     else if (ds.chat === 'dataset' && chatState.datasetShown) {
       chatState.datasetShown = false;
       resetDataset();
@@ -689,7 +709,7 @@
     if (!container) return;
     const el = document.createElement('div');
     el.className = 'chat-bubble ai';
-    el.innerHTML = `I can help with that! Here's what I generated based on the photo you gave me.<div class="redacted-block"><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Output redacted</span></div>`;
+    el.innerHTML = `I can help with that! Here's what I generated based on the photo you gave me.<div class="redacted-block recurring-image"><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Output redacted</span></div>`;
     container.appendChild(el);
     container.scrollTop = container.scrollHeight;
 
@@ -756,8 +776,6 @@
       showRedditComments(n);
     } else if (val === 'ban') {
       showRedditBan();
-    } else if (val === 'annotate-reddit') {
-      /* handled by sticky note */
     } else if (val === 'annotate-mdf') {
       showMdfOffline();
     }
@@ -820,8 +838,31 @@
     if (val === 'ads') showAds();
     if (val === 'instagram') {
       showAds();
-      document.getElementById('sr-ads')?.classList.add('social-focus');
+      focusSocialAd();
     }
+  }
+
+  function focusSocialAd() {
+    const box = document.getElementById('sr-ads');
+    const ad = box?.querySelector('.sr-ad-1');
+    if (!ad || box.classList.contains('social-focus')) return;
+    const from = ad.getBoundingClientRect();
+    const visible = ad.classList.contains('in');
+    const transition = ad.style.transition;
+    ad.style.transition = 'none';
+    box.classList.add('social-focus');
+    ad.classList.add('in');
+    const to = ad.getBoundingClientRect();
+    const transform = getComputedStyle(ad).transform;
+    ad.style.transition = transition;
+    if (prefersReducedMotion() || !visible || !from.width || !from.height) return;
+    ad.animate([
+      { transformOrigin: 'top left', transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) ${transform} scale(${from.width / to.width}, ${from.height / to.height})` },
+      { transformOrigin: 'top left', transform },
+    ], {
+      duration: 750,
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    });
   }
 
   /* pop-up ads arrive one after another over the results */
@@ -964,6 +1005,7 @@
     if (val === 'stats' && !cloudState.statsShown) {
       cloudState.statsShown = true;
       showCloudStats();
+
     } else if (val === 'alert' && !cloudState.alertShown) {
       cloudState.alertShown = true;
       showCloudAlert();
@@ -1023,7 +1065,7 @@
     if (!inStory && Eco.intro.flights) { Eco.intro.flights.forEach((a) => a.cancel()); Eco.intro.flights = []; }
     // the note: none before the first one and while the headlines arrive; otherwise the latest note passed
     if (!Eco.showNote) return;
-    if (i < 0 || flood.running || i === INTRO.indexOf('flood')) { if (Eco.hideNote) Eco.hideNote(); return; }
+    if (i < 0 || flood.running || ['flood', 'zoomnote'].includes(INTRO[i])) { if (Eco.hideNote) Eco.hideNote(); return; }
     for (let n = i; n >= 0; n--) {
       const el = document.querySelector(`.step--k[data-intro="${INTRO[n]}"]`);
       if (el) { Eco.showNote(el); return; }
@@ -1277,16 +1319,12 @@
       else { cancelAnimationFrame(countAnim); ['pub-views', 'pub-shares'].forEach((k) => { const e = document.getElementById(k); if (e) e.textContent = '0'; }); }
     }
   }
-  Eco.auxHide = () => { setAux('aux-nudifier', false); setAux('aux-pubsite', false); };
+  Eco.auxHide = () => { setAux('aux-pubsite', false); };
   function handleAux(val) {
-    if (val === 'nudifier') setAux('aux-nudifier', true);
-    else if (val === 'nudifier-off') setAux('aux-nudifier', false);
-    else if (val === 'pubsite') setAux('aux-pubsite', true);
+    if (val === 'pubsite') setAux('aux-pubsite', true);
   }
   function exitAux(val) {
-    if (val === 'nudifier') setAux('aux-nudifier', false);
-    else if (val === 'nudifier-off') setAux('aux-nudifier', true);
-    else if (val === 'pubsite') setAux('aux-pubsite', false);
+    if (val === 'pubsite') setAux('aux-pubsite', false);
   }
 
   Eco.handleStep = function (ds, direction) {
@@ -1325,12 +1363,10 @@
     cover:     { icon: '<span class="notif-folder notif-folder--neutral"><i class="fas fa-camera-retro"></i></span>',          app: 'NewsFeed', title: 'Trending now' },
     interface: { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-magic"></i></span>',         app: 'Assistant', title: 'AI interfaces' },
     dm:        { icon: '<span class="notif-folder notif-folder--distribution"><i class="fas fa-comment"></i></span>',       app: 'Messages', title: 'Sharing images' },
-    models:    { icon: '<span class="notif-folder notif-folder--creation"><i class="fas fa-code"></i></span>',            app: 'Models', title: 'Open and closed models' },
     reddit:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-users"></i></span>',         app: 'Forum', title: 'Deepfake creation communities' },
     search:    { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-search"></i></span>',           app: 'Search', title: 'Search engines' },
-    appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'Store', title: 'App stores' },
-    payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout', title: 'Payment services' },
-    cloud:     { icon: '<span class="notif-folder notif-folder--infra"><i class="fas fa-screwdriver-wrench"></i></span>',                app: 'Cloud', title: 'Infrastructure' },
+    // appstore:  { icon: '<span class="notif-folder notif-folder--discovery"><i class="fas fa-shopping-cart"></i></span>',    app: 'Store', title: 'App stores' },
+    // payment:   { icon: '<span class="notif-folder notif-folder--monetize"><i class="fas fa-hand-holding-usd"></i></span>',  app: 'Checkout', title: 'Payment services' },
   };
 
   // Keep the original nodes (and their listeners) when restoring scene markup.
@@ -1361,8 +1397,8 @@
     Eco.intro.cur = -1; Eco.intro.newsOpen = false; Eco.intro.storyOpen = false;
     Eco.intro.refresh();
     Eco.auxHide();
-    const companions = { models: 'devplat', reddit: 'mdf', dm: 'dm-email' };
-    [id, companions[id], 'aux-nudifier', 'aux-pubsite'].forEach(key => baselines.get(key)?.());
+    const companions = { models: 'devplat', reddit: 'mdf', cloud: 'mdf', dm: 'dm-email' };
+    [id, companions[id], 'aux-pubsite'].forEach(key => baselines.get(key)?.());
     chatState = { typed: false, sent: false, refused: false, followUpTyped: false, followedUp: false, thinking: false, responded: false, datasetShown: false, scanShown: false, returned: false, modelClicked: false };
     searchTyped = false; redditBanShown = false;
     appstoreState = { filled: false, highlighted: false, overlayShown: false };

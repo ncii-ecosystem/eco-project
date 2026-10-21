@@ -207,7 +207,7 @@
 .sr-ads.social-focus .sr-ad-1 {
   left: 50%; right: auto; top: 18%;
   width: min(320px, 85%); transform: translateX(-50%);
-  transition: left 500ms ease, top 500ms ease, width 500ms ease, transform 500ms ease;
+  transition: none;
 }
 .social-focus .sr-social-context {
   display: flex; align-items: baseline; justify-content: space-between;
@@ -224,4 +224,26 @@
 .social-focus .sr-ad-1 .sr-ad-tag, .social-focus .sr-ad-1 .sr-ad-x { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .sr-ads.social-focus .sr-ad-1 { transition: none; }
+}
+
+.redacted-block.recurring-image,
+.cdl-tile.cdl-tile-special {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: none;
+}
+
+.redacted-block.recurring-image::before,
+.cdl-tile.cdl-tile-special::before {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: -12px;
+  z-index: -1;
+  padding: 0;
+  border: 0;
+  background: var(--recurring-image-background) center / cover no-repeat;
+  filter: blur(8px);
+  pointer-events: none;
 }

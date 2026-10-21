@@ -160,13 +160,6 @@
 .payment-bg {
   background: var(--paper);
 }
-.pay-site-header {
-  border-bottom: 1px solid var(--p);
-}
-.pay-site-header nav {
-  color: var(--p);
-  font-family: var(--db-font-mono);
-}
 .pay-site-logo {
   color: var(--p);
   font-weight: 900;
@@ -370,4 +363,8 @@
   .cdl-tile {
     transition-duration: 0.01ms !important;
   }
+}
+
+.pay-site-hero > .redacted-block.lg {
+  height: 180px;
 }

@@ -1,23 +1,46 @@
-<h1><img src="assets/logo.svg" alt="" width="25" height="25" /> ncii-ecosystem <img src="assets/logo.svg" alt="" width="25" height="25" /></h1>
+<h1 align="center">
+  <img src="assets/logo.svg" alt="" width="25" height="25" />
+  ncii-ecosystem
+  <img src="assets/logo.svg" alt="" width="25" height="25" />
+</h1>
 
-## Frontend
+<p align="center">An interactive story, living evidence database, and support resources for understanding deepfake abuse.</p>
+
+<p align="center">
+  <a href="https://ncii-ecosystem.org">Visit the site ↗</a>
+  &nbsp; · &nbsp;
+  <a href="https://arxiv.org/abs/2602.04759">Read the paper ↗</a>
+</p>
+
+---
+
+## Run locally
+
+**Website** · [localhost:8000](http://localhost:8000)
 
 ```bash
 npm run site
 ```
 
-Open [http://localhost:8000](http://localhost:8000)
-
-## Backend (Sanity Studio)
+**Sanity Studio** · [localhost:3333](http://localhost:3333)
 
 ```bash
 npm install --prefix studio
 npm run studio
 ```
 
-Open [http://localhost:3333](http://localhost:3333)
+## Publish changes
 
-## Submission backend (Cloudflare Worker)
+After editing `src/` or `assets/`, run this to refresh `docs/` and clear out old files:
+
+```bash
+npm run build:pages
+```
+
+Commit the updated `docs/` files alongside your source changes.
+
+<details>
+<summary><strong>Submission backend · Cloudflare Worker</strong></summary>
 
 After changing the submission Worker, deploy it from the project root:
 
@@ -25,11 +48,16 @@ After changing the submission Worker, deploy it from the project root:
 npx wrangler deploy
 ```
 
-Pushing to GitHub updates the website but doesn't deploy the Worker!
+Pushing to GitHub updates the website but doesn't deploy the Worker.
 
-## Project structure
+</details>
 
-- `src/`: editable pages, shared frontend code, and the local server.
-- `assets/`: images used by the site.
-- `studio/`: Sanity Studio; `workers/`: the submission backend.
-- `docs/`: generated GitHub Pages site. After editing `src/` or `assets/`, run `npm run build:pages` to refresh `docs/` and clear out old files.
+## Around the project
+
+| Folder | What's inside |
+| --- | --- |
+| `src/` | Pages, shared frontend code, and the local server |
+| `assets/` | Images used by the site |
+| `studio/` | Sanity Studio |
+| `workers/` | Submission backend |
+| `docs/` | Generated GitHub Pages site |

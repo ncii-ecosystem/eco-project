@@ -258,10 +258,22 @@
   box-shadow: none;
 }
 .mdf-card .redacted-block {
+  position: relative;
   width: 100%; height: 120px;
   border-radius: 0 !important;
   border-width: 0 0 1px 0;
 }
+.mdf-card-price {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 2px 5px;
+  background: var(--paper);
+  color: var(--p);
+  border: 1px solid var(--p);
+  font: 400 var(--db-text-xs)/var(--db-lh-tight) var(--db-font-mono);
+}
+
 .mdf-card-meta {
   color: var(--p);
   font-family: var(--db-font-mono);
@@ -284,8 +296,14 @@
 .mdf-cards { margin-bottom: 0; }
 .mdf-stage { overflow: clip !important; }
 .mon-screen:not(.finale-mode) .mdf-stage {
-  height: 420px !important;
-  min-height: 420px;
+  height: auto !important;
+  min-height: 0;
+}
+.mdf-card:nth-last-child(-n + 3) .mdf-card-meta {
+  display: none;
+}
+.mdf-featured {
+  padding-bottom: 0;
 }
 .mdf-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .mdf-offline-box { padding: 24px 28px; }

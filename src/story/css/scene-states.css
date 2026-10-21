@@ -129,45 +129,6 @@
 }
 
 /* ═══ Dataset: explainer strip, CSAM scan, red flags ═══════ */
-.cdl-header {
-  align-items: center;
-}
-.cdl-header:not(:has(*)) { display: none; }
-.cdl-steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.cdl-steps li {
-  flex: 1 1 190px;
-  font: 400 11px/1.35 var(--db-font-mono);
-  color: var(--p);
-  border: 1px solid var(--p);
-  background: var(--paper);
-  padding: 6px 8px;
-  opacity: 0.35;
-  transition:
-    opacity 0.4s ease,
-    background 0.4s ease,
-    box-shadow 0.4s ease;
-}
-.cdl-steps li b {
-  display: inline-block;
-  background: var(--p);
-  color: #fff;
-  padding: 0 5px;
-  margin-right: 6px;
-}
-.cdl-steps li.on {
-  opacity: 1;
-}
-.cdl-steps li.now {
-  background: var(--role-creation);
-  box-shadow: var(--hard-sm);
-}
 .cdl-flagbox {
   position: static;
   left: auto;
@@ -215,6 +176,12 @@
   overflow: visible;
   animation: cdl-flag 1.8s ease-in-out infinite;
 }
+.cdl-tile.flagged::before {
+  color: var(--notification-red);
+  border-top-color: var(--notification-red);
+  background: #ffd6d6;
+}
+
 @keyframes cdl-flag {
   0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--notification-red) 0%, transparent); }
   50%      { box-shadow: 0 0 0 4px color-mix(in srgb, var(--notification-red) 75%, transparent); }

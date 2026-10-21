@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="/src/shared/router.css" />
     <script src="/src/shared/router.js"></script>
     <link rel="stylesheet" href="/src/shared/tokens.css?v=103" />
-    <link rel="stylesheet" href="/src/shared/site-nav.css" />
+    <link rel="stylesheet" href="/src/shared/site-nav.css?v=4" />
     <script src="/src/shared/theme-boot.js"></script>
 
     <meta charset="UTF-8" />
@@ -133,28 +133,28 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="/src/shared/page-styles.css?v=104" />
-    <link rel="stylesheet" href="/src/story/styles.css?v=108" />
-    <link rel="stylesheet" href="/src/story/theme.css?v=104" />
+    <link rel="stylesheet" href="/src/story/styles.css?v=110" />
+    <link rel="stylesheet" href="/src/story/theme.css?v=106" />
     <link rel="stylesheet" href="/src/story/theme/finale-and-dock.css?v=106" />
     <link rel="stylesheet" href="/src/story/theme/windows.css?v=106" />
     <link
       rel="stylesheet"
-      href="/src/story/theme/notes-and-notifications.css?v=105"
+      href="/src/story/theme/notes-and-notifications.css?v=108"
     />
-    <link rel="stylesheet" href="/src/story/theme/opening.css?v=105" />
+    <link rel="stylesheet" href="/src/story/theme/opening.css?v=106" />
     <link rel="stylesheet" href="/src/story/theme/headline-formats.css?v=105" />
     <link
       rel="stylesheet"
       href="/src/story/theme/narrative-controls.css?v=104"
     />
-    <link rel="stylesheet" href="/src/story/css/scenes-base.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/scenes-base.css?v=4" />
     <link rel="stylesheet" href="/src/story/css/feed.css?v=1" />
-    <link rel="stylesheet" href="/src/story/css/assistant-and-dataset.css?v=1" />
-    <link rel="stylesheet" href="/src/story/css/distribution.css?v=1" />
-    <link rel="stylesheet" href="/src/story/css/services.css?v=1" />
-    <link rel="stylesheet" href="/src/story/css/scene-states.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/assistant-and-dataset.css?v=5" />
+    <link rel="stylesheet" href="/src/story/css/distribution.css?v=3" />
+    <link rel="stylesheet" href="/src/story/css/services.css?v=4" />
+    <link rel="stylesheet" href="/src/story/css/scene-states.css?v=3" />
     <link rel="stylesheet" href="/src/story/css/models-and-developers.css?v=1" />
-    <link rel="stylesheet" href="/src/story/css/scene-overlays.css?v=1" />
+    <link rel="stylesheet" href="/src/story/css/scene-overlays.css?v=3" />
     <link rel="stylesheet" href="/src/story/desktop-gate.css?v=2" />
     <script src="/src/shared/nav.js" defer></script>
     <script src="/src/shared/theme.js" defer></script>
@@ -178,7 +178,7 @@
   </head>
   <body>
     <header class="site-topnav">
-      <a class="site-logo" href="/home" aria-label="ncii ecosystem">
+      <a class="site-logo" href="/home" aria-label="NCII-ECOSYSTEM.ORG">
         <img
           class="site-logo-img"
           src="/assets/logo.svg"
@@ -186,7 +186,7 @@
           width="28"
           height="28"
         />
-        <span class="site-logo-name">ncii ecosystem</span>
+        <span class="site-logo-name">NCII-ECOSYSTEM.ORG</span>
       </a>
       <button
         type="button"
@@ -302,34 +302,6 @@
           <div id="window-overlay"></div>
 
           <!-- Pop-up windows used by a few notes (shown and hidden by data-aux steps) -->
-          <div class="aux-win" id="aux-nudifier" aria-hidden="true">
-            <div class="win-titlebar">
-              <div class="win-traffic">
-                <span class="wtl wtl-r"></span><span class="wtl wtl-y"></span
-                ><span class="wtl wtl-g"></span>
-              </div>
-            </div>
-            <div class="aux-body">
-              <div class="pay-site-header">
-                <span class="pay-site-logo">UndressAI Pro</span>
-              </div>
-              <div class="pay-site-hero">
-                <div class="redacted-block lg"></div>
-                <div class="pay-site-cta">
-                  <h2>Unlimited AI Photo Editing</h2>
-                  <p>Join 2 million users. Results in 30 seconds.</p>
-                  <div class="pay-logos">
-                    <span class="pay-logo visa">Card</span
-                    ><span class="pay-logo mc">Debit</span
-                    ><span class="pay-logo pp">Wallet</span
-                    ><span class="pay-logo ap">Mobile Pay</span
-                    ><span class="pay-logo gp">Bank</span
-                    ><span class="pay-logo cr">Crypto</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           <div class="aux-win" id="aux-pubsite" aria-hidden="true">
             <div class="win-titlebar">
               <div class="win-traffic">
@@ -345,9 +317,9 @@
                 >
               </div>
               <div class="pub-grid">
-                <div class="pub-tile">
+                <div class="pub-tile redacted-block recurring-image">
                   <span
-                    ><i class="fas fa-play" aria-hidden="true"></i> 12:04</span
+                    ><i class="fas fa-play" aria-hidden="true"></i> 2:46</span
                   >
                 </div>
                 <div class="pub-tile">
@@ -804,19 +776,6 @@
 
               <!-- Dataset + model reveal — zooms over the chat on scroll -->
               <div class="chat-dataset-layer" id="chat-dataset-layer">
-                <div class="cdl-header"></div>
-                <ol class="cdl-steps" id="cdl-steps">
-                  <li data-k="1">
-                    <b>1</b> Images are scraped from the web into one huge
-                    dataset
-                  </li>
-                  <li data-k="2">
-                    <b>2</b> A scan finds child sexual abuse material inside it
-                  </li>
-                  <li data-k="3">
-                    <b>3</b> Models train on everything in the dataset
-                  </li>
-                </ol>
                 <div class="cdl-grid" id="cdl-grid">
                   <div
                     class="cdl-tile"
@@ -1043,7 +1002,7 @@
                     did you see what's going around
                   </div>
                   <div class="dm-msg dm-in dm-step" data-dm-step="1">
-                    <div class="dm-attachment redacted-block">
+                    <div class="dm-attachment redacted-block recurring-image">
                       <span class="redacted-label">Image</span>
                     </div>
                   </div>
@@ -1100,7 +1059,7 @@
                     an image of you has been circulating in several group chats
                     and has also been posted online.
                   </p>
-                  <div class="redacted-block email-img">
+                  <div class="redacted-block email-img recurring-image">
                     <span class="redacted-label"
                       ><i
                         class="fas fa-triangle-exclamation"
@@ -1168,8 +1127,8 @@
                           u/modeluser99 <span class="rc-pts">+218</span>
                         </div>
                         <div class="rc-text">
-                          Just tried the open face-swap toolkit from the wiki —
-                          results are insane. Way better than anything in the
+                          Just tried the open face-swap toolkit from the wiki.
+                          Results are insane. Way better than anything in the
                           store.
                         </div>
                       </div>
@@ -1206,7 +1165,7 @@
                         </div>
                         <div class="rc-text">
                           They always remove the best ones lol. Check the
-                          imageboard thread — it mirrors here whenever this
+                          imageboard thread. It mirrors here whenever this
                           community gets swept
                         </div>
                       </div>
@@ -1221,16 +1180,14 @@
                     <div class="reddit-banned-snoo-sub">forum.example</div>
                     <div class="reddit-banned-divider"></div>
                     <div class="reddit-banned-rule">
-                      RULE · NON-CONSENSUAL INTIMATE MEDIA
+                      SERVICE PROVIDER · HOSTING TERMINATED
                     </div>
                     <div class="reddit-banned-title">
-                      c/faceswaps has been banned from the forum
+                      c/faceswaps is offline
                     </div>
                     <div class="reddit-banned-sub">
-                      This community was removed for violating the
-                      <strong>forum's content policy</strong>. It was one of the
-                      first communities banned under a policy update targeting
-                      non-consensual pornography.
+                      This community is no longer available because a
+                      <strong>service provider terminated hosting</strong>.
                     </div>
                     <div class="reddit-banned-divider"></div>
                   </div>
@@ -1249,33 +1206,32 @@
                 </div>
                 <div class="mdf-featured">
                   <div class="mdf-section-label">
-                    <i class="fas fa-bolt"></i> Featured · Commission a
-                    Celebrity Deepfake
+                    <i class="fas fa-bolt"></i> Featured · Commission a deepfake
                   </div>
                   <div class="mdf-cards">
                     <div class="mdf-card">
-                      <div class="redacted-block"></div>
-                      <div class="mdf-card-meta">$15 · Verified creator</div>
+                      <div class="redacted-block"><span class="mdf-card-price">$25</span></div>
+                      <div class="mdf-card-meta">Verified creator</div>
                     </div>
                     <div class="mdf-card">
-                      <div class="redacted-block"></div>
-                      <div class="mdf-card-meta">$25 · HD available</div>
+                      <div class="redacted-block"><span class="mdf-card-price">$75</span></div>
+                      <div class="mdf-card-meta">HD available</div>
                     </div>
                     <div class="mdf-card">
-                      <div class="redacted-block"></div>
-                      <div class="mdf-card-meta">$20 · 24hr turnaround</div>
+                      <div class="redacted-block recurring-image"><span class="mdf-card-price">$120</span></div>
+                      <div class="mdf-card-meta">24hr turnaround</div>
                     </div>
                     <div class="mdf-card">
-                      <div class="redacted-block"></div>
-                      <div class="mdf-card-meta">$15 · Verified creator</div>
+                      <div class="redacted-block"><span class="mdf-card-price">$50</span></div>
+                      <div class="mdf-card-meta">Verified creator</div>
                     </div>
                     <div class="mdf-card">
-                      <div class="redacted-block"></div>
-                      <div class="mdf-card-meta">$25 · HD available</div>
+                      <div class="redacted-block"><span class="mdf-card-price">$200</span></div>
+                      <div class="mdf-card-meta">HD available</div>
                     </div>
                     <div class="mdf-card">
-                      <div class="redacted-block"></div>
-                      <div class="mdf-card-meta">$20 · 24hr turnaround</div>
+                      <div class="redacted-block"><span class="mdf-card-price">$90</span></div>
+                      <div class="mdf-card-meta">24hr turnaround</div>
                     </div>
                   </div>
                 </div>
@@ -1285,10 +1241,10 @@
                   <div class="mdf-offline-icon">
                     <i class="fas fa-triangle-exclamation"></i>
                   </div>
-                  <div class="mdf-offline-title">nsfwfakes.example Offline</div>
+                  <div class="mdf-offline-title">nsfwfakes.example Removed</div>
                   <div class="mdf-offline-msg">
-                    This site is no longer available. A service provider
-                    terminated hosting.
+                    This community was removed for violating the platform’s
+                    policy against non-consensual intimate media.
                   </div>
                 </div>
               </div>
@@ -1334,7 +1290,7 @@
                       ><i class="fas fa-xmark" aria-hidden="true"></i></span
                     ><span class="sr-ad-tag">Ad</span><b>Photo Magic</b>
                     <div class="sr-social-sponsored">Sponsored</div>
-                    <div class="sr-social-preview redacted-block">
+                    <div class="sr-social-preview redacted-block recurring-image">
                       <span class="redacted-label">Ad image redacted</span>
                     </div>
                     <div
@@ -1476,13 +1432,10 @@
           <div class="scene" id="payment">
             <div class="scene-stage payment-stage">
               <div class="payment-bg" id="payment-bg">
-                <div class="pay-site-header">
-                  <span class="pay-site-logo">UndressAI Pro</span>
-                </div>
                 <div class="pay-site-hero">
                   <div class="redacted-block lg"></div>
                   <div class="pay-site-cta">
-                    <h2>Unlimited AI Photo Editing</h2>
+                    <h2 class="pay-site-logo">UndressAI Pro <i class="fas fa-magic" aria-hidden="true"></i>: Unlimited Editing</h2>
                     <p>Join 2 million users. Results in 30 seconds.</p>
                     <div class="pay-logos">
                       <span class="pay-logo visa">Card</span>
@@ -1649,136 +1602,47 @@
     <div id="scroll-root">
       <!-- INTRO: narration notes on the desktop, the five headlines, then the story begins -->
       <div class="scroll-chapter" data-chapter="intro" data-scene="scene-intro">
-        <div
-          class="step step--k"
-          data-intro="n1"
-          data-pos="center"
-          style="height: 70vh"
-        >
+        <div class="step step--k" data-intro="n1" data-pos="center" style="height: 70vh">
           <span class="step-label">Grok</span>
-          <p class="step-key-text">
-            In December 2025, the AI chatbot Grok produced thousands of images
-            in response to user requests like ‘put a bikini on her’ and ‘take
-            her clothes off.’
-          </p>
+          <p class="step-key-text">In December 2025, Grok <b>generated</b> thousands of images in response to prompts like ‘put a bikini on her’ and ‘take her clothes off.’</p>
         </div>
-        <div
-          class="step step--k"
-          data-intro="n2"
-          data-pos="center"
-          style="height: 60vh"
-        >
+        <div class="step step--k" data-intro="n2" data-pos="center" style="height: 60vh">
           <span class="step-label">Non-consent</span>
-          <p class="step-key-text">
-            These images showed primarily women and girls who had not consented,
-            making it a form of image-based sexual abuse.
-          </p>
+          <p class="step-key-text">The images mostly showed women and girls who never consented. This is image-based sexual abuse.</p>
         </div>
-        <div
-          class="step step--k"
-          data-intro="n3"
-          data-pos="center"
-          style="height: 60vh"
-        >
+        <div class="step step--k" data-intro="n3" data-pos="center" style="height: 60vh">
           <span class="step-label">AIG-NCII</span>
-          <p class="step-key-text">
-            We call this AI-generated non-consensual intimate images, or
-            AIG-NCII.
-          </p>
+          <p class="step-key-text">They are commonly called “deepfakes.” We call this AIG-NCII: AI-generated non-consensual intimate images.</p>
         </div>
-        <div
-          class="step step--k"
-          data-intro="n4"
-          data-pos="center"
-          style="height: 60vh"
-        >
+        <div class="step step--k" data-intro="n4" data-pos="center" style="height: 60vh">
           <span class="step-label">A rapid scale</span>
-          <p class="step-key-text">
-            This form of abuse is increasing at a rapid scale…
-          </p>
+          <p class="step-key-text">And it is growing fast, impacting thousands of students, celebrities, journalists, and everyday people around the world.</p>
         </div>
         <div class="step step--n" data-intro="flood" style="height: 90vh"></div>
-        <div
-          class="step step--k"
-          data-intro="zoomnote"
-          data-pos="top"
-          style="height: 60vh"
-        >
-          <span class="step-label">Zoom in</span>
-          <p class="step-key-text">
-            Let’s zoom into a couple of these headlines.
-          </p>
+        <div class="step step--n" data-intro="zoomnote" data-pos="top" style="height: 60vh">
+
+
         </div>
-        <div
-          class="step step--k"
-          data-intro="grok"
-          data-pos="top"
-          style="height: 60vh"
-        >
+        <div class="step step--k" data-intro="grok" data-pos="top" style="height: 60vh">
           <span class="step-label">Grok</span>
-          <p class="step-key-text">All the headlines are talking about Grok…</p>
+          <p class="step-key-text">The headlines are all about Grok...</p>
         </div>
-        <div
-          class="step step--k"
-          data-intro="tech"
-          data-pos="top"
-          style="height: 60vh"
-        >
+        <div class="step step--k" data-intro="tech" data-pos="top" style="height: 60vh">
           <span class="step-label">Other technologies</span>
-          <p class="step-key-text">
-            …But look closely: other apps, websites, and services are involved
-            too.
-          </p>
+          <p class="step-key-text">…but Grok is one piece of a much larger system.</p>
         </div>
-        <div
-          class="step step--k"
-          data-intro="taxo"
-          data-pos="top"
-          style="height: 60vh"
-        >
+        <div class="step step--k" data-intro="taxo" data-pos="top" style="height: 60vh">
           <span class="step-label">The ecosystem</span>
-          <p class="step-key-text">
-            An ecosystem of connected technologies helps people create and
-            spread this abuse, not just the AI model that makes the image.
-          </p>
+          <p class="step-key-text">Abuse is powered not by a single model, but an entire ecosystem of technologies</p>
         </div>
-        <div
-          class="step step--k"
-          data-intro="story"
-          data-pos="top"
-          style="height: 70vh"
-        >
-          <span class="step-label">The Supply Chain</span>
-          <p class="step-key-text">
-            We’ll follow the tools and services involved, from creating an image
-            to sharing it.
-          </p>
-        </div>
+
         <div class="step step--n" data-intro="go" style="height: 50vh"></div>
-        <div
-          class="step step--k"
-          data-intro="t3"
-          data-pos="center"
-          style="height: 60vh"
-        >
-          <span class="step-label">Zero technical skills</span>
-          <p class="step-key-text">
-            How can someone create these images without knowing how AI works?
-          </p>
-        </div>
+
       </div>
 
       <!-- INTERFACE → DATASET → MODEL REVEAL (one continuous scene) -->
-      <div
-        class="scroll-chapter"
-        data-chapter="interface"
-        data-scene="interface"
-      >
-        <div
-          class="step step--n"
-          data-chat="type"
-          data-msg="I have a photo of a woman. Can you generate a version without clothes?"
-        >
+      <div class="scroll-chapter" data-chapter="interface" data-scene="interface">
+        <div class="step step--n" data-chat="type" data-msg="I have a photo of a woman. Can you generate a version without clothes?">
           <p>A standard natural-language request. The kind anyone can type.</p>
         </div>
         <div class="step step--n" data-chat="send">
@@ -1793,102 +1657,58 @@
 
         <div class="step step--k" data-chat="respond">
           <span class="step-label">Generative AI Interfaces</span>
-          <p class="step-key-text">
-            It’s that simple. A chatbot makes the process straightforward:
-            someone submits a photo and a request, and the AI returns an image.
-          </p>
-        </div>
-        <div class="step step--k" data-aux="nudifier" style="height: 70vh">
-          <span class="step-label">Many forms</span>
-          <p class="step-key-text">
-            People can access these tools through chatbots, mobile apps, and
-            websites. Some are designed specifically to make people appear
-            undressed, like “nudifier apps.”
-          </p>
-        </div>
-        <div class="step step--k" data-aux="nudifier-off" style="height: 50vh">
-          <span class="step-label">Back to the interface</span>
-          <p class="step-key-text">But let’s return to the chatbot…</p>
-        </div>
+          <p class="step-key-text">It starts with one photo. Let's follow it through the system that turned it into abuse.</p>
+        </div><div class="step step--k" data-note="interface"><span class="step-label">Generative AI interfaces</span><p class="step-key-text">A chatbot lets anyone upload a photo and get an altered image back.</p></div><div class="step step--k" data-note="surface"><span class="step-label">The interface</span><p class="step-key-text">But the interface is only the surface.</p></div>
+
+
         <div class="step step--k" data-note="supply" style="height: 50vh">
           <span class="step-label">The AI supply chain</span>
-          <p class="step-key-text">
-            What makes the chatbot’s image generation possible?
-          </p>
+          <p class="step-key-text">Behind every interface is a supply chain: the datasets and models that make it work.</p>
         </div>
         <div class="step step--k" data-chat="dataset">
           <span class="step-label">Training Datasets</span>
-          <p class="step-key-text">
-            AI models learn from collections of examples called training
-            datasets.
-          </p>
+          <p class="step-key-text">Every image model starts with its training data.</p>
         </div>
         <div class="step step--k" data-note="billions" style="height: 50vh">
           <span class="step-label">Scraped datasets</span>
-          <p class="step-key-text">
-            Modern image-generation models learn from billions of images
-            collected from the internet.
-          </p>
+          <p class="step-key-text">Modern image generators are trained on billions of images scraped from the internet.</p>
         </div>
         <div class="step step--k" data-chat="scan" style="height: 80vh">
           <span class="step-label">What is in the datasets</span>
-          <p class="step-key-text">
-            Studies have found that these datasets contain child sexual abuse
-            material, non-consensual intimate images, and pornography.
-          </p>
+          <p class="step-key-text">These datasets contain child sexual abuse material and adult content</p>
         </div>
         <div class="step step--k" data-chat="return" style="height: 80vh">
           <span class="step-label">Models</span>
-          <p class="step-key-text">
-            Models trained on this material can generate similar kinds of
-            images.
-          </p>
+          <p class="step-key-text">Models trained on this content can learn to reproduce it.</p>
         </div>
-        <div class="step step--k" data-chat="model" style="height: 80vh">
-          <span class="step-label">Open or closed</span>
-          <p class="step-key-text">
-            Companies can keep a model under their control or make it available
-            for others to download.
-          </p>
-        </div>
+
       </div>
 
       <!-- MODELS (open vs closed) → DEVELOPER PLATFORMS -->
       <div class="scroll-chapter" data-chapter="models" data-scene="models">
+        <div class="step step--k" data-md="intro" style="height: 80vh">
+          <span class="step-label">Open or closed</span>
+          <p class="step-key-text">Generative AI models can be open or closed</p>
+        </div>
         <div class="step step--k" data-md="closed" style="height: 80vh">
           <span class="step-label">Closed models</span>
-          <p class="step-key-text">
-            <b>Closed</b> models are held by the company…
-          </p>
+          <p class="step-key-text">Closed models are owned by the company that built them and can't be changed by the public.</p>
         </div>
         <div class="step step--k" data-note="safeguards" style="height: 60vh">
           <span class="step-label">Safeguards</span>
-          <p class="step-key-text">
-            Companies can use <b>safeguards</b> to check inputs and outputs for
-            harm. These checks can be missing or fail.
-          </p>
+          <p class="step-key-text">Some have safeguards that block harmful requests. Others don’t.</p>
         </div>
         <div class="step step--k" data-md="open" style="height: 80vh">
           <span class="step-label">Open models</span>
-          <p class="step-key-text">
-            <b>Open models</b> are publicly downloadable …
-          </p>
+          <p class="step-key-text">Open-weight models are publicly available.</p>
         </div>
-        <div class="step step--n" data-md="move">
-          <p>Where do open-weight models live? On developer platforms.</p>
-        </div>
-        <div class="step step--k" data-md="annotate-dev">
+        <div class="step step--k" data-md="move">
           <span class="step-label">Developer Platforms</span>
-          <p class="step-key-text">
-            They are hosted on <b>developer platforms</b> and other developers
-            can create <b>fine-tuned variants</b>
-          </p>
+          <p class="step-key-text">They’re shared on developer platforms where the public can create modified copies and remove safeguards.</p>
         </div>
         <div class="step step--k" data-note="hard" style="height: 60vh">
           <span class="step-label">A technical process</span>
-          <p class="step-key-text">
-            This is a technical and challenging process…
-          </p>
+          <p class="step-key-text">Doing this well takes technical skill.</p>
         </div>
       </div>
 
@@ -1896,10 +1716,7 @@
       <div class="scroll-chapter" data-chapter="reddit" data-scene="reddit">
         <div class="step step--k" data-rc="0">
           <span class="step-label">Deepfake creation communities</span>
-          <p class="step-key-text">
-            So there are <b>deepfake creation communities</b> on social media
-            platforms / forums that help each other
-          </p>
+          <p class="step-key-text">So deepfake creation communities form on social media platforms, where people share tips and tricks. This scales abuse.</p>
         </div>
         <div class="step step--n" data-rc="1">
           <p>
@@ -1927,37 +1744,20 @@
         </div>
         <div class="step step--n" data-rc="ban">
           <p>
-            Reddit bans r/deepfakes. February 2018. 90,000 subscribers removed
-            overnight.
+            In this illustrative example, the first community goes offline
+            after a service provider terminates hosting.
           </p>
         </div>
-        <div class="step step--k" data-rc="annotate-reddit">
-          <span class="step-label">Deepfake Creation Communities</span>
-          <p class="step-key-text">
-            <b>Deepfake creation communities</b> are highly migratory. When a
-            forum gets banned, they move to others…
-          </p>
-        </div>
-        <div class="step step--n" data-rc="mdf">
-          <p>
-            MrDeepFakes builds a commercial market — commissions, subscriptions,
-            a full review system for deepfake content.
-          </p>
-        </div>
-        <div class="step step--k" data-rc="annotate-mdf">
-          <span class="step-label">Deepfake creation communities</span>
-          <p class="step-key-text">
-            <b>Deepfake creation communities</b> are one of the technologies
-            that hyper-accelerate deepfake abuse…
-          </p>
-        </div>
+
+
+
       </div>
 
       <!-- CLOUD -->
       <div class="scroll-chapter" data-chapter="cloud" data-scene="cloud">
         <div class="step step--k" data-cloud="stats">
           <span class="step-label">Critical service providers</span>
-          <p class="step-key-text">Even a large community depends on <b>critical service providers</b> to stay online.</p>
+          <p class="step-key-text">Hosting, content delivery, and sign-in services help keep this ecosystem running.</p>
         </div>
         <div class="step step--k" data-note="provider-shutdown">
           <span class="step-label">A point of intervention</span>
@@ -1971,20 +1771,21 @@
             detection.
           </p>
         </div>
-        <div class="step step--k" data-cloud="annotate">
-          <span class="step-label">Critical service providers</span>
-          <p class="step-key-text">
-            Hosting, content delivery, and sign-in services help keep this ecosystem running.
-          </p>
-        </div>
-      </div>
+
+      <div class="step step--k" data-rc="mdf">
+          <span class="step-label">Deepfake Creation Communities</span>
+          <p class="step-key-text">However, deepfake creation communities are highly migratory. When one site goes offline, they move to others…</p>
+        </div><div class="step step--n" data-rc="annotate-mdf">
+
+
+        </div></div>
 
       <!-- SEARCH -->
       <!-- A BEAT ON THE EMPTY DESKTOP -->
       <div class="scroll-chapter" data-chapter="desk1" data-scene="">
         <div class="step step--k" data-note="onlyone" style="height: 70vh">
           <span class="step-label">Finding the tools</span>
-          <p class="step-key-text">But even if you’re not part of these communities, <b>how easy is it to find these tools?</b></p>
+          <p class="step-key-text">But even if you’re not part of these communities, how easy is it to find these tools?</p>
         </div>
       </div>
 
@@ -1998,9 +1799,7 @@
 
         <div class="step step--k" data-search="annotate">
           <span class="step-label">Search engines</span>
-          <p class="step-key-text">
-            Search engines help people find nudifier apps and deepfake websites.
-          </p>
+          <p class="step-key-text">Search engines lead users straight to nudifier apps</p>
         </div>
 
         <div class="step step--n" data-search="ads">
@@ -2009,22 +1808,10 @@
             page.
           </p>
         </div>
-        <div
-          class="step step--k"
-          data-search="annotate-ads"
-          data-done="payment"
-        >
-          <span class="step-label">Advertisement platforms</span>
-          <p class="step-key-text">
-            People also discover these apps through paid advertisements.
-          </p>
-        </div>
+
         <div class="step step--k" data-search="instagram">
           <span class="step-label">Ads on social media</span>
-          <p class="step-key-text">
-            These ads also appear on social media, helping these apps reach more
-            people.
-          </p>
+          <p class="step-key-text">Social media platforms run ads that send traffic their way</p>
         </div>
       </div>
 
@@ -2032,25 +1819,12 @@
       <div class="scroll-chapter" data-chapter="appstore" data-scene="appstore">
         <div class="step step--k" data-as="fill">
           <span class="step-label">App stores</span>
-          <p class="step-key-text"><b>App stores</b> host nudifier apps…</p>
+          <p class="step-key-text">App stores are hosting nudifier apps and profiting from their revenue</p>
         </div>
 
-        <div class="step step--k" data-as="annotate" data-done="search">
-          <span class="step-label">A million-dollar economy</span>
-          <p class="step-key-text">
-            <b>Nudification is a million-dollar economy.</b> App stores make these tools easy to discover and download, helping businesses reach users at scale.
-          </p>
-        </div>
-        <div class="step step--k" data-note="app-economy">
-          <span class="step-label">From downloads to revenue</span>
-          <p class="step-key-text">
-            These apps turn abuse into a business, charging users for <b>subscriptions and image credits</b>.
-          </p>
-        </div>
-        <div class="step step--k" data-note="money-reaches-businesses">
-          <span class="step-label">Following the money</span>
-          <p class="step-key-text">But <b>how does the money reach these businesses?</b></p>
-        </div>
+
+
+
       </div>
 
       <section class="story-section" aria-label="Payments and sharing">
@@ -2072,17 +1846,15 @@
         </div>
         <div class="step step--k" data-pay="annotate">
           <span class="step-label">Payment Processors</span>
-          <p class="step-key-text"><b>Payment processors</b>…</p>
+          <p class="step-key-text">Payment processors handle the transactions that keep it profitable</p>
         </div>
         <div class="step step--k" data-note="creation-scale">
           <span class="step-label">From creation to circulation</span>
-          <p class="step-key-text">Payment turns image creation into a business. The harm continues when those images are shared.</p>
+          <p class="step-key-text">Nudification is now a million-dollar economy</p>
         </div>
         <div class="step step--k" data-note="where" style="height: 70vh">
           <span class="step-label">Where does it go?</span>
-          <p class="step-key-text">
-            Once an image is created or purchased, <b>where does it go?</b>
-          </p>
+          <p class="step-key-text">But after the image is created, where does it go?</p>
         </div>
 
       </div>
@@ -2104,24 +1876,16 @@
         </div>
         <div class="step step--k" data-dm="annotate-imessage">
           <span class="step-label">Distribution Channels</span>
-          <p class="step-key-text">
-            These images can be shared privately through different distribution
-            channels…
-          </p>
+          <p class="step-key-text">Often images are shared privately, through direct messages and email</p>
         </div>
 
-        <div class="step step--k" data-dm="switchemail" data-done="appstore">
-          <span class="step-label">Email</span>
-          <p class="step-key-text">
-            …like direct messages, group chats, and email.
-          </p>
+        <div class="step step--n" data-dm="switchemail" data-done="appstore">
+
+
         </div>
         <div class="step step--k" data-aux="pubsite" style="height: 80vh">
           <span class="step-label">Public distribution channels</span>
-          <p class="step-key-text">
-            These images can also be posted publicly on social media or
-            dedicated “deepfake pornography” sites.
-          </p>
+          <p class="step-key-text">Or images are posted publicly on social media and dedicated deepfake sites</p>
         </div>
       </div>
 
@@ -2131,34 +1895,20 @@
       <div class="scroll-chapter" data-chapter="finale" data-scene="finale">
         <div class="step step--k" data-fin="assemble">
           <span class="step-label">All Open At Once</span>
-          <p class="step-key-text">Every app you opened is still running.</p>
+          <p class="step-key-text">Everything open is still running.</p>
         </div>
-        <div class="step step--k" data-fin="assemble" style="height: 70vh">
-          <span class="step-label">One system</span>
-          <p class="step-key-text">
-            Every window represents part of the same system. All provide the
-            tools to create, find, fund, and share these images.
-          </p>
-        </div>
+
         <div class="step step--k" data-fin="close1">
           <span class="step-label">Close One</span>
-          <p class="step-key-text">
-            Take one down, and another opens in its place.
-          </p>
+          <p class="step-key-text">Take one down and another opens in its place.</p>
         </div>
         <div class="step step--k" data-fin="close2">
           <span class="step-label">Close Another</span>
-          <p class="step-key-text">
-            Ban a forum and the community migrates. Shut down a site and copies
-            appear.
-          </p>
+          <p class="step-key-text">One fix is not enough.</p>
         </div>
         <div class="step step--k" data-fin="flood">
           <span class="step-label">Whack-a-Mole</span>
-          <p class="step-key-text">
-            One fix is not enough. Structural problems need structural
-            solutions.
-          </p>
+          <p class="step-key-text">Structural problems need structural solutions.</p>
         </div>
         <div class="step step--n" data-fin="end"></div>
       </div>
@@ -2258,7 +2008,7 @@
         >
           <i class="fas fa-camera-retro"></i>
         </div>
-        <div class="dt-dock-sep"></div>
+        <div class="dt-dock-sep" aria-hidden="true"></div>
         <div
           class="dt-dock-item dt-dock--creation"
           title="Assistant"
@@ -2289,7 +2039,6 @@
         >
           <i class="fas fa-laptop-code"></i>
         </div>
-        <div class="dt-dock-sep"></div>
         <div
           class="dt-dock-item dt-dock--discovery"
           title="Communities"
@@ -2304,7 +2053,6 @@
         >
           <i class="fas fa-screwdriver-wrench"></i>
         </div>
-        <div class="dt-dock-sep"></div>
         <div
           class="dt-dock-item dt-dock--discovery"
           title="Search"
@@ -2327,7 +2075,6 @@
         >
           <i class="fas fa-shopping-cart"></i>
         </div>
-        <div class="dt-dock-sep"></div>
         <div
           class="dt-dock-item dt-dock--monetize"
           title="Payments"
@@ -2342,7 +2089,7 @@
         >
           <i class="fas fa-comment"></i>
         </div>
-        <div class="dt-dock-sep"></div>
+        <div class="dt-dock-sep" aria-hidden="true"></div>
         <div
           class="dt-dock-item dt-dock--neutral"
           title="End"
@@ -2436,7 +2183,7 @@
       <div class="sn-hint">click to begin <span aria-hidden="true">↗</span></div>
     </div>
 
-    <script src="/src/story/desktop-gate.js?v=8"></script>
+    <script src="/src/story/desktop-gate.js?v=25"></script>
     <script>
       (function () {
         var loader = document.getElementById("loader");
