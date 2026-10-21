@@ -44,3 +44,12 @@
     "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
 }
+
+:where(*) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--db-ink) transparent;
+}
+
+:where(*)::-webkit-scrollbar { width: 6px; height: 6px; }
+:where(*)::-webkit-scrollbar-track { background: transparent; }
+:where(*)::-webkit-scrollbar-thumb { background: var(--db-ink); border-radius: 0; }

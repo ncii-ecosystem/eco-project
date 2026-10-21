@@ -116,7 +116,7 @@ window.DatabaseSubmit = (function () {
     var listPublicly = document.getElementById('db-sub-list-publicly');
     if (saveBtn) {
       saveBtn.disabled = true;
-      saveBtn.textContent = 'Submit for review';
+      saveBtn.textContent = 'Submit for Review';
     }
     if (name) name.value = '';
     if (affiliation) affiliation.value = '';
@@ -150,14 +150,14 @@ window.DatabaseSubmit = (function () {
       index.textContent = String(idx + 1);
       var title = document.createElement('span');
       title.className = 'db-sub-entry-title';
-      title.textContent = 'entry';
+      title.textContent = 'Entry';
       var entryTitle = String(entry.title || '').trim().replace(/\s+/g, ' ');
       if (!open && entryTitle) {
         var characters = Array.from(entryTitle);
         var shortTitle = characters.length > 40
           ? characters.slice(0, 39).join('').trimEnd() + '…'
           : entryTitle;
-        title.textContent = '"' + shortTitle + '" entry';
+        title.textContent = '"' + shortTitle + '" Entry';
         title.title = entryTitle;
       }
       label.appendChild(index);
@@ -170,7 +170,7 @@ window.DatabaseSubmit = (function () {
       edit.type = 'button';
       edit.className = 'db-sub-entry-action';
       edit.innerHTML = '<i class="fas fa-fw ' + (open ? 'fa-chevron-up' : 'fa-chevron-down') + '" aria-hidden="true"></i>';
-      edit.title = open ? 'Close entry' : 'Edit entry';
+      edit.title = open ? 'Close Entry' : 'Edit Entry';
       edit.setAttribute('aria-expanded', open ? 'true' : 'false');
       edit.setAttribute('aria-label', (open ? 'Close' : 'Edit') + ' entry ' + (idx + 1));
       edit.addEventListener('click', function () {

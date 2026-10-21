@@ -350,7 +350,6 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
   font-family: var(--font-sans);
   font-size: var(--db-text-sm);
   line-height: var(--db-lh-tight);
-  text-transform: lowercase;
   cursor: pointer;
   transform-origin: center center;
   perspective: 120px;
@@ -476,7 +475,6 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
   border: 1px solid transparent;
   cursor: pointer;
   line-height: var(--db-lh-tight);
-  text-transform: lowercase;
 }
 
 .db-filter-btn:hover {
@@ -561,7 +559,6 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
   font-size: var(--db-text-sm);
   line-height: var(--db-lh-tight);
   cursor: pointer;
-  text-transform: lowercase;
   background: transparent;
   border: 1px solid var(--db-ink);
   color: var(--db-ink);
@@ -586,13 +583,4 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
   font-size: var(--db-text-sm);
   line-height: var(--db-lh);
   color: var(--db-ink);
-}
-
-.db-index-footer {
-  flex: 0 0 auto;
-  padding: var(--db-space-4) var(--db-space-3);
-}
-
-.db-index-footer .db-meta-line {
-  opacity: var(--db-muted);
 }

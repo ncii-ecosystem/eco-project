@@ -529,12 +529,13 @@ function safeJoin(root, urlPath) {
 
 const PAGE_ROUTES = new Map([
   ['/story', '/src/story/index.html'], ['/home', '/src/home/index.html'],
-  ['/database', '/src/database/index.html'], ['/about', '/src/about/index.html'],
+  ['/database', '/src/database/index.html'], ['/research', '/src/research/index.html'],
   ['/survivor-support', '/src/survivor-support/index.html'],
 ]);
 const LEGACY_ROUTES = new Map([
   ['/index.html', '/story'], ['/home.html', '/home'],
-  ['/database.html', '/database'], ['/about.html', '/about'],
+  ['/database.html', '/database'], ['/research.html', '/research'],
+  ['/about', '/research'], ['/about.html', '/research'],
   ['/survivor-support.html', '/survivor-support'],
 ]);
 

@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <link rel="stylesheet" href="/src/shared/router.css" />
-    <script src="/src/shared/router.js"></script>
-    <link rel="stylesheet" href="/src/shared/tokens.css?v=103" />
+    <script src="/src/shared/router.js?v=2"></script>
+    <link rel="stylesheet" href="/src/shared/tokens.css?v=104" />
     <link rel="stylesheet" href="/src/shared/site-nav.css?v=4" />
     <script src="/src/shared/theme-boot.js"></script>
 
@@ -133,13 +133,13 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="/src/shared/page-styles.css?v=104" />
-    <link rel="stylesheet" href="/src/story/styles.css?v=110" />
+    <link rel="stylesheet" href="/src/story/styles.css?v=112" />
     <link rel="stylesheet" href="/src/story/theme.css?v=106" />
     <link rel="stylesheet" href="/src/story/theme/finale-and-dock.css?v=106" />
     <link rel="stylesheet" href="/src/story/theme/windows.css?v=106" />
     <link
       rel="stylesheet"
-      href="/src/story/theme/notes-and-notifications.css?v=108"
+      href="/src/story/theme/notes-and-notifications.css?v=109"
     />
     <link rel="stylesheet" href="/src/story/theme/opening.css?v=106" />
     <link rel="stylesheet" href="/src/story/theme/headline-formats.css?v=105" />
@@ -204,7 +204,7 @@
             <li><a href="/story" aria-current="page">Story</a></li>
             <li><a href="/database">Database</a></li>
             <li><a href="/survivor-support">Survivor Support</a></li>
-            <li><a href="/about">Research</a></li>
+            <li><a href="/research">Research</a></li>
           </ul>
         </nav>
         <button
@@ -249,7 +249,7 @@
         <nav class="cw-actions" aria-label="Explore the ecosystem">
           <a class="cw-btn desktop-only-support" href="/survivor-support">Find Survivor Support Resources <span aria-hidden="true">↗</span></a>
           <a class="cw-btn" href="/database">Explore the Database <span aria-hidden="true">↗</span></a>
-          <a class="cw-btn" href="/about">Read About the Research <span aria-hidden="true">↗</span></a>
+          <a class="cw-btn" href="/research">Read About the Research <span aria-hidden="true">↗</span></a>
           <a class="cw-btn" href="/home">Back to Home <span aria-hidden="true">↗</span></a>
         </nav>
       </div>
@@ -1619,10 +1619,6 @@
           <p class="step-key-text">And it is growing fast, impacting thousands of students, celebrities, journalists, and everyday people around the world.</p>
         </div>
         <div class="step step--n" data-intro="flood" style="height: 90vh"></div>
-        <div class="step step--n" data-intro="zoomnote" data-pos="top" style="height: 60vh">
-
-
-        </div>
         <div class="step step--k" data-intro="grok" data-pos="top" style="height: 60vh">
           <span class="step-label">Grok</span>
           <p class="step-key-text">The headlines are all about Grok...</p>
@@ -2004,7 +2000,7 @@
           class="dt-dock-item dt-dock--neutral"
           title="Feed"
           data-go="intro"
-          data-step='[data-intro="zoomnote"]'
+          data-step='[data-intro="flood"]'
         >
           <i class="fas fa-camera-retro"></i>
         </div>
@@ -2183,7 +2179,7 @@
       <div class="sn-hint">click to begin <span aria-hidden="true">↗</span></div>
     </div>
 
-    <script src="/src/story/desktop-gate.js?v=25"></script>
+    <script src="/src/story/desktop-gate.js?v=27"></script>
     <script>
       (function () {
         var loader = document.getElementById("loader");

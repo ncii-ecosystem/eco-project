@@ -75,7 +75,7 @@
 .intro-notif-meta,
 .sn-meta {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   min-height: 30px;
   padding-right: 26px;
   flex: 1;
@@ -101,7 +101,7 @@
 .intro-notif-time,
 .sn-time {
   position: absolute;
-  top: 8px;
+  top: 9px;
   right: 10px;
   margin: 0;
   font: 400 10px var(--db-font-mono);

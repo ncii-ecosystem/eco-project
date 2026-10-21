@@ -1,4 +1,4 @@
-/* Law overlays and explanatory steps for the About explorer. */
+/* Law overlays and explanatory steps for the Research explorer. */
 export function mountLawSection({ Eco = window.Eco, mon = document.getElementById('mon-screen'), motionScope } = {}) {
 
   const { setTimeout, clearTimeout, requestAnimationFrame } =
@@ -15,19 +15,29 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
   /* ── the laws (the paper's Table 3 and Figure 2) ───────────── */
   const LAWS = [
     { n: 1, st: 'CA', name: 'California', bill: 'SB981', year: 2024, role: 'dist', icons: ['comment'],
+      url: 'https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240SB981',
       text: 'Requires “social media platforms” to provide a mechanism that is reasonably accessible to a reporting user.' },
     { n: 2, st: 'NY', name: 'New York', bill: 'A8808', year: 2024, role: 'dist', icons: ['comment'],
+      url: 'https://www.nysenate.gov/legislation/bills/2023/A8808',
       text: 'Enables individuals to maintain an action or special proceeding for a court order to require “websites” to permanently remove non-consensually distributed intimate images.' },
     { n: 3, st: 'TN', name: 'Tennessee', bill: 'H0769', year: 2025, role: 'creation', icons: ['code', 'wand'],
+      url: 'https://wapp.capitol.tn.gov/apps/BillInfo/Default.aspx?BillNumber=HB0769&GA=114',
       text: 'Makes it an offense for a person to knowingly “possess, distribute, or produce technology, software, or digital tools” designed for the purpose of creating material that includes a minor engaged in sexual activity or simulated sexual activity.' },
     { n: 4, st: 'AR', name: 'Arkansas', bill: 'HB1529', year: 2025, role: 'creation', icons: ['code', 'wand'],
+      url: 'https://arkleg.state.ar.us/Bills/Detail?id=HB1529&ddBienniumSession=2025%2F2025R',
       text: 'Enables the Attorney General to “institute a civil action on behalf of the state against a provider or developer of image generation technology” that was used to create deepfake visual material.' },
     { n: 5, st: 'TX', name: 'Texas', bill: 'SB441', year: 2025, role: 'creation', icons: ['code', 'wand'],
+      url: 'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=SB441',
       text: 'Makes it an offense for an individual to non-consensually create intimate deepfakes. Does not apply to the “provider or developer of a publicly accessible artificial intelligence application or software” that was used in the creation of the deepfake media if they “included a prohibition against the creation of deep fake media … in terms and conditions or user policies” and “took affirmative steps to prevent the creation of deep fake media.”' },
     { n: 6, st: 'MN', name: 'Minnesota', bill: 'HF1606', year: 2026, role: 'creation', icons: ['wand'],
+      url: 'https://www.revisor.mn.gov/bills/bill.php?b=House&f=HF1606&ssn=0&y=2026',
       text: 'Titled “Prohibition on Nudification Technology”. A person who owns or controls a website, application, software, program, or other service must not allow a user to access, download, or use it to nudify an image or video, or nudify an image or video on behalf of a user.' },
   ];
   const lawBySt = Object.fromEntries(LAWS.map((l) => [l.st, l]));
+  /* the one federal law, listed first in the legend (Distribution Channels) */
+  const FED = { name: 'Federal', bill: 'TAKE IT DOWN Act', year: 2025, role: 'dist', icons: ['comment'],
+    url: 'https://www.govinfo.gov/content/pkg/PLAW-119publ12/html/PLAW-119publ12.htm', linkLabel: 'Read the law',
+    text: 'Requires public platforms to remove reported non-consensually posted “intimate visual depictions” within 48 hours. Enforced by the Federal Trade Commission.' };
 
   /* ── tags on the boxes ────────────────────────────────────── */
   const TAG_W = 150, TAG_H = 42, TAG_GAP = 12, TAG_Y = 232;
@@ -107,13 +117,89 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
   map.setAttribute('aria-label', 'Landscape of U.S. state laws regulating the AIG-NCII ecosystem');
   map.innerHTML = `
     <div class="pol-legend">
-    <h3>Landscape of U.S. State Laws Regulating the AIG-NCII Ecosystem</h3>
-    <ol class="pol-list">${LAWS.map((l) => `<li class="r-${l.role}"><span class="pol-n">${l.n}</span>${l.name} · ${l.bill} (${l.year})</li>`).join('')}</ol>
+    <ol class="pol-list">${LAWS.map((l) => `<li class="r-${l.role}" data-st="${l.st}" tabindex="0" role="button" aria-pressed="false" aria-label="${l.name} ${l.bill}, ${l.year}: read what it says"><span class="pol-n">${l.n}</span>${l.name} · ${l.bill} (${l.year})</li>`).join('')}</ol>
     </div>
-    <div class="pol-us-wrap"><svg class="pol-us" viewBox="${-outlineInset} ${-outlineInset} ${12 * (T + TG) - TG + outlineInset * 2} ${8 * (T + TG) - TG + outlineInset * 2}" role="group"></svg></div>
-    <div class="pol-role"><span>Role of technology in the ecosystem:</span><span class="pol-role-item"><i class="sw r-creation"></i>Creation</span><span class="pol-role-item"><i class="sw r-dist"></i>Distribution</span></div>`;
+    <div class="pol-us-wrap"><svg class="pol-us" viewBox="${-outlineInset} -40 ${12 * (T + TG) - TG + outlineInset * 2} ${8 * (T + TG) - TG + outlineInset + 40}" role="group"></svg></div>
+    <div class="pol-role"><span>Role of technology in the ecosystem:</span><span class="pol-role-item" data-role="creation" tabindex="0" role="button" aria-pressed="false"><i class="sw r-creation"></i>Creation</span><span class="pol-role-item" data-role="dist" tabindex="0" role="button" aria-pressed="false"><i class="sw r-dist"></i>Distribution</span></div>`;
   mon.appendChild(map);
   const us = map.querySelector('.pol-us');
+  /* Federal law marker centered in the top row of the map. */
+  const fedNode = el('g', { class: 'pol-fed-node', tabindex: '0', role: 'button', 'aria-pressed': 'false',
+    'aria-label': `${FED.name} law, ${FED.bill}, ${FED.year}: read what it says`,
+    transform: `translate(${(12 * (T + TG) - TG) / 2} 25)` }, us);
+  const fedClip = el('clipPath', { id: 'pol-fed-clip' }, fedNode);
+  el('circle', { r: 25 }, fedClip);
+  const flag = el('g', { 'clip-path': 'url(#pol-fed-clip)' }, fedNode);
+  const stripe = 50 / 7;
+  for (let i = 0; i < 7; i++) el('rect', { x: -25, y: -25 + i * stripe, width: 50, height: stripe + 0.4, class: i % 2 === 0 ? 'pol-flag-red' : 'pol-flag-white' }, flag);
+  el('rect', { x: -25, y: -25, width: 23, height: 4 * stripe, class: 'pol-flag-blue' }, flag);
+  for (let row = 0; row < 3; row++) for (let col = 0; col < 3; col++) el('circle', { cx: -20 + col * 7, cy: -20 + row * 7.5, r: 1.3, class: 'pol-flag-star' }, flag);
+  el('circle', { r: 25, class: 'pol-fed-edge' }, fedNode);
+  const fedCap = el('text', { class: 'pol-fed-cap' }, fedNode);
+  el('tspan', { x: 0, y: 44 }, fedCap).textContent = 'FEDERAL';
+  const clearActive = () => {
+    us.querySelectorAll('.pol-state.has').forEach((st) => { st.classList.remove('active'); st.setAttribute('aria-pressed', 'false'); });
+    fedNode.classList.remove('active'); fedNode.setAttribute('aria-pressed', 'false');
+    markListItem(null);
+  };
+  const openFed = () => {
+    clearActive();
+    fedNode.classList.add('active'); fedNode.setAttribute('aria-pressed', 'true');
+    setRole(null);
+    showLaw(FED);
+  };
+  Eco.onActivate(fedNode, openFed);
+
+  /* the legend is clickable: a numbered law opens like its state does; a role lights up the laws with that role */
+  const listItems = Array.from(map.querySelectorAll('.pol-list li[data-st]'));
+  const roleItems = Array.from(map.querySelectorAll('.pol-role-item'));
+  let activeRole = null;
+  function markListItem(code) {
+    listItems.forEach((li) => {
+      const on = li.dataset.st === code;
+      li.classList.toggle('active', on);
+      li.setAttribute('aria-pressed', String(on));
+    });
+  }
+  function setRole(role) {
+    activeRole = role;
+    map.classList.toggle('has-role', !!role);
+    us.querySelectorAll('.pol-state.has').forEach((st) => st.classList.toggle('role-dim', !!role && !st.classList.contains('r-' + role)));
+    fedNode.classList.toggle('role-dim', !!role && FED.role !== role);
+    listItems.forEach((li) => li.classList.toggle('role-dim', !!role && lawBySt[li.dataset.st].role !== role));
+    roleItems.forEach((item) => {
+      const on = item.dataset.role === role;
+      item.classList.toggle('on', on);
+      item.setAttribute('aria-pressed', String(on));
+    });
+  }
+  const ROLE_LAW = {
+    creation: { title: 'Creation', text: 'Laws that regulate the creation of AIG-NCII: training datasets, generative AI models and generative AI interfaces.' },
+    dist: { title: 'Distribution', text: 'Laws that regulate distribution channels: the private channels and public platforms these images are shared across.' },
+  };
+  function showRoleLaws(role) {
+    if (!Eco.showNote) return;
+    const info = ROLE_LAW[role];
+    const step = document.createElement('div');
+    step.className = 'step step--k';
+    step.dataset.nkey = 'law-role-' + role;
+    const label = document.createElement('span'); label.className = 'step-label'; label.textContent = info.title;
+    const key = document.createElement('p'); key.className = 'step-key-text'; key.textContent = info.text;
+    const det = document.createElement('div'); det.className = 'step-detail';
+    const all = (role === FED.role ? [FED] : []).concat(LAWS.filter((l) => l.role === role));
+    all.forEach((l) => { const p = document.createElement('p'); p.textContent = `${l.name} · ${l.bill} (${l.year})`; det.appendChild(p); });
+    step.append(label, key, det);
+    Eco.showNote(step);
+  }
+  listItems.forEach((li) => Eco.onActivate(li, () => openers[li.dataset.st] && openers[li.dataset.st]()));
+  roleItems.forEach((item) => Eco.onActivate(item, () => {
+    const role = item.dataset.role;
+    if (activeRole === role) { setRole(null); if (Eco.resetNote) Eco.resetNote(); return; }
+    clearActive();
+    setRole(role);
+    showRoleLaws(role);
+  }));
+  const openers = {};
   Object.entries(GRID).forEach(([code, [c, r]]) => {
     const law = lawBySt[code];
     const g = el('g', { class: 'pol-state' + (law ? ' has r-' + law.role : ''), transform: `translate(${c * (T + TG)} ${r * (T + TG)})` }, us);
@@ -127,12 +213,13 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
       const nn = el('text', { x: 9, y: 13, 'text-anchor': 'middle', class: 'pol-badge-n' }, g); nn.textContent = String(law.n);
       g.setAttribute('aria-pressed', 'false');
       const open = () => {
-        us.querySelectorAll('.pol-state.has').forEach(state => {
-          state.classList.toggle('active', state === g);
-          state.setAttribute('aria-pressed', String(state === g));
-        });
+        clearActive();
+        setRole(null);
+        g.classList.add('active'); g.setAttribute('aria-pressed', 'true');
+        markListItem(code);
         showLaw(law);
       };
+      openers[code] = open;
       Eco.onActivate(g, open);
     }
   });
@@ -147,6 +234,18 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
     const label = document.createElement('span'); label.className = 'step-label'; label.textContent = `${law.name} · ${law.bill} (${law.year})`;
     const key = document.createElement('p'); key.className = 'step-key-text'; key.textContent = law.text;
     const det = document.createElement('div'); det.className = 'step-detail';
+    if (law.url) {
+      const p = document.createElement('p');
+      const a = document.createElement('a');
+      a.href = law.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.textContent = law.linkLabel || 'Read the bill';
+      const arrow = document.createElement('span');
+      arrow.className = 'research-link-arrow';
+      arrow.setAttribute('aria-hidden', 'true');
+      arrow.textContent = ' ↗';
+      a.appendChild(arrow);
+      p.appendChild(a); det.appendChild(p);
+    }
     step.append(label, key, det);
     Eco.showNote(step);
   }
@@ -229,7 +328,7 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
     STEPS,
     step(name) { const i = STEPS.indexOf(name); if (i >= 0) apply(i + 1); },
     undo(name) { const i = STEPS.indexOf(name); if (i >= 0) apply(i); },
-    reset() { apply(0); },
+    reset() { apply(0); clearActive(); setRole(null); },
   };
   return Eco.policy;
 }
@@ -238,38 +337,107 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
 export const stepsHtml = `    <div class="step step--k" data-fin="law-intro">
       <span class="step-label">Laws and the Ecosystem</span>
       <p class="step-key-text">AIG-NCII is a crisis of non-consent at scale, and regulators are scrambling.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>AIG-NCII is a crisis of non-consent at scale that regulators are scrambling to control.</p>
+        <p>Regulation that only criminalizes individuals for the creation, dissemination, or solicitation of AIG-NCII without targeting the technological ecosystem supporting it is simply not enough to prevent image-based sexual abuse at scale.</p>
+        <p>In the U.S., there is a patchwork of federal and state laws that cover AIG-NCII to some degree. Nearly all 50 U.S. states have some form of law addressing AIG-NCII. However, these laws use inconsistent terminology, definitions, and include varying levels of protections for victim-survivors.</p>
+        <p>The paper maps the U.S. federal law (the TAKE IT DOWN Act) and 63 state laws across 44 states. Out of the 63 state laws, a vast majority target individuals who have created, solicited, or disseminated AIG-NCII. Only 5 out of 63 state laws (7.9%) explicitly target technology actors.</p>
+
+      </div>
     </div>
     <div class="step step--k" data-fin="law-fed">
       <span class="step-label">Federal: the TAKE IT DOWN Act</span>
       <p class="step-key-text">The only U.S. federal law so far is the <b>TAKE IT DOWN Act</b>.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>The only U.S. federal law to date targeting AIG-NCII is the TAKE IT DOWN Act.</p>
+        <p>Signed into law in May 2025 (and in effect in May 2026), the Act requires public platforms to remove reported non-consensually posted “intimate visual depictions” within 48 hours, to be enforced by the Federal Trade Commission.</p>
+        <p>Viewing the Act against the ecosystem, current federal protections only target a very small piece of it, namely the Distribution Channels.</p>
+
+      </div>
     </div>
     <div class="step step--k" data-fin="law-states">
       <span class="step-label">State Laws: Different Technologies</span>
       <p class="step-key-text">California and New York regulate <b>Distribution Channels</b>. Tennessee, Arkansas and Texas regulate <b>Models</b> and <b>Interfaces</b>.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>California and New York regulate the same piece of the ecosystem, Distribution Channels, while Tennessee, Arkansas and Texas attempt to regulate the technologies involved in the creation of AIG-NCII: Generative AI Models and Generative AI Interfaces.</p>
+        <p>California SB981 (2024) requires “social media platforms” to provide a mechanism that is reasonably accessible to a reporting user.</p>
+        <p>New York A8808 (2024) enables individuals to maintain an action or special proceeding for a court order to require “websites” to permanently remove non-consensually distributed intimate images.</p>
+        <p>Tennessee H0769 (2025) makes it an offense for a person to knowingly “possess, distribute, or produce technology, software, or digital tools” designed for the purpose of creating material that includes a minor engaged in sexual activity or simulated sexual activity.</p>
+        <p>Arkansas HB1529 (2025) enables the Attorney General to “institute a civil action on behalf of the state against a provider or developer of image generation technology” that was used to create deepfake visual material.</p>
+        <p>Texas SB441 (2025) makes it an offense for an individual to non-consensually create intimate deepfakes. It does not apply to the “provider or developer of a publicly accessible artificial intelligence application or software” used in the creation of the deepfake media if they “included a prohibition against the creation of deep fake media … in terms and conditions or user policies” and “took affirmative steps to prevent the creation of deep fake media.”</p>
+
+      </div>
     </div>
     <div class="step step--k" data-fin="law-same">
       <span class="step-label">Same Technology, Different Wording</span>
       <p class="step-key-text">Tennessee’s language is about how technologies are <b>designed</b>. Arkansas’ is about how they have been <b>used</b>.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Tennessee’s language focuses on how technologies are designed while Arkansas’ language focuses on how they have been used.</p>
+        <p>Both laws reasonably target the creation pipeline via Generative AI Models and Generative AI Interfaces.</p>
+        <p>In practice, a Generative AI Interface that is clearly designed for the purpose of nudification (but never used) may not be subject to civil action in Arkansas but could be within scope in Tennessee.</p>
+        <p>So although some jurisdictions target the same technology, their language is inconsistent, which may or may not have been done intentionally. The ecosystem map helps to see this, and directs a closer reading of the legal text of the two states.</p>
+
+      </div>
     </div>
     <div class="step step--k" data-fin="law-new">
       <span class="step-label">A New Law, Added to the Map</span>
       <p class="step-key-text">On May 7, 2026, Minnesota passed <b>HF 1606</b>: “Prohibition on Nudification Technology”.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>On May 7, 2026, Minnesota passed a new state law (bill HF 1606) titled “Prohibition on Nudification Technology”.</p>
+        <p>“A person who owns or controls a website, application, software, program, or other service must not: (1) allow a user to access, download, or use the website, application, software, program, or other service to nudify an image or video; or (2) nudify an image or video on behalf of a user.”</p>
+        <p>Annotating the bill text with the technologies it targets, the law targets primarily Generative AI Interfaces, particularly nudifier applications. However, it differs from the other states that target creation technologies (Tennessee and Arkansas) because Generative AI Models are not covered.</p>
+        <p>The ecosystem is robust over time: new laws can be annotated and added as they are passed.</p>
+
+      </div>
     </div>
     <div class="step step--k" data-fin="law-map">
       <span class="step-label">The U.S. State Landscape</span>
       <p class="step-key-text">Highlighted states show laws that regulate technologies in the ecosystem. Icons identify the technologies, and colors indicate their role.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Click a highlighted state to read about its law, or the flag circle for the federal law.</p>
+
+      </div>
     </div>
     <div class="step step--k" data-fin="law-gap">
       <span class="step-label">What the Laws Reach</span>
       <p class="step-key-text">Mapping laws onto the ecosystem lets us compare them clearly.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>Mapping policies against the ecosystem allows stakeholders to clearly characterize and compare different state laws.</p>
+        <p>As a result, industry players can improve product compliance; advocacy organizations can develop localized victim-survivor resources; lawyers have a larger toolkit for litigation; and state and local policymakers can situate their laws within a larger landscape.</p>
+        <p>The goal is not to offer recommendations on how best to regulate this ecosystem, which should be done with the participation of local policymakers and civil society groups, but to show how the ecosystem can help make sense of the existing legal landscape and reveal gaps and opportunities.</p>
+        <p>The same method can be applied to other jurisdictions. Regulators from the European Commission, United Kingdom, France, Ireland, India, Malaysia, Indonesia, Brazil, Australia, Canada, and many others have initiated investigations in response to Grok.</p>
+
+      </div>
     </div>
     <div class="step step--k" data-fin="future-edge">
       <span class="step-label">Next: The Links Between Boxes</span>
       <p class="step-key-text">The links between technologies matter, but have not been studied yet.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>The ecosystem reveals edges, the relationships between technologies, that are important to understand but have not yet been studied.</p>
+        <p>For example, there has yet to be a study on the relationship between Generative AI Models and Generative AI Interfaces (specifically AI nudifier applications). Current AI nudifier apps or “undressing” sites state that they use generative AI technology, but do not specify the underlying model being used, reflecting a gap in tech accountability upstream.</p>
+        <p>Further research along this edge would assist existing interventions (e.g., lawsuits against the creators of these technologies) and shed light on future directions for AI governance (e.g., designing AI safety techniques to mitigate downstream harm).</p>
+
+      </div>
     </div>
     <div class="step step--k" data-fin="future-ripple">
       <span class="step-label">Next: Ripple Effects</span>
       <p class="step-key-text">It is all connected, so one fix can <b>ripple</b> through the rest.</p>
+      <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+      <div class="step-detail" aria-hidden="true">
+        <p>All the different technologies are connected in a complex web, so one intervention can ripple through the others.</p>
+        <p>In April 2025, developer platform Civitai, which hosts NSFW models and datasets, updated its Terms of Service to explicitly prohibit content that uses, reproduces, or is based on the likeness of real people. 404 Media called the new policy a major blow to the nonconsensual AI porn ecosystem.</p>
+        <p>On the map, the policy induces a ripple effect for Training Datasets and Generative AI Models. Researchers could study how it affects other technologies in the ecosystem, such as the amount of NSFW Generative AI Models or, further downstream, the number of Generative AI Interfaces available on App Stores.</p>
+        <p>The recommendation: a relational approach to researching AIG-NCII, looking at the relationships between technologies and the ripple effects that interventions may have.</p>
+
+      </div>
     </div>
 `;
 export const dockHtml = `<div class="dt-dock-item dt-dock--neutral" title="Law" data-go="finale" data-step="[data-fin=&quot;law-intro&quot;]"><i class="fas fa-scale-balanced"></i></div>

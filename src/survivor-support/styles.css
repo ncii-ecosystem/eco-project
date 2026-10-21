@@ -1,3 +1,6 @@
+html, body { scrollbar-width: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+
 .ss-layout {
   padding: var(--db-space-5) var(--db-space-3);
   max-width: 72rem;

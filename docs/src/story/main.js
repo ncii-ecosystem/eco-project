@@ -669,7 +669,7 @@
     let note = null;
     chapterSteps.forEach(step => {
       if (step.classList.contains('step--k')) note = step;
-      if (['flood', 'zoomnote'].includes(step.dataset.intro)) note = null;
+      if (step.dataset.intro === 'flood') note = null;
       noteForStep.set(step, note);
     });
   });
@@ -765,7 +765,7 @@
         closingWindows.add(win);
       }
     });
-    const headlineNotes = ['zoomnote', 'grok', 'tech', 'taxo'];
+    const headlineNotes = ['flood', 'grok', 'tech', 'taxo'];
     const retainHeadlines = headlineNotes.includes(lastRenderedStep?.dataset.intro) &&
       ['grok', 'tech', 'taxo'].includes(element.dataset.intro);
     const retainScene = retainHeadlines || retainModels || retainSearch;

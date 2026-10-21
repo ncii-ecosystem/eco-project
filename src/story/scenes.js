@@ -1038,7 +1038,7 @@
      A wall of headlines scrolls past, the desktop starts, notes narrate on it, the five headlines arrive as cards,
      and the story begins. The steps are numbered; the screen is always drawn for "the last step played",
      so scrolling forwards, backwards, or jumping gives the same picture. */
-  const INTRO = ['n1', 'n2', 'n3', 'n4', 'flood', 'zoomnote', 'grok', 'tech', 'taxo', 'story', 'go', 't3'];
+  const INTRO = ['n1', 'n2', 'n3', 'n4', 'flood', 'grok', 'tech', 'taxo', 'story', 'go', 't3'];
   Eco.intro = { cur: -1, newsOpen: false, storyOpen: false, steps: INTRO, };
   document.querySelectorAll('#cover .tech').forEach((t) => { if (/Grok/.test(t.textContent)) t.classList.add('gk'); });
   function applyIntro(i, play) {
@@ -1058,14 +1058,14 @@
     if (!at('flood')) floodClear();
     else if (!flood.running) {
       if (!flood.done) { if (play === 'flood' && !prefersReducedMotion()) floodRun(); else floodStatic(!at('grok')); }
-      else if (at('grok') && !flood.zoomed) { if (play === 'grok' && !prefersReducedMotion()) floodZoom(); else { floodClear(); floodStatic(false); } }
+      else if (at('grok') && !flood.zoomed) { if (!Eco.replaying && !prefersReducedMotion()) floodZoom(); else { floodClear(); floodStatic(false); } }
     }
     const lay = document.getElementById('flood-layer');
     if (lay) { lay.classList.toggle('dim', flood.done && !flood.running); lay.classList.toggle('zoomed', flood.zoomed); lay.classList.toggle('cleared', flood.zoomed && !flood.zoomAnim); }
     if (!inStory && Eco.intro.flights) { Eco.intro.flights.forEach((a) => a.cancel()); Eco.intro.flights = []; }
     // the note: none before the first one and while the headlines arrive; otherwise the latest note passed
     if (!Eco.showNote) return;
-    if (i < 0 || flood.running || ['flood', 'zoomnote'].includes(INTRO[i])) { if (Eco.hideNote) Eco.hideNote(); return; }
+    if (i < 0 || flood.running || flood.zoomAnim || INTRO[i] === 'flood') { if (Eco.hideNote) Eco.hideNote(); return; }
     for (let n = i; n >= 0; n--) {
       const el = document.querySelector(`.step--k[data-intro="${INTRO[n]}"]`);
       if (el) { Eco.showNote(el); return; }
@@ -1078,10 +1078,7 @@
     if (i < 0) return;
     Eco.intro.cur = i;
     applyIntro(i, direction === 'down' && !Eco.replaying ? val : null);
-    // after the zoom note has had its moment, the cards open up on their own: no scrolling needed
-    if (val === 'zoomnote' && direction === 'down' && !Eco.replaying) {
-      later2(() => { if (flood.done && !flood.zoomed && !flood.running && Eco.intro.cur >= INTRO.indexOf('zoomnote')) floodZoom(); }, 2000);
-    }
+
   }
   function exitIntro(val) {
     const i = INTRO.indexOf(val);
@@ -1113,7 +1110,7 @@
     ['Wireframe', 'Free “Photo Editor” Apps Hide a Nudify Button'],
   ];
   const flood = { running: false, done: false, zoomed: false, zoomAnim: false, timers: [] };
-  Object.defineProperty(Eco.intro, 'floodRunning', { get: () => flood.running });
+  Object.defineProperty(Eco.intro, 'floodRunning', { get: () => flood.running || flood.zoomAnim });
   const later2 = (fn, ms) => { flood.timers.push(setTimeout(fn, ms)); };
 
   /* ── What a headline looks like in different places ──
@@ -1265,8 +1262,11 @@
     later2(() => {                                                          // then the rest goes dim
       flood.running = false; flood.done = true;
       lay.classList.remove('run');
-      Eco.intro.refresh();                                                  // the zoom note comes up...
-      if (Eco.holdScroll) Eco.holdScroll(4600);
+      Eco.intro.refresh();
+      if (Eco.holdScroll) Eco.holdScroll(3300);
+      later2(() => {
+        if (Eco.intro.cur === INTRO.indexOf('flood') && !flood.zoomed) floodZoom();
+      }, 1000);
     }, t + 500 + 5 * 110 + 700);
   }
   // ...and then open up, into the cards the notes go on to talk about

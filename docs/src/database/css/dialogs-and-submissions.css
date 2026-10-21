@@ -55,7 +55,6 @@
   font-weight: 400;
   line-height: var(--db-lh-tight);
   color: var(--db-ink);
-  text-transform: lowercase;
 }
 
 #db-info-title {
@@ -318,7 +317,6 @@ body.page-body .db-docs a {
 }
 
 .db-sub-check-text {
-  text-transform: lowercase;
 }
 
 .db-submit-grid {
@@ -351,7 +349,6 @@ body.page-body .db-docs a {
   font-size: var(--db-text-xs);
   line-height: var(--db-lh-tight);
   color: var(--db-ink);
-  text-transform: lowercase;
 }
 
 .db-req {
@@ -470,4 +467,9 @@ select.db-field-input option {
 
 .db-sub-techs .db-filter-btn {
   margin: 0;
+}
+
+.db-docs .db-acknowledgements .db-meta-line {
+  margin: 0;
+  opacity: var(--db-muted);
 }

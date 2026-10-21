@@ -91,7 +91,7 @@
       els.search.placeholder = 'Search ' + n + ' ' + entryLabel;
     }
     if (els.exportBtn) {
-      els.exportBtn.textContent = 'Export ' + n + ' ' + entryLabel;
+      els.exportBtn.textContent = 'Export ' + n + ' ' + (n === 1 ? 'Entry' : 'Entries');
       els.exportBtn.disabled = n === 0;
       els.exportBtn.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
     }
@@ -230,7 +230,7 @@
     function syncKeyButton(animate) {
       if (!keyBtn) return;
       var byDate = sortKey === 'date';
-      var label = byDate ? 'date' : 'a–z';
+      var label = byDate ? 'Date' : 'A–Z';
       var labelEl = keyBtn.querySelector('.db-sort-btn-label');
       keyBtn.setAttribute('data-sort', sortKey);
       keyBtn.setAttribute(
@@ -408,8 +408,8 @@
       document.body.classList.toggle('db-sidebar-expanded', expanded);
 
       btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-      var showLabel = 'Show filters';
-      var hideLabel = mobile ? 'Hide filters' : 'Put filters away';
+      var showLabel = mobile ? 'Show Description and Filters' : 'Show Filters';
+      var hideLabel = mobile ? 'Hide Description and Filters' : 'Put Filters Away';
       btn.title = collapsed ? showLabel : hideLabel;
       btn.setAttribute('aria-label', collapsed ? showLabel : hideLabel);
       try {
@@ -451,8 +451,31 @@
       });
     });
 
+    var drawerAnimating = false;
     btn.addEventListener('click', function () {
-      setCollapsed(!isCollapsed());
+      if (drawerAnimating) return;
+      var closing = !isCollapsed();
+      if (!isMobile() || !side.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setCollapsed(closing);
+        return;
+      }
+      drawerAnimating = true;
+      if (!closing) setCollapsed(false);
+      var animations = Array.from(side.querySelectorAll('.db-intro, .db-filters, .db-actions')).map(function (element) {
+        var style = getComputedStyle(element);
+        var full = { height: element.getBoundingClientRect().height + 'px', opacity: 1,
+          marginTop: style.marginTop, marginBottom: style.marginBottom, overflow: 'hidden' };
+        var empty = { height: '0px', opacity: 0, marginTop: '0px', marginBottom: '0px', overflow: 'hidden' };
+        return element.animate(closing ? [full, empty] : [empty, full], {
+          duration: 200, easing: 'ease-in-out', fill: 'both'
+        });
+      });
+      Promise.all(animations.map(function (animation) { return animation.finished; })).then(function () {
+        if (closing) setCollapsed(true);
+        animations.forEach(function (animation) { animation.cancel(); });
+        drawerAnimating = false;
+        syncMobileChromeHeight();
+      });
     });
 
     var mq = window.matchMedia(MQ);

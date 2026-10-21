@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!-- Research page: created and built by Haya Bugshan. Research and technology descriptions: Ding, Suresh and Venkatasubramanian (2026). -->
+<html lang="en">
+<head>
+<link rel="stylesheet" href="/src/shared/router.css" />
+<script src="/src/shared/router.js?v=2"></script>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="/src/shared/tokens.css?v=104" />
+<link rel="stylesheet" href="/src/shared/site-nav.css?v=5" />
+<script src="/src/shared/theme-boot.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link id="site-favicon" rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+<title>Research</title>
+<meta name="author" content="Haya Bugshan" />
+<meta name="description" content="The research behind this project: the ecosystem paper that maps technologies facilitating AI-generated non-consensual intimate images." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=PT+Mono&display=swap" rel="stylesheet" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+<link rel="stylesheet" href="/src/shared/page-styles.css?v=103" />
+<link rel="stylesheet" href="/src/research/styles.css?v=12" />
+<link rel="stylesheet" href="/src/research/research.css?v=150" />
+<script type="module" src="/src/research/research.js?v=33"></script>
+<script src="/src/shared/nav.js" defer></script>
+</head>
+<body class="page-body about-page">
+
+<header class="site-topnav">
+  <a class="site-logo" href="/home" aria-label="NCII-ECOSYSTEM.ORG">
+    <img class="site-logo-img" src="/assets/logo.svg" alt="" width="28" height="28" />
+    <span class="site-logo-name">NCII-ECOSYSTEM.ORG</span>
+  </a>
+  <button type="button" class="site-nav-tab" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Open menu">
+    <span class="site-burger" aria-hidden="true"></span>
+  </button>
+  <div class="site-nav-panel" id="site-nav-menu">
+    <nav aria-label="Site">
+      <ul class="site-topnav-links">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/story">Story</a></li>
+        <li><a href="/database">Database</a></li>
+        <li><a href="/survivor-support">Survivor Support</a></li>
+        <li><a href="/research" aria-current="page">Research</a></li>
+      </ul>
+    </nav>
+    <button type="button" class="site-theme-toggle" id="site-theme-toggle" aria-label="Switch to dark mode" title="Theme">
+      <i class="site-theme-toggle-icon fas fa-fw fa-moon" aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
+
+<main class="about-layout">
+  <div class="about-text">
+  <header class="about-header">
+    <h1 class="content-title about-paper-title">Explore the research.</h1>
+    <p class="about-summary">A map of the technologies that make AI-generated intimate image abuse possible, and the laws that try to stop it.</p>
+    <p class="about-paper-links">
+      <a href="https://arxiv.org/abs/2602.04759" target="_blank" rel="noopener noreferrer">[arXiv]</a>
+      <a href="https://arxiv.org/pdf/2602.04759" target="_blank" rel="noopener noreferrer">[PDF]</a>
+      <span class="about-soon">[ACM Digital Library coming soon]</span>
+      <span class="about-soon">[EAAMO slides and recording coming soon]</span>
+    </p>
+  </header>
+
+  <div class="about-folds">
+    <button type="button" class="about-fold-btn" data-dialog-open="abstract-dialog" aria-haspopup="dialog" aria-controls="abstract-dialog">
+      <span>Read the abstract</span><span aria-hidden="true">+</span>
+    </button>
+    <a class="about-fold-btn" href="https://arxiv.org/abs/2602.04759" target="_blank" rel="noopener noreferrer">
+      <span>Read the paper</span><span class="about-fold-arrow" aria-hidden="true">↗</span>
+    </a>
+    <button type="button" class="about-fold-btn" data-dialog-open="cite-dialog" aria-haspopup="dialog" aria-controls="cite-dialog">
+      <span>Cite this paper</span><span aria-hidden="true">+</span>
+    </button>
+  </div>
+</div>
+
+  <section class="about-research" aria-label="Interactive figures">
+    <div class="research-header">
+    <div class="research-views" role="group" aria-label="Research view">
+      <button type="button" data-view="system" aria-pressed="true"><i class="fas fa-project-diagram" aria-hidden="true"></i> ECOSYSTEM DIAGRAM</button>
+      <button type="button" data-view="law" aria-pressed="false"><i class="fas fa-balance-scale" aria-hidden="true"></i> U.S. LEGAL LANDSCAPE</button>
+    </div>
+    </div>
+    <div class="research-copy">
+      <p><strong>AIG-NCII is a crisis of non-consent at scale that regulators are scrambling to control.</strong> In the U.S., nearly all 50 states have enacted laws regulating AIG-NCII. We found that over 90% of these laws criminalize individuals for creating, soliciting, or distributing AIG-NCII and <strong>do very little to regulate the technologies powering abuse.</strong></p>
+      <p><strong>Criminalizing individuals does not prevent future abuse.</strong> In 2025, Grok was <a href="https://www.bloomberg.com/news/articles/2026-01-07/musk-s-grok-ai-generated-thousands-of-undressed-images-per-hour-on-x" target="_blank" rel="noopener noreferrer">generating</a> over 6700 images per hour. In 2026, nearly 90 schools and 600 students around the world have been <a href="https://www.wired.com/story/deepfake-nudify-schools-global-crisis/" target="_blank" rel="noopener noreferrer">impacted</a> by AIG-NCII. Deepfake abuse results in a gendered chilling effect where vulnerable communities retreat from online spaces due to fear of harassment. As long as the ecosystem proliferates, the risk of abuse remains, and the silencing effect persists. Regulation that only criminalizes individuals without targeting the technological ecosystem supporting it is simply not enough to prevent abuse at scale.</p>
+      <p><strong>What technologies are regulated already?</strong> We can use our tech ecosystem to build a clearer policy landscape to see gaps and opportunities. To demo, we read all the enacted intimate deepfake laws tracked by <a href="https://www.citizen.org/article/tracker-intimate-deepfakes-state-legislation/" target="_blank" rel="noopener noreferrer">Public Citizen</a> <img class="research-source-icon" src="/assets/press/public-citizen.png" alt="" width="18" height="18" loading="lazy" /> and coded them with our ecosystem. Learn more about our methodology <a href="https://arxiv.org/abs/2602.04759" target="_blank" rel="noopener noreferrer">here</a>.</p>
+      <p class="about-madeby">Created and built by Haya Bugshan</p>
+    </div>
+    <div class="research-layout">
+      <div class="research-visual-scroll" tabindex="0" aria-label="Interactive research diagram">
+        <h3 class="research-diagram-title">Role of Technology in Facilitating AIG-NCII</h3>
+        <div id="research-visual"></div>
+      <details class="research-desc" data-for="system">
+        <summary><span><strong>The AIG-NCII Tech Ecosystem.</strong> <em>Interactive adaptation of Figure 1 from Ding et al. (2026)</em></span><i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+        <div class="research-desc-content">
+        <p>The ecosystem of technologies that facilitate AIG-NCII via Creation (training datasets, generative AI models, and generative AI interfaces), Distribution (distribution channels), Proliferation and Discovery (deepfake creation communities, search engines, advertisement platforms, app stores), Infrastructural Support (developer platforms, critical service providers), and Monetization (payment processors). Click each box to learn more about each technology. You can also explore the <a href="/database"><strong>evidence database</strong></a> and filter for reports, news articles, laws, artifacts, and papers by technology.</p>
+        </div>
+      </details>
+      <details class="research-desc" data-for="law">
+        <summary><span><strong>The U.S. Legal Landscape Regulating AIG-NCII Ecosystem Technologies.</strong> <em>Interactive adaptation of Figure 2 from Ding et al. (2026)</em></span><i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+        <div class="research-desc-content">
+        <p>The landscape of U.S. federal and state laws regulating the AIG-NCII ecosystem: Federal Law - The TAKE IT DOWN Act (2025); California - SB981 (2024); New York - A8808 (2024); Tennessee - H0769 (2025); Arkansas - HB1529 (2025); Texas - SB441 (2025); Minnesota - HF1606 (2026). Each state is labeled with icons of regulated technologies and color-coded with the role of the technology in the ecosystem.</p>
+        </div>
+      </details>
+      </div>
+      <aside class="research-details" aria-label="Selected explanation" aria-live="polite">
+        <div class="research-note-titlebar" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="research-note-content">
+        <h3 id="research-detail-title">State laws</h3>
+        <div id="research-detail-body"><p>Select a highlighted state to read its law.</p></div>
+        </div>
+      </aside>
+    </div>
+    <p id="research-error" role="status" hidden>The interactive views could not load. You can still read the paper using the links above.</p>
+  </section>
+</main>
+
+<dialog class="about-dialog" id="abstract-dialog" aria-labelledby="abstract-dialog-title">
+  <header class="about-dialog-head">
+    <h2 id="abstract-dialog-title">Abstract</h2>
+    <button type="button" class="about-dialog-close" data-dialog-close aria-label="Close">&times;</button>
+  </header>
+  <div class="about-dialog-body">
+      <section class="about-abstract">
+        <p>
+          The last decade has witnessed a rapid advancement of generative AI technology that significantly scaled the accessibility of <strong>AI-generated non-consensual intimate images (AIG-NCII)</strong>, a form of image-based sexual abuse that disproportionately harms and silences women and girls. There is a patchwork of commendable efforts across industry, policy, academia, and civil society to address AIG-NCII. However, these efforts lack a shared, consistent mental model that clearly situates the technologies they target within the context of a large, interconnected, and ever-evolving technological ecosystem. As a result, interventions remain siloed and are difficult to evaluate and compare, leading to a reactive cycle of <strong>whack-a-mole</strong>. Through a synthesis of over a hundred primary sources from academia, civil society, industry, and policy, we contribute the first comprehensive map of this ecosystem, including 11 categories of technologies that play one of <strong>five roles</strong> in facilitating AIG-NCII:
+        </p>
+      </section>
+      <section class="about-roles" aria-label="Roles in the ecosystem">
+        <ol class="about-role-list">
+          <li>
+            <span class="about-role-num" aria-hidden="true">1</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-creation">Creation</span>
+              <span class="about-role-detail"><span class="about-tech">Training Datasets <span class="inline-icon" aria-hidden="true"><i class="fas fa-database"></i></span></span>, <span class="about-tech">Generative AI Models <span class="inline-icon" aria-hidden="true"><i class="fas fa-code"></i></span></span>, and <span class="about-tech">Generative AI Interfaces <span class="inline-icon" aria-hidden="true"><i class="fas fa-magic"></i></span></span></span>
+            </span>
+          </li>
+          <li>
+            <span class="about-role-num" aria-hidden="true">2</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-distribution">Distribution</span>
+              <span class="about-role-detail"><span class="about-tech">Distribution Channels <span class="inline-icon" aria-hidden="true"><i class="fas fa-comment"></i></span></span></span>
+            </span>
+          </li>
+          <li>
+            <span class="about-role-num" aria-hidden="true">3</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-proliferation">Proliferation &amp; Discovery</span>
+              <span class="about-role-detail"><span class="about-tech">Deepfake Creation Communities <span class="inline-icon" aria-hidden="true"><i class="fas fa-users"></i></span></span>, <span class="about-tech">Search Engines <span class="inline-icon" aria-hidden="true"><i class="fas fa-search"></i></span></span>, <span class="about-tech">Advertisement Platforms <span class="inline-icon" aria-hidden="true"><i class="fas fa-bullhorn"></i></span></span>, and <span class="about-tech">App Stores <span class="inline-icon" aria-hidden="true"><i class="fas fa-shopping-cart"></i></span></span></span>
+            </span>
+          </li>
+          <li>
+            <span class="about-role-num" aria-hidden="true">4</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-infra">Infrastructural Support</span>
+              <span class="about-role-detail"><span class="about-tech">Developer Platforms <span class="inline-icon" aria-hidden="true"><i class="fas fa-laptop-code"></i></span></span>, <span class="about-tech">Critical Service Providers <span class="inline-icon" aria-hidden="true"><i class="fas fa-tools"></i></span></span></span>
+            </span>
+          </li>
+          <li>
+            <span class="about-role-num" aria-hidden="true">5</span>
+            <span class="about-role-content">
+              <span class="text-highlight role-monetization">Monetization</span>
+              <span class="about-role-detail"><span class="about-tech">Payment Processors <span class="inline-icon" aria-hidden="true"><i class="fas fa-hand-holding-usd"></i></span></span></span>
+            </span>
+          </li>
+        </ol>
+      </section>
+      <section class="about-closing">
+        <p>
+          Our goal is to bridge the gaps and connect the dots to provide a clear, shared <strong>terminology</strong> and <strong>framework</strong> for stakeholders to move into the future of AIG-NCII prevention with clarity and foresight.
+        </p>
+      </section>
+    </div>
+</dialog>
+
+<dialog class="about-dialog" id="cite-dialog" aria-labelledby="cite-dialog-title">
+  <header class="about-dialog-head">
+    <h2 id="cite-dialog-title">ACM Reference Format</h2>
+    <button type="button" class="about-dialog-close" data-dialog-close aria-label="Close">&times;</button>
+  </header>
+  <div class="about-dialog-body">
+      <section class="about-citation" aria-labelledby="cite-dialog-title">
+        <p class="about-citation-text">
+          Michelle L. Ding, Harini Suresh, and Suresh Venkatasubramanian. 2026. How to Stop Playing Whack-a-Mole: Mapping the Ecosystem of Technologies Facilitating AI-Generated Non-Consensual Intimate Images. In <em>Equity and Access in Algorithms, Mechanisms, and Optimization (EAAMO &rsquo;26)</em>, November 05&ndash;07, 2026, Munich, Germany. ACM, New York, NY, USA, 16 pages.
+        <a href="https://doi.org/10.1145/3846167.3848604" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3846167.3848604</a>
+        </p>
+      </section>
+    </div>
+</dialog>
+
+<script src="/src/shared/dialog.js"></script>
+<script src="/src/shared/theme.js"></script>
+</body>
+</html>

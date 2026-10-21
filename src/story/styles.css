@@ -196,7 +196,6 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
   overflow-y: auto; overflow-x: hidden;
   opacity: 0; pointer-events: none;
   transition: opacity 0.4s ease;
-  scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.15) transparent;
 }
 .scene.active { opacity: 1; pointer-events: all; }
 
@@ -720,3 +719,8 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
 .in-outro #notes-app,
 .in-outro .reader-controls .rc-btn,
 .in-outro #scene-notif { opacity: 0; visibility: hidden; pointer-events: none; }
+
+:is(#interface, #dm, #dm-email, #reddit, #mdf),
+:is(#interface, #dm, #dm-email, #reddit, #mdf) * { scrollbar-width: none; }
+:is(#interface, #dm, #dm-email, #reddit, #mdf)::-webkit-scrollbar,
+:is(#interface, #dm, #dm-email, #reddit, #mdf) *::-webkit-scrollbar { display: none; }
