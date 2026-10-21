@@ -27,8 +27,8 @@
 
 .about-summary {
   margin: 0;
-  font-size: var(--db-text-md);
-  line-height: var(--db-lh-loose);
+  font-size: 0.9375rem;
+  line-height: 1.45;
 }
 
 .about-folds {

@@ -127,13 +127,9 @@ export function mountLawSection({ Eco = window.Eco, mon = document.getElementByI
   const fedNode = el('g', { class: 'pol-fed-node', tabindex: '0', role: 'button', 'aria-pressed': 'false',
     'aria-label': `${FED.name} law, ${FED.bill}, ${FED.year}: read what it says`,
     transform: `translate(${(12 * (T + TG) - TG) / 2} 25)` }, us);
-  const fedClip = el('clipPath', { id: 'pol-fed-clip' }, fedNode);
-  el('circle', { r: 25 }, fedClip);
-  const flag = el('g', { 'clip-path': 'url(#pol-fed-clip)' }, fedNode);
-  const stripe = 50 / 7;
-  for (let i = 0; i < 7; i++) el('rect', { x: -25, y: -25 + i * stripe, width: 50, height: stripe + 0.4, class: i % 2 === 0 ? 'pol-flag-red' : 'pol-flag-white' }, flag);
-  el('rect', { x: -25, y: -25, width: 23, height: 4 * stripe, class: 'pol-flag-blue' }, flag);
-  for (let row = 0; row < 3; row++) for (let col = 0; col < 3; col++) el('circle', { cx: -20 + col * 7, cy: -20 + row * 7.5, r: 1.3, class: 'pol-flag-star' }, flag);
+  el('circle', { r: 25, class: 'pol-fed-fill' }, fedNode);
+  el('text', { x: 0, y: -3, class: 'pol-fed-code' }, fedNode).textContent = 'US';
+  el('text', { x: 0, y: 14, class: 'pol-ic pol-fed-ic' }, fedNode).textContent = FED.icons.map((k) => ICON[k]).join(' ');
   el('circle', { r: 25, class: 'pol-fed-edge' }, fedNode);
   const fedCap = el('text', { class: 'pol-fed-cap' }, fedNode);
   el('tspan', { x: 0, y: 44 }, fedCap).textContent = 'FEDERAL';
@@ -400,7 +396,7 @@ export const stepsHtml = `    <div class="step step--k" data-fin="law-intro">
       <p class="step-key-text">Highlighted states show laws that regulate technologies in the ecosystem. Icons identify the technologies, and colors indicate their role.</p>
       <button class="step-expand-btn" aria-expanded="false">Read more <i class="fas fa-chevron-down" aria-hidden="true"></i></button>
       <div class="step-detail" aria-hidden="true">
-        <p>Click a highlighted state to read about its law, or the flag circle for the federal law.</p>
+        <p>Click a highlighted state to read about its law, or the “US” circle for the federal law.</p>
 
       </div>
     </div>

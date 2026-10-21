@@ -31,8 +31,8 @@
 .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: var(--research-outline); vector-effect: non-scaling-stroke; transition: stroke-width 0.15s ease; }
 .eco-graph.live .eg-node:hover .eg-box, .eg-node:focus-visible .eg-box, .eg-node.active .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 3; }
 .eg-node { transform-box: fill-box; transform-origin: center; }
-/* the box that was clicked: a little larger, a heavier outline and bolder text */
-.eg-node.in.active { transform: scale(1.03); }
+/* the box that was clicked: a heavier outline and bolder text, same size so it stays lined up */
+.eg-node.in.active { transform: none; }
 .eg-node.active .eg-h, .eg-node.active .eg-m { font-weight: 700; }
 /* boxes it connects to stay clear; the rest step back */
 .eg-node.linked .eg-box { stroke: var(--research-box-ink, var(--p)); stroke-width: 2; }
@@ -311,7 +311,7 @@ body.page-body .research-desc a { text-decoration: underline; text-underline-off
   .about-layout .pol-us-wrap { width: 100%; max-width: none; }
   /* The chart or map keeps its proportions and sits centered in the (wider) figure box */
   .about-layout .eco-graph,
-  .about-layout .pol-map { width: 100%; max-width: var(--content-w, 100%); margin-inline: 0; align-self: flex-start; }
+  .about-layout .pol-map { width: 100%; max-width: var(--content-w, 100%); margin-inline: auto; align-self: center; }
   .about-layout .research-header { margin-block: 0; }
   .about-layout .research-details { position: relative; min-height: 12rem; }
   .about-layout .research-note-content { position: absolute; inset: 38px 0 0 0; overflow-y: auto; }
@@ -319,10 +319,9 @@ body.page-body .research-desc a { text-decoration: underline; text-underline-off
 
 /* The federal law: a circle with a U.S. flag on the map, with a small caption; it opens like a state does. */
 .pol-fed-node { cursor: pointer; outline: none; }
-.pol-flag-red { fill: var(--role-creation); }
-.pol-flag-white { fill: var(--paper, #fff); }
-.pol-flag-blue { fill: var(--role-infra); }
-.pol-flag-star { fill: var(--paper, #fff); }
+.pol-fed-fill { fill: var(--role-distribution); }
+.pol-fed-code { font: 700 15px var(--db-font-mono); fill: var(--p); text-anchor: middle; }
+.pol-fed-ic { text-anchor: middle; }
 .pol-fed-edge { fill: none; stroke: var(--research-box-ink, var(--p)); stroke-width: var(--research-outline); vector-effect: non-scaling-stroke; transition: stroke-width 0.15s ease; }
 .pol-fed-node:hover .pol-fed-edge,
 .pol-fed-node:focus-visible .pol-fed-edge,
@@ -337,6 +336,7 @@ body.page-body .research-desc a { text-decoration: underline; text-underline-off
 .eg-legend-item .eg-swatch { stroke: var(--research-box-ink, var(--p)); stroke-width: 1; transition: stroke-width 0.15s ease; }
 .eg-legend-item:hover .eg-swatch, .eg-legend-item:focus-visible .eg-swatch, .eg-legend-item.on .eg-swatch { stroke-width: 3; }
 .eco-graph.has-role .eg-node:not(.role-on) { opacity: 0.3; }
+.eco-graph.has-role .eg-node:not(.role-on) .eg-box { stroke-dasharray: 6 4; }
 .eco-graph.has-role .eg-edge { opacity: 0.15; }
 /* Law map: a numbered law opens like its state; a role lights up its laws. */
 .pol-list li[data-st], .pol-role-item { cursor: pointer; }
@@ -493,3 +493,21 @@ body.page-body .research-copy a {
   .about-research .pol-legend .pol-list,
   .about-research .pol-role { font-size: 11px; }
 }
+
+/* The legend overlay no longer blocks the boxes under it: only its own rows take clicks. */
+.research-system-legend { pointer-events: none; }
+.research-system-legend .eg-legend-item { pointer-events: all; }
+
+/* Selected box: normal color with a thick outline. Boxes it connects to: kept light (lower opacity, no darker tint). Everything else: fainter. */
+.eco-graph .eg-node.active .eg-box,
+.eco-graph.live .eg-node.active:hover .eg-box { stroke-width: 5; }
+.eco-graph.has-selection .eg-node.active { filter: brightness(1.08) saturate(1.1) drop-shadow(0 2px 4px rgba(0,0,0,0.25)); }
+.eco-graph.has-selection .eg-node.linked { opacity: 0.85; }
+.eco-graph.has-selection .eg-node.linked .eg-box { stroke-width: 2px; }
+.eco-graph.has-selection .eg-node:not(.active):not(.linked) .eg-box { stroke-dasharray: 6 4; }
+.eco-graph.has-selection .eg-node:not(.active):not(.linked) { opacity: 0.5; }
+
+/* Hint that the system chart's legend can be clicked (the law map's legend is not part of this). */
+.research-system-legend .eg-legend-hint { font: 700 11px var(--db-font-mono); fill: var(--db-ink); opacity: var(--db-muted, 0.7); pointer-events: none; }
+.research-system-legend .eg-legend-label { text-decoration: underline dotted; text-underline-offset: 3px; }
+.research-system-legend .eg-legend-item:hover .eg-legend-label { text-decoration-style: solid; }
