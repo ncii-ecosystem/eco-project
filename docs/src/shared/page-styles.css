@@ -148,3 +148,21 @@ body.page-body a {
   white-space: nowrap;
   border: 0;
 }
+
+.citation-copy-button {
+  display: inline-grid;
+  vertical-align: middle;
+  border: 0;
+  background: transparent;
+  color: var(--db-ink);
+  cursor: pointer;
+  place-items: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+}
+.citation-copy-button i { grid-area: 1 / 1; font-size: 16px; line-height: 1; }
+.citation-copy-button .citation-check-symbol,
+.citation-copy-button.is-copied .citation-copy-symbol { visibility: hidden; }
+.citation-copy-button.is-copied .citation-check-symbol { visibility: visible; }

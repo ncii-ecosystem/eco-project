@@ -307,3 +307,5 @@ body.page-body .about-citation-text a {
   .research-layout { grid-area: fig; }
   #research-error { grid-column: 1 / -1; }
 }
+
+.about-dialog-actions { display: flex; align-items: center; gap: var(--db-space-2); }

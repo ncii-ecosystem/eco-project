@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <link rel="stylesheet" href="/src/shared/router.css" />
-<script src="/src/shared/router.js?v=2"></script>
+<script src="/src/shared/router.js?v=3"></script>
 <meta charset="UTF-8" />
 <link rel="stylesheet" href="/src/shared/tokens.css?v=104" />
 <link rel="stylesheet" href="/src/shared/site-nav.css?v=5" />
@@ -23,8 +23,8 @@
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 />
-<link rel="stylesheet" href="/src/shared/page-styles.css?v=103" />
-<link rel="stylesheet" href="/src/research/styles.css?v=14" />
+<link rel="stylesheet" href="/src/shared/page-styles.css?v=105" />
+<link rel="stylesheet" href="/src/research/styles.css?v=20" />
 <link rel="stylesheet" href="/src/research/research.css?v=179" />
 <script type="module" src="/src/research/research.js?v=46"></script>
 <script src="/src/shared/nav.js" defer></script>
@@ -188,11 +188,14 @@
 <dialog class="about-dialog" id="cite-dialog" aria-labelledby="cite-dialog-title">
   <header class="about-dialog-head">
     <h2 id="cite-dialog-title">ACM Reference Format</h2>
-    <button type="button" class="about-dialog-close" data-dialog-close aria-label="Close">&times;</button>
+    <div class="about-dialog-actions">
+      <button type="button" class="about-dialog-close citation-copy-button" id="copy-paper-citation" data-copy-target="paper-citation-text" aria-label="Copy citation" title="Copy citation"><i class="far fa-copy citation-copy-symbol" aria-hidden="true"></i><i class="far fa-check-circle citation-check-symbol" aria-hidden="true"></i></button>
+      <button type="button" class="about-dialog-close" data-dialog-close aria-label="Close">&times;</button>
+    </div>
   </header>
   <div class="about-dialog-body">
       <section class="about-citation" aria-labelledby="cite-dialog-title">
-        <p class="about-citation-text">
+        <p class="about-citation-text" id="paper-citation-text">
           Michelle L. Ding, Harini Suresh, and Suresh Venkatasubramanian. 2026. How to Stop Playing Whack-a-Mole: Mapping the Ecosystem of Technologies Facilitating AI-Generated Non-Consensual Intimate Images. In <em>Equity and Access in Algorithms, Mechanisms, and Optimization (EAAMO &rsquo;26)</em>, November 05&ndash;07, 2026, Munich, Germany. ACM, New York, NY, USA, 16 pages.
         <a href="https://doi.org/10.1145/3846167.3848604" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3846167.3848604</a>
         </p>
@@ -200,6 +203,7 @@
     </div>
 </dialog>
 
+<script src="/src/shared/copy-citation.js?v=1"></script>
 <script src="/src/shared/dialog.js"></script>
 <script src="/src/shared/theme.js"></script>
 </body>

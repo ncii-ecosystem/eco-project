@@ -434,3 +434,13 @@ body.page-body .home-section[aria-labelledby="home-impact-title"] a {
 body.page-body .home-details .home-org-name {
   text-decoration: none;
 }
+
+.home-section .home-citation-text {
+  margin: var(--db-space-4) 0 0;
+  font-size: var(--db-text-sm);
+  overflow-wrap: anywhere;
+}
+body.page-body .home-citation-text a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}

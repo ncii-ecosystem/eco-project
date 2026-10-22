@@ -48,7 +48,12 @@
     navigate(url.href);
   }
 
-  if (window.parent !== window && window.parent.SiteRouter) {
+  var parentRouter;
+  try {
+    if (window.parent !== window) parentRouter = window.parent.SiteRouter;
+  } catch (error) {}
+
+  if (parentRouter) {
     document.documentElement.classList.add("site-content");
     window.addEventListener("storage", function (event) {
       if (event.key === "db-theme" || event.key === null) {
@@ -61,12 +66,16 @@
       }
     });
     document.addEventListener("click", function (event) {
-      intercept(event, window.parent.SiteRouter.navigate);
+      intercept(event, parentRouter.navigate);
       if (event.target.closest("#cw-btn"))
-        window.parent.SiteRouter.startStory();
+        parentRouter.startStory();
     });
     document.addEventListener("DOMContentLoaded", function () {
-      window.parent.SiteRouter.contentReady(document.title);
+      if (document.body.classList.contains("site-shell")) {
+        parentRouter.navigate(location.href, true);
+        return;
+      }
+      parentRouter.contentReady(document.title);
     });
     return;
   }
