@@ -505,6 +505,12 @@ body.page-body .research-copy a {
 .eco-graph.has-selection .eg-node:not(.active):not(.linked) { opacity: 0.5; }
 
 #research-visual {
+  -webkit-user-select: text;
+  user-select: text;
+}
+#research-visual .eg-node,
+#research-visual .pol-state,
+#research-visual .pol-fed-node {
   -webkit-user-select: none;
   user-select: none;
 }

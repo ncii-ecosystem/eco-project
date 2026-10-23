@@ -124,14 +124,25 @@ h3 {
     width 0.5s ease,
     visibility 0.45s !important;
 }
-.mac-window,
-.mac-window *,
-.aux-win,
-.aux-win *,
+/* Decorative overlays and window chrome stay unselectable; the text inside the scene windows can be selected and copied. */
 #hl-grid,
 #hl-grid *,
 #flood-layer,
 #flood-layer * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+.mac-window,
+.mac-window *,
+.aux-win,
+.aux-win * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+.win-titlebar,
+.win-titlebar *,
+.mac-window button,
+.aux-win button {
   -webkit-user-select: none;
   user-select: none;
 }
