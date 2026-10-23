@@ -15,10 +15,11 @@
   const cwOverlay    = document.getElementById('cw-overlay');
   const cwBtn        = document.getElementById('cw-btn');
 
-  /* ── Exit: back to the content warning, with the story reset ── */
+  /* Exit returns to Home immediately. */
   function quickExit() {
     try { document.body.innerHTML = ''; } catch (e) { /* ignore */ }   // the story disappears at once
-    window.location.replace(window.location.href);
+    if (window.parent !== window && window.parent.SiteRouter) window.parent.SiteRouter.navigate('/home');
+    else window.location.replace('/home');
   }
   document.getElementById('quick-exit')?.addEventListener('click', quickExit);
   let escCount = 0, escTimer = null;

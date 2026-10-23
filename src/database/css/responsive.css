@@ -298,5 +298,3 @@
     margin-right: calc(var(--db-space-3) * -1);
   }
 }
-
-.db-mobile-docs svg { width: 1rem; height: 1rem; }

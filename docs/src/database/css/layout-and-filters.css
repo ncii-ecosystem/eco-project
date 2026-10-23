@@ -86,8 +86,10 @@ body.page-body.db-split .db-layout {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 1lh;
-  vertical-align: bottom;
+  width: 1em;
+  height: 1em;
+  margin-left: -0.1em;
+  vertical-align: -0.1em;
   padding: 0;
   border: 0;
   background: transparent;
@@ -96,10 +98,23 @@ body.page-body.db-split .db-layout {
   cursor: pointer;
 }
 
-.db-intro-info svg {
+.db-intro-info svg,
+.db-mobile-docs svg {
   display: block;
   width: 1em;
   height: 1em;
+  stroke-width: 3;
+  transition: transform 150ms ease;
+}
+@media (hover: hover) {
+  .db-intro-info:hover svg,
+  .db-mobile-docs:hover svg { transform: scale(1.1); }
+}
+.db-intro-info:focus-visible svg,
+.db-mobile-docs:focus-visible svg { transform: scale(1.1); }
+@media (prefers-reduced-motion: reduce) {
+  .db-intro-info svg,
+  .db-mobile-docs svg { transition: none; }
 }
 
 .db-sidebar-main {
