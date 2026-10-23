@@ -26,6 +26,7 @@
 .sr-ad.in {
   opacity: 1;
   transform: none;
+  pointer-events: auto;
 }
 .sr-ad-1 {
   right: 6%;
@@ -171,9 +172,6 @@
 /* the model name is a plain label now (not a dropdown); the cursor still clicks it */
 .chat-model-badge {
   cursor: default;
-  user-select: none;
-  -webkit-user-select: none;
-  pointer-events: none;
 }
 
 /* each model panel appears with its own step: closed first (it is held by the company), then open */

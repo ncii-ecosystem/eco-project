@@ -125,12 +125,19 @@ h3 {
     visibility 0.45s !important;
 }
 /* Decorative overlays and window chrome stay unselectable; the text inside the scene windows can be selected and copied. */
-#hl-grid,
-#hl-grid *,
 #flood-layer,
 #flood-layer * {
   -webkit-user-select: none;
   user-select: none;
+}
+/* The headline cards are real text: they can be selected and copied (the grid itself stays click-through). */
+#hl-grid .hl-card,
+#hl-grid .hl-card * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+#hl-grid .hl-card {
+  pointer-events: auto;
 }
 .mac-window,
 .mac-window *,
