@@ -82,14 +82,19 @@ body.page-body.db-split .db-layout {
   flex: 0 0 auto;
 }
 
+.db-intro-ending {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15em;
+  vertical-align: bottom;
+}
+
 .db-intro-info {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 1em;
   height: 1em;
-  margin-left: -0.1em;
-  vertical-align: -0.1em;
   padding: 0;
   border: 0;
   background: transparent;
@@ -338,7 +343,7 @@ body.page-body:not(.db-sidebar-ready) .db-sidebar-toggle-glyph {
 
 .db-search-input::placeholder {
   color: var(--db-ink);
-  opacity: 0.55;
+  opacity: var(--db-muted);
 }
 
 .db-sort {

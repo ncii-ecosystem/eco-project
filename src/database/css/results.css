@@ -131,15 +131,13 @@
   box-shadow: none;
 }
 
-.db-result-media:hover img.db-result-media-photo,
-.db-result-media--brand:hover {
+.db-result-media:hover .db-result-media-surface {
   filter: blur(0) saturate(1);
   opacity: 1;
-  transform: scale(1);
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
-.db-result-media--brand {
-  background: var(--db-brand-color, #8a8a8a);
+.db-result-media--brand .db-result-media-surface {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -147,11 +145,13 @@
   transform-origin: center center;
 }
 
-.db-result-media img.db-result-media-photo,
-.db-result-media--brand {
+.db-result-media-surface {
+  position: absolute;
+  inset: 0;
+  background: var(--db-brand-color, #8a8a8a);
   filter: var(--media-preview-filter);
   opacity: var(--media-preview-opacity);
-  transform: scale(var(--media-preview-scale));
+  transform: translate3d(0, 0, 0) scale(var(--media-preview-scale));
   transition:
     filter 0.55s ease,
     transform 0.55s ease,
@@ -171,9 +171,18 @@
   transform: none;
 }
 
+.db-result-media-surface img[data-preview-image] {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.db-result-media-surface img.is-loaded {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .db-result-media img.db-result-media-photo,
-  .db-result-media--brand {
+  .db-result-media-surface,
+  .db-result-media-surface img[data-preview-image] {
     transition: none;
   }
 }

@@ -217,7 +217,7 @@ body.page-body .research-desc a { text-decoration: underline; text-underline-off
 .about-research .pol-us { position: relative; display: block; height: auto; }
 .about-research .pol-hint { display: none; }
 .research-details {
-  color: #241a5c;
+  color: var(--purple-dark);
   border: 1px solid var(--p); background: var(--role-proliferation);
   box-shadow: none; border-radius: 0;
   font: 400 var(--db-text-sm)/var(--db-lh-loose) var(--db-font-mono);

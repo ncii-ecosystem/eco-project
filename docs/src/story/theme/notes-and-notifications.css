@@ -106,7 +106,7 @@
   margin: 0;
   font: 400 10px var(--db-font-mono);
   color: var(--p);
-  opacity: 0.7;
+  opacity: var(--db-muted);
   flex: none;
 }
 .intro-notification {

@@ -1,11 +1,3 @@
-html.db-theme-dark {
-  --db-bg: #6751d4;
-  --db-ink: #ffffff;
-  --db-chip-ink: #6751d4;
-  --db-selected-bg: #ffffff;
-  --db-selected-fg: #6751d4;
-}
-
 body.page-body {
   font-family: var(--font-sans);
   font-size: var(--db-text-md);

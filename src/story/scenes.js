@@ -721,7 +721,7 @@
     if (!container) return;
     const el = document.createElement('div');
     el.className = 'chat-bubble ai';
-    el.innerHTML = `I can help with that! Here's what I generated based on the photo you gave me.<div class="redacted-block recurring-image"><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Output redacted</span></div>`;
+    el.innerHTML = `I can help with that! Here's what I generated based on the photo you gave me.<div class="redacted-block recurring-image"><span class="sr-only">A redacted generated image. This is the image followed through the rest of the story.</span><span class="redacted-label"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Output redacted</span></div>`;
     container.appendChild(el);
     container.scrollTop = container.scrollHeight;
 

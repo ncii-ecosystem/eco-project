@@ -16,11 +16,11 @@
   } else {
     const sources = [
       "/src/story/navigation.js?v=1",
-      "/src/story/scenes.js?v=133",
+      "/src/story/scenes.js?v=134",
       "/src/story/main.js?v=149",
       "/src/story/motion.js?v=62",
       "/src/story/windows.js?v=4",
-      "/src/story/finale.js?v=26",
+      "/src/story/finale.js?v=27",
     ];
     window.storyReady = Promise.all(
       sources.map(

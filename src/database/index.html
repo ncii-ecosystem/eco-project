@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="/src/shared/router.css" />
+    <link rel="stylesheet" href="/src/shared/router.css?v=2" />
     <script src="/src/shared/router.js?v=3"></script>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/src/shared/tokens.css?v=104" />
+    <link rel="stylesheet" href="/src/shared/tokens.css?v=112" />
     <link rel="stylesheet" href="/src/shared/site-nav.css?v=4" />
     <script src="/src/shared/theme-boot.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,7 +12,7 @@
       id="site-favicon"
       rel="icon"
       type="image/svg+xml"
-      href="/assets/logo.svg"
+      href="/assets/logo.svg?v=4"
     />
     <title>Database</title>
     <meta
@@ -32,10 +32,10 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="/src/shared/page-styles.css?v=103" />
-    <link rel="stylesheet" href="/src/database/css/layout-and-filters.css?v=9" />
-    <link rel="stylesheet" href="/src/database/css/results.css?v=1" />
-    <link rel="stylesheet" href="/src/database/css/dialogs-and-submissions.css?v=6" />
+    <link rel="stylesheet" href="/src/shared/page-styles.css?v=106" />
+    <link rel="stylesheet" href="/src/database/css/layout-and-filters.css?v=11" />
+    <link rel="stylesheet" href="/src/database/css/results.css?v=3" />
+    <link rel="stylesheet" href="/src/database/css/dialogs-and-submissions.css?v=7" />
     <link rel="stylesheet" href="/src/database/css/responsive.css?v=11" />
     <script src="/src/shared/nav.js" defer></script>
     <script>
@@ -70,7 +70,7 @@
       <a class="site-logo" href="/home" aria-label="NCII-ECOSYSTEM.ORG">
         <img
           class="site-logo-img"
-          src="/assets/logo.svg"
+          src="/assets/logo.svg?v=4"
           alt=""
           width="28"
           height="28"
@@ -138,7 +138,7 @@
             database gathering sources across academia, industry, civil society,
             and journalism that document, investigate, and analyze the ecosystem
             of technologies facilitating AI-generated non-consensual intimate
-            images (AIG-NCII).
+            images <span class="db-intro-ending"><span>(AIG-NCII).</span>
             <button
               type="button"
               class="db-intro-info"
@@ -165,7 +165,7 @@
                 <circle cx="12" cy="12" r="10" />
                 <path d="M12 16v-4M12 8h.01" />
               </svg>
-            </button>
+            </button></span>
           </p>
 
           <div class="db-sidebar-main">
@@ -175,6 +175,7 @@
                   class="db-search-input"
                   type="text"
                   id="db-search"
+                  aria-label="Search database entries"
                   placeholder="Search 0 entries"
                   autocomplete="off"
                   spellcheck="false"
@@ -749,7 +750,8 @@
     <script src="/src/database/constants.js"></script>
     <script src="/src/database/data.js"></script>
     <script src="/src/database/utils.js?v=2"></script>
-    <script src="/src/database/render.js"></script>
+    <script src="/src/shared/preview-images.js?v=1"></script>
+    <script src="/src/database/render.js?v=3"></script>
     <script src="/src/shared/dialog.js"></script>
     <script src="/src/database/submit.js?v=8"></script>
     <script src="/src/database/app.js?v=4"></script>

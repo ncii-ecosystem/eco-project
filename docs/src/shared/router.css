@@ -2,11 +2,6 @@ html.site-content {
   --site-nav-h: 0px;
 }
 
-html.db-theme-dark .site-shell {
-  --db-bg: #6751d4;
-  --db-ink: #ffffff;
-}
-
 .site-shell {
   margin: 0;
   background: var(--db-bg);

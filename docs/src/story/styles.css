@@ -4,12 +4,6 @@
 :root {
   --bg:      #111;
   --ink:     #f5f5f5;
-  /* neon palette */
-  --role-creation-ink:#c2653a;
-  --role-distribution-ink:    #c99a2e;
-  --role-proliferation-ink:  #3f9b7a;
-  --role-infra-ink:   #4f6fb0;
-  --role-monetization-ink:   #9a5bb0;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,7 +15,7 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
 }
-a { color: var(--role-infra-ink); }
+a { color: var(--db-chip-ink); }
 a:hover { color: var(--signal); }
 
 /* ═══════════════════════════════════════════════════════════
@@ -179,12 +173,12 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
 }
 .intro-notif-icon { flex-shrink: 0; line-height: 1; }
 .notif-folder { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; font-size:0.9rem; flex-shrink:0; }
-.notif-folder--neutral     { color:#5a5070; }
+.notif-folder--neutral     { color:var(--db-chip-ink); }
 
-.notif-folder--distribution{ background:var(--role-distribution); color:var(--role-distribution-ink); }
-.notif-folder--discovery   { background:var(--role-proliferation); color:var(--role-proliferation-ink); }
-.notif-folder--infra       { background:var(--role-infra); color:var(--role-infra-ink); }
-.notif-folder--monetize    { background:var(--role-monetization); color:var(--role-monetization-ink); }
+.notif-folder--distribution{ background:var(--role-distribution); color:var(--db-chip-ink); }
+.notif-folder--discovery   { background:var(--role-proliferation); color:var(--db-chip-ink); }
+.notif-folder--infra       { background:var(--role-infra); color:var(--db-chip-ink); }
+.notif-folder--monetize    { background:var(--role-monetization); color:var(--db-chip-ink); }
 .intro-notif-app { margin-bottom: 2px; }
 .intro-notif-time { font-size: 10px; flex-shrink: 0; }
 
@@ -235,12 +229,12 @@ body:has(#cw-overlay:not(.hidden)) #notes-app { visibility: hidden; }
   background: inherit;
   border-radius: 2px 2px 0 0;
 }
-.dt-dock--neutral    { color: #4a4060; }
-.dt-dock--creation   { background: var(--role-creation); color: var(--role-creation-ink); }
-.dt-dock--distribution{ background: var(--role-distribution); color: var(--role-distribution-ink); }
-.dt-dock--discovery  { background: var(--role-proliferation); color: var(--role-proliferation-ink); }
-.dt-dock--infra      { background: var(--role-infra); color: var(--role-infra-ink); }
-.dt-dock--monetize   { background: var(--role-monetization); color: var(--role-monetization-ink); }
+.dt-dock--neutral    { color: var(--db-chip-ink); }
+.dt-dock--creation   { background: var(--role-creation); color: var(--db-chip-ink); }
+.dt-dock--distribution{ background: var(--role-distribution); color: var(--db-chip-ink); }
+.dt-dock--discovery  { background: var(--role-proliferation); color: var(--db-chip-ink); }
+.dt-dock--infra      { background: var(--role-infra); color: var(--db-chip-ink); }
+.dt-dock--monetize   { background: var(--role-monetization); color: var(--db-chip-ink); }
 
 /* ═══════════════════════════════════════════════════════════
    SCENE STAGE — fills monitor screen (overrides original sticky)

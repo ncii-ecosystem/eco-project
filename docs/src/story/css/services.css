@@ -208,7 +208,7 @@
 .ps-merchant-sub {
   color: var(--p);
   font-family: var(--db-font-mono);
-  opacity: 0.8;
+  opacity: var(--db-muted);
 }
 .ps-amount {
   color: var(--p);

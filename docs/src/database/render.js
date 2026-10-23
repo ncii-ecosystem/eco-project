@@ -127,27 +127,29 @@ window.DatabaseRender = (function () {
       var logoImg = logo
         ? '<img class="db-result-media-logo" src="' +
           escapeHtml(logo) +
-          '" alt="" loading="lazy" decoding="async" />'
+          '" alt="" loading="lazy" decoding="async" data-preview-image />'
         : '';
       return (
         '<div class="db-result-media db-result-media--brand" aria-hidden="true" style="--db-brand-color:' +
         escapeHtml(color) +
-        '">' +
+        '"><div class="db-result-media-surface">' +
         logoImg +
-        '</div>'
+        '</div></div>'
       );
     }
 
     return (
-      '<div class="db-result-media" aria-hidden="true">' +
+      '<div class="db-result-media" aria-hidden="true" style="--db-brand-color:' +
+      escapeHtml(color) + '">' +
+      '<div class="db-result-media-surface">' +
       '<img class="db-result-media-photo" src="' +
       escapeHtml(r.imageUrl) +
-      '" alt="" loading="lazy" decoding="async" data-color="' +
+      '" alt="" loading="lazy" decoding="async" data-preview-image data-color="' +
       escapeHtml(color) +
       '" data-logo="' +
       escapeHtml(u().publisherLogoUrl(r)) +
       '" />' +
-      '</div>'
+      '</div></div>'
     );
   }
 
@@ -215,7 +217,7 @@ window.DatabaseRender = (function () {
         img.addEventListener(
           'error',
           function () {
-            var parent = img.parentNode;
+            var parent = img.closest('.db-result-media');
             if (!parent) return;
             parent.classList.add('db-result-media--brand');
             parent.style.setProperty(
@@ -236,6 +238,7 @@ window.DatabaseRender = (function () {
         );
       })(photos[i]);
     }
+    window.PreviewImages.prepare(root);
   }
 
   return {

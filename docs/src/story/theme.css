@@ -261,7 +261,7 @@ h3 {
 }
 .na-ed-date {
   color: var(--p);
-  opacity: 0.6;
+  opacity: var(--db-muted);
   font-family: var(--db-font-mono);
 }
 .na-ed-body,
@@ -384,7 +384,7 @@ h3 {
 .na-sb-item-preview {
   color: var(--ink-d);
   font-size: 10px;
-  opacity: 0.65;
+  opacity: var(--db-muted);
 }
 .na-sb-item.active .na-sb-item-preview {
   opacity: 1;

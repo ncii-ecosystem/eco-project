@@ -383,7 +383,7 @@ body.page-body .db-docs a {
 
 .db-field-input::placeholder {
   color: var(--db-ink);
-  opacity: 0.55;
+  opacity: var(--db-muted);
 }
 
 .db-field-input:focus {

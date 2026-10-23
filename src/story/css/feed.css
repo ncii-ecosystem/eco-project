@@ -206,7 +206,7 @@
   background: var(--role-distribution);
 }
 .mac-window[data-chapter="cover"] .fp-av { background: var(--p); color: var(--paper); }
-.fp-who > span { color: var(--p); opacity: 0.6; }
+.fp-who > span { color: var(--p); opacity: var(--db-muted); }
 .fp-who {
   flex: 1;
   display: flex;
@@ -223,7 +223,7 @@
 .fp-who small {
   font: 400 11px var(--db-font-mono);
   color: var(--p);
-  opacity: 0.65;
+  opacity: var(--db-muted);
 }
 .fp-dots {
   color: var(--p);
@@ -261,7 +261,7 @@
 
 /* the highlighted headline: a marker pen sweeps over the words, and the technology words inside get the darker stroke */
 .nh {
-  --hl: #c9c2f3;
+  --hl: color-mix(in srgb, var(--p) 30%, white);
   --hl-strong: #9f93ea;
   cursor: pointer;
   border-bottom: 2px dotted var(--p);
@@ -272,23 +272,23 @@
   padding: 1px 2px;
 }
 .nh[data-role="creation"] {
-  --hl: #f8b8b1;
+  --hl: var(--role-creation);
   --hl-strong: #ef8c82;
 }
 .nh[data-role="dist"] {
-  --hl: #f7cd92;
+  --hl: var(--role-distribution);
   --hl-strong: #efae57;
 }
 .nh[data-role="prolif"] {
-  --hl: #ffe873;
+  --hl: var(--role-proliferation);
   --hl-strong: #f5cf27;
 }
 .nh[data-role="infra"] {
-  --hl: #9ad5dc;
+  --hl: var(--role-infra);
   --hl-strong: #62b9c4;
 }
 .nh[data-role="money"] {
-  --hl: #9ce88b;
+  --hl: var(--role-monetization);
   --hl-strong: #5fd14b;
 }
 .nh:hover,

@@ -56,7 +56,10 @@
               req.className = 'md-req ' + direction + ' ok';
               req.style.setProperty('--lane-offset', '0px');
               req.style.left = position + '%';
-              if (direction === 'input' && index === 1) req.style.background = 'var(--notification-red)';
+              if (direction === 'input' && index === 1) {
+                req.classList.add('stopped');
+                req.style.background = 'var(--notification-red)';
+              }
               reqs.appendChild(req);
             });
           });

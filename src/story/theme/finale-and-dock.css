@@ -189,12 +189,13 @@
   margin-top: 6px;
 }
 
-/* Zoom already adjusts the scene's layout coordinates; inset sizing keeps it inside its window. */
+/* Lay out thumbnails at double size, then scale their contents into the window. */
 .finale-mode .mac-window:not(.fin-pop) .win-content > .scene {
-  zoom: 0.5;
-  inset: 0;
-  width: auto;
-  height: auto;
+  inset: 0 auto auto 0;
+  width: 200%;
+  height: 200%;
+  transform: scale(0.5);
+  transform-origin: top left;
 }
 
 /* A few thumbnails otherwise collapse to a corner, a blank panel, or a clipped edge */

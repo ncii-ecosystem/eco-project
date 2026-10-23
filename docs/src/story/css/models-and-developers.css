@@ -167,6 +167,7 @@
   height: 12px;
   border-radius: 50%;
   background: var(--p);
+  outline: 1px solid var(--p);
   opacity: 0;
   animation-duration: 4.4s;
   animation-iteration-count: infinite;
@@ -196,6 +197,7 @@
   animation-name: md-req-no;
 }
 .md-req.no-output { animation-name: md-req-no-output; }
+.md-req.stopped { outline: none; }
 @keyframes md-req-ok {
   0% {
     left: var(--flow-start);
@@ -215,18 +217,19 @@
   }
 }
 @keyframes md-req-no-output {
-  0% { left: var(--flow-start); opacity: 0; background: var(--flow-color); }
+  0% { left: var(--flow-start); opacity: 0; background: var(--flow-color); outline-color: var(--p); }
   8% { opacity: 1; }
   40% { left: var(--flow-mid); background: var(--flow-color); }
-  65% { left: 74%; background: var(--flow-color); }
-  72% { left: 74%; opacity: 1; background: var(--notification-red); transform: scale(1.3); }
-  100% { left: 74%; opacity: 0; background: var(--notification-red); transform: scale(1.9); }
+  65% { left: 74%; background: var(--flow-color); outline-color: var(--p); }
+  72% { left: 74%; opacity: 1; background: var(--notification-red); outline-color: transparent; transform: scale(1.3); }
+  100% { left: 74%; opacity: 0; background: var(--notification-red); outline-color: transparent; transform: scale(1.9); }
 }
 @keyframes md-req-no {
   0% {
     left: var(--flow-start);
     opacity: 0;
     background: var(--flow-color);
+    outline-color: var(--p);
   }
   8% {
     opacity: 1;
@@ -234,10 +237,12 @@
   30% {
     left: calc(50% - 6px);
     background: var(--flow-color);
+    outline-color: var(--p);
   }
   36% {
     left: calc(50% - 6px);
     background: var(--notification-red);
+    outline-color: transparent;
     transform: scale(1.3);
   }
   60%,
@@ -245,6 +250,7 @@
     left: calc(50% - 6px);
     opacity: 0;
     background: var(--notification-red);
+    outline-color: transparent;
     transform: scale(1.9);
   }
 }
@@ -361,7 +367,7 @@
 .dp-h small {
   font-weight: 400;
   font-size: 11px;
-  opacity: 0.8;
+  opacity: var(--db-muted);
 }
 .dp-count {
   margin-left: auto;
@@ -458,7 +464,7 @@
   text-align: right;
   font-style: normal;
   font-size: 11px;
-  opacity: 0.7;
+  opacity: var(--db-muted);
 }
 .dp-tag {
   font-size: 10px;
