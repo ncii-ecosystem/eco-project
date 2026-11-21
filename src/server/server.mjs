@@ -531,6 +531,7 @@ const PAGE_ROUTES = new Map([
   ['/story', '/src/story/index.html'], ['/home', '/src/home/index.html'],
   ['/database', '/src/database/index.html'], ['/research', '/src/research/index.html'],
   ['/survivor-support', '/src/survivor-support/index.html'],
+  ['/impact', '/src/impact/index.html'],
 ]);
 const LEGACY_ROUTES = new Map([
   ['/index.html', '/story'], ['/home.html', '/home'],

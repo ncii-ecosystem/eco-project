@@ -5,7 +5,7 @@ import {MEDIUMS, LIMITS} from '../src/shared/submit-constants.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = path.join(root, 'docs');
-const pages = ['home', 'story', 'database', 'research', 'survivor-support'];
+const pages = ['home', 'story', 'database', 'research', 'survivor-support', 'impact'];
 const publicConfig = JSON.parse(await fs.readFile(path.join(root, 'src/sanity/public-config.json'), 'utf8'));
 const config = {
   projectId: process.env.SANITY_PROJECT_ID || publicConfig.projectId,

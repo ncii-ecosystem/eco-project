@@ -248,35 +248,6 @@
     padding: var(--db-space-2) var(--db-space-3);
   }
 
-  .db-result {
-    flex-direction: row;
-    align-items: stretch;
-    gap: var(--db-space-2);
-    padding: 0 0 0 var(--db-space-3);
-  }
-
-  .db-result-media {
-    flex: 0 0 var(--db-size-media-xs);
-    width: var(--db-size-media-xs);
-    min-width: var(--db-size-media-xs);
-    max-width: var(--db-size-media-xs);
-    height: auto;
-    align-self: stretch;
-  }
-
-  .db-result-link {
-    flex: 1 1 auto;
-    min-width: 0;
-    width: auto;
-    flex-direction: column;
-    align-items: stretch;
-    padding-top: var(--db-space-3);
-  }
-
-  .db-result .content-title {
-    max-width: calc(100% - var(--db-space-4));
-  }
-
   .db-dialog {
     max-width: calc(100vw - var(--db-space-4));
     max-height: calc(100dvh - var(--db-space-4));
