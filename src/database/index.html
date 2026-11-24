@@ -33,10 +33,16 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="/src/shared/page-styles.css?v=106" />
-    <link rel="stylesheet" href="/src/database/css/layout-and-filters.css?v=11" />
+    <link
+      rel="stylesheet"
+      href="/src/database/css/layout-and-filters.css?v=11"
+    />
     <link rel="stylesheet" href="/src/database/css/results.css?v=5" />
-    <link rel="stylesheet" href="/src/database/css/dialogs-and-submissions.css?v=7" />
-    <link rel="stylesheet" href="/src/database/css/responsive.css?v=12" />
+    <link
+      rel="stylesheet"
+      href="/src/database/css/dialogs-and-submissions.css?v=8"
+    />
+    <link rel="stylesheet" href="/src/database/css/responsive.css?v=13" />
     <script src="/src/shared/nav.js" defer></script>
     <script>
       (function () {
@@ -139,34 +145,36 @@
             database gathering sources across academia, industry, civil society,
             and journalism that document, investigate, and analyze the ecosystem
             of technologies facilitating AI-generated non-consensual intimate
-            images <span class="db-intro-ending"><span>(AIG-NCII).</span>
-            <button
-              type="button"
-              class="db-intro-info"
-              id="db-intro-info"
-              data-dialog-open="db-info-dialog"
-              aria-haspopup="dialog"
-              aria-controls="db-info-dialog"
-              aria-label="Open database docs"
-              title="Docs"
-            >
-              <!-- Lucide Info icon (ISC license): https://lucide.dev/license -->
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                focusable="false"
+            images
+            <span class="db-intro-ending"
+              ><span>(AIG-NCII).</span>
+              <button
+                type="button"
+                class="db-intro-info"
+                id="db-intro-info"
+                data-dialog-open="db-info-dialog"
+                aria-haspopup="dialog"
+                aria-controls="db-info-dialog"
+                aria-label="Open database docs"
+                title="Docs"
               >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 16v-4M12 8h.01" />
-              </svg>
-            </button></span>
+                <!-- Lucide Info icon (ISC license): https://lucide.dev/license -->
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 16v-4M12 8h.01" />
+                </svg></button
+            ></span>
           </p>
 
           <div class="db-sidebar-main">
@@ -211,24 +219,30 @@
                 </button>
               </div>
 
-              <button type="button" class="db-mobile-docs" data-dialog-open="db-info-dialog"
-                aria-label="Open database docs" title="DOCS"
-                aria-haspopup="dialog" aria-controls="db-info-dialog">
-                <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                focusable="false"
+              <button
+                type="button"
+                class="db-mobile-docs"
+                data-dialog-open="db-info-dialog"
+                aria-label="Open database docs"
+                title="DOCS"
+                aria-haspopup="dialog"
+                aria-controls="db-info-dialog"
               >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 16v-4M12 8h.01" />
-              </svg>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 16v-4M12 8h.01" />
+                </svg>
               </button>
 
               <button
@@ -422,12 +436,14 @@
               <li>
                 Export your current results as a CSV file for further analysis.
                 CSV files contain the metadata fields “<code>title</code>”,
-                “<code>authors</code>”, “<code>link</code>”, “<code>Date</code>”,
-                “<code>provenance</code>”, and “<code>technologies</code>”.
+                “<code>authors</code>”, “<code>link</code>”,
+                “<code>Date</code>”, “<code>provenance</code>”, and
+                “<code>technologies</code>”.
               </li>
               <li>
                 Submit a new source through “Submit Entries” to help grow the
-                collection. You can contribute anonymously or choose to be credited.
+                collection. You can contribute anonymously or choose to be
+                credited.
               </li>
             </ul>
           </section>
@@ -438,12 +454,15 @@
               We group sources using the framework from
               <a href="https://arxiv.org/abs/2602.04759">Ding et al. (2026)</a>:
               creation, distribution, proliferation and discovery,
-              infrastructural support, and monetization. A source can cover
-              more than one technology.
+              infrastructural support, and monetization. A source can cover more
+              than one technology.
             </p>
             <p>Source type and field considerations:</p>
             <div class="db-docs-table-wrap">
-              <table class="db-docs-table" aria-label="Source type and field considerations">
+              <table
+                class="db-docs-table"
+                aria-label="Source type and field considerations"
+              >
                 <thead>
                   <tr>
                     <th scope="col">Source Type</th>
@@ -455,8 +474,14 @@
                 <tbody>
                   <tr>
                     <th scope="row">Research</th>
-                    <td>Preprints and published academic papers (month-year preprinted or published)</td>
-                    <td>Preprints: field left blank<br><br>Publications: conference or journal venue</td>
+                    <td>
+                      Preprints and published academic papers (month-year
+                      preprinted or published)
+                    </td>
+                    <td>
+                      Preprints: field left blank<br /><br />Publications:
+                      conference or journal venue
+                    </td>
                     <td>Month-year preprinted or published</td>
                   </tr>
                   <tr>
@@ -467,19 +492,34 @@
                   </tr>
                   <tr>
                     <th scope="row">Report</th>
-                    <td>Whitepapers and technical reports from civil society organizations, think tanks, government bodies, and other institutions</td>
-                    <td>Institution or organization that released the report</td>
+                    <td>
+                      Whitepapers and technical reports from civil society
+                      organizations, think tanks, government bodies, and other
+                      institutions
+                    </td>
+                    <td>
+                      Institution or organization that released the report
+                    </td>
                     <td>Month-year released</td>
                   </tr>
                   <tr>
                     <th scope="row">Artifact</th>
-                    <td>Press releases, databases, GitHub repositories, open letters, public statements, and other artifacts</td>
-                    <td>Institution or organization that released the artifact</td>
+                    <td>
+                      Press releases, databases, GitHub repositories, open
+                      letters, public statements, and other artifacts
+                    </td>
+                    <td>
+                      Institution or organization that released the artifact
+                    </td>
                     <td>Month-year released</td>
                   </tr>
                   <tr>
                     <th scope="row">Law &amp; Policy</th>
-                    <td>Enacted U.S. federal and state laws targeting technologies in the ecosystem (currently scoped to the U.S. but may expand to other jurisdictions in the future)</td>
+                    <td>
+                      Enacted U.S. federal and state laws targeting technologies
+                      in the ecosystem (currently scoped to the U.S. but may
+                      expand to other jurisdictions in the future)
+                    </td>
                     <td>Legislature that enacted the law</td>
                     <td>Year enacted</td>
                   </tr>
@@ -499,13 +539,14 @@
             <h3 id="db-docs-review">Want to Contribute a Source?</h3>
             <p>
               Our database is a living resource. Anyone who wants to contribute
-              a source can fill out the <a href="/database?submit=1"><strong>submission form</strong></a>. You can submit both
-              your own work or someone else’s work. All contributors will be
-              acknowledged with their consent. Researchers review each submission
-              before it appears here, so your entry won’t be visible right away.
-              We check that the source is relevant, the details are accurate,
-              and it isn’t already listed. Submissions that meet these criteria
-              are added to the collection.
+              a source can fill out the
+              <a href="/database?submit=1"><strong>submission form</strong></a
+              >. You can submit both your own work or someone else’s work. All
+              contributors will be acknowledged with their consent. Researchers
+              review each submission before it appears here, so your entry won’t
+              be visible right away. We check that the source is relevant, the
+              details are accurate, and it isn’t already listed. Submissions
+              that meet these criteria are added to the collection.
             </p>
           </section>
 
@@ -515,14 +556,24 @@
               We tried our best to accurately provide meta data for each entry.
               However, if you spotted an error in your work, want to update any
               fields, or want to be removed from the database, please email
-              <a href="mailto:michelle_ding@brown.edu">michelle_ding@brown.edu</a>.
+              <a href="mailto:michelle_ding@brown.edu"
+                >michelle_ding@brown.edu</a
+              >.
             </p>
           </section>
 
           <section class="db-acknowledgements" aria-label="Database credits">
-            <p class="db-meta-line">Database designed and built by Maja Mishevska</p>
-            <p class="db-meta-line">Database entries organized and curated by Haya Bugshan and Michelle L. Ding based on Ding et al. (2026)</p>
-            <p class="db-meta-line">Additional contributors to be listed</p>
+            <p class="db-meta-line">
+              Database designed and built by Maja Mishevska
+            </p>
+            <p class="db-meta-line">
+              Database entries organized and curated by Haya Bugshan and
+              Michelle L. Ding based on Ding et al. (2026)
+            </p>
+            <p class="db-meta-line db-additional-contributors">
+              Additional contributors: Léo le Douarec · Alejandro Cuevas
+              (Princeton University)
+            </p>
           </section>
         </div>
       </div>

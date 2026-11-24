@@ -1,0 +1,60 @@
+NCII-ECOSYSTEM.ORG PRESS KIT
+
+WHAT IS THIS PROJECT?
+
+NCII-ECOSYSTEM.ORG maps 11 categories of technology that enable the creation, distribution, discovery, support, and monetization of AI-generated non-consensual intimate images. We turned our research into an interactive story and a living evidence database to help people understand the systems behind deepfake abuse and identify where interventions are possible.
+
+Website — https://ncii-ecosystem.org
+Research paper — https://doi.org/10.1145/3846167.3848604
+
+WHAT'S INCLUDED
+
+logos/
+  ncii-ecosystem-logo.png
+  ncii-ecosystem-wordmark-for-light-backgrounds.png
+  ncii-ecosystem-wordmark-for-dark-backgrounds.png
+Use the wordmark that fits your background. Keep the original colors and proportions.
+
+social-graphics/
+  ncii-ecosystem-social-graphics.pdf
+  png/ — Five individual 1080 × 1350 PNGs, numbered in reading order.
+The PDF and PNGs contain the same graphics. Keep the project name and any on-image credits visible when sharing.
+
+screenshots/
+  desktop-1440x815/ — Eleven screenshots.
+  desktop-1350x1080/ — The same eleven views at a second size.
+
+Screenshot descriptions
+  home.png — Homepage and links to the main sections of the site.
+  database.png — Evidence database with technology filters and search results.
+  research-ecosystem-diagram.png — Interactive map of technologies behind deepfake abuse.
+  research-us-legal-landscape.png — Interactive map of U.S. laws addressing AI-generated non-consensual intimate images.
+  story-00-headlines-feed.png — The opening headline feed.
+  story-00-headlines-highlighted.png — Headlines with the relevant technologies highlighted.
+  story-01-generative-ai-interfaces.png — The story’s simulated AI chat interface.
+  story-02-training-datasets.png — The story’s visualization of training data.
+  story-04-developer-platforms.png — The story’s model and developer platform scene.
+  story-11-distribution-channels.png — The story’s simulated messaging and email scene.
+  story-12-closing.png — The story’s closing scene about structural solutions.
+If you crop a screenshot, keep the content in context and retain any visible credits.
+
+Credit line for all assets — NCII-ECOSYSTEM.ORG (Michelle L. Ding, Haya Bugshan, and Maja Mishevska).
+For reuse permissions, please contact us at the address below.
+
+LAUNCH VIDEO
+
+ncii-ecosystem-launch-video.mp4
+Launch video introducing our interactive story.
+If you edit the video or use a clip, please keep the closing credits intact.
+
+HOW TO CITE US
+
+Website
+Michelle L. Ding, Haya Bugshan, and Maja Mishevska. “NCII-ECOSYSTEM.ORG.” 2026. https://ncii-ecosystem.org
+
+Research
+Michelle L. Ding, Harini Suresh, and Suresh Venkatasubramanian. 2026. How to Stop Playing Whack-a-Mole: Mapping the Ecosystem of Technologies Facilitating AI-Generated Non-Consensual Intimate Images. In Equity and Access in Algorithms, Mechanisms, and Optimization (EAAMO ’26), November 05–07, 2026, Munich, Germany. ACM, New York, NY, USA, 16 pages. https://doi.org/10.1145/3846167.3848604
+
+PRESS CONTACT
+
+For press inquiries, email Michelle L. Ding at michelle_ding@brown.edu.

@@ -27,6 +27,11 @@ for (const directory of ['assets', 'src/shared', 'src/sanity', ...pages.map(page
   });
 }
 
+await fs.copyFile(
+  path.join(root, 'press-kit/ncii-ecosystem-launch-video.mp4'),
+  path.join(output, 'assets/ncii-ecosystem-video.mp4'),
+);
+
 const shell = (await fs.readFile(path.join(root, 'src/shared/shell.html'), 'utf8'))
   .replace('class="site-shell"', 'class="site-shell" data-static-host')
   .replace('/home?content=1', '/src/home/index.html');

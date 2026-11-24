@@ -473,3 +473,7 @@ select.db-field-input option {
   margin: 0;
   opacity: var(--db-muted);
 }
+
+.db-docs .db-acknowledgements .db-additional-contributors {
+  margin-block-start: var(--db-space-2);
+}
