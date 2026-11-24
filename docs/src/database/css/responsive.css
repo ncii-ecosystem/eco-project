@@ -2,17 +2,22 @@
 
 @media (max-width: 720px) {
 
-  html:has(body.db-split),
-  body.page-body.db-split {
+  html:has(body.db-split) {
     height: auto;
     min-height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior-x: none;
+  }
+
+  html.db-sidebar-expanded:has(body.db-split) {
+    overflow-y: hidden;
   }
 
   body.page-body.db-split {
     height: auto;
     min-height: 100vh;
+    overflow: visible;
   }
 
   body.page-body.db-split .db-layout {
@@ -49,6 +54,7 @@
     max-height: calc(100dvh - var(--site-nav-h, 2rem) - var(--db-space-4));
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding-bottom: 0;
     transition: none;
     -webkit-overflow-scrolling: touch;
@@ -241,6 +247,8 @@
     max-height: none;
     min-height: 0;
     border-left: 0;
+    overflow: clip visible;
+    touch-action: pan-y pinch-zoom;
     flex: 1 1 auto;
   }
 
