@@ -5,7 +5,7 @@ import {MEDIUMS, LIMITS} from '../src/shared/submit-constants.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = path.join(root, 'docs');
-const pages = ['home', 'story', 'database', 'research', 'survivor-support'];
+const pages = ['home', 'story', 'database', 'research', 'survivor-support', 'impact'];
 const publicConfig = JSON.parse(await fs.readFile(path.join(root, 'src/sanity/public-config.json'), 'utf8'));
 const config = {
   projectId: process.env.SANITY_PROJECT_ID || publicConfig.projectId,
@@ -26,6 +26,11 @@ for (const directory of ['assets', 'src/shared', 'src/sanity', ...pages.map(page
     filter: source => path.basename(source) !== '.DS_Store',
   });
 }
+
+await fs.copyFile(
+  path.join(root, 'press-kit/ncii-ecosystem-launch-video.mp4'),
+  path.join(output, 'assets/ncii-ecosystem-video.mp4'),
+);
 
 const shell = (await fs.readFile(path.join(root, 'src/shared/shell.html'), 'utf8'))
   .replace('class="site-shell"', 'class="site-shell" data-static-host')

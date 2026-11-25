@@ -161,7 +161,7 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 840px) {
   :root {
     --site-nav-h: var(--db-size-control);
   }
@@ -313,7 +313,7 @@
   }
 }
 
-@media (max-width: 720px) and (prefers-reduced-motion: reduce) {
+@media (max-width: 840px) and (prefers-reduced-motion: reduce) {
   .site-burger,
   .site-burger::before,
   .site-burger::after,

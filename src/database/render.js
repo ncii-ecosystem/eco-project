@@ -1,5 +1,5 @@
 window.DatabaseRender = (function () {
-  'use strict';
+  "use strict";
 
   function u() {
     return window.DatabaseUtils;
@@ -10,12 +10,12 @@ window.DatabaseRender = (function () {
   }
 
   function roleClassForTech(label) {
-    return (data().TECH_ROLE && data().TECH_ROLE[label]) || '';
+    return (data().TECH_ROLE && data().TECH_ROLE[label]) || "";
   }
 
   function techIconHtml(label) {
     var icon = data().TECH_ICONS && data().TECH_ICONS[label];
-    if (!icon) return '';
+    if (!icon) return "";
     return (
       '<span class="inline-icon" aria-hidden="true">' +
       '<i class="fas ' +
@@ -26,12 +26,12 @@ window.DatabaseRender = (function () {
 
   function renderTitleHtml(r) {
     var escapeHtml = u().escapeHtml;
-    var title = r.title || '';
+    var title = r.title || "";
     var anns = r.headlineAnnotations;
     if (!anns || !anns.length) return escapeHtml(title);
 
     var remaining = title;
-    var html = '';
+    var html = "";
     var guard = 0;
 
     while (remaining.length && guard < 50) {
@@ -57,16 +57,16 @@ window.DatabaseRender = (function () {
         '<span class="text-highlight ' +
         roleClassForTech(bestAnn.technology) +
         '" data-technology="' +
-        escapeHtml(bestAnn.technology || '') +
+        escapeHtml(bestAnn.technology || "") +
         '" title="' +
-        escapeHtml(bestAnn.technology || '') +
+        escapeHtml(bestAnn.technology || "") +
         '">' +
         escapeHtml(bestAnn.text);
       html +=
         ' <span class="text-highlight-icons" aria-hidden="true" contenteditable="false">(' +
         techIconHtml(bestAnn.technology) +
-        ')</span>';
-      html += '</span>';
+        ")</span>";
+      html += "</span>";
       remaining = remaining.slice(bestIdx + bestAnn.text.length);
     }
     return html;
@@ -75,7 +75,7 @@ window.DatabaseRender = (function () {
   function techTagsHtml(r) {
     var escapeHtml = u().escapeHtml;
     var techs = (r.technologies || []).filter(Boolean);
-    if (!techs.length) return '';
+    if (!techs.length) return "";
     return (
       '<div class="db-tech-tags" aria-label="Related technologies">' +
       techs
@@ -91,8 +91,8 @@ window.DatabaseRender = (function () {
               '" aria-label="' +
               escapeHtml(t) +
               '">' +
-              escapeHtml(t.charAt(0) || '?') +
-              '</span>'
+              escapeHtml(t.charAt(0) || "?") +
+              "</span>"
             );
           }
           return (
@@ -104,11 +104,11 @@ window.DatabaseRender = (function () {
             escapeHtml(t) +
             '">' +
             icon +
-            '</span>'
+            "</span>"
           );
         })
-        .join('') +
-      '</div>'
+        .join("") +
+      "</div>"
     );
   }
 
@@ -118,8 +118,8 @@ window.DatabaseRender = (function () {
 
   function mediaHtml(r) {
     var escapeHtml = u().escapeHtml;
-    var key = r.id || r.title || r.source || 'x';
-    var color = u().fallbackColor(key + (r.source || ''));
+    var key = r.id || r.title || r.source || "x";
+    var color = u().fallbackColor(key + (r.source || ""));
     var useBrand = r.sensitiveThumbnail || !r.imageUrl;
 
     if (useBrand) {
@@ -128,19 +128,20 @@ window.DatabaseRender = (function () {
         ? '<img class="db-result-media-logo" src="' +
           escapeHtml(logo) +
           '" alt="" loading="lazy" decoding="async" data-preview-image />'
-        : '';
+        : "";
       return (
         '<div class="db-result-media db-result-media--brand" aria-hidden="true" style="--db-brand-color:' +
         escapeHtml(color) +
         '"><div class="db-result-media-surface">' +
         logoImg +
-        '</div></div>'
+        "</div></div>"
       );
     }
 
     return (
       '<div class="db-result-media" aria-hidden="true" style="--db-brand-color:' +
-      escapeHtml(color) + '">' +
+      escapeHtml(color) +
+      '">' +
       '<div class="db-result-media-surface">' +
       '<img class="db-result-media-photo" src="' +
       escapeHtml(r.imageUrl) +
@@ -149,17 +150,16 @@ window.DatabaseRender = (function () {
       '" data-logo="' +
       escapeHtml(u().publisherLogoUrl(r)) +
       '" />' +
-      '</div></div>'
+      "</div></div>"
     );
   }
 
   function renderResult(r) {
     var escapeHtml = u().escapeHtml;
     var hasLink = !!r.sourceUrl;
-    var authors =
-      r.authors || '';
+    var authors = r.authors || "";
     var time = u().formatDisplayDate(r);
-    var org = r.source || '';
+    var org = r.source || "";
     var hideAuthors = authorsMatchOrg(authors, org);
     var showAuthors = authors && !hideAuthors;
 
@@ -167,37 +167,35 @@ window.DatabaseRender = (function () {
       '<div class="db-result-top">' +
       '<div class="db-result-top-left">' +
       '<span class="db-result-type">' +
-      escapeHtml(r.medium || '') +
-      '</span>' +
+      escapeHtml(r.medium || "") +
+      "</span>" +
       techTagsHtml(r) +
-      '</div>' +
+      "</div>" +
       (time
-        ? '<div class="content-date">' + escapeHtml(time) + '</div>'
+        ? '<div class="content-date">' + escapeHtml(time) + "</div>"
         : '<div class="content-date" aria-hidden="true"></div>') +
-      '</div>' +
+      "</div>" +
       '<h2 class="content-title">' +
       renderTitleHtml(r) +
-      '</h2>' +
+      "</h2>" +
       '<div class="db-result-bottom' +
-      (hideAuthors ? ' db-result-bottom--org-only' : '') +
+      (hideAuthors ? " db-result-bottom--org-only" : "") +
       '">' +
       (org
-        ? '<div class="db-result-org">' + escapeHtml(org) + '</div>'
+        ? '<div class="db-result-org">' + escapeHtml(org) + "</div>"
         : '<div class="db-result-org" aria-hidden="true"></div>') +
       (showAuthors
-        ? '<div class="content-authors">' +
-          escapeHtml(authors) +
-          '</div>'
+        ? '<div class="content-authors">' + escapeHtml(authors) + "</div>"
         : '<div class="content-authors" aria-hidden="true"></div>') +
-      '</div>';
+      "</div>";
 
     var linkBlock = hasLink
       ? '<a href="' +
         escapeHtml(r.sourceUrl) +
         '" target="_blank" rel="noopener noreferrer" class="db-result-link">' +
         inner +
-        '</a>'
-      : '<div class="db-result-link">' + inner + '</div>';
+        "</a>"
+      : '<div class="db-result-link">' + inner + "</div>";
 
     return (
       '<div class="db-result" data-id="' +
@@ -205,36 +203,36 @@ window.DatabaseRender = (function () {
       '">' +
       linkBlock +
       mediaHtml(r) +
-      '</div>'
+      "</div>"
     );
   }
 
   function bindMediaFallbacks(root) {
     if (!root) return;
-    var photos = root.querySelectorAll('.db-result-media-photo');
+    var photos = root.querySelectorAll(".db-result-media-photo");
     for (var i = 0; i < photos.length; i++) {
       (function (img) {
         img.addEventListener(
-          'error',
+          "error",
           function () {
-            var parent = img.closest('.db-result-media');
+            var parent = img.closest(".db-result-media");
             if (!parent) return;
-            parent.classList.add('db-result-media--brand');
+            parent.classList.add("db-result-media--brand");
             parent.style.setProperty(
-              '--db-brand-color',
-              img.getAttribute('data-color') || '#8a8a8a'
+              "--db-brand-color",
+              img.getAttribute("data-color") || "#8a8a8a",
             );
-            var logo = img.getAttribute('data-logo') || '';
+            var logo = img.getAttribute("data-logo") || "";
             if (logo) {
-              img.className = 'db-result-media-logo';
-              img.removeAttribute('data-color');
-              img.removeAttribute('data-logo');
+              img.className = "db-result-media-logo";
+              img.removeAttribute("data-color");
+              img.removeAttribute("data-logo");
               img.src = logo;
             } else {
               img.remove();
             }
           },
-          {once: true}
+          { once: true },
         );
       })(photos[i]);
     }
@@ -246,6 +244,6 @@ window.DatabaseRender = (function () {
     roleClassForTech: roleClassForTech,
     renderTitleHtml: renderTitleHtml,
     renderResult: renderResult,
-    bindMediaFallbacks: bindMediaFallbacks
+    bindMediaFallbacks: bindMediaFallbacks,
   };
 })();

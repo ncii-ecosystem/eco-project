@@ -8,6 +8,7 @@
     "database",
     "research",
     "survivor-support",
+    "impact",
   ]);
 
   function pageName(url) {
@@ -121,6 +122,7 @@
         database: "Database",
         research: "Research",
         "survivor-support": "Survivor Support",
+        impact: "Impact & Press Coverage",
       };
       document.title = routeTitles[pageName(url)];
       if (staticHost) url.pathname = "/src/" + pageName(url) + "/index.html";

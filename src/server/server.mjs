@@ -1,27 +1,31 @@
-import http from 'node:http';
-import fs from 'node:fs';
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-import {MEDIUMS, LIMITS} from '../shared/submit-constants.mjs';
-import {loadDotEnv} from './env.mjs';
+import http from "node:http";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { MEDIUMS, LIMITS } from "../shared/submit-constants.mjs";
+import { loadDotEnv } from "./env.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '../..');
+const ROOT = path.resolve(__dirname, "../..");
 const PORT = Number(process.env.PORT || 8000);
 
 loadDotEnv(ROOT);
 
-const PROJECT_ID = String(process.env.SANITY_PROJECT_ID || '').trim();
-const DATASET = String(process.env.SANITY_DATASET || 'production').trim();
-const API_VERSION = String(process.env.SANITY_API_VERSION || '2024-01-01').trim();
-const WRITE_TOKEN = String(process.env.SANITY_WRITE_TOKEN || '').trim();
+const PROJECT_ID = String(process.env.SANITY_PROJECT_ID || "").trim();
+const DATASET = String(process.env.SANITY_DATASET || "production").trim();
+const API_VERSION = String(
+  process.env.SANITY_API_VERSION || "2024-01-01",
+).trim();
+const WRITE_TOKEN = String(process.env.SANITY_WRITE_TOKEN || "").trim();
 
 const MAX_BODY_BYTES = Number(process.env.SUBMIT_MAX_BODY_BYTES || 512 * 1024);
 const RATE_IP_MAX = Number(process.env.SUBMIT_RATE_IP_MAX || 25);
-const RATE_IP_WINDOW_MS = Number(process.env.SUBMIT_RATE_IP_WINDOW_MS || 15 * 60 * 1000);
+const RATE_IP_WINDOW_MS = Number(
+  process.env.SUBMIT_RATE_IP_WINDOW_MS || 15 * 60 * 1000,
+);
 const RATE_GLOBAL_MAX = Number(process.env.SUBMIT_RATE_GLOBAL_MAX || 200);
 const RATE_GLOBAL_WINDOW_MS = Number(
-  process.env.SUBMIT_RATE_GLOBAL_WINDOW_MS || 60 * 60 * 1000
+  process.env.SUBMIT_RATE_GLOBAL_WINDOW_MS || 60 * 60 * 1000,
 );
 const MAX_IN_FLIGHT = Number(process.env.SUBMIT_MAX_IN_FLIGHT || 3);
 const TECH_CACHE_MS = Number(process.env.SUBMIT_TECH_CACHE_MS || 5 * 60 * 1000);
@@ -29,34 +33,36 @@ const TECH_CACHE_MS = Number(process.env.SUBMIT_TECH_CACHE_MS || 5 * 60 * 1000);
 const ALLOWED_MEDIUMS = new Set(MEDIUMS);
 
 const MIME = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.svg': 'image/svg+xml',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.webp': 'image/webp',
-  '.ico': 'image/x-icon',
-  '.woff': 'font/woff',
-  '.woff2': 'font/woff2',
-  '.md': 'text/markdown; charset=utf-8',
-  '.txt': 'text/plain; charset=utf-8',
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".mp4": "video/mp4",
+  ".zip": "application/zip",
+  ".ico": "image/x-icon",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+  ".md": "text/markdown; charset=utf-8",
+  ".txt": "text/plain; charset=utf-8",
 };
 
 const ipBuckets = new Map();
-const globalBucket = {hits: []};
+const globalBucket = { hits: [] };
 let inFlight = 0;
-let techCache = {at: 0, rows: null};
+let techCache = { at: 0, rows: null };
 
 function clientIp(req) {
-  const xf = String(req.headers['x-forwarded-for'] || '')
-    .split(',')[0]
+  const xf = String(req.headers["x-forwarded-for"] || "")
+    .split(",")[0]
     .trim();
   if (xf) return xf.slice(0, 128);
-  return String(req.socket.remoteAddress || 'unknown').slice(0, 128);
+  return String(req.socket.remoteAddress || "unknown").slice(0, 128);
 }
 
 function pruneHits(hits, windowMs, now) {
@@ -74,13 +80,13 @@ function checkRateLimit(ip, count) {
     return {
       ok: false,
       retryAfterSec: Math.ceil(RATE_GLOBAL_WINDOW_MS / 1000),
-      error: 'Too many submissions right now. Try again later.',
+      error: "Too many submissions right now. Try again later.",
     };
   }
 
   let bucket = ipBuckets.get(ip);
   if (!bucket) {
-    bucket = {hits: []};
+    bucket = { hits: [] };
     ipBuckets.set(ip, bucket);
   }
   pruneHits(bucket.hits, RATE_IP_WINDOW_MS, now);
@@ -90,18 +96,18 @@ function checkRateLimit(ip, count) {
       ok: false,
       retryAfterSec: Math.max(
         1,
-        Math.ceil((oldest + RATE_IP_WINDOW_MS - now) / 1000)
+        Math.ceil((oldest + RATE_IP_WINDOW_MS - now) / 1000),
       ),
       error:
-        'Rate limit exceeded. You can submit up to ' +
+        "Rate limit exceeded. You can submit up to " +
         RATE_IP_MAX +
-        ' entries every ' +
+        " entries every " +
         Math.round(RATE_IP_WINDOW_MS / 60000) +
-        ' minutes.',
+        " minutes.",
     };
   }
 
-  return {ok: true};
+  return { ok: true };
 }
 
 function recordSubmit(ip, count) {
@@ -110,7 +116,7 @@ function recordSubmit(ip, count) {
   for (let i = 0; i < n; i += 1) globalBucket.hits.push(now);
   let bucket = ipBuckets.get(ip);
   if (!bucket) {
-    bucket = {hits: []};
+    bucket = { hits: [] };
     ipBuckets.set(ip, bucket);
   }
   for (let i = 0; i < n; i += 1) bucket.hits.push(now);
@@ -128,17 +134,17 @@ function key() {
 }
 
 function newDocId() {
-  return 'caseStudy-' + Date.now().toString(36) + '-' + key();
+  return "caseStudy-" + Date.now().toString(36) + "-" + key();
 }
 
 function sendJson(res, status, body, extraHeaders) {
   const payload = JSON.stringify(body);
   const headers = Object.assign(
     {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Content-Length': Buffer.byteLength(payload),
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Length": Buffer.byteLength(payload),
     },
-    extraHeaders || {}
+    extraHeaders || {},
   );
   res.writeHead(status, headers);
   res.end(payload);
@@ -148,27 +154,27 @@ function readBody(req) {
   return new Promise(function (resolve, reject) {
     const chunks = [];
     let size = 0;
-    req.on('data', function (chunk) {
+    req.on("data", function (chunk) {
       size += chunk.length;
       if (size > MAX_BODY_BYTES) {
-        reject(new Error('Payload too large'));
+        reject(new Error("Payload too large"));
         req.destroy();
         return;
       }
       chunks.push(chunk);
     });
-    req.on('end', function () {
-      resolve(Buffer.concat(chunks).toString('utf8'));
+    req.on("end", function () {
+      resolve(Buffer.concat(chunks).toString("utf8"));
     });
-    req.on('error', reject);
+    req.on("error", reject);
   });
 }
 
 async function sanityFetch(pathname, options) {
   const url =
-    'https://' +
+    "https://" +
     PROJECT_ID +
-    '.api.sanity.io/v' +
+    ".api.sanity.io/v" +
     encodeURIComponent(API_VERSION) +
     pathname;
   const res = await fetch(url, options);
@@ -182,7 +188,7 @@ async function sanityFetch(pathname, options) {
   if (!res.ok) {
     const msg =
       (json && (json.message || json.error)) || text || res.statusText;
-    throw new Error('Sanity ' + res.status + ': ' + msg);
+    throw new Error("Sanity " + res.status + ": " + msg);
   }
   return json;
 }
@@ -195,41 +201,42 @@ async function fetchTechnologies() {
   const query =
     '*[_type == "technology" && !(_id in path("drafts.**"))]{ _id, name }';
   const json = await sanityFetch(
-    '/data/query/' +
+    "/data/query/" +
       encodeURIComponent(DATASET) +
-      '?query=' +
+      "?query=" +
       encodeURIComponent(query),
     {
       headers: {
-        Accept: 'application/json',
-        Authorization: 'Bearer ' + WRITE_TOKEN,
+        Accept: "application/json",
+        Authorization: "Bearer " + WRITE_TOKEN,
       },
-    }
+    },
   );
   const rows = Array.isArray(json && json.result) ? json.result : [];
-  techCache = {at: now, rows: rows};
+  techCache = { at: now, rows: rows };
   return rows;
 }
 
 function normalizeSubmitter(raw) {
-  const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
-  const name = String(source.name || '')
+  const source =
+    raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
+  const name = String(source.name || "")
     .trim()
     .slice(0, LIMITS.SUBMITTER_NAME);
-  const affiliation = String(source.affiliation || '')
+  const affiliation = String(source.affiliation || "")
     .trim()
     .slice(0, LIMITS.SUBMITTER_AFFILIATION);
-  const contact = String(source.contact || '')
+  const contact = String(source.contact || "")
     .trim()
     .slice(0, LIMITS.CONTACT);
   const listPublicly = !!source.listPublicly;
 
   if (listPublicly && !name) {
-    throw new Error('Name is required for public credit.');
+    throw new Error("Name is required for public credit.");
   }
 
   if (contact && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
-    throw new Error('Enter a valid email address.');
+    throw new Error("Enter a valid email address.");
   }
 
   return {
@@ -242,26 +249,33 @@ function normalizeSubmitter(raw) {
 }
 
 function validDate(value) {
-  const match = String(value || '').match(/^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/);
-  if (!match || Number(match[1]) < 1900 || Number(match[1]) > 2100) return false;
+  const match = String(value || "").match(
+    /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/,
+  );
+  if (!match || Number(match[1]) < 1900 || Number(match[1]) > 2100)
+    return false;
   if (match[2] && (Number(match[2]) < 1 || Number(match[2]) > 12)) return false;
   if (match[3]) {
-    const days = new Date(Date.UTC(Number(match[1]), Number(match[2]), 0)).getUTCDate();
+    const days = new Date(
+      Date.UTC(Number(match[1]), Number(match[2]), 0),
+    ).getUTCDate();
     if (Number(match[3]) < 1 || Number(match[3]) > days) return false;
   }
   return true;
 }
 
 function buildCaseStudyDoc(input, techByName, submitter) {
-  const title = String(input.title || '').trim();
-  const medium = String(input.medium || '').trim();
-  if (!title) throw new Error('Title is required');
-  if (!ALLOWED_MEDIUMS.has(medium)) throw new Error('Invalid type');
+  const title = String(input.title || "").trim();
+  const medium = String(input.medium || "").trim();
+  if (!title) throw new Error("Title is required");
+  if (!ALLOWED_MEDIUMS.has(medium)) throw new Error("Invalid type");
 
-  const authors = typeof input.authors === 'string' ? input.authors.trim() : '';
-  if (!authors) throw new Error('Author(s)/organization is required');
+  const authors = typeof input.authors === "string" ? input.authors.trim() : "";
+  if (!authors) throw new Error("Author(s)/organization is required");
   if (authors.length > LIMITS.AUTHORS) {
-    throw new Error('You’ve reached the maximum number of characters for this field.');
+    throw new Error(
+      "You’ve reached the maximum number of characters for this field.",
+    );
   }
 
   const techNames = Array.isArray(input.technologies) ? input.technologies : [];
@@ -271,12 +285,12 @@ function buildCaseStudyDoc(input, techByName, submitter) {
     i < techNames.length && technologies.length < LIMITS.TECHNOLOGIES;
     i++
   ) {
-    const tName = String(techNames[i] || '').trim();
+    const tName = String(techNames[i] || "").trim();
     if (!tName) continue;
     const tDoc = techByName[tName];
-    if (!tDoc || !tDoc._id) throw new Error('Unknown technology: ' + tName);
+    if (!tDoc || !tDoc._id) throw new Error("Unknown technology: " + tName);
     technologies.push({
-      _type: 'reference',
+      _type: "reference",
       _key: key(),
       _ref: tDoc._id,
     });
@@ -298,13 +312,13 @@ function buildCaseStudyDoc(input, techByName, submitter) {
     s++
   ) {
     const seg = segments[s];
-    const text = String((seg && seg.text) || '')
+    const text = String((seg && seg.text) || "")
       .trim()
       .slice(0, LIMITS.HIGHLIGHT_LEN);
-    const techLabel = String((seg && seg.technology) || '').trim();
+    const techLabel = String((seg && seg.technology) || "").trim();
     if (!text) continue;
     if (title.indexOf(text) === -1) {
-      throw new Error('Highlight is not part of the title: ' + text);
+      throw new Error("Highlight is not part of the title: " + text);
     }
 
     let searchFrom = 0;
@@ -322,50 +336,52 @@ function buildCaseStudyDoc(input, techByName, submitter) {
         }
       }
       if (!clash) {
-        occupied.push({start, end});
+        occupied.push({ start, end });
         placed = true;
         break;
       }
       searchFrom = idx + 1;
     }
     if (!placed) {
-      throw new Error('Overlapping title highlights are not allowed');
+      throw new Error("Overlapping title highlights are not allowed");
     }
 
-    const entry = {_type: 'headlineSegment', _key: key(), text: text};
+    const entry = { _type: "headlineSegment", _key: key(), text: text };
     if (techLabel) {
       const refDoc = techByName[techLabel];
       if (!refDoc || !refDoc._id) {
-        throw new Error('Unknown technology for highlight: ' + techLabel);
+        throw new Error("Unknown technology for highlight: " + techLabel);
       }
-      entry.technology = {_type: 'reference', _ref: refDoc._id};
+      entry.technology = { _type: "reference", _ref: refDoc._id };
     }
     headlineSegments.push(entry);
   }
 
-  const date = String(input.date || '').trim();
-  if (!date) throw new Error('Date is required');
-  if (!validDate(date)) throw new Error('Enter a valid date.');
+  const date = String(input.date || "").trim();
+  if (!date) throw new Error("Date is required");
+  if (!validDate(date)) throw new Error("Enter a valid date.");
 
-  const sourceUrl = String(input.sourceUrl || '').trim().slice(0, LIMITS.URL);
-  if (!sourceUrl) throw new Error('URL is required');
+  const sourceUrl = String(input.sourceUrl || "")
+    .trim()
+    .slice(0, LIMITS.URL);
+  if (!sourceUrl) throw new Error("URL is required");
   try {
     const u = new URL(sourceUrl);
-    if (u.protocol !== 'http:' && u.protocol !== 'https:') {
-      throw new Error('bad protocol');
+    if (u.protocol !== "http:" && u.protocol !== "https:") {
+      throw new Error("bad protocol");
     }
   } catch (e) {
-    throw new Error('URL must start with http:// or https://');
+    throw new Error("URL must start with http:// or https://");
   }
 
   const publishedId = newDocId();
   const doc = {
-    _id: 'drafts.' + publishedId,
-    _type: 'caseStudy',
+    _id: "drafts." + publishedId,
+    _type: "caseStudy",
     title: title.slice(0, LIMITS.TITLE),
     authors: authors,
     medium: medium,
-    provenance: 'Open Submission',
+    provenance: "Open Submission",
     sensitiveThumbnail: true,
     technologies: technologies,
     headlineSegments: headlineSegments,
@@ -379,15 +395,16 @@ function buildCaseStudyDoc(input, techByName, submitter) {
   if (submitter.name) doc.submitterName = submitter.name;
   if (submitter.affiliation) doc.submitterAffiliation = submitter.affiliation;
 
-  if (input.source) doc.source = String(input.source).trim().slice(0, LIMITS.SOURCE);
+  if (input.source)
+    doc.source = String(input.source).trim().slice(0, LIMITS.SOURCE);
 
-  return {doc: doc, id: publishedId};
+  return { doc: doc, id: publishedId };
 }
 
 async function handleSubmit(req, res) {
   if (!PROJECT_ID || !WRITE_TOKEN) {
     sendJson(res, 500, {
-      error: 'Submissions are temporarily unavailable. Please try again later.',
+      error: "Submissions are temporarily unavailable. Please try again later.",
     });
     return;
   }
@@ -398,8 +415,8 @@ async function handleSubmit(req, res) {
     sendJson(
       res,
       503,
-      {error: 'Server is busy handling submissions. Try again shortly.'},
-      {'Retry-After': '15'}
+      { error: "Server is busy handling submissions. Try again shortly." },
+      { "Retry-After": "15" },
     );
     return;
   }
@@ -408,7 +425,7 @@ async function handleSubmit(req, res) {
   try {
     raw = await readBody(req);
   } catch (e) {
-    sendJson(res, 413, {error: e.message || 'Payload too large'});
+    sendJson(res, 413, { error: e.message || "Payload too large" });
     return;
   }
 
@@ -416,23 +433,23 @@ async function handleSubmit(req, res) {
   try {
     input = raw ? JSON.parse(raw) : {};
   } catch (e) {
-    sendJson(res, 400, {error: 'Invalid JSON'});
+    sendJson(res, 400, { error: "Invalid JSON" });
     return;
   }
 
-  if (!input || typeof input !== 'object' || Array.isArray(input)) {
-    sendJson(res, 400, {error: 'Invalid payload'});
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    sendJson(res, 400, { error: "Invalid payload" });
     return;
   }
 
   const entries = Array.isArray(input.entries) ? input.entries : null;
   if (!entries || !entries.length) {
-    sendJson(res, 400, {error: 'Add at least one entry'});
+    sendJson(res, 400, { error: "Add at least one entry" });
     return;
   }
   if (entries.length > LIMITS.ENTRIES) {
     sendJson(res, 400, {
-      error: 'You can submit up to ' + LIMITS.ENTRIES + ' entries at a time',
+      error: "You can submit up to " + LIMITS.ENTRIES + " entries at a time",
     });
     return;
   }
@@ -441,7 +458,9 @@ async function handleSubmit(req, res) {
   try {
     submitter = normalizeSubmitter(input.submitter);
   } catch (e) {
-    sendJson(res, 400, {error: e.message || 'Please review your submission details.'});
+    sendJson(res, 400, {
+      error: e.message || "Please review your submission details.",
+    });
     return;
   }
 
@@ -450,8 +469,8 @@ async function handleSubmit(req, res) {
     sendJson(
       res,
       429,
-      {error: rate.error},
-      {'Retry-After': String(rate.retryAfterSec || 60)}
+      { error: rate.error },
+      { "Retry-After": String(rate.retryAfterSec || 60) },
     );
     return;
   }
@@ -468,27 +487,30 @@ async function handleSubmit(req, res) {
         return buildCaseStudyDoc(entry, techByName, submitter);
       } catch (err) {
         const error = new Error(
-          'Entry ' + (index + 1) + ': ' + (err.message || 'Please review this entry.')
+          "Entry " +
+            (index + 1) +
+            ": " +
+            (err.message || "Please review this entry."),
         );
         error.isEntryValidation = true;
         throw error;
       }
     });
     await sanityFetch(
-      '/data/mutate/' + encodeURIComponent(DATASET) + '?returnIds=true',
+      "/data/mutate/" + encodeURIComponent(DATASET) + "?returnIds=true",
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + WRITE_TOKEN,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + WRITE_TOKEN,
         },
         body: JSON.stringify({
           mutations: built.map(function (item) {
-            return {create: item.doc};
+            return { create: item.doc };
           }),
         }),
-      }
+      },
     );
     recordSubmit(ip, built.length);
     sendJson(res, 200, {
@@ -501,7 +523,9 @@ async function handleSubmit(req, res) {
   } catch (e) {
     console.error(e);
     sendJson(res, e.isEntryValidation ? 400 : 500, {
-      error: e.isEntryValidation ? e.message : 'We couldn’t submit your entries. Please try again.',
+      error: e.isEntryValidation
+        ? e.message
+        : "We couldn’t submit your entries. Please try again.",
     });
   } finally {
     inFlight = Math.max(0, inFlight - 1);
@@ -511,118 +535,178 @@ async function handleSubmit(req, res) {
 function safeJoin(root, urlPath) {
   let decoded;
   try {
-    decoded = decodeURIComponent(urlPath.split('?')[0]);
+    decoded = decodeURIComponent(urlPath.split("?")[0]);
   } catch {
     return null;
   }
-  if (decoded.includes('\0') || decoded.includes('\\')) return null;
-  const parts = decoded.split('/').filter(Boolean);
-  if (!['src', 'assets'].includes(parts[0]) ||
-      parts.some(part => part.startsWith('.')) ||
-      (parts[0] === 'src' && ['server', 'unused'].includes(parts[1]))) return null;
-  const full = path.resolve(root, '.' + decoded);
+  if (decoded.includes("\0") || decoded.includes("\\")) return null;
+  const parts = decoded.split("/").filter(Boolean);
+  if (
+    !["src", "assets"].includes(parts[0]) ||
+    parts.some((part) => part.startsWith(".")) ||
+    (parts[0] === "src" && ["server", "unused"].includes(parts[1]))
+  )
+    return null;
+  const full = path.resolve(root, "." + decoded);
   const relative = path.relative(root, full);
-  if (relative.startsWith('..') || path.isAbsolute(relative)) return null;
+  if (relative.startsWith("..") || path.isAbsolute(relative)) return null;
   if (!Object.hasOwn(MIME, path.extname(full).toLowerCase())) return null;
   return full;
 }
 
 const PAGE_ROUTES = new Map([
-  ['/story', '/src/story/index.html'], ['/home', '/src/home/index.html'],
-  ['/database', '/src/database/index.html'], ['/research', '/src/research/index.html'],
-  ['/survivor-support', '/src/survivor-support/index.html'],
+  ["/story", "/src/story/index.html"],
+  ["/home", "/src/home/index.html"],
+  ["/database", "/src/database/index.html"],
+  ["/research", "/src/research/index.html"],
+  ["/survivor-support", "/src/survivor-support/index.html"],
+  ["/impact", "/src/impact/index.html"],
 ]);
 const LEGACY_ROUTES = new Map([
-  ['/index.html', '/story'], ['/home.html', '/home'],
-  ['/database.html', '/database'], ['/research.html', '/research'],
-  ['/about', '/research'], ['/about.html', '/research'],
-  ['/survivor-support.html', '/survivor-support'],
+  ["/index.html", "/story"],
+  ["/home.html", "/home"],
+  ["/database.html", "/database"],
+  ["/research.html", "/research"],
+  ["/about", "/research"],
+  ["/about.html", "/research"],
+  ["/survivor-support.html", "/survivor-support"],
 ]);
 
 function serveStatic(req, res) {
-  let urlPath = req.url.split('?')[0] || '/';
-  const params = new URL(req.url, 'http://localhost').searchParams;
-  if (urlPath === '/shell.html') urlPath = '/src/shared/shell.html';
-  const canonical = LEGACY_ROUTES.get(urlPath) ||
-    (urlPath.endsWith('/') && PAGE_ROUTES.has(urlPath.slice(0, -1)) ? urlPath.slice(0, -1) : null);
+  let urlPath = req.url.split("?")[0] || "/";
+  const params = new URL(req.url, "http://localhost").searchParams;
+  if (urlPath === "/shell.html") urlPath = "/src/shared/shell.html";
+  const canonical =
+    LEGACY_ROUTES.get(urlPath) ||
+    (urlPath.endsWith("/") && PAGE_ROUTES.has(urlPath.slice(0, -1))
+      ? urlPath.slice(0, -1)
+      : null);
   if (canonical) {
-    const query = new URL(req.url, 'http://localhost').search;
-    res.writeHead(308, {Location: canonical + query});
+    const query = new URL(req.url, "http://localhost").search;
+    res.writeHead(308, { Location: canonical + query });
     res.end();
     return;
   }
-  const pageFile = urlPath === '/' ? PAGE_ROUTES.get('/home') : PAGE_ROUTES.get(urlPath);
+  const pageFile =
+    urlPath === "/" ? PAGE_ROUTES.get("/home") : PAGE_ROUTES.get(urlPath);
   if (pageFile) {
-    urlPath = params.get('content') === '1' ? pageFile : '/src/shared/shell.html';
+    urlPath =
+      params.get("content") === "1" ? pageFile : "/src/shared/shell.html";
   }
 
   // Unknown page addresses return to Home; file requests retain file errors.
-  if (!pageFile && urlPath !== '/src/shared/shell.html' &&
-      !urlPath.startsWith('/src/') && !urlPath.startsWith('/assets/') &&
-      !urlPath.startsWith('/api/') && !urlPath.split('/').some(part => part.startsWith('.'))) {
-    res.writeHead(302, {Location: '/home'});
+  if (
+    !pageFile &&
+    urlPath !== "/src/shared/shell.html" &&
+    !urlPath.startsWith("/src/") &&
+    !urlPath.startsWith("/assets/") &&
+    !urlPath.startsWith("/api/") &&
+    !urlPath.split("/").some((part) => part.startsWith("."))
+  ) {
+    res.writeHead(302, { Location: "/home" });
     res.end();
     return;
   }
 
-  const filePath = safeJoin(ROOT, urlPath);
+  const filePath =
+    urlPath === "/assets/ncii-ecosystem-video.mp4"
+      ? path.join(ROOT, "press-kit/ncii-ecosystem-launch-video.mp4")
+      : safeJoin(ROOT, urlPath);
   if (!filePath) {
     res.writeHead(403);
-    res.end('Forbidden');
+    res.end("Forbidden");
     return;
   }
 
   fs.stat(filePath, function (err, stat) {
     if (err || !stat.isFile()) {
       res.writeHead(404);
-      res.end('Not found');
+      res.end("Not found");
       return;
     }
     const ext = path.extname(filePath).toLowerCase();
-    const type = MIME[ext] || 'application/octet-stream';
-    res.writeHead(200, {'Content-Type': type, 'Content-Length': stat.size});
-    if (req.method === 'HEAD') {
+    const type = MIME[ext] || "application/octet-stream";
+    const headers = { "Content-Type": type, "Content-Length": stat.size };
+    let status = 200;
+    let range;
+    if (ext === ".mp4") {
+      headers["Accept-Ranges"] = "bytes";
+      const match = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || "");
+      if (match && (match[1] || match[2])) {
+        const start = match[1]
+          ? Number(match[1])
+          : Math.max(0, stat.size - Number(match[2]));
+        const end =
+          match[1] && match[2]
+            ? Math.min(stat.size - 1, Number(match[2]))
+            : stat.size - 1;
+        if (start > end) {
+          res.writeHead(416, { "Content-Range": `bytes */${stat.size}` });
+          res.end();
+          return;
+        }
+        range = { start, end };
+        status = 206;
+        headers["Content-Range"] = `bytes ${start}-${end}/${stat.size}`;
+        headers["Content-Length"] = end - start + 1;
+      }
+    }
+    res.writeHead(status, headers);
+    if (req.method === "HEAD") {
       res.end();
       return;
     }
-    const stream = fs.createReadStream(filePath);
-    stream.on('error', () => res.destroy());
+    const stream = fs.createReadStream(filePath, range);
+    stream.on("error", () => res.destroy());
     stream.pipe(res);
   });
 }
 
 const server = http.createServer(async function (req, res) {
-  const urlPath = (req.url || '/').split('?')[0];
+  const urlPath = (req.url || "/").split("?")[0];
 
-  if ((req.method === 'GET' || req.method === 'HEAD') && urlPath === '/api/config.js') {
-    const config = {projectId: PROJECT_ID, dataset: DATASET, apiVersion: API_VERSION, useCdn: true};
+  if (
+    (req.method === "GET" || req.method === "HEAD") &&
+    urlPath === "/api/config.js"
+  ) {
+    const config = {
+      projectId: PROJECT_ID,
+      dataset: DATASET,
+      apiVersion: API_VERSION,
+      useCdn: true,
+    };
     res.writeHead(200, {
-      'Content-Type': 'text/javascript; charset=utf-8',
-      'Cache-Control': 'no-store',
+      "Content-Type": "text/javascript; charset=utf-8",
+      "Cache-Control": "no-store",
     });
-    const script = 'window.SANITY_CONFIG = ' + JSON.stringify(config) + ';\n' +
-      'window.SUBMISSION_CONSTANTS = ' + JSON.stringify({MEDIUMS, LIMITS}) + ';\n';
-    res.end(req.method === 'HEAD' ? undefined : script);
+    const script =
+      "window.SANITY_CONFIG = " +
+      JSON.stringify(config) +
+      ";\n" +
+      "window.SUBMISSION_CONSTANTS = " +
+      JSON.stringify({ MEDIUMS, LIMITS }) +
+      ";\n";
+    res.end(req.method === "HEAD" ? undefined : script);
     return;
   }
 
-  if (req.method === 'POST' && urlPath === '/api/submit') {
+  if (req.method === "POST" && urlPath === "/api/submit") {
     await handleSubmit(req, res);
     return;
   }
 
-  if (req.method === 'GET' || req.method === 'HEAD') {
+  if (req.method === "GET" || req.method === "HEAD") {
     serveStatic(req, res);
     return;
   }
 
   res.writeHead(405);
-  res.end('Method not allowed');
+  res.end("Method not allowed");
 });
 
 server.listen(PORT, function () {
-  console.log('Site + submit API at http://localhost:' + PORT);
+  console.log("Site + submit API at http://localhost:" + PORT);
   if (!WRITE_TOKEN) {
-    console.warn('Warning: SANITY_WRITE_TOKEN missing — /api/submit will fail');
+    console.warn("Warning: SANITY_WRITE_TOKEN missing — /api/submit will fail");
   }
 });
